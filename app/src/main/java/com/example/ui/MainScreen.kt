@@ -1,0 +1,241 @@
+package com.example.ui
+
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.Crossfade
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.slideInVertically
+import androidx.compose.animation.slideOutVertically
+import androidx.compose.foundation.layout.*
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalLayoutDirection
+import androidx.compose.ui.unit.LayoutDirection
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.example.model.*
+import com.example.ui.components.MujtamaBottomNav
+import com.example.ui.components.MujtamaTopBar
+import com.example.ui.screens.*
+import com.example.viewmodel.SocialAppViewModel
+import kotlinx.coroutines.launch
+
+@Composable
+fun MainScreen(viewModel: SocialAppViewModel) {
+    // Force full RTL layout for Arabic user experience
+    CompositionLocalProvider(LocalLayoutDirection provides LayoutDirection.Rtl) {
+        val currentTab by viewModel.currentTab.collectAsStateWithLifecycle()
+        val walletBalance by viewModel.walletBalance.collectAsStateWithLifecycle()
+        val userMessage by viewModel.userMessage.collectAsStateWithLifecycle()
+        val activeRoomId by viewModel.activeRoomId.collectAsStateWithLifecycle()
+
+        // Hide top bar and bottom navigation when user is inside any chat room
+        val isInsideRoom = currentTab == AppTab.CHAT && activeRoomId != null
+
+        val snackbarHostState = remember { SnackbarHostState() }
+        val coroutineScope = rememberCoroutineScope()
+
+        LaunchedEffect(userMessage) {
+            userMessage?.let { msg ->
+                coroutineScope.launch {
+                    snackbarHostState.showSnackbar(
+                        message = msg,
+                        duration = SnackbarDuration.Short
+                    )
+                    viewModel.clearUserMessage()
+                }
+            }
+        }
+
+        Scaffold(
+            modifier = Modifier.fillMaxSize(),
+            topBar = {
+                AnimatedVisibility(
+                    visible = !isInsideRoom,
+                    enter = slideInVertically(initialOffsetY = { -it }) + fadeIn(),
+                    exit = slideOutVertically(targetOffsetY = { -it }) + fadeOut()
+                ) {
+                    MujtamaTopBar(
+                        currentTab = currentTab,
+                        walletBalance = walletBalance,
+                        onWalletClick = { viewModel.setTab(AppTab.PROFILE) },
+                        onNotificationsClick = { viewModel.togglePushNotifications() },
+                        onSearchClick = { viewModel.setTab(AppTab.CHAT) }
+                    )
+                }
+            },
+            bottomBar = {
+                AnimatedVisibility(
+                    visible = !isInsideRoom,
+                    enter = slideInVertically(initialOffsetY = { it }) + fadeIn(),
+                    exit = slideOutVertically(targetOffsetY = { it }) + fadeOut()
+                ) {
+                    MujtamaBottomNav(
+                        currentTab = currentTab,
+                        onTabSelected = { viewModel.setTab(it) }
+                    )
+                }
+            },
+            snackbarHost = {
+                SnackbarHost(hostState = snackbarHostState)
+            }
+        ) { innerPadding ->
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(innerPadding)
+            ) {
+                Crossfade(targetState = currentTab, label = "tab_transition") { tab ->
+                    when (tab) {
+                        AppTab.FEED -> {
+                            val stories by viewModel.stories.collectAsStateWithLifecycle()
+                            val posts by viewModel.posts.collectAsStateWithLifecycle()
+                            val activeStory by viewModel.activeStory.collectAsStateWithLifecycle()
+                            val activeCommentPostId by viewModel.activeCommentPostId.collectAsStateWithLifecycle()
+
+                            FeedScreen(
+                                stories = stories,
+                                posts = posts,
+                                activeStory = activeStory,
+                                activeCommentPostId = activeCommentPostId,
+                                onStoryClick = { viewModel.openStory(it) },
+                                onCloseStory = { viewModel.closeStory() },
+                                onAddStory = { viewModel.addStory(it) },
+                                onLikeClick = { viewModel.toggleLike(it) },
+                                onCommentClick = { viewModel.openComments(it) },
+                                onCloseComments = { viewModel.closeComments() },
+                                onAddComment = { postId, text -> viewModel.addComment(postId, text) },
+                                onShareClick = { viewModel.sharePost(it) },
+                                onPublishPost = { text, tag, type -> viewModel.publishPost(text, tag, type) }
+                            )
+                        }
+
+                        AppTab.CHAT -> {
+                            val conversations by viewModel.conversations.collectAsStateWithLifecycle()
+                            val activeChatId by viewModel.activeChatId.collectAsStateWithLifecycle()
+                            val chatFilter by viewModel.chatFilter.collectAsStateWithLifecycle()
+                            val pushNotificationsEnabled by viewModel.pushNotificationsEnabled.collectAsStateWithLifecycle()
+                            val chatSubTab by viewModel.chatSubTab.collectAsStateWithLifecycle()
+                            val chatRooms by viewModel.chatRooms.collectAsStateWithLifecycle()
+                            val activeRoomId by viewModel.activeRoomId.collectAsStateWithLifecycle()
+                            val roomCategoryFilter by viewModel.roomCategoryFilter.collectAsStateWithLifecycle()
+
+                            ChatScreen(
+                                conversations = conversations,
+                                activeChatId = activeChatId,
+                                chatFilter = chatFilter,
+                                pushNotificationsEnabled = pushNotificationsEnabled,
+                                chatSubTab = chatSubTab,
+                                chatRooms = chatRooms,
+                                activeRoomId = activeRoomId,
+                                roomCategoryFilter = roomCategoryFilter,
+                                onSubTabChange = { viewModel.setChatSubTab(it) },
+                                onFilterChange = { viewModel.setChatFilter(it) },
+                                onTogglePushNotifications = { viewModel.togglePushNotifications() },
+                                onOpenChat = { viewModel.openConversation(it) },
+                                onCloseChat = { viewModel.closeConversation() },
+                                onSendMessage = { convId, text, type -> viewModel.sendMessage(convId, text, type) },
+                                onStartGameInChat = { convId, gameType ->
+                                    viewModel.startInChatGame(convId, gameType)
+                                    viewModel.launchGame(gameType, GameMatchMode.WITH_FRIEND, "صديقك")
+                                    viewModel.setTab(AppTab.GAMES)
+                                },
+                                onNavigateToGames = { gameType ->
+                                    if (gameType != null) {
+                                        viewModel.launchGame(gameType, GameMatchMode.WITH_FRIEND, "صديقك")
+                                    }
+                                    viewModel.setTab(AppTab.GAMES)
+                                },
+                                onRoomCategoryChange = { viewModel.setRoomCategoryFilter(it) },
+                                onOpenRoom = { viewModel.openRoom(it) },
+                                onCloseRoom = { viewModel.closeRoom() },
+                                onCreateRoom = { name, desc, cat, access, pass, max, emoji, imgUrl ->
+                                    viewModel.createChatRoom(name, desc, cat, access, pass, max, emoji, imgUrl)
+                                },
+                                onJoinRoom = { roomId, pass -> viewModel.joinChatRoom(roomId, pass) },
+                                onLeaveRoom = { viewModel.leaveChatRoom(it) },
+                                onSendRoomMessage = { roomId, text, type -> viewModel.sendRoomMessage(roomId, text, type) },
+                                onPinRoomMessage = { roomId, text -> viewModel.pinRoomMessage(roomId, text) },
+                                onUnpinRoomMessage = { viewModel.unpinRoomMessage(it) },
+                                onDeleteRoomMessage = { roomId, msgId -> viewModel.deleteRoomMessage(roomId, msgId) },
+                                onKickRoomMember = { roomId, memId -> viewModel.kickRoomMember(roomId, memId) },
+                                onMuteRoomMember = { roomId, memId -> viewModel.muteRoomMember(roomId, memId) },
+                                onChangeMemberRole = { roomId, memId, role -> viewModel.changeRoomMemberRole(roomId, memId, role) },
+                                onUpdateRoomSettings = { roomId, name, desc, max -> viewModel.updateRoomSettings(roomId, name, desc, max) },
+                                onStartInRoomGame = { roomId, gameType ->
+                                    viewModel.startInRoomGame(roomId, gameType)
+                                    viewModel.launchGame(gameType, GameMatchMode.WITH_FRIEND, "أعضاء الغرفة")
+                                    viewModel.setTab(AppTab.GAMES)
+                                }
+                            )
+                        }
+
+                        AppTab.GAMES -> {
+                            val activeGame by viewModel.activeGameType.collectAsStateWithLifecycle()
+                            val activeMode by viewModel.activeGameMode.collectAsStateWithLifecycle()
+                            val activeOpponent by viewModel.activeGameOpponent.collectAsStateWithLifecycle()
+
+                            GamesScreen(
+                                activeGame = activeGame,
+                                activeMode = activeMode,
+                                activeOpponent = activeOpponent,
+                                onLaunchGame = { game, mode, opp -> viewModel.launchGame(game, mode, opp) },
+                                onExitGame = { viewModel.exitGame() },
+                                onWinReward = { reward, gameName -> viewModel.rewardGameWin(reward, gameName) }
+                            )
+                        }
+
+                        AppTab.TEAM -> {
+                            val myTeam by viewModel.myTeam.collectAsStateWithLifecycle()
+                            val userProfile by viewModel.userProfile.collectAsStateWithLifecycle()
+                            val referrals by viewModel.referrals.collectAsStateWithLifecycle()
+                            val friendRequests by viewModel.friendRequests.collectAsStateWithLifecycle()
+
+                            TeamScreen(
+                                userProfile = userProfile,
+                                team = myTeam,
+                                referrals = referrals,
+                                friendRequests = friendRequests,
+                                onBackClick = { viewModel.setTab(AppTab.FEED) },
+                                onSendFriendRequest = { viewModel.sendFriendRequest(it) },
+                                onAcceptFriendRequest = { viewModel.acceptFriendRequest(it) },
+                                onRejectFriendRequest = { viewModel.rejectFriendRequest(it) },
+                                onSimulateReferralJoined = { viewModel.simulateNewReferralJoined(it) }
+                            )
+                        }
+
+                        AppTab.PROFILE -> {
+                            val userProfile by viewModel.userProfile.collectAsStateWithLifecycle()
+                            val posts by viewModel.posts.collectAsStateWithLifecycle()
+                            val dailyBonusClaimed by viewModel.dailyBonusClaimed.collectAsStateWithLifecycle()
+                            val walletFilter by viewModel.walletFilter.collectAsStateWithLifecycle()
+                            val transactions by viewModel.transactions.collectAsStateWithLifecycle()
+                            val storeItems by viewModel.storeItems.collectAsStateWithLifecycle()
+
+                            ProfileScreen(
+                                userProfile = userProfile,
+                                posts = posts,
+                                balance = walletBalance,
+                                dailyBonusClaimed = dailyBonusClaimed,
+                                walletFilter = walletFilter,
+                                transactions = transactions,
+                                storeItems = storeItems,
+                                onUpdateBio = { viewModel.updateUserBio(it) },
+                                onUpdateProfile = { name, bio, emoji -> viewModel.updateUserProfile(name, bio, emoji) },
+                                onToggleNotifications = { viewModel.toggleProfileNotifications() },
+                                onTogglePrivacy = { viewModel.toggleProfilePrivacy() },
+                                onLogout = { viewModel.logoutUser() },
+                                onClaimDailyBonus = { viewModel.claimDailyBonus() },
+                                onFilterChange = { viewModel.setWalletFilter(it) },
+                                onBuyItem = { viewModel.buyStoreItem(it) },
+                                onLikePost = { viewModel.toggleLike(it) },
+                                onCommentPost = { viewModel.openComments(it) },
+                                onSharePost = { viewModel.sharePost(it) }
+                            )
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
