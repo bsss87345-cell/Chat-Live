@@ -18,6 +18,9 @@ out/
 .externalNativeBuild
 .cxx
 
+# Ensure Gradle Wrapper jar is never ignored
+!gradle/wrapper/gradle-wrapper.jar
+
 # Local configuration and environment secrets
 local.properties
 /local.properties
