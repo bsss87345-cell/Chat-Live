@@ -1,18 +1,48 @@
+# Built application files
+*.apk
+*.ap_
+*.aab
+*.dex
+*.class
+
+# Java/Kotlin build outputs
 *.iml
-.gradle
-.kotlin
-/local.properties
-/.idea/caches
-/.idea/libraries
-/.idea/modules.xml
-/.idea/workspace.xml
-/.idea/navEditor.xml
-/.idea/assetWizardSettings.xml
-.DS_Store
+.gradle/
+.kotlin/
+build/
+*/build/
+bin/
+out/
 /build
 /captures
 .externalNativeBuild
 .cxx
+
+# Local configuration and environment secrets
 local.properties
+/local.properties
 .env
+.env.local
+secrets.properties
+
+# Android Keystores and signing credentials
+*.jks
+*.keystore
 debug.keystore
+debug.keystore.base64
+
+# IDE files
+.idea/
+/.idea/
+*.iws
+*.ipr
+
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+

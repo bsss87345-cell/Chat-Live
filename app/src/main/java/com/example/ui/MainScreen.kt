@@ -17,6 +17,7 @@ import com.example.model.*
 import com.example.ui.components.MujtamaBottomNav
 import com.example.ui.components.MujtamaTopBar
 import com.example.ui.screens.*
+import com.example.ui.screens.auth.AuthScreen
 import com.example.viewmodel.SocialAppViewModel
 import kotlinx.coroutines.launch
 
@@ -24,10 +25,19 @@ import kotlinx.coroutines.launch
 fun MainScreen(viewModel: SocialAppViewModel) {
     // Force full RTL layout for Arabic user experience
     CompositionLocalProvider(LocalLayoutDirection provides LayoutDirection.Rtl) {
-        val currentTab by viewModel.currentTab.collectAsStateWithLifecycle()
-        val walletBalance by viewModel.walletBalance.collectAsStateWithLifecycle()
-        val userMessage by viewModel.userMessage.collectAsStateWithLifecycle()
-        val activeRoomId by viewModel.activeRoomId.collectAsStateWithLifecycle()
+        val isLoggedIn by viewModel.isLoggedIn.collectAsStateWithLifecycle()
+
+        if (!isLoggedIn) {
+            AuthScreen(
+                onAuthSuccess = { account, generatedId ->
+                    viewModel.onAuthSuccess(account, generatedId)
+                }
+            )
+        } else {
+            val currentTab by viewModel.currentTab.collectAsStateWithLifecycle()
+            val walletBalance by viewModel.walletBalance.collectAsStateWithLifecycle()
+            val userMessage by viewModel.userMessage.collectAsStateWithLifecycle()
+            val activeRoomId by viewModel.activeRoomId.collectAsStateWithLifecycle()
 
         // Hide top bar and bottom navigation when user is inside any chat room
         val isInsideRoom = currentTab == AppTab.CHAT && activeRoomId != null
@@ -100,13 +110,19 @@ fun MainScreen(viewModel: SocialAppViewModel) {
                                 activeCommentPostId = activeCommentPostId,
                                 onStoryClick = { viewModel.openStory(it) },
                                 onCloseStory = { viewModel.closeStory() },
-                                onAddStory = { viewModel.addStory(it) },
+                                onAddStory = { text, mediaUri, mediaType, colors ->
+                                    viewModel.addStory(text, mediaUri, mediaType, colors)
+                                },
                                 onLikeClick = { viewModel.toggleLike(it) },
                                 onCommentClick = { viewModel.openComments(it) },
                                 onCloseComments = { viewModel.closeComments() },
                                 onAddComment = { postId, text -> viewModel.addComment(postId, text) },
                                 onShareClick = { viewModel.sharePost(it) },
-                                onPublishPost = { text, tag, type -> viewModel.publishPost(text, tag, type) }
+                                onPublishPost = { text, tag, type -> viewModel.publishPost(text, tag, type) },
+                                onFollowClick = { viewModel.toggleFollowUser(it) },
+                                onEditPost = { postId, newText -> viewModel.editPost(postId, newText) },
+                                onDeletePost = { viewModel.deletePost(it) },
+                                onReportPost = { viewModel.reportPost(it) }
                             )
                         }
 
@@ -238,4 +254,5 @@ fun MainScreen(viewModel: SocialAppViewModel) {
             }
         }
     }
+}
 }

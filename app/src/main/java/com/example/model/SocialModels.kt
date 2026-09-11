@@ -14,6 +14,8 @@ data class UserProfile(
     val handle: String = "84920153",
     val bio: String = "عاشق للتقنية والتحديات البرمجية 💻 | عضو في فريق فرسان الألعاب 🛡️ | أهلاً بكم في صفحتي الشخصية!",
     val avatarEmoji: String = "👨‍💻",
+    val email: String = "user@example.com",
+    val authProvider: String = "Google",
     val followersCount: Int = 348,
     val followingCount: Int = 192,
     val teamsJoinedCount: Int = 2,
@@ -22,6 +24,10 @@ data class UserProfile(
     val privacyLevel: String = "عام للجميع"
 )
 
+enum class StoryMediaType {
+    PHOTO, VIDEO, TEXT
+}
+
 data class Story(
     val id: String,
     val authorName: String,
@@ -29,7 +35,9 @@ data class Story(
     val mediaText: String = "",
     val timeAgo: String = "منذ ساعة",
     val isCurrentUser: Boolean = false,
-    val gradientColors: List<Long> = listOf(0xFF673AB7, 0xFF00897B)
+    val gradientColors: List<Long> = listOf(0xFF673AB7, 0xFF00897B),
+    val mediaType: StoryMediaType = StoryMediaType.TEXT,
+    val mediaUri: String? = null
 )
 
 enum class PostMediaType {
@@ -57,7 +65,9 @@ data class Post(
     val isLiked: Boolean = false,
     val commentsCount: Int,
     val sharesCount: Int,
-    val commentsList: List<PostComment> = emptyList()
+    val commentsList: List<PostComment> = emptyList(),
+    val isAuthor: Boolean = false,
+    val isFollowing: Boolean = false
 )
 
 enum class ChatMessageType {

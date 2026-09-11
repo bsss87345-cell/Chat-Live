@@ -102,4 +102,111 @@ class ExampleUnitTest {
         assertTrue(currentBalance > 0)
         assertEquals(5, vm.transactions.value.size)
     }
+
+    @Test
+    fun testPostOwnershipAndFollowToggle() {
+        val vm = SocialAppViewModel()
+        val posts = vm.posts.value
+        val authorPost = posts.find { it.isAuthor }
+        assertNotNull(authorPost)
+        assertEquals("أحمد المنصور", authorPost!!.authorName)
+
+        val otherPost = posts.find { !it.isAuthor }
+        assertNotNull(otherPost)
+        val initialFollow = otherPost!!.isFollowing
+
+        // Toggle follow
+        vm.toggleFollowUser(otherPost.id)
+        val afterFollow = vm.posts.value.find { it.id == otherPost.id }!!
+        assertEquals(!initialFollow, afterFollow.isFollowing)
+    }
+
+    @Test
+    fun testPostEditAndDelete() {
+        val vm = SocialAppViewModel()
+        val authorPost = vm.posts.value.find { it.isAuthor }!!
+        val updatedText = "محتوى معدل جديد للمنشور الخاص بي ✍️"
+
+        // Edit
+        vm.editPost(authorPost.id, updatedText)
+        val edited = vm.posts.value.find { it.id == authorPost.id }!!
+        assertEquals(updatedText, edited.content)
+
+        // Delete
+        val countBefore = vm.posts.value.size
+        vm.deletePost(authorPost.id)
+        val countAfter = vm.posts.value.size
+        assertEquals(countBefore - 1, countAfter)
+        assertNull(vm.posts.value.find { it.id == authorPost.id })
+    }
+
+    @Test
+    fun testPostReportMessage() {
+        val vm = SocialAppViewModel()
+        val otherPost = vm.posts.value.find { !it.isAuthor }!!
+        vm.reportPost(otherPost.id, "محتوى غير لائق")
+        assertNotNull(vm.userMessage.value)
+        assertTrue(vm.userMessage.value!!.contains("البلاغ"))
+    }
+
+    @Test
+    fun testStoryCreationModes() {
+        val vm = SocialAppViewModel()
+
+        // 1. Photo story
+        vm.addStory(
+            text = "صورة رائعة من الرحلة",
+            mediaUri = "https://images.unsplash.com/photo-1",
+            mediaType = com.example.model.StoryMediaType.PHOTO
+        )
+        val photoStory = vm.stories.value.first()
+        assertEquals("صورة رائعة من الرحلة", photoStory.mediaText)
+        assertEquals(com.example.model.StoryMediaType.PHOTO, photoStory.mediaType)
+        assertEquals("https://images.unsplash.com/photo-1", photoStory.mediaUri)
+        assertTrue(photoStory.isCurrentUser)
+
+        // 2. Video story
+        vm.addStory(
+            text = "تسجيل فيديو سريع 🎥",
+            mediaUri = "https://example.com/video1.mp4",
+            mediaType = com.example.model.StoryMediaType.VIDEO
+        )
+        val videoStory = vm.stories.value.first()
+        assertEquals("تسجيل فيديو سريع 🎥", videoStory.mediaText)
+        assertEquals(com.example.model.StoryMediaType.VIDEO, videoStory.mediaType)
+        assertTrue(videoStory.isCurrentUser)
+
+        // 3. Text story
+        vm.addStory(
+            text = "صباح الخير والبركة لجميع الأصدقاء ✨",
+            mediaUri = null,
+            mediaType = com.example.model.StoryMediaType.TEXT,
+            gradientColors = listOf(0xFF673AB7, 0xFF00897B)
+        )
+        val textStory = vm.stories.value.first()
+        assertEquals("صباح الخير والبركة لجميع الأصدقاء ✨", textStory.mediaText)
+        assertEquals(com.example.model.StoryMediaType.TEXT, textStory.mediaType)
+        assertNull(textStory.mediaUri)
+        assertEquals(2, textStory.gradientColors.size)
+    }
+
+    @Test
+    fun testGameCatalogStructureAndDominoActive() {
+        // Verify Domino is active and only Domino is returned in available list
+        val availableGames = com.example.ui.screens.ALL_CATALOG_GAMES.filter { it.isAvailable }
+        assertEquals(1, availableGames.size)
+
+        val domino = availableGames.first()
+        assertEquals(com.example.model.GameType.DOMINO, domino.gameType)
+        assertEquals("الدومينو الكلاسيكية", domino.title)
+        assertTrue(domino.isAvailable)
+
+        // Verify the catalog is extensible and contains the other planned games
+        val allCatalogTypes = com.example.ui.screens.ALL_CATALOG_GAMES.map { it.gameType }
+        assertTrue(allCatalogTypes.contains(com.example.model.GameType.DOMINO))
+        assertTrue(allCatalogTypes.contains(com.example.model.GameType.LUDO))
+        assertTrue(allCatalogTypes.contains(com.example.model.GameType.JACKAROO))
+        assertTrue(allCatalogTypes.contains(com.example.model.GameType.SNAKES_AND_LADDERS))
+        assertTrue(allCatalogTypes.contains(com.example.model.GameType.CHESS))
+    }
 }

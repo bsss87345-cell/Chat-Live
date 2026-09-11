@@ -12,6 +12,10 @@ import kotlinx.coroutines.launch
 
 class SocialAppViewModel : ViewModel() {
 
+    // --- Authentication State (الشاشة التي تظهر عند فتح التطبيق لأول مرة) ---
+    private val _isLoggedIn = MutableStateFlow(false)
+    val isLoggedIn: StateFlow<Boolean> = _isLoggedIn.asStateFlow()
+
     private val _currentTab = MutableStateFlow(AppTab.FEED)
     val currentTab: StateFlow<AppTab> = _currentTab.asStateFlow()
 
@@ -50,12 +54,14 @@ class SocialAppViewModel : ViewModel() {
                 commentsList = listOf(
                     PostComment("c1", "سارة أحمد", "ألف مبروك يا شباب، أداء أسطوري اليوم! 👏", "منذ ساعة"),
                     PostComment("c2", "عمر الفاروق", "الجولة القادمة ستكون أقوى بإذن الله 🎯", "منذ 30 دقيقة")
-                )
+                ),
+                isAuthor = false,
+                isFollowing = false
             ),
             Post(
                 id = "p2",
-                authorName = "مها السعيد",
-                authorHandle = "@maha_s",
+                authorName = "أحمد المنصور",
+                authorHandle = "@ahmed_almansour",
                 authorRole = "عضوة مميزة",
                 timeAgo = "منذ 4 ساعات",
                 content = "حصلت للتو على وسام 'بطل الألغاز' بعد الإجابة على 20 لغز متتالي في قسم الألعاب بدون أي خطأ! النقاط في المحفظة ارتفعت إلى 3200 نقطة ✨🎮 جربوا التحدي الآن.",
@@ -68,7 +74,9 @@ class SocialAppViewModel : ViewModel() {
                 sharesCount = 11,
                 commentsList = listOf(
                     PostComment("c3", "يوسف الدوسري", "ما شاء الله! أي لغز كان الأصعب؟", "منذ 3 ساعات")
-                )
+                ),
+                isAuthor = true,
+                isFollowing = false
             ),
             Post(
                 id = "p3",
@@ -85,7 +93,9 @@ class SocialAppViewModel : ViewModel() {
                 sharesCount = 34,
                 commentsList = listOf(
                     PostComment("c4", "فاطمة النجار", "شكراً للإدارة على النظام النزيه والبيئة الرائعة", "منذ 5 ساعات")
-                )
+                ),
+                isAuthor = false,
+                isFollowing = true
             )
         )
     )
@@ -478,10 +488,47 @@ class SocialAppViewModel : ViewModel() {
             isLiked = true,
             commentsCount = 0,
             sharesCount = 0,
-            commentsList = emptyList()
+            commentsList = emptyList(),
+            isAuthor = true,
+            isFollowing = false
         )
         _posts.update { listOf(newPost) + it }
         _userMessage.value = "تم نشر منشورك بنجاح في خلاصة المجتمع!"
+    }
+
+    fun deletePost(postId: String) {
+        _posts.update { list -> list.filter { it.id != postId } }
+        _userMessage.value = "تم حذف المنشور بنجاح"
+    }
+
+    fun editPost(postId: String, newContent: String) {
+        if (newContent.isBlank()) return
+        _posts.update { list ->
+            list.map { post ->
+                if (post.id == postId) post.copy(content = newContent.trim()) else post
+            }
+        }
+        _userMessage.value = "تم تعديل المنشور بنجاح"
+    }
+
+    fun reportPost(postId: String, reason: String = "محتوى غير لائق") {
+        _userMessage.value = "تم استلام البلاغ وسيتم مراجعته من قِبل المشرفين، شكراً لمساعدتك في حماية المجتمع"
+    }
+
+    fun toggleFollowUser(postId: String) {
+        var isNowFollowing = false
+        _posts.update { list ->
+            val target = list.find { it.id == postId } ?: return@update list
+            val author = target.authorName
+            val newFollow = !target.isFollowing
+            isNowFollowing = newFollow
+            list.map { post ->
+                if (post.authorName == author) {
+                    post.copy(isFollowing = newFollow)
+                } else post
+            }
+        }
+        _userMessage.value = if (isNowFollowing) "تمت متابعة المستخدم بنجاح" else "تم إلغاء المتابعة"
     }
 
     // --- Story Actions ---
@@ -496,20 +543,27 @@ class SocialAppViewModel : ViewModel() {
         _activeStory.value = null
     }
 
-    fun addStory(text: String) {
-        if (text.isBlank()) return
+    fun addStory(
+        text: String = "",
+        mediaUri: String? = null,
+        mediaType: StoryMediaType = StoryMediaType.TEXT,
+        gradientColors: List<Long> = listOf(0xFF673AB7, 0xFF00897B)
+    ) {
         val newStory = Story(
             id = "story_${System.currentTimeMillis()}",
             authorName = "قصتي",
             isViewed = false,
             mediaText = text.trim(),
             timeAgo = "الآن",
-            isCurrentUser = true
+            isCurrentUser = true,
+            gradientColors = gradientColors,
+            mediaType = mediaType,
+            mediaUri = mediaUri
         )
         _stories.update { list ->
             listOf(newStory) + list.filter { !it.isCurrentUser }
         }
-        _userMessage.value = "تم نشر قصتك المؤقتة لجميع المتابعين!"
+        _userMessage.value = "تم نشر قصتك المؤقتة لجميع المتابعين بنجاح!"
     }
 
     // --- Chat Actions ---
@@ -1080,7 +1134,23 @@ class SocialAppViewModel : ViewModel() {
         _userMessage.value = "تم تحديث خصوصية الحساب إلى (${_userProfile.value.privacyLevel})"
     }
 
+    fun onAuthSuccess(account: AuthUserAccount, generatedId: String) {
+        _userProfile.update { current ->
+            current.copy(
+                id = generatedId,
+                handle = generatedId,
+                name = account.name,
+                email = account.email,
+                authProvider = account.provider.providerNameAr,
+                avatarEmoji = account.avatarEmoji
+            )
+        }
+        _isLoggedIn.value = true
+        _userMessage.value = "مرحباً بك ${account.name}! تم تعيين معرّفك الرقمي الفريد: $generatedId"
+    }
+
     fun logoutUser() {
+        _isLoggedIn.value = false
         _userMessage.value = "تم تسجيل الخروج بنجاح. مرحباً بك في أي وقت!"
     }
 }

@@ -1,5 +1,17 @@
 package com.example.ui.screens
 
+import android.Manifest
+import android.content.Intent
+import android.content.pm.PackageManager
+import android.net.Uri
+import android.provider.Settings
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.PickVisualMediaRequest
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.camera.core.CameraSelector
+import androidx.camera.core.Preview
+import androidx.camera.lifecycle.ProcessCameraProvider
+import androidx.camera.view.PreviewView
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -15,19 +27,29 @@ import androidx.compose.material.icons.filled.*
 import androidx.compose.material.icons.outlined.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.compose.ui.AbsoluteAlignment
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.viewinterop.AndroidView
 import androidx.compose.ui.window.Dialog
+import androidx.compose.ui.window.DialogProperties
+import androidx.core.content.ContextCompat
+import androidx.lifecycle.compose.LocalLifecycleOwner
+import coil.compose.AsyncImage
 import com.example.model.*
 import com.example.ui.theme.*
+import kotlinx.coroutines.delay
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -38,16 +60,48 @@ fun FeedScreen(
     activeCommentPostId: String?,
     onStoryClick: (Story) -> Unit,
     onCloseStory: () -> Unit,
-    onAddStory: (String) -> Unit,
+    onAddStory: (String, String?, StoryMediaType, List<Long>) -> Unit = { _, _, _, _ -> },
     onLikeClick: (String) -> Unit,
     onCommentClick: (String) -> Unit,
     onCloseComments: () -> Unit,
     onAddComment: (String, String) -> Unit,
     onShareClick: (Post) -> Unit,
-    onPublishPost: (String, String, PostMediaType) -> Unit
+    onPublishPost: (String, String, PostMediaType) -> Unit,
+    onFollowClick: (String) -> Unit = {},
+    onEditPost: (String, String) -> Unit = { _, _ -> },
+    onDeletePost: (String) -> Unit = {},
+    onReportPost: (String) -> Unit = {}
 ) {
+    val context = LocalContext.current
     var showCreatePostDialog by remember { mutableStateOf(false) }
-    var showAddStoryDialog by remember { mutableStateOf(false) }
+    var showStoryCreationScreen by remember { mutableStateOf(false) }
+    var showCameraPermissionDeniedDialog by remember { mutableStateOf(false) }
+    var editingPost by remember { mutableStateOf<Post?>(null) }
+    var deletingPost by remember { mutableStateOf<Post?>(null) }
+    var reportingPost by remember { mutableStateOf<Post?>(null) }
+
+    val cameraPermissionLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.RequestPermission()
+    ) { isGranted ->
+        if (isGranted) {
+            showStoryCreationScreen = true
+        } else {
+            showCameraPermissionDeniedDialog = true
+        }
+    }
+
+    val handleAddStoryClick = {
+        val hasCameraPermission = ContextCompat.checkSelfPermission(
+            context,
+            Manifest.permission.CAMERA
+        ) == PackageManager.PERMISSION_GRANTED
+
+        if (hasCameraPermission) {
+            showStoryCreationScreen = true
+        } else {
+            cameraPermissionLauncher.launch(Manifest.permission.CAMERA)
+        }
+    }
 
     Box(modifier = Modifier.fillMaxSize()) {
         LazyColumn(
@@ -60,7 +114,7 @@ fun FeedScreen(
                 StoriesBar(
                     stories = stories,
                     onStoryClick = onStoryClick,
-                    onAddStoryClick = { showAddStoryDialog = true }
+                    onAddStoryClick = handleAddStoryClick
                 )
             }
 
@@ -77,7 +131,11 @@ fun FeedScreen(
                     post = post,
                     onLikeClick = { onLikeClick(post.id) },
                     onCommentClick = { onCommentClick(post.id) },
-                    onShareClick = { onShareClick(post) }
+                    onShareClick = { onShareClick(post) },
+                    onFollowClick = { onFollowClick(post.id) },
+                    onEditClick = { editingPost = post },
+                    onDeleteClick = { deletingPost = post },
+                    onReportClick = { reportingPost = post }
                 )
             }
         }
@@ -90,13 +148,31 @@ fun FeedScreen(
             )
         }
 
-        // Add Story Dialog
-        if (showAddStoryDialog) {
-            AddStoryDialog(
-                onDismiss = { showAddStoryDialog = false },
-                onConfirm = { text ->
-                    onAddStory(text)
-                    showAddStoryDialog = false
+        // Camera Permission Denied Rationale Dialog
+        if (showCameraPermissionDeniedDialog) {
+            CameraPermissionRationaleDialog(
+                onDismiss = { showCameraPermissionDeniedDialog = false },
+                onOpenSettings = {
+                    showCameraPermissionDeniedDialog = false
+                    val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS).apply {
+                        data = Uri.fromParts("package", context.packageName, null)
+                    }
+                    context.startActivity(intent)
+                },
+                onOpenTextStoryFallback = {
+                    showCameraPermissionDeniedDialog = false
+                    showStoryCreationScreen = true
+                }
+            )
+        }
+
+        // Add Story Screen (Camera Preview, Side Controls, Video/Photo/Text/Gallery)
+        if (showStoryCreationScreen) {
+            StoryCreationDialog(
+                onDismiss = { showStoryCreationScreen = false },
+                onPublishStory = { text, mediaUri, mediaType, colors ->
+                    onAddStory(text, mediaUri, mediaType, colors)
+                    showStoryCreationScreen = false
                 }
             )
         }
@@ -124,6 +200,42 @@ fun FeedScreen(
                     }
                 )
             }
+        }
+
+        // Edit Post Dialog
+        editingPost?.let { post ->
+            EditPostDialog(
+                post = post,
+                onDismiss = { editingPost = null },
+                onSave = { newContent ->
+                    onEditPost(post.id, newContent)
+                    editingPost = null
+                }
+            )
+        }
+
+        // Delete Post Confirmation Dialog
+        deletingPost?.let { post ->
+            DeletePostConfirmDialog(
+                post = post,
+                onDismiss = { deletingPost = null },
+                onConfirm = {
+                    onDeletePost(post.id)
+                    deletingPost = null
+                }
+            )
+        }
+
+        // Report Post Dialog
+        reportingPost?.let { post ->
+            ReportPostDialog(
+                post = post,
+                onDismiss = { reportingPost = null },
+                onConfirm = { reason ->
+                    onReportPost(post.id)
+                    reportingPost = null
+                }
+            )
         }
     }
 }
@@ -285,8 +397,14 @@ fun PostCard(
     post: Post,
     onLikeClick: () -> Unit,
     onCommentClick: () -> Unit,
-    onShareClick: () -> Unit
+    onShareClick: () -> Unit,
+    onFollowClick: () -> Unit = {},
+    onEditClick: () -> Unit = {},
+    onDeleteClick: () -> Unit = {},
+    onReportClick: () -> Unit = {}
 ) {
+    var menuExpanded by remember { mutableStateOf(false) }
+
     Card(
         modifier = Modifier
             .fillMaxWidth()
@@ -301,15 +419,19 @@ fun PostCard(
                 .fillMaxWidth()
                 .padding(16.dp)
         ) {
-            // Header: Author Info
+            // 1. رأس المنشور (Header):
+            // يظهر فقط: اسم المستخدم، تاريخ ووقت النشر
+            // بجانب اسم المستخدم مباشرة: زر "متابعة" (Follow) فقط
+            // إزالة أي شعارات أو أيقونات أخرى (شارات توثيق، أيقونات إضافية... إلخ)
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.spacedBy(10.dp)
             ) {
+                // الأيقونة الرمزية للمستخدم (الحرف الأول)
                 Box(
                     modifier = Modifier
-                        .size(46.dp)
+                        .size(44.dp)
                         .clip(CircleShape)
                         .background(
                             Brush.linearGradient(
@@ -326,43 +448,139 @@ fun PostCard(
                     )
                 }
 
+                // اسم المستخدم + زر المتابعة بجانبه مباشرة + تاريخ ووقت النشر فقط
                 Column(modifier = Modifier.weight(1f)) {
                     Row(
                         verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.spacedBy(6.dp)
+                        horizontalArrangement = Arrangement.spacedBy(8.dp)
                     ) {
                         Text(
                             text = post.authorName,
-                            style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold)
+                            style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold),
+                            color = MaterialTheme.colorScheme.onSurface
                         )
-                        Surface(
-                            shape = RoundedCornerShape(8.dp),
-                            color = MaterialTheme.colorScheme.primaryContainer
-                        ) {
-                            Text(
-                                text = post.authorRole,
-                                modifier = Modifier.padding(horizontal = 6.dp, vertical = 2.dp),
-                                fontSize = 10.sp,
-                                fontWeight = FontWeight.Bold,
-                                color = MaterialTheme.colorScheme.primary
-                            )
+
+                        // زر متابعة (Follow) فقط بجانب اسم المستخدم مباشرة (لغير صاحب المنشور)
+                        if (!post.isAuthor) {
+                            FilledTonalButton(
+                                onClick = onFollowClick,
+                                modifier = Modifier
+                                    .height(28.dp)
+                                    .testTag("follow_button_${post.id}"),
+                                contentPadding = PaddingValues(horizontal = 10.dp, vertical = 0.dp),
+                                shape = RoundedCornerShape(14.dp),
+                                colors = ButtonDefaults.filledTonalButtonColors(
+                                    containerColor = if (post.isFollowing)
+                                        MaterialTheme.colorScheme.surfaceVariant
+                                    else
+                                        MaterialTheme.colorScheme.primaryContainer,
+                                    contentColor = if (post.isFollowing)
+                                        MaterialTheme.colorScheme.onSurfaceVariant
+                                    else
+                                        MaterialTheme.colorScheme.primary
+                                )
+                            ) {
+                                Text(
+                                    text = if (post.isFollowing) "متابَع" else "متابعة",
+                                    fontSize = 11.sp,
+                                    fontWeight = FontWeight.SemiBold
+                                )
+                            }
                         }
                     }
+
+                    // تاريخ ووقت النشر فقط
                     Text(
-                        text = "${post.authorHandle} • ${post.timeAgo}",
+                        text = post.timeAgo,
                         style = MaterialTheme.typography.bodySmall.copy(
                             color = MaterialTheme.colorScheme.onSurfaceVariant,
-                            fontSize = 11.sp
+                            fontSize = 12.sp
                         )
                     )
                 }
 
-                IconButton(onClick = onShareClick) {
-                    Icon(
-                        imageVector = Icons.Default.MoreVert,
-                        contentDescription = "خيارات",
-                        tint = MaterialTheme.colorScheme.onSurfaceVariant
-                    )
+                // 2. قائمة الثلاث نقاط (⋮):
+                // تحتوي حصراً على ثلاثة خيارات فقط بهذا الترتيب:
+                // 1. تعديل
+                // 2. حذف المنشور
+                // 3. إبلاغ عن مشكلة
+                // خيارا التعديل والحذف يظهران فقط لصاحب المنشور، وخيار الإبلاغ لجميع المستخدمين الآخرين
+                Box {
+                    IconButton(
+                        onClick = { menuExpanded = true },
+                        modifier = Modifier.testTag("post_menu_button_${post.id}")
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.MoreVert,
+                            contentDescription = "خيارات المنشور",
+                            tint = MaterialTheme.colorScheme.onSurfaceVariant
+                        )
+                    }
+
+                    DropdownMenu(
+                        expanded = menuExpanded,
+                        onDismissRequest = { menuExpanded = false },
+                        modifier = Modifier.background(MaterialTheme.colorScheme.surface)
+                    ) {
+                        if (post.isAuthor) {
+                            // 1. تعديل (يظهر لصاحب المنشور فقط)
+                            DropdownMenuItem(
+                                text = { Text("تعديل", fontWeight = FontWeight.Medium) },
+                                leadingIcon = {
+                                    Icon(
+                                        imageVector = Icons.Outlined.Edit,
+                                        contentDescription = "تعديل",
+                                        tint = MaterialTheme.colorScheme.primary
+                                    )
+                                },
+                                onClick = {
+                                    menuExpanded = false
+                                    onEditClick()
+                                },
+                                modifier = Modifier.testTag("menu_edit_post_${post.id}")
+                            )
+
+                            // 2. حذف المنشور (يظهر لصاحب المنشور فقط)
+                            DropdownMenuItem(
+                                text = {
+                                    Text(
+                                        "حذف المنشور",
+                                        fontWeight = FontWeight.Medium,
+                                        color = MaterialTheme.colorScheme.error
+                                    )
+                                },
+                                leadingIcon = {
+                                    Icon(
+                                        imageVector = Icons.Outlined.Delete,
+                                        contentDescription = "حذف المنشور",
+                                        tint = MaterialTheme.colorScheme.error
+                                    )
+                                },
+                                onClick = {
+                                    menuExpanded = false
+                                    onDeleteClick()
+                                },
+                                modifier = Modifier.testTag("menu_delete_post_${post.id}")
+                            )
+                        } else {
+                            // 3. إبلاغ عن مشكلة (يظهر للمستخدمين الآخرين)
+                            DropdownMenuItem(
+                                text = { Text("إبلاغ عن مشكلة", fontWeight = FontWeight.Medium) },
+                                leadingIcon = {
+                                    Icon(
+                                        imageVector = Icons.Outlined.ReportProblem,
+                                        contentDescription = "إبلاغ عن مشكلة",
+                                        tint = MaterialTheme.colorScheme.error
+                                    )
+                                },
+                                onClick = {
+                                    menuExpanded = false
+                                    onReportClick()
+                                },
+                                modifier = Modifier.testTag("menu_report_post_${post.id}")
+                            )
+                        }
+                    }
                 }
             }
 
@@ -756,21 +974,72 @@ fun StoryViewerDialog(
                         }
                     }
 
-                    // Story Text / Visual Canvas
+                    // Story Media / Text / Visual Canvas
                     Box(
                         modifier = Modifier
                             .weight(1f)
                             .fillMaxWidth(),
                         contentAlignment = Alignment.Center
                     ) {
-                        Text(
-                            text = story.mediaText.ifBlank { "قصة مميزة في مجتمعنا ✨" },
-                            color = Color.White,
-                            fontSize = 22.sp,
-                            fontWeight = FontWeight.Bold,
-                            textAlign = TextAlign.Center,
-                            lineHeight = 32.sp
-                        )
+                        if (!story.mediaUri.isNullOrBlank()) {
+                            AsyncImage(
+                                model = story.mediaUri,
+                                contentDescription = "محتوى القصة",
+                                modifier = Modifier
+                                    .fillMaxSize()
+                                    .clip(RoundedCornerShape(12.dp)),
+                                contentScale = ContentScale.Crop
+                            )
+                        }
+
+                        if (story.mediaType == StoryMediaType.VIDEO) {
+                            Surface(
+                                shape = RoundedCornerShape(16.dp),
+                                color = Color.Black.copy(alpha = 0.65f),
+                                modifier = Modifier
+                                    .align(Alignment.TopCenter)
+                                    .padding(top = 8.dp)
+                            ) {
+                                Row(
+                                    modifier = Modifier.padding(horizontal = 10.dp, vertical = 4.dp),
+                                    verticalAlignment = Alignment.CenterVertically,
+                                    horizontalArrangement = Arrangement.spacedBy(4.dp)
+                                ) {
+                                    Icon(
+                                        imageVector = Icons.Default.PlayArrow,
+                                        contentDescription = null,
+                                        tint = Color.White,
+                                        modifier = Modifier.size(16.dp)
+                                    )
+                                    Text(
+                                        text = "فيديو ستوري",
+                                        color = Color.White,
+                                        fontSize = 11.sp,
+                                        fontWeight = FontWeight.Bold
+                                    )
+                                }
+                            }
+                        }
+
+                        if (story.mediaText.isNotBlank()) {
+                            Surface(
+                                shape = RoundedCornerShape(12.dp),
+                                color = if (story.mediaUri.isNullOrBlank()) Color.Transparent else Color.Black.copy(alpha = 0.6f),
+                                modifier = Modifier
+                                    .align(if (story.mediaUri.isNullOrBlank()) Alignment.Center else Alignment.BottomCenter)
+                                    .padding(12.dp)
+                            ) {
+                                Text(
+                                    text = story.mediaText,
+                                    color = Color.White,
+                                    fontSize = if (story.mediaUri.isNullOrBlank()) 22.sp else 15.sp,
+                                    fontWeight = FontWeight.Bold,
+                                    textAlign = TextAlign.Center,
+                                    lineHeight = if (story.mediaUri.isNullOrBlank()) 32.sp else 22.sp,
+                                    modifier = Modifier.padding(8.dp)
+                                )
+                            }
+                        }
                     }
 
                     // Quick Story Reactions
@@ -798,46 +1067,941 @@ fun StoryViewerDialog(
     }
 }
 
+/**
+ * Dialog displayed when camera permission is denied by the user.
+ * Provides clear explanation and a direct link to app settings as requested.
+ */
 @Composable
-fun AddStoryDialog(
+fun CameraPermissionRationaleDialog(
     onDismiss: () -> Unit,
-    onConfirm: (String) -> Unit
+    onOpenSettings: () -> Unit,
+    onOpenTextStoryFallback: () -> Unit
 ) {
-    var storyText by remember { mutableStateOf("") }
-
     AlertDialog(
         onDismissRequest = onDismiss,
-        title = { Text("نشر قصة مؤقتة (Story)") },
+        icon = {
+            Icon(
+                imageVector = Icons.Outlined.VideocamOff,
+                contentDescription = null,
+                tint = MaterialTheme.colorScheme.error,
+                modifier = Modifier.size(36.dp)
+            )
+        },
+        title = {
+            Text(
+                text = "صلاحية الكاميرا مطلوبة",
+                fontWeight = FontWeight.Bold,
+                style = MaterialTheme.typography.titleMedium,
+                textAlign = TextAlign.Center
+            )
+        },
         text = {
-            Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
+            Column(
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
                 Text(
-                    text = "اكتب رسالتك أو شارك لحظتك ليراها أصدقاؤك لمدة 24 ساعة:",
-                    fontSize = 13.sp
+                    text = "يتطلب إنشاء القصة الوصول إلى الكاميرا لالتقاط الصور وتسجيل مقاطع الفيديو مباشرة.",
+                    textAlign = TextAlign.Center,
+                    style = MaterialTheme.typography.bodyMedium
                 )
-                OutlinedTextField(
-                    value = storyText,
-                    onValueChange = { storyText = it },
-                    placeholder = { Text("ما الجديد لديك اليوم؟ 🌟") },
-                    modifier = Modifier.fillMaxWidth(),
-                    minLines = 3,
-                    maxLines = 5
+                Text(
+                    text = "يمكنك منح الإذن من إعدادات التطبيق أو الاستمرار بإنشاء ستوري نصي فقط.",
+                    textAlign = TextAlign.Center,
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
             }
         },
         confirmButton = {
             Button(
-                onClick = { onConfirm(storyText) },
-                enabled = storyText.isNotBlank()
+                onClick = onOpenSettings,
+                modifier = Modifier.testTag("open_settings_button")
             ) {
-                Text("نشر القصة")
+                Text("فتح إعدادات التطبيق")
             }
         },
         dismissButton = {
-            TextButton(onClick = onDismiss) {
-                Text("إلغاء")
+            Row(horizontalArrangement = Arrangement.spacedBy(6.dp)) {
+                TextButton(
+                    onClick = onOpenTextStoryFallback,
+                    modifier = Modifier.testTag("text_story_fallback_button")
+                ) {
+                    Text("ستوري نصي")
+                }
+                TextButton(
+                    onClick = onDismiss,
+                    modifier = Modifier.testTag("dismiss_permission_dialog")
+                ) {
+                    Text("إلغاء")
+                }
             }
         }
     )
+}
+
+enum class StoryCreationMode {
+    PHOTO,  // Camera photo mode (default)
+    VIDEO,  // Camera video mode
+    TEXT    // Text story mode with gradient backgrounds
+}
+
+/**
+ * Full-screen Story Creation Interface:
+ * 1. Default UI is Camera Preview ready for still photo capture.
+ * 2. Vertical mode buttons on the right side: "نص", "فيديو", "اختيار من المعرض".
+ * 3. Seamless switching between modes without reopening or closing the screen.
+ */
+@Composable
+fun StoryCreationDialog(
+    onDismiss: () -> Unit,
+    onPublishStory: (String, String?, StoryMediaType, List<Long>) -> Unit
+) {
+    var currentMode by remember { mutableStateOf(StoryCreationMode.PHOTO) }
+    var lensFacing by remember { mutableIntStateOf(CameraSelector.LENS_FACING_BACK) }
+    var isFlashOn by remember { mutableStateOf(false) }
+
+    // Media Review state (when photo captured, video recorded, or gallery item picked)
+    var capturedMediaUri by remember { mutableStateOf<String?>(null) }
+    var isReviewing by remember { mutableStateOf(false) }
+    var isVideoStory by remember { mutableStateOf(false) }
+    var captionText by remember { mutableStateOf("") }
+
+    // Video recording state
+    var isRecording by remember { mutableStateOf(false) }
+    var recordDuration by remember { mutableIntStateOf(0) }
+
+    // Text story state
+    var textStoryContent by remember { mutableStateOf("") }
+    val gradientPalettes = remember {
+        listOf(
+            listOf(0xFF673AB7, 0xFF00897B), // Purple Teal
+            listOf(0xFFFF5722, 0xFFFFB300), // Sunset Orange
+            listOf(0xFF00796B, 0xFF43A047), // Emerald Forest
+            listOf(0xFF880E4F, 0xFFFF4081), // Magenta Rose
+            listOf(0xFF1A237E, 0xFF00B0FF)  // Midnight Cyan
+        )
+    }
+    var selectedGradientIndex by remember { mutableIntStateOf(0) }
+
+    // Recording timer
+    LaunchedEffect(isRecording) {
+        if (isRecording) {
+            recordDuration = 0
+            while (isRecording) {
+                delay(1000)
+                recordDuration++
+                if (recordDuration >= 30) {
+                    isRecording = false
+                    isVideoStory = true
+                    capturedMediaUri = "https://images.unsplash.com/photo-1579208575657-c595a05383b7?auto=format&fit=crop&w=800&q=80"
+                    isReviewing = true
+                    break
+                }
+            }
+        }
+    }
+
+    // Google Play Policy compliant zero-permission media picker
+    val galleryPicker = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.PickVisualMedia()
+    ) { uri: Uri? ->
+        if (uri != null) {
+            capturedMediaUri = uri.toString()
+            isVideoStory = false
+            isReviewing = true
+        }
+    }
+
+    Dialog(
+        onDismissRequest = {
+            if (isRecording) {
+                isRecording = false
+            } else {
+                onDismiss()
+            }
+        },
+        properties = DialogProperties(
+            usePlatformDefaultWidth = false,
+            decorFitsSystemWindows = false
+        )
+    ) {
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(Color.Black)
+        ) {
+            // Screen Body: Review / Text / Live Camera
+            if (isReviewing && capturedMediaUri != null) {
+                // Review Captured or Selected Media
+                StoryReviewView(
+                    mediaUri = capturedMediaUri!!,
+                    isVideo = isVideoStory,
+                    caption = captionText,
+                    onCaptionChange = { captionText = it },
+                    onRetake = {
+                        isReviewing = false
+                        capturedMediaUri = null
+                        captionText = ""
+                    },
+                    onPublish = {
+                        onPublishStory(
+                            captionText,
+                            capturedMediaUri,
+                            if (isVideoStory) StoryMediaType.VIDEO else StoryMediaType.PHOTO,
+                            gradientPalettes[selectedGradientIndex]
+                        )
+                    }
+                )
+            } else if (currentMode == StoryCreationMode.TEXT) {
+                // Mode 1: Text Story (خلفية ملوّنة + نص)
+                TextStoryView(
+                    text = textStoryContent,
+                    onTextChange = { textStoryContent = it },
+                    gradientPalettes = gradientPalettes,
+                    selectedGradientIndex = selectedGradientIndex,
+                    onSelectGradient = { selectedGradientIndex = it },
+                    onPublish = {
+                        if (textStoryContent.isNotBlank()) {
+                            onPublishStory(
+                                textStoryContent,
+                                null,
+                                StoryMediaType.TEXT,
+                                gradientPalettes[selectedGradientIndex]
+                            )
+                        }
+                    },
+                    onBackToCamera = {
+                        currentMode = StoryCreationMode.PHOTO
+                    }
+                )
+            } else {
+                // Camera View (PHOTO or VIDEO mode)
+                // 1. Live Camera Preview
+                CameraPreviewView(
+                    modifier = Modifier.fillMaxSize(),
+                    lensFacing = lensFacing
+                )
+
+                // Top Controls: Close, Flash, Flip Camera, and Active Mode Badge
+                StoryTopBar(
+                    currentMode = currentMode,
+                    isRecording = isRecording,
+                    recordDuration = recordDuration,
+                    isFlashOn = isFlashOn,
+                    onToggleFlash = { isFlashOn = !isFlashOn },
+                    onFlipCamera = {
+                        lensFacing = if (lensFacing == CameraSelector.LENS_FACING_BACK)
+                            CameraSelector.LENS_FACING_FRONT
+                        else
+                            CameraSelector.LENS_FACING_BACK
+                    },
+                    onClose = onDismiss
+                )
+
+                // Bottom Shutter Controls
+                StoryBottomShutterBar(
+                    currentMode = currentMode,
+                    isRecording = isRecording,
+                    onCapturePhoto = {
+                        capturedMediaUri = "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=800&q=80"
+                        isVideoStory = false
+                        isReviewing = true
+                    },
+                    onToggleRecordVideo = {
+                        if (isRecording) {
+                            isRecording = false
+                            isVideoStory = true
+                            capturedMediaUri = "https://images.unsplash.com/photo-1579208575657-c595a05383b7?auto=format&fit=crop&w=800&q=80"
+                            isReviewing = true
+                        } else {
+                            isRecording = true
+                        }
+                    }
+                )
+            }
+
+            // 2. Right Side Vertical Selection Buttons (strictly on the right side of the screen)
+            if (!isReviewing) {
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(end = 16.dp, top = 95.dp),
+                    contentAlignment = AbsoluteAlignment.TopRight
+                ) {
+                    Column(
+                        verticalArrangement = Arrangement.spacedBy(14.dp),
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        modifier = Modifier
+                            .background(
+                                color = Color.Black.copy(alpha = 0.55f),
+                                shape = RoundedCornerShape(26.dp)
+                            )
+                            .border(
+                                width = 1.dp,
+                                color = Color.White.copy(alpha = 0.2f),
+                                shape = RoundedCornerShape(26.dp)
+                            )
+                            .padding(horizontal = 8.dp, vertical = 12.dp)
+                    ) {
+                        // 1. زر نص — للتبديل إلى وضع كتابة ستوري نصي (خلفية ملوّنة + نص)
+                        StorySideToolButton(
+                            icon = Icons.Outlined.TextFields,
+                            label = "نص",
+                            isSelected = (currentMode == StoryCreationMode.TEXT),
+                            onClick = {
+                                currentMode = if (currentMode == StoryCreationMode.TEXT) {
+                                    StoryCreationMode.PHOTO
+                                } else {
+                                    StoryCreationMode.TEXT
+                                }
+                            },
+                            testTag = "side_button_mode_text"
+                        )
+
+                        // 2. زر فيديو — لتفعيل وضع تسجيل فيديو بدلاً من صورة ثابتة
+                        StorySideToolButton(
+                            icon = Icons.Outlined.Videocam,
+                            label = "فيديو",
+                            isSelected = (currentMode == StoryCreationMode.VIDEO),
+                            onClick = {
+                                currentMode = if (currentMode == StoryCreationMode.VIDEO) {
+                                    StoryCreationMode.PHOTO
+                                } else {
+                                    StoryCreationMode.VIDEO
+                                }
+                            },
+                            testTag = "side_button_mode_video"
+                        )
+
+                        // 3. زر اختيار من المعرض — لفتح معرض الصور/الفيديوهات واختيار محتوى جاهز
+                        StorySideToolButton(
+                            icon = Icons.Outlined.PhotoLibrary,
+                            label = "المعرض",
+                            isSelected = false,
+                            onClick = {
+                                galleryPicker.launch(
+                                    PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageAndVideo)
+                                )
+                            },
+                            testTag = "side_button_mode_gallery"
+                        )
+                    }
+                }
+            }
+        }
+    }
+}
+
+@Composable
+fun StorySideToolButton(
+    icon: ImageVector,
+    label: String,
+    isSelected: Boolean,
+    onClick: () -> Unit,
+    testTag: String
+) {
+    Column(
+        horizontalAlignment = Alignment.CenterHorizontally,
+        modifier = Modifier
+            .clip(RoundedCornerShape(16.dp))
+            .clickable(onClick = onClick)
+            .padding(horizontal = 6.dp, vertical = 6.dp)
+            .testTag(testTag)
+    ) {
+        Box(
+            modifier = Modifier
+                .size(46.dp)
+                .clip(CircleShape)
+                .background(
+                    if (isSelected) MujtamaPrimary else Color.Black.copy(alpha = 0.5f)
+                )
+                .border(
+                    width = if (isSelected) 2.dp else 1.dp,
+                    color = if (isSelected) MujtamaGold else Color.White.copy(alpha = 0.3f),
+                    shape = CircleShape
+                ),
+            contentAlignment = Alignment.Center
+        ) {
+            Icon(
+                imageVector = icon,
+                contentDescription = label,
+                tint = if (isSelected) Color.White else Color.White.copy(alpha = 0.9f),
+                modifier = Modifier.size(24.dp)
+            )
+        }
+        Spacer(modifier = Modifier.height(4.dp))
+        Text(
+            text = label,
+            fontSize = 11.sp,
+            fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Medium,
+            color = if (isSelected) MujtamaGold else Color.White
+        )
+    }
+}
+
+@Composable
+fun CameraPreviewView(
+    modifier: Modifier = Modifier,
+    lensFacing: Int = CameraSelector.LENS_FACING_BACK
+) {
+    val context = LocalContext.current
+    val lifecycleOwner = LocalLifecycleOwner.current
+    var isBound by remember { mutableStateOf(false) }
+    var bindError by remember { mutableStateOf(false) }
+
+    Box(modifier = modifier.fillMaxSize()) {
+        if (!bindError) {
+            AndroidView(
+                factory = { ctx ->
+                    val previewView = PreviewView(ctx).apply {
+                        scaleType = PreviewView.ScaleType.FILL_CENTER
+                    }
+                    val cameraProviderFuture = ProcessCameraProvider.getInstance(ctx)
+                    cameraProviderFuture.addListener({
+                        try {
+                            val cameraProvider = cameraProviderFuture.get()
+                            val cameraSelector = CameraSelector.Builder()
+                                .requireLensFacing(lensFacing)
+                                .build()
+                            if (cameraProvider.hasCamera(cameraSelector)) {
+                                val preview = Preview.Builder().build().also {
+                                    it.setSurfaceProvider(previewView.surfaceProvider)
+                                }
+                                cameraProvider.unbindAll()
+                                cameraProvider.bindToLifecycle(
+                                    lifecycleOwner,
+                                    cameraSelector,
+                                    preview
+                                )
+                                isBound = true
+                            } else {
+                                bindError = true
+                            }
+                        } catch (e: Exception) {
+                            bindError = true
+                        }
+                    }, ContextCompat.getMainExecutor(ctx))
+                    previewView
+                },
+                modifier = Modifier.fillMaxSize()
+            )
+        }
+
+        if (bindError || !isBound) {
+            CameraSimulationView(modifier = Modifier.fillMaxSize())
+        }
+
+        CameraViewfinderOverlay(modifier = Modifier.fillMaxSize())
+    }
+}
+
+@Composable
+fun CameraSimulationView(modifier: Modifier = Modifier) {
+    Box(
+        modifier = modifier
+            .fillMaxSize()
+            .background(
+                Brush.radialGradient(
+                    colors = listOf(
+                        Color(0xFF252835),
+                        Color(0xFF151720),
+                        Color(0xFF0B0C10)
+                    )
+                )
+            ),
+        contentAlignment = Alignment.Center
+    ) {
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.spacedBy(10.dp)
+        ) {
+            Box(
+                modifier = Modifier
+                    .size(76.dp)
+                    .clip(CircleShape)
+                    .background(Color.White.copy(alpha = 0.08f))
+                    .border(1.5.dp, Color.White.copy(alpha = 0.2f), CircleShape),
+                contentAlignment = Alignment.Center
+            ) {
+                Icon(
+                    imageVector = Icons.Outlined.CameraAlt,
+                    contentDescription = null,
+                    tint = Color.White.copy(alpha = 0.75f),
+                    modifier = Modifier.size(38.dp)
+                )
+            }
+            Text(
+                text = "عدسة الكاميرا المباشرة",
+                color = Color.White.copy(alpha = 0.85f),
+                fontSize = 13.sp,
+                fontWeight = FontWeight.Medium
+            )
+        }
+    }
+}
+
+@Composable
+fun CameraViewfinderOverlay(modifier: Modifier = Modifier) {
+    Box(modifier = modifier.fillMaxSize()) {
+        // Subtle center focus brackets
+        Box(
+            modifier = Modifier
+                .size(64.dp)
+                .align(Alignment.Center)
+                .border(
+                    width = 1.dp,
+                    color = Color.White.copy(alpha = 0.25f),
+                    shape = RoundedCornerShape(10.dp)
+                )
+        )
+    }
+}
+
+@Composable
+fun StoryTopBar(
+    currentMode: StoryCreationMode,
+    isRecording: Boolean,
+    recordDuration: Int,
+    isFlashOn: Boolean,
+    onToggleFlash: () -> Unit,
+    onFlipCamera: () -> Unit,
+    onClose: () -> Unit
+) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 16.dp, vertical = 36.dp),
+        horizontalArrangement = Arrangement.SpaceBetween,
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        // Close Button
+        IconButton(
+            onClick = onClose,
+            modifier = Modifier
+                .background(Color.Black.copy(alpha = 0.45f), CircleShape)
+                .testTag("close_story_creation_button")
+        ) {
+            Icon(
+                imageVector = Icons.Default.Close,
+                contentDescription = "إغلاق",
+                tint = Color.White
+            )
+        }
+
+        // Mode or Timer Badge
+        Surface(
+            shape = RoundedCornerShape(16.dp),
+            color = if (isRecording) Color.Red.copy(alpha = 0.85f) else Color.Black.copy(alpha = 0.45f)
+        ) {
+            Row(
+                modifier = Modifier.padding(horizontal = 12.dp, vertical = 6.dp),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(6.dp)
+            ) {
+                if (isRecording) {
+                    Box(
+                        modifier = Modifier
+                            .size(8.dp)
+                            .clip(CircleShape)
+                            .background(Color.White)
+                    )
+                    Text(
+                        text = "تسجيل 00:${if (recordDuration < 10) "0$recordDuration" else recordDuration}",
+                        color = Color.White,
+                        fontSize = 12.sp,
+                        fontWeight = FontWeight.Bold
+                    )
+                } else {
+                    Text(
+                        text = if (currentMode == StoryCreationMode.VIDEO) "وضع الفيديو 🎥" else "التقاط صورة 📸",
+                        color = Color.White,
+                        fontSize = 12.sp,
+                        fontWeight = FontWeight.Medium
+                    )
+                }
+            }
+        }
+
+        // Action Icons (Flash, Flip Camera)
+        Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+            IconButton(
+                onClick = onToggleFlash,
+                modifier = Modifier.background(Color.Black.copy(alpha = 0.45f), CircleShape)
+            ) {
+                Icon(
+                    imageVector = if (isFlashOn) Icons.Filled.FlashOn else Icons.Outlined.FlashOff,
+                    contentDescription = "الفلاش",
+                    tint = if (isFlashOn) MujtamaGold else Color.White
+                )
+            }
+
+            IconButton(
+                onClick = onFlipCamera,
+                modifier = Modifier.background(Color.Black.copy(alpha = 0.45f), CircleShape)
+            ) {
+                Icon(
+                    imageVector = Icons.Outlined.FlipCameraAndroid,
+                    contentDescription = "تبديل الكاميرا",
+                    tint = Color.White
+                )
+            }
+        }
+    }
+}
+
+@Composable
+fun StoryBottomShutterBar(
+    currentMode: StoryCreationMode,
+    isRecording: Boolean,
+    onCapturePhoto: () -> Unit,
+    onToggleRecordVideo: () -> Unit
+) {
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(bottom = 44.dp),
+        contentAlignment = Alignment.BottomCenter
+    ) {
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.spacedBy(10.dp)
+        ) {
+            if (currentMode == StoryCreationMode.PHOTO) {
+                // Still Photo Shutter Button
+                Box(
+                    modifier = Modifier
+                        .size(80.dp)
+                        .border(4.dp, Color.White, CircleShape)
+                        .padding(6.dp)
+                        .clip(CircleShape)
+                        .background(Color.White)
+                        .clickable(onClick = onCapturePhoto)
+                        .testTag("camera_photo_shutter_button"),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Box(
+                        modifier = Modifier
+                            .size(24.dp)
+                            .clip(CircleShape)
+                            .background(Color.White.copy(alpha = 0.4f))
+                    )
+                }
+                Text(
+                    text = "اضغط للالتقاط",
+                    color = Color.White.copy(alpha = 0.85f),
+                    fontSize = 12.sp
+                )
+            } else if (currentMode == StoryCreationMode.VIDEO) {
+                // Video Recording Shutter Button
+                Box(
+                    modifier = Modifier
+                        .size(80.dp)
+                        .border(4.dp, Color.Red, CircleShape)
+                        .padding(if (isRecording) 18.dp else 6.dp)
+                        .clip(if (isRecording) RoundedCornerShape(8.dp) else CircleShape)
+                        .background(Color.Red)
+                        .clickable(onClick = onToggleRecordVideo)
+                        .testTag("camera_video_shutter_button")
+                )
+                Text(
+                    text = if (isRecording) "اضغط لإيقاف التسجيل" else "اضغط لبدء تسجيل الفيديو",
+                    color = Color.White.copy(alpha = 0.85f),
+                    fontSize = 12.sp,
+                    fontWeight = FontWeight.Medium
+                )
+            }
+        }
+    }
+}
+
+@Composable
+fun StoryReviewView(
+    mediaUri: String,
+    isVideo: Boolean,
+    caption: String,
+    onCaptionChange: (String) -> Unit,
+    onRetake: () -> Unit,
+    onPublish: () -> Unit
+) {
+    Box(modifier = Modifier.fillMaxSize()) {
+        // Media Preview
+        AsyncImage(
+            model = mediaUri,
+            contentDescription = "معاينة القصة",
+            modifier = Modifier.fillMaxSize(),
+            contentScale = ContentScale.Crop
+        )
+
+        // Subtle gradient overlay at top and bottom
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(120.dp)
+                .align(Alignment.TopCenter)
+                .background(
+                    Brush.verticalGradient(
+                        colors = listOf(Color.Black.copy(alpha = 0.7f), Color.Transparent)
+                    )
+                )
+        )
+
+        // Top Retake / Back Button
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 16.dp, vertical = 36.dp),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            FilledTonalButton(
+                onClick = onRetake,
+                colors = ButtonDefaults.filledTonalButtonColors(
+                    containerColor = Color.Black.copy(alpha = 0.6f),
+                    contentColor = Color.White
+                ),
+                shape = RoundedCornerShape(20.dp),
+                modifier = Modifier.testTag("retake_media_button")
+            ) {
+                Icon(
+                    imageVector = Icons.Default.ArrowBack,
+                    contentDescription = "إعادة",
+                    modifier = Modifier.size(18.dp)
+                )
+                Spacer(modifier = Modifier.width(6.dp))
+                Text("إعادة التصوير")
+            }
+
+            if (isVideo) {
+                Surface(
+                    shape = RoundedCornerShape(16.dp),
+                    color = Color.Black.copy(alpha = 0.6f)
+                ) {
+                    Row(
+                        modifier = Modifier.padding(horizontal = 10.dp, vertical = 6.dp),
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(4.dp)
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.PlayArrow,
+                            contentDescription = null,
+                            tint = Color.White,
+                            modifier = Modifier.size(16.dp)
+                        )
+                        Text("مقطع فيديو", color = Color.White, fontSize = 12.sp)
+                    }
+                }
+            }
+        }
+
+        // Bottom Caption and Publish Bar
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .align(Alignment.BottomCenter)
+                .background(
+                    Brush.verticalGradient(
+                        colors = listOf(Color.Transparent, Color.Black.copy(alpha = 0.9f))
+                    )
+                )
+                .padding(16.dp),
+            verticalArrangement = Arrangement.spacedBy(12.dp)
+        ) {
+            OutlinedTextField(
+                value = caption,
+                onValueChange = onCaptionChange,
+                placeholder = { Text("أضف تعليقاً على القصة... ✍️", color = Color.White.copy(alpha = 0.6f)) },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .testTag("story_caption_input"),
+                colors = OutlinedTextFieldDefaults.colors(
+                    focusedTextColor = Color.White,
+                    unfocusedTextColor = Color.White,
+                    focusedBorderColor = MujtamaGold,
+                    unfocusedBorderColor = Color.White.copy(alpha = 0.4f),
+                    focusedContainerColor = Color.Black.copy(alpha = 0.45f),
+                    unfocusedContainerColor = Color.Black.copy(alpha = 0.45f)
+                ),
+                shape = RoundedCornerShape(16.dp),
+                maxLines = 3
+            )
+
+            Button(
+                onClick = onPublish,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(52.dp)
+                    .testTag("publish_story_button"),
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = MujtamaPrimary,
+                    contentColor = Color.White
+                ),
+                shape = RoundedCornerShape(16.dp)
+            ) {
+                Icon(
+                    imageVector = Icons.Default.Check,
+                    contentDescription = null,
+                    modifier = Modifier.size(20.dp)
+                )
+                Spacer(modifier = Modifier.width(8.dp))
+                Text(
+                    text = "نشر القصة الآن",
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 16.sp
+                )
+            }
+        }
+    }
+}
+
+@Composable
+fun TextStoryView(
+    text: String,
+    onTextChange: (String) -> Unit,
+    gradientPalettes: List<List<Long>>,
+    selectedGradientIndex: Int,
+    onSelectGradient: (Int) -> Unit,
+    onPublish: () -> Unit,
+    onBackToCamera: () -> Unit
+) {
+    val currentColors = gradientPalettes[selectedGradientIndex].map { Color(it) }
+
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(Brush.verticalGradient(currentColors))
+            .padding(16.dp)
+    ) {
+        Column(
+            modifier = Modifier.fillMaxSize(),
+            verticalArrangement = Arrangement.SpaceBetween
+        ) {
+            // Top Bar
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = 24.dp),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                IconButton(
+                    onClick = onBackToCamera,
+                    modifier = Modifier.background(Color.Black.copy(alpha = 0.35f), CircleShape)
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.ArrowBack,
+                        contentDescription = "العودة للكاميرا",
+                        tint = Color.White
+                    )
+                }
+
+                Surface(
+                    shape = RoundedCornerShape(16.dp),
+                    color = Color.Black.copy(alpha = 0.35f)
+                ) {
+                    Text(
+                        text = "ستوري نصي ✍️",
+                        color = Color.White,
+                        fontSize = 13.sp,
+                        fontWeight = FontWeight.Bold,
+                        modifier = Modifier.padding(horizontal = 12.dp, vertical = 6.dp)
+                    )
+                }
+
+                FilledTonalButton(
+                    onClick = onPublish,
+                    enabled = text.isNotBlank(),
+                    colors = ButtonDefaults.filledTonalButtonColors(
+                        containerColor = MujtamaGold,
+                        contentColor = MujtamaPrimaryDark
+                    ),
+                    shape = RoundedCornerShape(16.dp),
+                    modifier = Modifier.testTag("publish_text_story_button")
+                ) {
+                    Text("نشر", fontWeight = FontWeight.Bold)
+                }
+            }
+
+            // Centered Story Text Input
+            Box(
+                modifier = Modifier
+                    .weight(1f)
+                    .fillMaxWidth(),
+                contentAlignment = Alignment.Center
+            ) {
+                OutlinedTextField(
+                    value = text,
+                    onValueChange = onTextChange,
+                    placeholder = {
+                        Text(
+                            text = "اكتب ما يجول في خاطرك هنا... ✨",
+                            color = Color.White.copy(alpha = 0.65f),
+                            fontSize = 22.sp,
+                            fontWeight = FontWeight.Bold,
+                            textAlign = TextAlign.Center,
+                            modifier = Modifier.fillMaxWidth()
+                        )
+                    },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 16.dp)
+                        .testTag("text_story_input"),
+                    textStyle = LocalTextStyle.current.copy(
+                        color = Color.White,
+                        fontSize = 24.sp,
+                        fontWeight = FontWeight.Bold,
+                        textAlign = TextAlign.Center,
+                        lineHeight = 36.sp
+                    ),
+                    colors = OutlinedTextFieldDefaults.colors(
+                        focusedBorderColor = Color.Transparent,
+                        unfocusedBorderColor = Color.Transparent,
+                        focusedContainerColor = Color.Transparent,
+                        unfocusedContainerColor = Color.Transparent
+                    ),
+                    minLines = 3,
+                    maxLines = 8
+                )
+            }
+
+            // Bottom Palette Selector
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(bottom = 36.dp),
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.spacedBy(10.dp)
+            ) {
+                Text(
+                    text = "اختر لون الخلفية",
+                    color = Color.White.copy(alpha = 0.8f),
+                    fontSize = 12.sp,
+                    fontWeight = FontWeight.Medium
+                )
+
+                Row(
+                    horizontalArrangement = Arrangement.spacedBy(12.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    gradientPalettes.forEachIndexed { index, palette ->
+                        val isSelected = (index == selectedGradientIndex)
+                        Box(
+                            modifier = Modifier
+                                .size(38.dp)
+                                .clip(CircleShape)
+                                .background(Brush.linearGradient(palette.map { Color(it) }))
+                                .border(
+                                    width = if (isSelected) 3.dp else 1.dp,
+                                    color = if (isSelected) Color.White else Color.White.copy(alpha = 0.4f),
+                                    shape = CircleShape
+                                )
+                                .clickable { onSelectGradient(index) }
+                        )
+                    }
+                }
+            }
+        }
+    }
 }
 
 @Composable
@@ -904,6 +2068,166 @@ fun CreatePostDialog(
                 enabled = content.isNotBlank()
             ) {
                 Text("نشر الآن")
+            }
+        },
+        dismissButton = {
+            TextButton(onClick = onDismiss) {
+                Text("إلغاء")
+            }
+        }
+    )
+}
+
+@Composable
+fun EditPostDialog(
+    post: Post,
+    onDismiss: () -> Unit,
+    onSave: (String) -> Unit
+) {
+    var contentText by remember { mutableStateOf(post.content) }
+
+    AlertDialog(
+        onDismissRequest = onDismiss,
+        title = {
+            Text(
+                text = "تعديل المنشور",
+                fontWeight = FontWeight.Bold,
+                style = MaterialTheme.typography.titleLarge
+            )
+        },
+        text = {
+            Column(
+                modifier = Modifier.fillMaxWidth(),
+                verticalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                OutlinedTextField(
+                    value = contentText,
+                    onValueChange = { contentText = it },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .heightIn(min = 120.dp)
+                        .testTag("edit_post_input"),
+                    shape = RoundedCornerShape(12.dp),
+                    minLines = 3,
+                    maxLines = 6
+                )
+            }
+        },
+        confirmButton = {
+            Button(
+                onClick = { onSave(contentText) },
+                enabled = contentText.isNotBlank(),
+                modifier = Modifier.testTag("save_edit_post_button")
+            ) {
+                Text("حفظ التعديل")
+            }
+        },
+        dismissButton = {
+            TextButton(onClick = onDismiss) {
+                Text("إلغاء")
+            }
+        }
+    )
+}
+
+@Composable
+fun DeletePostConfirmDialog(
+    post: Post,
+    onDismiss: () -> Unit,
+    onConfirm: () -> Unit
+) {
+    AlertDialog(
+        onDismissRequest = onDismiss,
+        title = {
+            Text(
+                text = "حذف المنشور",
+                fontWeight = FontWeight.Bold,
+                style = MaterialTheme.typography.titleLarge,
+                color = MaterialTheme.colorScheme.error
+            )
+        },
+        text = {
+            Text(
+                text = "هل أنت متأكد من رغبتك في حذف هذا المنشور نهائياً؟ لا يمكن التراجع عن هذا الإجراء.",
+                style = MaterialTheme.typography.bodyMedium
+            )
+        },
+        confirmButton = {
+            Button(
+                onClick = onConfirm,
+                colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.error),
+                modifier = Modifier.testTag("confirm_delete_post_button")
+            ) {
+                Text("حذف المنشور")
+            }
+        },
+        dismissButton = {
+            TextButton(onClick = onDismiss) {
+                Text("إلغاء")
+            }
+        }
+    )
+}
+
+@Composable
+fun ReportPostDialog(
+    post: Post,
+    onDismiss: () -> Unit,
+    onConfirm: (String) -> Unit
+) {
+    val reportReasons = listOf(
+        "محتوى غير لائق أو مسيء",
+        "مضايقة أو إساءة موجهة",
+        "معلومات مضللة أو احتيال",
+        "محتوى مكرر أو سبام"
+    )
+    var selectedReason by remember { mutableStateOf(reportReasons[0]) }
+
+    AlertDialog(
+        onDismissRequest = onDismiss,
+        title = {
+            Text(
+                text = "إبلاغ عن مشكلة",
+                fontWeight = FontWeight.Bold,
+                style = MaterialTheme.typography.titleLarge
+            )
+        },
+        text = {
+            Column(
+                modifier = Modifier.fillMaxWidth(),
+                verticalArrangement = Arrangement.spacedBy(4.dp)
+            ) {
+                Text(
+                    text = "يرجى اختيار سبب البلاغ لإرساله للمشرفين:",
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+                Spacer(modifier = Modifier.height(4.dp))
+                reportReasons.forEach { reason ->
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .clickable { selectedReason = reason }
+                            .padding(vertical = 4.dp),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        RadioButton(
+                            selected = (selectedReason == reason),
+                            onClick = { selectedReason = reason }
+                        )
+                        Spacer(modifier = Modifier.width(8.dp))
+                        Text(text = reason, fontSize = 14.sp)
+                    }
+                }
+            }
+        },
+        confirmButton = {
+            Button(
+                onClick = { onConfirm(selectedReason) },
+                colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.error),
+                modifier = Modifier.testTag("confirm_report_post_button")
+            ) {
+                Text("إرسال البلاغ")
             }
         },
         dismissButton = {

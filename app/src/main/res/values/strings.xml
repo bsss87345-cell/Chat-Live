@@ -1,3 +1,14 @@
 <resources>
     <string name="app_name">مجتمعنا</string>
+    <string name="app_tagline">مجتمعك العربي للتواصل، الألعاب، والمحادثات التفاعلية</string>
+    <string name="login_with_facebook">تسجيل الدخول عبر فيسبوك</string>
+    <string name="login_with_google">تسجيل الدخول عبر جوجل</string>
+    <string name="signup_with_facebook">إنشاء حساب عبر فيسبوك</string>
+    <string name="signup_with_google">إنشاء حساب عبر جوجل</string>
+    <string name="no_account_prompt">ليس لديك حساب؟</string>
+    <string name="have_account_prompt">لديك حساب بالفعل؟</string>
+    <string name="create_account_action">إنشاء حساب</string>
+    <string name="login_action">تسجيل الدخول</string>
+    <string name="facebook_app_id">108920194819201</string>
+    <string name="fb_login_protocol_scheme">fb108920194819201</string>
 </resources>
