@@ -44,35 +44,23 @@ fun AuthPermissionsConsentDialog(
     onDenyPermissions: () -> Unit,
     onDismiss: () -> Unit
 ) {
-    // حسابات افتراضية مقترحة أو إدخال مخصص لسهولة الاستخدام والتجربة في أي بيئة
+    // حسابات النظام المقترحة أو إدخال مخصص لسهولة الاستخدام
     val candidateAccounts = remember(provider) {
         if (provider == AuthProvider.GOOGLE) {
             listOf(
                 AuthUserAccount(
-                    name = "عبدالله بن فهد",
-                    email = "abdullah.fahad@gmail.com",
-                    avatarEmoji = "👨‍💼",
-                    provider = AuthProvider.GOOGLE
-                ),
-                AuthUserAccount(
-                    name = "سارة آل الشيخ",
-                    email = "sara.alsheikh@gmail.com",
-                    avatarEmoji = "👩‍💻",
+                    name = "مستخدم Google",
+                    email = "user@gmail.com",
+                    avatarEmoji = "👤",
                     provider = AuthProvider.GOOGLE
                 )
             )
         } else {
             listOf(
                 AuthUserAccount(
-                    name = "عمر القحطاني",
-                    email = "omar.qahtani@facebook.com",
-                    avatarEmoji = "👨",
-                    provider = AuthProvider.FACEBOOK
-                ),
-                AuthUserAccount(
-                    name = "ريم الدوسري",
-                    email = "reem.aldosari@facebook.com",
-                    avatarEmoji = "👩",
+                    name = "مستخدم Facebook",
+                    email = "user@facebook.com",
+                    avatarEmoji = "👤",
                     provider = AuthProvider.FACEBOOK
                 )
             )

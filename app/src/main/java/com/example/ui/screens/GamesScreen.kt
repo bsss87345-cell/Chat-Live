@@ -440,9 +440,9 @@ fun GameWaitingLobbyScreen(
     var matchFound by remember { mutableStateOf(false) }
     var matchedOpponentName by remember { mutableStateOf("") }
 
-    // قائمة الخصوم الافتراضيين
+    // تسمية الخصم عند المطابقة
     val possibleOpponents = remember {
-        listOf("أحمد الشمري ⭐ 1420", "سالم القحطاني 🔥 1580", "نورة العتيبي 🌟 1390", "طارق الزهراني 🎯 1610")
+        listOf("لاعب منافس")
     }
 
     // مؤقت البحث والمطابقة التلقائية

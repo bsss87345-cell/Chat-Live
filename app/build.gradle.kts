@@ -1,4 +1,4 @@
-import com.google.gms.googleservices.GoogleServicesPlugin.MissingGoogleServicesStrategy
+// import com.google.gms.googleservices.GoogleServicesPlugin.MissingGoogleServicesStrategy
 
 plugins {
   alias(libs.plugins.android.application)
@@ -6,7 +6,10 @@ plugins {
   alias(libs.plugins.google.devtools.ksp)
   alias(libs.plugins.roborazzi)
   alias(libs.plugins.secrets)
-  alias(libs.plugins.google.services)
+
+  // [ملاحظة للمرحلة القادمة]: تم تعطيل إضافة Google Services مؤقتاً لتمكين البناء وتوليد APK دون الحاجة لملف google-services.json
+  // أعد تفعيل السطر التالي عند إضافة ملف google-services.json وربط Firebase الحقيقي:
+  // alias(libs.plugins.google.services)
 }
 
 android {
@@ -31,12 +34,7 @@ android {
       keyAlias = "upload"
       keyPassword = System.getenv("KEY_PASSWORD")
     }
-    create("debugConfig") {
-      storeFile = file("${rootDir}/debug.keystore")
-      storePassword = "android"
-      keyAlias = "androiddebugkey"
-      keyPassword = "android"
-    }
+    // [ملاحظة للتوقيع]: تم إلغاء debugConfig المخصص ليستخدم توقيع Debug الافتراضي التلقائي لـ Gradle على GitHub Actions ومحلياً
   }
 
   buildTypes {
@@ -46,7 +44,9 @@ android {
       proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
       signingConfig = signingConfigs.getByName("release")
     }
-    debug { signingConfig = signingConfigs.getByName("debugConfig") }
+    debug {
+      // يُترك بدون signingConfig مخصص ليستخدم توقيع Debug التلقائي الخاص بـ Gradle
+    }
   }
   compileOptions {
     sourceCompatibility = JavaVersion.VERSION_11
@@ -71,7 +71,9 @@ secrets {
   ignoreList.add("FIREBASE_APPCHECK_DEBUG_TOKEN")
 }
 
-googleServices { missingGoogleServicesStrategy = MissingGoogleServicesStrategy.WARN }
+// [ملاحظة للمرحلة القادمة]: تم تعطيل إعدادات googleServices مؤقتاً لعدم وجود ملف google-services.json.
+// أعد تفعيل السطر أدناه عند ربط Firebase الحقيقي:
+// googleServices { missingGoogleServicesStrategy = MissingGoogleServicesStrategy.WARN }
 
 // Some unused dependencies are commented out below instead of being removed.
 // This makes it easy to add them back in the future if needed.

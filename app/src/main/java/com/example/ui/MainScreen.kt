@@ -38,9 +38,12 @@ fun MainScreen(viewModel: SocialAppViewModel) {
             val walletBalance by viewModel.walletBalance.collectAsStateWithLifecycle()
             val userMessage by viewModel.userMessage.collectAsStateWithLifecycle()
             val activeRoomId by viewModel.activeRoomId.collectAsStateWithLifecycle()
+            val activeGameType by viewModel.activeGameType.collectAsStateWithLifecycle()
 
-        // Hide top bar and bottom navigation when user is inside any chat room
+        // Hide top bar and bottom navigation when user is inside any chat room or active game
         val isInsideRoom = currentTab == AppTab.CHAT && activeRoomId != null
+        val isInsideGame = currentTab == AppTab.GAMES && activeGameType != null
+        val hideBars = isInsideRoom || isInsideGame
 
         val snackbarHostState = remember { SnackbarHostState() }
         val coroutineScope = rememberCoroutineScope()
@@ -61,7 +64,7 @@ fun MainScreen(viewModel: SocialAppViewModel) {
             modifier = Modifier.fillMaxSize(),
             topBar = {
                 AnimatedVisibility(
-                    visible = !isInsideRoom,
+                    visible = !hideBars,
                     enter = slideInVertically(initialOffsetY = { -it }) + fadeIn(),
                     exit = slideOutVertically(targetOffsetY = { -it }) + fadeOut()
                 ) {
@@ -76,7 +79,7 @@ fun MainScreen(viewModel: SocialAppViewModel) {
             },
             bottomBar = {
                 AnimatedVisibility(
-                    visible = !isInsideRoom,
+                    visible = !hideBars,
                     enter = slideInVertically(initialOffsetY = { it }) + fadeIn(),
                     exit = slideOutVertically(targetOffsetY = { it }) + fadeOut()
                 ) {

@@ -56,6 +56,18 @@ fun ProfileScreen(
     var showLogoutDialog by remember { mutableStateOf(false) }
     var showRechargeDialog by remember { mutableStateOf(false) }
 
+    // Account settings dialog states
+    var showSupportChatDialog by remember { mutableStateOf(false) }
+    var showLanguageDialog by remember { mutableStateOf(false) }
+    var currentLanguage by remember { mutableStateOf("العربية") }
+    var showReportProblemDialog by remember { mutableStateOf(false) }
+    var isSettingsExpanded by remember { mutableStateOf(true) }
+    var showBlockedListDialog by remember { mutableStateOf(false) }
+    var showPolicyDialog by remember { mutableStateOf(false) }
+    var blockedUsersList by remember {
+        mutableStateOf(emptyList<Triple<String, String, String>>())
+    }
+
     // User's own posts or activity
     val userPosts = posts.filter { 
         it.authorHandle == userProfile.handle || 
@@ -64,7 +76,7 @@ fun ProfileScreen(
         it.id.startsWith("post_") ||
         it.id.startsWith("p_")
     }.take(6)
-    val totalPostsCount = userPosts.size.coerceAtLeast(8)
+    val totalPostsCount = userPosts.size
 
     val filteredTransactions = transactions.filter { tx ->
         when (walletFilter) {
@@ -706,7 +718,9 @@ fun ProfileScreen(
         if (selectedSubTab == 2) {
             item {
                 Card(
-                    modifier = Modifier.fillMaxWidth(),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .testTag("account_settings_card"),
                     shape = RoundedCornerShape(18.dp),
                     colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface)
                 ) {
@@ -717,92 +731,357 @@ fun ProfileScreen(
                         verticalArrangement = Arrangement.spacedBy(10.dp)
                     ) {
                         Text(
-                            text = "إعدادات الحساب والخصوصية ⚙️",
+                            text = "إعدادات الحساب ⚙️",
                             fontWeight = FontWeight.Bold,
-                            fontSize = 14.sp
+                            fontSize = 15.sp,
+                            color = MaterialTheme.colorScheme.onSurface
                         )
 
-                        // 1. Edit Profile Item
+                        // 1. تعديل الملف الشخصي (موجود مسبقاً)
                         SettingsActionRow(
                             icon = Icons.Default.Person,
-                            title = "تعديل بيانات الملف الشخصي",
-                            subtitle = "الاسم، النبذة، والصورة الرمزية",
+                            title = "تعديل الملف الشخصي",
+                            subtitle = "الاسم، النبذة التعريفية، والصورة الرمزية",
                             onClick = { showEditProfileDialog = true }
                         )
 
-                        HorizontalDivider()
+                        HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f))
 
-                        // 2. Privacy Setting Switcher
-                        Row(
-                            modifier = Modifier.fillMaxWidth(),
-                            horizontalArrangement = Arrangement.SpaceBetween,
-                            verticalAlignment = Alignment.CenterVertically
-                        ) {
-                            Row(
-                                verticalAlignment = Alignment.CenterVertically,
-                                horizontalArrangement = Arrangement.spacedBy(10.dp)
-                            ) {
-                                Icon(Icons.Default.Lock, contentDescription = null, tint = MujtamaTeal)
-                                Column {
-                                    Text(text = "خصوصية الحساب", fontWeight = FontWeight.Bold, fontSize = 13.sp)
-                                    Text(text = "الحالة الحالية: ${userProfile.privacyLevel}", fontSize = 11.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
-                                }
-                            }
-                            OutlinedButton(
-                                onClick = onTogglePrivacy,
-                                shape = RoundedCornerShape(10.dp),
-                                contentPadding = PaddingValues(horizontal = 10.dp, vertical = 4.dp)
-                            ) {
-                                Text("تبديل", fontSize = 11.sp)
-                            }
-                        }
+                        // 2. تواصل مباشر مع الدعم
+                        SettingsActionRow(
+                            icon = Icons.Default.SupportAgent,
+                            title = "تواصل مباشر مع الدعم",
+                            subtitle = "محادثة فورية مع فريق الدعم الفني وخدمة العملاء",
+                            onClick = { showSupportChatDialog = true }
+                        )
 
-                        HorizontalDivider()
+                        HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f))
 
-                        // 3. Notifications Toggle
-                        Row(
-                            modifier = Modifier.fillMaxWidth(),
-                            horizontalArrangement = Arrangement.SpaceBetween,
-                            verticalAlignment = Alignment.CenterVertically
-                        ) {
-                            Row(
-                                verticalAlignment = Alignment.CenterVertically,
-                                horizontalArrangement = Arrangement.spacedBy(10.dp)
-                            ) {
-                                Icon(
-                                    imageVector = if (userProfile.isNotificationsEnabled) Icons.Default.NotificationsActive else Icons.Default.NotificationsOff,
-                                    contentDescription = null,
-                                    tint = if (userProfile.isNotificationsEnabled) MujtamaPrimary else MaterialTheme.colorScheme.onSurfaceVariant
-                                )
-                                Column {
-                                    Text(text = "إشعارات التطبيق", fontWeight = FontWeight.Bold, fontSize = 13.sp)
-                                    Text(
-                                        text = if (userProfile.isNotificationsEnabled) "التنبيهات مفعلة لجميع الأنشطة" else "التنبيهات مكتومة",
-                                        fontSize = 11.sp,
-                                        color = MaterialTheme.colorScheme.onSurfaceVariant
-                                    )
-                                }
-                            }
-                            Switch(
-                                checked = userProfile.isNotificationsEnabled,
-                                onCheckedChange = { onToggleNotifications() }
-                            )
-                        }
+                        // 3. تغيير اللغة
+                        SettingsActionRow(
+                            icon = Icons.Default.Translate,
+                            title = "تغيير اللغة",
+                            subtitle = "اللغة الحالية: $currentLanguage",
+                            onClick = { showLanguageDialog = true }
+                        )
 
-                        HorizontalDivider()
+                        HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f))
 
-                        // 4. Logout Button
-                        Button(
-                            onClick = { showLogoutDialog = true },
-                            colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.error),
-                            shape = RoundedCornerShape(12.dp),
+                        // 4. إبلاغ عن مشكلة
+                        SettingsActionRow(
+                            icon = Icons.Default.ReportProblem,
+                            title = "إبلاغ عن مشكلة",
+                            subtitle = "إرسال تقرير فني عن أي خلل أو عطل في التطبيق",
+                            onClick = { showReportProblemDialog = true }
+                        )
+
+                        HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f))
+
+                        // 5. زر "الإعدادات" وقائمته المنسدلة
+                        Surface(
+                            shape = RoundedCornerShape(14.dp),
+                            color = if (isSettingsExpanded) MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.25f)
+                                    else MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.4f),
+                            border = androidx.compose.foundation.BorderStroke(
+                                1.dp,
+                                if (isSettingsExpanded) MaterialTheme.colorScheme.primary.copy(alpha = 0.5f)
+                                else MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f)
+                            ),
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .testTag("logout_button")
+                                .clip(RoundedCornerShape(14.dp))
+                                .clickable { isSettingsExpanded = !isSettingsExpanded }
+                                .testTag("settings_dropdown_button")
                         ) {
-                            Icon(Icons.Default.ExitToApp, contentDescription = null, modifier = Modifier.size(16.dp))
-                            Spacer(modifier = Modifier.width(6.dp))
-                            Text("تسجيل الخروج", fontWeight = FontWeight.Bold, fontSize = 12.sp)
+                            Row(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(horizontal = 14.dp, vertical = 12.dp),
+                                verticalAlignment = Alignment.CenterVertically,
+                                horizontalArrangement = Arrangement.SpaceBetween
+                            ) {
+                                Row(
+                                    verticalAlignment = Alignment.CenterVertically,
+                                    horizontalArrangement = Arrangement.spacedBy(10.dp)
+                                ) {
+                                    Box(
+                                        modifier = Modifier
+                                            .size(36.dp)
+                                            .clip(CircleShape)
+                                            .background(MaterialTheme.colorScheme.primary.copy(alpha = 0.15f)),
+                                        contentAlignment = Alignment.Center
+                                    ) {
+                                        Icon(
+                                            imageVector = Icons.Default.Settings,
+                                            contentDescription = null,
+                                            tint = MaterialTheme.colorScheme.primary,
+                                            modifier = Modifier.size(20.dp)
+                                        )
+                                    }
+                                    Column {
+                                        Text(
+                                            text = "الإعدادات",
+                                            fontWeight = FontWeight.Bold,
+                                            fontSize = 14.sp
+                                        )
+                                        Text(
+                                            text = if (isSettingsExpanded) "اضغط للطي" else "الإشعارات، قائمة الحظر، والسياسات",
+                                            fontSize = 11.sp,
+                                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                                        )
+                                    }
+                                }
+
+                                Icon(
+                                    imageVector = if (isSettingsExpanded) Icons.Default.ExpandLess else Icons.Default.ExpandMore,
+                                    contentDescription = if (isSettingsExpanded) "طي القائمة" else "فتح القائمة",
+                                    tint = MaterialTheme.colorScheme.primary
+                                )
+                            }
+                        }
+
+                        // القائمة المنسدلة التابعة لزر الإعدادات
+                        AnimatedVisibility(visible = isSettingsExpanded) {
+                            Card(
+                                shape = RoundedCornerShape(14.dp),
+                                colors = CardDefaults.cardColors(
+                                    containerColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.35f)
+                                ),
+                                border = androidx.compose.foundation.BorderStroke(
+                                    1.dp,
+                                    MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.4f)
+                                ),
+                                modifier = Modifier.fillMaxWidth()
+                            ) {
+                                Column(
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .padding(12.dp),
+                                    verticalArrangement = Arrangement.spacedBy(10.dp)
+                                ) {
+                                    // تمكين الإشعارات (Toggle)
+                                    Row(
+                                        modifier = Modifier.fillMaxWidth(),
+                                        horizontalArrangement = Arrangement.SpaceBetween,
+                                        verticalAlignment = Alignment.CenterVertically
+                                    ) {
+                                        Row(
+                                            verticalAlignment = Alignment.CenterVertically,
+                                            horizontalArrangement = Arrangement.spacedBy(10.dp),
+                                            modifier = Modifier.weight(1f)
+                                        ) {
+                                            Icon(
+                                                imageVector = if (userProfile.isNotificationsEnabled) Icons.Default.NotificationsActive else Icons.Default.NotificationsOff,
+                                                contentDescription = null,
+                                                tint = if (userProfile.isNotificationsEnabled) MujtamaPrimary else MaterialTheme.colorScheme.onSurfaceVariant,
+                                                modifier = Modifier.size(22.dp)
+                                            )
+                                            Column {
+                                                Text(
+                                                    text = "تمكين الإشعارات",
+                                                    fontWeight = FontWeight.Bold,
+                                                    fontSize = 13.sp
+                                                )
+                                                Text(
+                                                    text = if (userProfile.isNotificationsEnabled) "التنبيهات مفعلة لجميع الأنشطة" else "التنبيهات معطلة",
+                                                    fontSize = 11.sp,
+                                                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                                                )
+                                            }
+                                        }
+                                        Switch(
+                                            checked = userProfile.isNotificationsEnabled,
+                                            onCheckedChange = { onToggleNotifications() },
+                                            modifier = Modifier.testTag("notifications_toggle")
+                                        )
+                                    }
+
+                                    HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.3f))
+
+                                    // قائمة الحظر
+                                    Row(
+                                        modifier = Modifier
+                                            .fillMaxWidth()
+                                            .clip(RoundedCornerShape(8.dp))
+                                            .clickable { showBlockedListDialog = true }
+                                            .padding(vertical = 4.dp),
+                                        horizontalArrangement = Arrangement.SpaceBetween,
+                                        verticalAlignment = Alignment.CenterVertically
+                                    ) {
+                                        Row(
+                                            verticalAlignment = Alignment.CenterVertically,
+                                            horizontalArrangement = Arrangement.spacedBy(10.dp)
+                                        ) {
+                                            Icon(
+                                                imageVector = Icons.Default.Block,
+                                                contentDescription = null,
+                                                tint = MaterialTheme.colorScheme.error,
+                                                modifier = Modifier.size(22.dp)
+                                            )
+                                            Column {
+                                                Text(
+                                                    text = "قائمة الحظر",
+                                                    fontWeight = FontWeight.Bold,
+                                                    fontSize = 13.sp
+                                                )
+                                                Text(
+                                                    text = "${blockedUsersList.size} مستخدمين محظورين",
+                                                    fontSize = 11.sp,
+                                                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                                                )
+                                            }
+                                        }
+
+                                        Row(
+                                            verticalAlignment = Alignment.CenterVertically,
+                                            horizontalArrangement = Arrangement.spacedBy(4.dp)
+                                        ) {
+                                            Surface(
+                                                shape = RoundedCornerShape(10.dp),
+                                                color = MaterialTheme.colorScheme.error.copy(alpha = 0.1f)
+                                            ) {
+                                                Text(
+                                                    text = "${blockedUsersList.size}",
+                                                    color = MaterialTheme.colorScheme.error,
+                                                    fontSize = 11.sp,
+                                                    fontWeight = FontWeight.Bold,
+                                                    modifier = Modifier.padding(horizontal = 6.dp, vertical = 2.dp)
+                                                )
+                                            }
+                                            Icon(
+                                                imageVector = Icons.Default.ChevronLeft,
+                                                contentDescription = null,
+                                                tint = MaterialTheme.colorScheme.onSurfaceVariant
+                                            )
+                                        }
+                                    }
+
+                                    HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.3f))
+
+                                    // سياسة البرنامج
+                                    Row(
+                                        modifier = Modifier
+                                            .fillMaxWidth()
+                                            .clip(RoundedCornerShape(8.dp))
+                                            .clickable { showPolicyDialog = true }
+                                            .padding(vertical = 4.dp),
+                                        horizontalArrangement = Arrangement.SpaceBetween,
+                                        verticalAlignment = Alignment.CenterVertically
+                                    ) {
+                                        Row(
+                                            verticalAlignment = Alignment.CenterVertically,
+                                            horizontalArrangement = Arrangement.spacedBy(10.dp)
+                                        ) {
+                                            Icon(
+                                                imageVector = Icons.Default.Policy,
+                                                contentDescription = null,
+                                                tint = MujtamaTeal,
+                                                modifier = Modifier.size(22.dp)
+                                            )
+                                            Column {
+                                                Text(
+                                                    text = "سياسة البرنامج",
+                                                    fontWeight = FontWeight.Bold,
+                                                    fontSize = 13.sp
+                                                )
+                                                Text(
+                                                    text = "شروط الاستخدام والخصوصية",
+                                                    fontSize = 11.sp,
+                                                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                                                )
+                                            }
+                                        }
+
+                                        Icon(
+                                            imageVector = Icons.Default.ChevronLeft,
+                                            contentDescription = null,
+                                            tint = MaterialTheme.colorScheme.onSurfaceVariant
+                                        )
+                                    }
+
+                                    HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.3f))
+
+                                    // النسخة الحالية (Read-only)
+                                    Row(
+                                        modifier = Modifier
+                                            .fillMaxWidth()
+                                            .padding(vertical = 4.dp),
+                                        horizontalArrangement = Arrangement.SpaceBetween,
+                                        verticalAlignment = Alignment.CenterVertically
+                                    ) {
+                                        Row(
+                                            verticalAlignment = Alignment.CenterVertically,
+                                            horizontalArrangement = Arrangement.spacedBy(10.dp)
+                                        ) {
+                                            Icon(
+                                                imageVector = Icons.Default.Info,
+                                                contentDescription = null,
+                                                tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                                                modifier = Modifier.size(22.dp)
+                                            )
+                                            Column {
+                                                Text(
+                                                    text = "النسخة الحالية",
+                                                    fontWeight = FontWeight.Bold,
+                                                    fontSize = 13.sp
+                                                )
+                                                Text(
+                                                    text = "الإصدار 1.2.0 (Build 104)",
+                                                    fontSize = 11.sp,
+                                                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                                                )
+                                            }
+                                        }
+
+                                        Surface(
+                                            shape = RoundedCornerShape(8.dp),
+                                            color = MujtamaOnlineGreen.copy(alpha = 0.15f)
+                                        ) {
+                                            Text(
+                                                text = "أحدث إصدار ✓",
+                                                color = MujtamaOnlineGreen,
+                                                fontSize = 10.sp,
+                                                fontWeight = FontWeight.Bold,
+                                                modifier = Modifier.padding(horizontal = 6.dp, vertical = 3.dp)
+                                            )
+                                        }
+                                    }
+
+                                    HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.3f))
+
+                                    // 6. زر تسجيل الخروج في نهاية قائمة الإعدادات بتصميم مميز ولون تحذيري
+                                    Button(
+                                        onClick = { showLogoutDialog = true },
+                                        colors = ButtonDefaults.buttonColors(
+                                            containerColor = MaterialTheme.colorScheme.errorContainer,
+                                            contentColor = MaterialTheme.colorScheme.onErrorContainer
+                                        ),
+                                        border = androidx.compose.foundation.BorderStroke(
+                                            1.dp,
+                                            MaterialTheme.colorScheme.error.copy(alpha = 0.4f)
+                                        ),
+                                        shape = RoundedCornerShape(12.dp),
+                                        modifier = Modifier
+                                            .fillMaxWidth()
+                                            .padding(top = 4.dp)
+                                            .testTag("logout_button")
+                                    ) {
+                                        Icon(
+                                            imageVector = Icons.Default.Logout,
+                                            contentDescription = null,
+                                            tint = MaterialTheme.colorScheme.error,
+                                            modifier = Modifier.size(18.dp)
+                                        )
+                                        Spacer(modifier = Modifier.width(8.dp))
+                                        Text(
+                                            text = "تسجيل الخروج",
+                                            fontWeight = FontWeight.Bold,
+                                            fontSize = 13.sp,
+                                            color = MaterialTheme.colorScheme.error
+                                        )
+                                    }
+                                }
+                            }
                         }
                     }
                 }
@@ -1032,6 +1311,638 @@ fun ProfileScreen(
             confirmButton = {
                 TextButton(onClick = { showRechargeDialog = false }) {
                     Text("إغلاق")
+                }
+            }
+        )
+    }
+
+    // Direct Support Chat Dialog (تواصل مباشر مع الدعم)
+    if (showSupportChatDialog) {
+        var supportMessages by remember {
+            mutableStateOf(
+                listOf(
+                    Pair("فريق الدعم الفني 🎧", "مرحباً بك في مركز الدعم الفني لمجتمعنا! كيف يمكننا مساعدتك اليوم؟")
+                )
+            )
+        }
+        var messageInput by remember { mutableStateOf("") }
+
+        AlertDialog(
+            onDismissRequest = { showSupportChatDialog = false },
+            title = {
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(8.dp)
+                ) {
+                    Box(
+                        modifier = Modifier
+                            .size(32.dp)
+                            .clip(CircleShape)
+                            .background(MujtamaTeal.copy(alpha = 0.2f)),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.SupportAgent,
+                            contentDescription = null,
+                            tint = MujtamaTeal,
+                            modifier = Modifier.size(20.dp)
+                        )
+                    }
+                    Column {
+                        Text(
+                            text = "تواصل مباشر مع الدعم",
+                            fontWeight = FontWeight.Bold,
+                            fontSize = 15.sp
+                        )
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.spacedBy(4.dp)
+                        ) {
+                            Box(
+                                modifier = Modifier
+                                    .size(8.dp)
+                                    .clip(CircleShape)
+                                    .background(MujtamaOnlineGreen)
+                            )
+                            Text(
+                                text = "الفريق متصل الآن (24/7)",
+                                fontSize = 10.sp,
+                                color = MujtamaOnlineGreen
+                            )
+                        }
+                    }
+                }
+            },
+            text = {
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .heightIn(min = 200.dp, max = 320.dp),
+                    verticalArrangement = Arrangement.spacedBy(8.dp)
+                ) {
+                    // Quick topic chips
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.spacedBy(6.dp)
+                    ) {
+                        listOf("شحن الرصيد ⚡", "مشكلة في لعبة 🎲", "توثيق الحساب 🛡️").forEach { topic ->
+                            Surface(
+                                shape = RoundedCornerShape(12.dp),
+                                color = MaterialTheme.colorScheme.primary.copy(alpha = 0.08f),
+                                modifier = Modifier.clickable {
+                                    messageInput = topic
+                                }
+                            ) {
+                                Text(
+                                    text = topic,
+                                    fontSize = 10.sp,
+                                    modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp),
+                                    color = MaterialTheme.colorScheme.primary
+                                )
+                            }
+                        }
+                    }
+
+                    HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.3f))
+
+                    // Chat messages list
+                    LazyColumn(
+                        modifier = Modifier
+                            .weight(1f)
+                            .fillMaxWidth(),
+                        verticalArrangement = Arrangement.spacedBy(8.dp)
+                    ) {
+                        items(supportMessages) { (sender, text) ->
+                            val isMe = sender == "أنا"
+                            Column(
+                                modifier = Modifier.fillMaxWidth(),
+                                horizontalAlignment = if (isMe) Alignment.End else Alignment.Start
+                            ) {
+                                Surface(
+                                    shape = RoundedCornerShape(
+                                        topStart = 12.dp,
+                                        topEnd = 12.dp,
+                                        bottomStart = if (isMe) 12.dp else 2.dp,
+                                        bottomEnd = if (isMe) 2.dp else 12.dp
+                                    ),
+                                    color = if (isMe) MujtamaPrimary else MaterialTheme.colorScheme.surfaceVariant
+                                ) {
+                                    Column(modifier = Modifier.padding(10.dp)) {
+                                        Text(
+                                            text = sender,
+                                            fontWeight = FontWeight.Bold,
+                                            fontSize = 10.sp,
+                                            color = if (isMe) Color.White.copy(alpha = 0.8f) else MaterialTheme.colorScheme.primary
+                                        )
+                                        Spacer(modifier = Modifier.height(2.dp))
+                                        Text(
+                                            text = text,
+                                            fontSize = 12.sp,
+                                            color = if (isMe) Color.White else MaterialTheme.colorScheme.onSurface
+                                        )
+                                    }
+                                }
+                            }
+                        }
+                    }
+
+                    // Message input field
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(6.dp)
+                    ) {
+                        OutlinedTextField(
+                            value = messageInput,
+                            onValueChange = { messageInput = it },
+                            placeholder = { Text("اكتب رسالتك للدعم...", fontSize = 12.sp) },
+                            modifier = Modifier.weight(1f),
+                            singleLine = true,
+                            shape = RoundedCornerShape(12.dp)
+                        )
+                        IconButton(
+                            onClick = {
+                                if (messageInput.isNotBlank()) {
+                                    val newMsg = messageInput.trim()
+                                    supportMessages = supportMessages + Pair("أنا", newMsg)
+                                    messageInput = ""
+                                    // Automatic immediate feedback from support
+                                    supportMessages = supportMessages + Pair(
+                                        "فريق الدعم الفني 🎧",
+                                        "شكراً لتواصلك! تم استلام رسالتك وسيتولى أحد ممثلي الدعم الرد عليك في غضون لحظات."
+                                    )
+                                }
+                            },
+                            enabled = messageInput.isNotBlank()
+                        ) {
+                            Icon(
+                                imageVector = Icons.Default.Send,
+                                contentDescription = "إرسال",
+                                tint = if (messageInput.isNotBlank()) MujtamaPrimary else MaterialTheme.colorScheme.onSurfaceVariant
+                            )
+                        }
+                    }
+                }
+            },
+            confirmButton = {
+                TextButton(onClick = { showSupportChatDialog = false }) {
+                    Text("إغلاق")
+                }
+            }
+        )
+    }
+
+    // Change Language Dialog (تغيير اللغة)
+    if (showLanguageDialog) {
+        var tempSelectedLang by remember { mutableStateOf(currentLanguage) }
+        val languages = listOf(
+            Pair("العربية", "العربية (الافتراضية)"),
+            Pair("English", "English (United States)"),
+            Pair("Français", "Français (France)")
+        )
+
+        AlertDialog(
+            onDismissRequest = { showLanguageDialog = false },
+            title = {
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(8.dp)
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.Translate,
+                        contentDescription = null,
+                        tint = MujtamaPrimary
+                    )
+                    Text("تغيير لغة التطبيق 🌐", fontWeight = FontWeight.Bold, fontSize = 15.sp)
+                }
+            },
+            text = {
+                Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                    Text(
+                        text = "اختر اللغة المفضلة لواجهة التطبيق:",
+                        fontSize = 12.sp,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+
+                    languages.forEach { (code, label) ->
+                        val isSelected = tempSelectedLang == code
+                        Surface(
+                            shape = RoundedCornerShape(12.dp),
+                            color = if (isSelected) MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.3f)
+                                    else MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.3f),
+                            border = androidx.compose.foundation.BorderStroke(
+                                1.dp,
+                                if (isSelected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.4f)
+                            ),
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .clickable { tempSelectedLang = code }
+                        ) {
+                            Row(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(horizontal = 14.dp, vertical = 12.dp),
+                                horizontalArrangement = Arrangement.SpaceBetween,
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                Column {
+                                    Text(
+                                        text = label,
+                                        fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Normal,
+                                        fontSize = 13.sp
+                                    )
+                                    if (code == "العربية") {
+                                        Text(
+                                            text = "اللغة الأساسية للمنصة",
+                                            fontSize = 10.sp,
+                                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                                        )
+                                    }
+                                }
+
+                                if (isSelected) {
+                                    Icon(
+                                        imageVector = Icons.Default.CheckCircle,
+                                        contentDescription = null,
+                                        tint = MaterialTheme.colorScheme.primary,
+                                        modifier = Modifier.size(20.dp)
+                                    )
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            confirmButton = {
+                Button(
+                    onClick = {
+                        currentLanguage = tempSelectedLang
+                        showLanguageDialog = false
+                    }
+                ) {
+                    Text("تطبيق اللغة")
+                }
+            },
+            dismissButton = {
+                TextButton(onClick = { showLanguageDialog = false }) {
+                    Text("إلغاء")
+                }
+            }
+        )
+    }
+
+    // Report Problem Dialog (إبلاغ عن مشكلة)
+    if (showReportProblemDialog) {
+        var issueCategory by remember { mutableStateOf("مشكلة تقنية عامة") }
+        var issueDescription by remember { mutableStateOf("") }
+        var isSubmitted by remember { mutableStateOf(false) }
+
+        val categories = listOf("مشكلة في الصوت 🎙️", "خطأ في الألعاب 🎲", "شحن ونقاط ⚡", "مشكلة تقنية عامة ⚠️")
+
+        AlertDialog(
+            onDismissRequest = {
+                showReportProblemDialog = false
+                isSubmitted = false
+            },
+            title = {
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(8.dp)
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.ReportProblem,
+                        contentDescription = null,
+                        tint = MaterialTheme.colorScheme.error
+                    )
+                    Text("إبلاغ عن مشكلة تقنية", fontWeight = FontWeight.Bold, fontSize = 15.sp)
+                }
+            },
+            text = {
+                if (isSubmitted) {
+                    Column(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(vertical = 12.dp),
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        verticalArrangement = Arrangement.spacedBy(8.dp)
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.CheckCircle,
+                            contentDescription = null,
+                            tint = MujtamaOnlineGreen,
+                            modifier = Modifier.size(48.dp)
+                        )
+                        Text(
+                            text = "تم إرسال البلاغ بنجاح! ✓",
+                            fontWeight = FontWeight.Bold,
+                            fontSize = 14.sp
+                        )
+                        Text(
+                            text = "رقم التذكرة: #84920\nشكراً لمساعدتنا في تحسين تجربة مجتمعنا. سيقوم الفريق الفني بمراجعة البلاغ وحل المشكلة في أقرب وقت.",
+                            fontSize = 11.sp,
+                            textAlign = TextAlign.Center,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                        )
+                    }
+                } else {
+                    Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
+                        Text(
+                            text = "حدد نوع المشكلة التي تواجهك:",
+                            fontSize = 12.sp,
+                            fontWeight = FontWeight.SemiBold
+                        )
+
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.spacedBy(6.dp)
+                        ) {
+                            categories.take(2).forEach { cat ->
+                                val selected = issueCategory == cat
+                                Surface(
+                                    shape = RoundedCornerShape(10.dp),
+                                    color = if (selected) MaterialTheme.colorScheme.primaryContainer else MaterialTheme.colorScheme.surfaceVariant,
+                                    modifier = Modifier
+                                        .weight(1f)
+                                        .clickable { issueCategory = cat }
+                                ) {
+                                    Text(
+                                        text = cat,
+                                        fontSize = 10.sp,
+                                        fontWeight = if (selected) FontWeight.Bold else FontWeight.Normal,
+                                        modifier = Modifier.padding(vertical = 8.dp, horizontal = 6.dp),
+                                        textAlign = TextAlign.Center
+                                    )
+                                }
+                            }
+                        }
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.spacedBy(6.dp)
+                        ) {
+                            categories.drop(2).forEach { cat ->
+                                val selected = issueCategory == cat
+                                Surface(
+                                    shape = RoundedCornerShape(10.dp),
+                                    color = if (selected) MaterialTheme.colorScheme.primaryContainer else MaterialTheme.colorScheme.surfaceVariant,
+                                    modifier = Modifier
+                                        .weight(1f)
+                                        .clickable { issueCategory = cat }
+                                ) {
+                                    Text(
+                                        text = cat,
+                                        fontSize = 10.sp,
+                                        fontWeight = if (selected) FontWeight.Bold else FontWeight.Normal,
+                                        modifier = Modifier.padding(vertical = 8.dp, horizontal = 6.dp),
+                                        textAlign = TextAlign.Center
+                                    )
+                                }
+                            }
+                        }
+
+                        Text(
+                            text = "وصف المشكلة بالتفصيل:",
+                            fontSize = 12.sp,
+                            fontWeight = FontWeight.SemiBold
+                        )
+
+                        OutlinedTextField(
+                            value = issueDescription,
+                            onValueChange = { issueDescription = it },
+                            placeholder = { Text("اذكر ما حدث معك بالتحديد...", fontSize = 12.sp) },
+                            modifier = Modifier.fillMaxWidth(),
+                            minLines = 3,
+                            maxLines = 5,
+                            shape = RoundedCornerShape(12.dp)
+                        )
+
+                        Text(
+                            text = "سيتم ربط التقرير بمعرف حسابك (${userProfile.id}) للمتابعة.",
+                            fontSize = 10.sp,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                        )
+                    }
+                }
+            },
+            confirmButton = {
+                if (isSubmitted) {
+                    Button(onClick = {
+                        showReportProblemDialog = false
+                        isSubmitted = false
+                    }) {
+                        Text("تم")
+                    }
+                } else {
+                    Button(
+                        onClick = { isSubmitted = true },
+                        enabled = issueDescription.isNotBlank()
+                    ) {
+                        Text("إرسال البلاغ")
+                    }
+                }
+            },
+            dismissButton = {
+                if (!isSubmitted) {
+                    TextButton(onClick = { showReportProblemDialog = false }) {
+                        Text("إلغاء")
+                    }
+                }
+            }
+        )
+    }
+
+    // Blocked Users Dialog (قائمة الحظر)
+    if (showBlockedListDialog) {
+        AlertDialog(
+            onDismissRequest = { showBlockedListDialog = false },
+            title = {
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(8.dp)
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.Block,
+                        contentDescription = null,
+                        tint = MaterialTheme.colorScheme.error
+                    )
+                    Text("قائمة الحظر", fontWeight = FontWeight.Bold, fontSize = 15.sp)
+                }
+            },
+            text = {
+                Column(
+                    modifier = Modifier.fillMaxWidth(),
+                    verticalArrangement = Arrangement.spacedBy(10.dp)
+                ) {
+                    Text(
+                        text = "المستخدمون المحظورون لا يمكنهم مراسلتك أو الانضمام لغرفك الخاصة:",
+                        fontSize = 11.sp,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+
+                    if (blockedUsersList.isEmpty()) {
+                        Box(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(vertical = 24.dp),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Text(
+                                text = "لا يوجد أي مستخدم محظور حالياً 👍",
+                                fontSize = 12.sp,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant
+                            )
+                        }
+                    } else {
+                        LazyColumn(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .heightIn(max = 240.dp),
+                            verticalArrangement = Arrangement.spacedBy(8.dp)
+                        ) {
+                            items(blockedUsersList) { (id, name, date) ->
+                                Surface(
+                                    shape = RoundedCornerShape(10.dp),
+                                    color = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f),
+                                    modifier = Modifier.fillMaxWidth()
+                                ) {
+                                    Row(
+                                        modifier = Modifier
+                                            .fillMaxWidth()
+                                            .padding(10.dp),
+                                        verticalAlignment = Alignment.CenterVertically,
+                                        horizontalArrangement = Arrangement.SpaceBetween
+                                    ) {
+                                        Row(
+                                            verticalAlignment = Alignment.CenterVertically,
+                                            horizontalArrangement = Arrangement.spacedBy(8.dp)
+                                        ) {
+                                            Box(
+                                                modifier = Modifier
+                                                    .size(32.dp)
+                                                    .clip(CircleShape)
+                                                    .background(MaterialTheme.colorScheme.error.copy(alpha = 0.15f)),
+                                                contentAlignment = Alignment.Center
+                                            ) {
+                                                Icon(
+                                                    imageVector = Icons.Default.PersonOff,
+                                                    contentDescription = null,
+                                                    tint = MaterialTheme.colorScheme.error,
+                                                    modifier = Modifier.size(16.dp)
+                                                )
+                                            }
+                                            Column {
+                                                Text(text = name, fontWeight = FontWeight.Bold, fontSize = 12.sp)
+                                                Text(text = "$date • ID: $id", fontSize = 10.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                                            }
+                                        }
+
+                                        OutlinedButton(
+                                            onClick = {
+                                                blockedUsersList = blockedUsersList.filter { it.first != id }
+                                            },
+                                            shape = RoundedCornerShape(8.dp),
+                                            contentPadding = PaddingValues(horizontal = 8.dp, vertical = 2.dp)
+                                        ) {
+                                            Text("إلغاء الحظر", fontSize = 11.sp)
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            confirmButton = {
+                TextButton(onClick = { showBlockedListDialog = false }) {
+                    Text("إغلاق")
+                }
+            }
+        )
+    }
+
+    // App Policy Dialog (سياسة البرنامج)
+    if (showPolicyDialog) {
+        AlertDialog(
+            onDismissRequest = { showPolicyDialog = false },
+            title = {
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(8.dp)
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.Policy,
+                        contentDescription = null,
+                        tint = MujtamaTeal
+                    )
+                    Text("سياسة البرنامج والخصوصية 📜", fontWeight = FontWeight.Bold, fontSize = 15.sp)
+                }
+            },
+            text = {
+                LazyColumn(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .heightIn(max = 300.dp),
+                    verticalArrangement = Arrangement.spacedBy(10.dp)
+                ) {
+                    item {
+                        Text(
+                            text = "مرحباً بك في مجتمعنا! تسري هذه السياسة على جميع مستخدمي المنصة.",
+                            fontSize = 11.sp,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                        )
+                    }
+                    item {
+                        Text(
+                            text = "1. قواعد السلوك والاحترام المتبادل",
+                            fontWeight = FontWeight.Bold,
+                            fontSize = 12.sp
+                        )
+                        Text(
+                            text = "يُمنع منعاً باتاً نشر أي محتوى مسيء، ترويجي مزعج (سبام)، أو التعدي على خصوصية الأعضاء الآخرين في الغرف الصوتية والدردشات.",
+                            fontSize = 11.sp,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                        )
+                    }
+                    item {
+                        Text(
+                            text = "2. حماية الخصوصية والبيانات",
+                            fontWeight = FontWeight.Bold,
+                            fontSize = 12.sp
+                        )
+                        Text(
+                            text = "نحن نحافظ على سرية بياناتك الشخصية ولا نشارك معرّف حسابك أو بريدك الإلكتروني مع أي أطراف ثالثة دون إذنك المسبق.",
+                            fontSize = 11.sp,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                        )
+                    }
+                    item {
+                        Text(
+                            text = "3. نزاهة الألعاب والتحديات",
+                            fontWeight = FontWeight.Bold,
+                            fontSize = 12.sp
+                        )
+                        Text(
+                            text = "النقاط والمكافآت داخل التطبيق مخصصة للترفيه والمنافسة الشريفة. يُحظر استخدام أي برامج خارجية أو محاولات تلاعب بالنتائج.",
+                            fontSize = 11.sp,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                        )
+                    }
+                    item {
+                        Text(
+                            text = "4. حقوق الأمان والإبلاغ",
+                            fontWeight = FontWeight.Bold,
+                            fontSize = 12.sp
+                        )
+                        Text(
+                            text = "يحق لكل مستخدم الإبلاغ عن أي انتهاك أو حظر أي حساب مسيء فوراً عبر أدوات الحظر المتاحة داخل التطبيق.",
+                            fontSize = 11.sp,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                        )
+                    }
+                }
+            },
+            confirmButton = {
+                Button(onClick = { showPolicyDialog = false }) {
+                    Text("فهمت وموافق")
                 }
             }
         )

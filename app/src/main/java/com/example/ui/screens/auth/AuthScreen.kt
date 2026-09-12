@@ -76,9 +76,6 @@ fun AuthScreen(
     // طلب الصلاحيات التفاعلي
     var pendingProviderForPermissions by remember { mutableStateOf<AuthProvider?>(null) }
 
-    // نافذة الاحتفال بنجاح إنشاء الحساب وعرض الـ ID الفريد
-    var successNewAccountData by remember { mutableStateOf<Pair<AuthUserAccount, String>?>(null) }
-
     // تهيئة CredentialManager لنظام أندرويد
     val credentialManager = remember { CredentialManager.create(context) }
 
@@ -120,7 +117,7 @@ fun AuthScreen(
                     )
                     isLoading = false
                     activeLoadingProvider = null
-                    successNewAccountData = Pair(account, newId)
+                    onAuthSuccess(account, newId)
                 } catch (e: GetCredentialCancellationException) {
                     isLoading = false
                     activeLoadingProvider = null
@@ -399,7 +396,7 @@ fun AuthScreen(
                 onConfirmPermissions = { account ->
                     pendingProviderForPermissions = null
                     val uniqueId = generateUniqueUserId()
-                    successNewAccountData = Pair(account, uniqueId)
+                    onAuthSuccess(account, uniqueId)
                 },
                 onDenyPermissions = {
                     pendingProviderForPermissions = null
@@ -410,115 +407,6 @@ fun AuthScreen(
                     pendingProviderForPermissions = null
                 }
             )
-        }
-
-        // -------------------------------------------------------------
-        // نافذة الاحتفال بنجاح الدخول / إنشاء الحساب وعرض الـ ID الفريد
-        // -------------------------------------------------------------
-        if (successNewAccountData != null) {
-            val (account, generatedId) = successNewAccountData!!
-            Dialog(onDismissRequest = { /* إجباري حتى يضغط المستخدم زر المتابعة */ }) {
-                Surface(
-                    shape = RoundedCornerShape(20.dp),
-                    color = MujtamaDarkSurface,
-                    border = androidx.compose.foundation.BorderStroke(1.5.dp, MujtamaGold),
-                    shadowElevation = 10.dp,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = 6.dp)
-                        .testTag("auth_success_dialog")
-                ) {
-                    Column(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(22.dp),
-                        horizontalAlignment = Alignment.CenterHorizontally,
-                        verticalArrangement = Arrangement.spacedBy(14.dp)
-                    ) {
-                        Box(
-                            modifier = Modifier
-                                .size(64.dp)
-                                .clip(CircleShape)
-                                .background(MujtamaGold.copy(alpha = 0.15f))
-                                .border(2.dp, MujtamaGold, CircleShape),
-                            contentAlignment = Alignment.Center
-                        ) {
-                            Text(text = "🎉", fontSize = 28.sp)
-                        }
-
-                        Text(
-                            text = if (isLoginMode) "أهلاً بك مجدداً!" else "مبروك! تم إنشاء حسابك بنجاح",
-                            fontWeight = FontWeight.Black,
-                            fontSize = 17.sp,
-                            color = MujtamaGold
-                        )
-
-                        Text(
-                            text = "مرحباً بك يا ${account.name} في مجتمعنا! تم ربط حساب ${account.provider.providerNameAr} وتخصيص معرّفك الرقمي الفريد:",
-                            fontSize = 12.5.sp,
-                            color = MujtamaDarkText,
-                            textAlign = TextAlign.Center,
-                            lineHeight = 18.sp
-                        )
-
-                        // بطاقة الـ ID الرقمي الفريد المولّد تلقائياً
-                        Surface(
-                            shape = RoundedCornerShape(12.dp),
-                            color = MujtamaPrimary.copy(alpha = 0.25f),
-                            border = androidx.compose.foundation.BorderStroke(1.2.dp, MujtamaGold),
-                            modifier = Modifier.fillMaxWidth()
-                        ) {
-                            Column(
-                                modifier = Modifier.padding(14.dp),
-                                horizontalAlignment = Alignment.CenterHorizontally,
-                                verticalArrangement = Arrangement.spacedBy(4.dp)
-                            ) {
-                                Text(
-                                    text = "المعرّف الرقمي الفريد (User ID):",
-                                    fontSize = 11.5.sp,
-                                    color = MujtamaGoldLight,
-                                    fontWeight = FontWeight.SemiBold
-                                )
-                                Text(
-                                    text = generatedId,
-                                    fontSize = 24.sp,
-                                    fontWeight = FontWeight.Black,
-                                    color = Color.White,
-                                    letterSpacing = 3.sp
-                                )
-                                Text(
-                                    text = "معرّفك الرقمي هو هويتك الرسمية في التحديات والبحث بدلاً من اسم مستخدم إنجليزي",
-                                    fontSize = 10.5.sp,
-                                    color = MujtamaDarkTextMuted,
-                                    textAlign = TextAlign.Center
-                                )
-                            }
-                        }
-
-                        Button(
-                            onClick = {
-                                val currentData = successNewAccountData
-                                successNewAccountData = null
-                                currentData?.let { (acc, id) ->
-                                    onAuthSuccess(acc, id)
-                                }
-                            },
-                            shape = RoundedCornerShape(14.dp),
-                            colors = ButtonDefaults.buttonColors(containerColor = MujtamaGold, contentColor = Color(0xFF2C1600)),
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .height(46.dp)
-                                .testTag("auth_continue_to_app_button")
-                        ) {
-                            Text(
-                                text = "دخول التطبيق الآن 🚀",
-                                fontSize = 14.sp,
-                                fontWeight = FontWeight.Bold
-                            )
-                        }
-                    }
-                }
-            }
         }
     }
 }

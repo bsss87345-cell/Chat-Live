@@ -20,161 +20,21 @@ class SocialAppViewModel : ViewModel() {
     val currentTab: StateFlow<AppTab> = _currentTab.asStateFlow()
 
     // --- Stories State ---
-    private val _stories = MutableStateFlow(
-        listOf(
-            Story("story_0", "قصتي", isViewed = false, mediaText = "أهلاً بكم في مجتمعنا! 🌟", isCurrentUser = true),
-            Story("story_1", "سارة أحمد", isViewed = false, mediaText = "تحدينا في لعبة الكلمات كان حماسياً جداً اليوم! 🏆", timeAgo = "منذ 20 د"),
-            Story("story_2", "طارق العمري", isViewed = false, mediaText = "فريق فرسان الضاد في المركز الأول هذا الأسبوع 💪", timeAgo = "منذ 45 د"),
-            Story("story_3", "نور الهدى", isViewed = true, mediaText = "صباح الخير والمحبة للجميع ☕✨", timeAgo = "منذ ساعتين"),
-            Story("story_4", "فريق الأبطال", isViewed = true, mediaText = "باب الانضمام مفتوح للتحدي الشهري 🎮", timeAgo = "منذ 3 ساعات")
-        )
-    )
+    private val _stories = MutableStateFlow<List<Story>>(emptyList())
     val stories: StateFlow<List<Story>> = _stories.asStateFlow()
 
     private val _activeStory = MutableStateFlow<Story?>(null)
     val activeStory: StateFlow<Story?> = _activeStory.asStateFlow()
 
     // --- Feed Posts State ---
-    private val _posts = MutableStateFlow(
-        listOf(
-            Post(
-                id = "p1",
-                authorName = "أحمد خالد",
-                authorHandle = "@ahmed_k",
-                authorRole = "قائد فريق فرسان الضاد",
-                timeAgo = "منذ ساعتين",
-                content = "أنهينا اليوم التحدي الجماعي للكلمات والألغاز وحققنا المركز الأول على مستوى المجتمع! شكر كبير لكل أعضاء الفريق على الروح الحماسية 🚀🔥",
-                mediaType = PostMediaType.SHORT_VIDEO,
-                mediaCaption = "مقتطف من الجولة النهائية لتحدي الكلمات (0:45)",
-                tag = "#تحديات_الألعاب",
-                likesCount = 84,
-                isLiked = false,
-                commentsCount = 19,
-                sharesCount = 6,
-                commentsList = listOf(
-                    PostComment("c1", "سارة أحمد", "ألف مبروك يا شباب، أداء أسطوري اليوم! 👏", "منذ ساعة"),
-                    PostComment("c2", "عمر الفاروق", "الجولة القادمة ستكون أقوى بإذن الله 🎯", "منذ 30 دقيقة")
-                ),
-                isAuthor = false,
-                isFollowing = false
-            ),
-            Post(
-                id = "p2",
-                authorName = "أحمد المنصور",
-                authorHandle = "@ahmed_almansour",
-                authorRole = "عضوة مميزة",
-                timeAgo = "منذ 4 ساعات",
-                content = "حصلت للتو على وسام 'بطل الألغاز' بعد الإجابة على 20 لغز متتالي في قسم الألعاب بدون أي خطأ! النقاط في المحفظة ارتفعت إلى 3200 نقطة ✨🎮 جربوا التحدي الآن.",
-                mediaType = PostMediaType.IMAGE,
-                mediaCaption = "وسام بطل الألغاز الذهبي 🏅",
-                tag = "#ألعاب_الذكاء",
-                likesCount = 126,
-                isLiked = true,
-                commentsCount = 28,
-                sharesCount = 11,
-                commentsList = listOf(
-                    PostComment("c3", "يوسف الدوسري", "ما شاء الله! أي لغز كان الأصعب؟", "منذ 3 ساعات")
-                ),
-                isAuthor = true,
-                isFollowing = false
-            ),
-            Post(
-                id = "p3",
-                authorName = "إدارة مجتمعنا",
-                authorHandle = "@mujtama_official",
-                authorRole = "حساب رسمي",
-                timeAgo = "منذ 6 ساعات",
-                content = "تذكير لجميع الأعضاء: تم شحن مكافأة الدخول اليومية في المحفظة (+150 نقطة). النقاط مخصصة لترقية ألقاب الحساب ودعم الفرق وشارات البروفايل، ولا تخضع لأي مراهنات مالية حفاظاً على بيئة آمنة وودية 🛡️❤️",
-                mediaType = PostMediaType.NONE,
-                tag = "#إعلان_المجتمع",
-                likesCount = 310,
-                isLiked = true,
-                commentsCount = 45,
-                sharesCount = 34,
-                commentsList = listOf(
-                    PostComment("c4", "فاطمة النجار", "شكراً للإدارة على النظام النزيه والبيئة الرائعة", "منذ 5 ساعات")
-                ),
-                isAuthor = false,
-                isFollowing = true
-            )
-        )
-    )
+    private val _posts = MutableStateFlow<List<Post>>(emptyList())
     val posts: StateFlow<List<Post>> = _posts.asStateFlow()
 
     private val _activeCommentPostId = MutableStateFlow<String?>(null)
     val activeCommentPostId: StateFlow<String?> = _activeCommentPostId.asStateFlow()
 
     // --- Chat State ---
-    private val _conversations = MutableStateFlow(
-        listOf(
-            ChatConversation(
-                id = "chat_group_1",
-                name = "فريق فرسان الضاد 🛡️",
-                isGroup = true,
-                lastMessage = "أحمد: هيا لنبدأ تحدي الكلمات الجديد معاً!",
-                time = "10:30 ص",
-                unreadCount = 2,
-                isOnline = true,
-                memberCount = 18,
-                messages = listOf(
-                    ChatMessage("m1", "أحمد خالد", "السلام عليكم جميعاً، جاهزون لجولة اليوم؟", "10:15 ص", false),
-                    ChatMessage("m2", "سارة أحمد", "جاهزة ومتحمسة جداً!", "10:18 ص", false),
-                    ChatMessage("m3", "أنا", "أهلاً بالجميع، جاهز للانطلاق 🎯", "10:25 ص", true),
-                    ChatMessage(
-                        id = "m4",
-                        senderName = "أحمد خالد",
-                        text = "بدأ أحمد لعبة 'تحدي الكلمات والألغاز' المباشرة!",
-                        timestamp = "10:30 ص",
-                        isFromMe = false,
-                        type = ChatMessageType.GAME_INVITE,
-                        gameTitle = "تحدي الكلمات والألغاز",
-                        gameReward = 150
-                    )
-                )
-            ),
-            ChatConversation(
-                id = "chat_user_1",
-                name = "سارة أحمد",
-                isGroup = false,
-                lastMessage = "تسجيل صوتي (0:18)",
-                time = "أمس",
-                unreadCount = 0,
-                isOnline = true,
-                memberCount = 2,
-                messages = listOf(
-                    ChatMessage("m20", "سارة أحمد", "مرحباً! هل رأيت تحدي الفرق الجديد في قسم الألعاب؟", "أمس 4:00 م", false),
-                    ChatMessage("m21", "أنا", "نعم، سنفوز به بالتأكيد ونحصل على نقاط المحفظة 🚀", "أمس 4:05 م", true),
-                    ChatMessage("m22", "سارة أحمد", "", "أمس 4:10 م", false, type = ChatMessageType.AUDIO, audioDurationSec = 18)
-                )
-            ),
-            ChatConversation(
-                id = "chat_user_2",
-                name = "يوسف الدوسري",
-                isGroup = false,
-                lastMessage = "سأرسل لك دعوة الانضمام الآن",
-                time = "أمس",
-                unreadCount = 0,
-                isOnline = false,
-                memberCount = 2,
-                messages = listOf(
-                    ChatMessage("m30", "يوسف الدوسري", "سأرسل لك دعوة الانضمام الآن", "أمس 2:15 م", false)
-                )
-            ),
-            ChatConversation(
-                id = "chat_group_2",
-                name = "رابطة محبي الألغاز 🧩",
-                isGroup = true,
-                lastMessage = "نور: اللغز رقم 15 كان رائعاً جداً",
-                time = "منذ يومين",
-                unreadCount = 0,
-                isOnline = true,
-                memberCount = 42,
-                messages = listOf(
-                    ChatMessage("m40", "نور الهدى", "اللغز رقم 15 كان رائعاً جداً", "منذ يومين", false)
-                )
-            )
-        )
-    )
+    private val _conversations = MutableStateFlow<List<ChatConversation>>(emptyList())
     val conversations: StateFlow<List<ChatConversation>> = _conversations.asStateFlow()
 
     private val _activeChatId = MutableStateFlow<String?>(null)
@@ -196,114 +56,7 @@ class SocialAppViewModel : ViewModel() {
     private val _roomCategoryFilter = MutableStateFlow("الكل")
     val roomCategoryFilter: StateFlow<String> = _roomCategoryFilter.asStateFlow()
 
-    private val _chatRooms = MutableStateFlow<List<ChatRoom>>(
-        listOf(
-            ChatRoom(
-                id = "10842915",
-                name = "ديوانية عشاق الألعاب 🎮",
-                description = "نقاشات حول أحدث ألعاب الذكاء، الألغاز، والتحديات الثنائية في مجتمعنا.",
-                category = "ألعاب",
-                iconEmoji = "🎮",
-                imageUrl = "https://images.unsplash.com/photo-1542751371-adc38448a05e?q=80&w=800&auto=format&fit=crop",
-                accessType = RoomAccessType.PUBLIC,
-                inviteCode = "GAME-2026",
-                memberCount = 85,
-                maxMembers = 150,
-                isJoined = true,
-                isOwner = true,
-                pinnedMessage = "📌 مرحباً بكم في ديوانية الألعاب! التحدي الأسبوعي يبدأ كل خميس الساعة 8 مساءً مع نقاط مضاعفة.",
-                members = listOf(
-                    RoomMember("me", "أنت (المالك)", RoomMemberRole.OWNER, isOnline = true),
-                    RoomMember("rm_1", "فيصل الغامدي", RoomMemberRole.ADMIN, isOnline = true),
-                    RoomMember("rm_2", "نور الهدى", RoomMemberRole.MEMBER, isOnline = true),
-                    RoomMember("rm_3", "سارة أحمد", RoomMemberRole.MEMBER, isOnline = true),
-                    RoomMember("rm_4", "عمر فاروق", RoomMemberRole.MEMBER, isOnline = false)
-                ),
-                messages = listOf(
-                    ChatMessage("rm_m1", "فيصل الغامدي", "السلام عليكم جميعاً! مبروك للفائزين بتحدي الأمس 👏", "10:30 ص", false),
-                    ChatMessage("rm_m2", "نور الهدى", "الله يبارك فيك فيصل، الأسئلة كانت ممتعة جداً", "10:32 ص", false),
-                    ChatMessage("rm_m3", "أنت", "أهلاً بالجميع، جاهزون لتحدي اليوم من داخل الغرفة؟ 🚀", "10:35 ص", true),
-                    ChatMessage(
-                        id = "rm_m4",
-                        senderName = "فيصل الغامدي",
-                        text = "",
-                        timestamp = "10:36 ص",
-                        isFromMe = false,
-                        type = ChatMessageType.GAME_INVITE,
-                        gameTitle = "تحدي الألغاز الجماعي 🧩",
-                        gameReward = 200
-                    )
-                )
-            ),
-            ChatRoom(
-                id = "24918274",
-                name = "مجلس الرياضة وكرة القدم ⚽",
-                description = "تحليلات المباريات، بطولات الأندية العربية، والنقاشات الرياضية الراقية بدون تعصب.",
-                category = "رياضة",
-                iconEmoji = "⚽",
-                imageUrl = "https://images.unsplash.com/photo-1508098682722-e99c43a406b2?q=80&w=800&auto=format&fit=crop",
-                accessType = RoomAccessType.PUBLIC,
-                inviteCode = "SPORT-2026",
-                memberCount = 142,
-                maxMembers = 200,
-                isJoined = false,
-                isOwner = false,
-                pinnedMessage = "📌 الالتزام بالروح الرياضية هو شعار الغرفة الأول دائماً.",
-                members = listOf(
-                    RoomMember("rm_s1", "سلطان العتيبي", RoomMemberRole.OWNER, isOnline = true),
-                    RoomMember("rm_s2", "ماجد عبد الله", RoomMemberRole.ADMIN, isOnline = true),
-                    RoomMember("rm_s3", "خالد الشمري", RoomMemberRole.MEMBER, isOnline = false)
-                ),
-                messages = listOf(
-                    ChatMessage("rm_sm1", "سلطان العتيبي", "أهلاً بعشاق الساحرة المستديرة في مجلسنا الرياضي!", "أمس", false)
-                )
-            ),
-            ChatRoom(
-                id = "38102948",
-                name = "نخبة فرق التحدي الذهبية 🛡️",
-                description = "غرفة مغلقة بكلمة مرور لقادة ومشرفي الفرق لتنسيق الاستراتيجيات وجوائز المحفظة.",
-                category = "فرق",
-                iconEmoji = "🛡️",
-                imageUrl = "https://images.unsplash.com/photo-1550745165-9bc0b252726f?q=80&w=800&auto=format&fit=crop",
-                accessType = RoomAccessType.PASSWORD,
-                password = "1234",
-                inviteCode = "TEAM-VIP",
-                memberCount = 28,
-                maxMembers = 50,
-                isJoined = false,
-                isOwner = false,
-                pinnedMessage = "📌 كلمة المرور مطلوبة للدخول. نقاط التحدي القادم 5,000 نقطة من النظام.",
-                members = listOf(
-                    RoomMember("rm_t1", "كابتن زياد", RoomMemberRole.OWNER, isOnline = true),
-                    RoomMember("rm_t2", "هدى المنصور", RoomMemberRole.ADMIN, isOnline = true)
-                ),
-                messages = listOf(
-                    ChatMessage("rm_tm1", "كابتن زياد", "تم تجديد خطة التحديات الأسبوعية للفريق.", "منذ يومين", false)
-                )
-            ),
-            ChatRoom(
-                id = "49201943",
-                name = "صالون الأدب والثقافة العامة 📚",
-                description = "مساحة راقية للحوار الثقافي، الشعر العربي، وتحديات اللغة والألغاز الفكرية.",
-                category = "عام",
-                iconEmoji = "📚",
-                imageUrl = "https://images.unsplash.com/photo-1457369804613-52c61a468e7d?q=80&w=800&auto=format&fit=crop",
-                accessType = RoomAccessType.INVITE_ONLY,
-                inviteCode = "ADAB2026",
-                memberCount = 45,
-                maxMembers = 100,
-                isJoined = false,
-                isOwner = false,
-                pinnedMessage = "📌 الانضمام لهذه الغرفة عبر كود الدعوة فقط لضمان جودة المحتوى الأدبي.",
-                members = listOf(
-                    RoomMember("rm_a1", "د. عبد الرحمن", RoomMemberRole.OWNER, isOnline = true)
-                ),
-                messages = listOf(
-                    ChatMessage("rm_am1", "د. عبد الرحمن", "مرحباً بروّاد الكلمة الطيبة والفكر المستنير.", "منذ 3 أيام", false)
-                )
-            )
-        )
-    )
+    private val _chatRooms = MutableStateFlow<List<ChatRoom>>(emptyList())
     val chatRooms: StateFlow<List<ChatRoom>> = _chatRooms.asStateFlow()
 
     init {
@@ -315,14 +68,16 @@ class SocialAppViewModel : ViewModel() {
             while (true) {
                 delay(12000)
                 _chatRooms.update { currentRooms ->
-                    currentRooms.map { room ->
-                        // Slight natural member count fluctuation (+/- 1 or 2) within bounds
-                        val delta = listOf(-1, 0, 1, 1).random()
-                        val newCount = (room.memberCount + delta).coerceIn(1, room.maxMembers)
-                        if (newCount != room.memberCount) {
-                            room.copy(memberCount = newCount)
-                        } else {
-                            room
+                    if (currentRooms.isEmpty()) currentRooms
+                    else {
+                        currentRooms.map { room ->
+                            val delta = listOf(-1, 0, 1, 1).random()
+                            val newCount = (room.memberCount + delta).coerceIn(1, room.maxMembers)
+                            if (newCount != room.memberCount) {
+                                room.copy(memberCount = newCount)
+                            } else {
+                                room
+                            }
                         }
                     }
                 }
@@ -337,32 +92,22 @@ class SocialAppViewModel : ViewModel() {
     private val _activeGameMode = MutableStateFlow(GameMatchMode.RANDOM_OPPONENT)
     val activeGameMode: StateFlow<GameMatchMode> = _activeGameMode.asStateFlow()
 
-    private val _activeGameOpponent = MutableStateFlow("خصم عشوائي")
+    private val _activeGameOpponent = MutableStateFlow("")
     val activeGameOpponent: StateFlow<String> = _activeGameOpponent.asStateFlow()
 
     // --- Team State ---
     private val _myTeam = MutableStateFlow(
         Team(
-            id = "team_1",
-            name = "فرسان الضاد",
-            motto = "بالعلم والذكاء نتصدر القمم 🏹",
-            level = 5,
-            totalScore = 24650,
-            memberCount = 18,
-            maxMembers = 25,
-            rank = 1,
-            members = listOf(
-                TeamMember("m_1", "أحمد خالد", "قائد", 4200, true),
-                TeamMember("m_2", "سارة أحمد", "مشرف", 3850, true),
-                TeamMember("m_3", "أنت (أنا)", "مشرف", 3450, true),
-                TeamMember("m_4", "يوسف الدوسري", "عضو", 2100, false),
-                TeamMember("m_5", "منى الحربي", "عضو", 1900, true),
-                TeamMember("m_6", "فهد السالم", "عضو", 1650, false)
-            ),
-            challenges = listOf(
-                TeamChallenge("tc1", "تحدي المليون نقطة الأسبوعي", "جمع نقاط الألعاب عبر كل أعضاء الفريق", 780000, 1000000, 3, 2500),
-                TeamChallenge("tc2", "حل 500 لغز عربي", "الإجابة الصحيحة على ألغاز الكلمات", 340, 500, 5, 1200)
-            )
+            id = "",
+            name = "",
+            motto = "",
+            level = 0,
+            totalScore = 0,
+            memberCount = 0,
+            maxMembers = 0,
+            rank = 0,
+            members = emptyList(),
+            challenges = emptyList()
         )
     )
     val myTeam: StateFlow<Team> = _myTeam.asStateFlow()
@@ -375,7 +120,7 @@ class SocialAppViewModel : ViewModel() {
     val friendRequests: StateFlow<List<FriendRequest>> = _friendRequests.asStateFlow()
 
     // --- Wallet State ---
-    private val _walletBalance = MutableStateFlow(3450)
+    private val _walletBalance = MutableStateFlow(0)
     val walletBalance: StateFlow<Int> = _walletBalance.asStateFlow()
 
     private val _dailyBonusClaimed = MutableStateFlow(false)
@@ -384,20 +129,12 @@ class SocialAppViewModel : ViewModel() {
     private val _walletFilter = MutableStateFlow("الكل") // الكل، كسب، إنفاق
     val walletFilter: StateFlow<String> = _walletFilter.asStateFlow()
 
-    private val _transactions = MutableStateFlow(
-        listOf(
-            WalletTransaction("t1", "هدية ترحيبية من النظام", TransactionType.EARN, 1000, "01 سبتمبر", "مكافأة الانضمام للتطبيق"),
-            WalletTransaction("t2", "مكافأة الفوز في مسابقة الألغاز", TransactionType.EARN, 350, "04 سبتمبر", "تحدي الكلمات الثنائي"),
-            WalletTransaction("t3", "شراء إطار الحساب الذهبي", TransactionType.SPEND, 500, "06 سبتمبر", "متجر المقتنيات الافتراضية"),
-            WalletTransaction("t4", "مكافأة تحدي الفريق الأسبوعي", TransactionType.EARN, 800, "07 سبتمبر", "فريق فرسان الضاد - المركز الأول"),
-            WalletTransaction("t5", "مكافأة تسجيل الدخول اليومي", TransactionType.EARN, 150, "اليوم", "شحن نظامي مجاني")
-        )
-    )
+    private val _transactions = MutableStateFlow<List<WalletTransaction>>(emptyList())
     val transactions: StateFlow<List<WalletTransaction>> = _transactions.asStateFlow()
 
     private val _storeItems = MutableStateFlow(
         listOf(
-            StoreItem("item_1", "إطار البروفايل الذهبي", "إطار ملكي مميز يظهر حول صورتك في التعليقات والدردشة", 500, "إطارات", isOwned = true),
+            StoreItem("item_1", "إطار البروفايل الذهبي", "إطار ملكي مميز يظهر حول صورتك في التعليقات والدردشة", 500, "إطارات", isOwned = false),
             StoreItem("item_2", "وسام عبقري الألغاز", "شارة تظهر بجانب اسمك تثبت تفوقك في تحديات الذكاء", 750, "أوسمة", isOwned = false),
             StoreItem("item_3", "ثيم الدردشة الليلي الفاخر", "ألوان وخلفيات مخصصة لمحادثاتك الخاصة ومحادثات الفريق", 400, "ثيمات", isOwned = false),
             StoreItem("item_4", "درع دعم الفريق المشترك", "يرفع مضاعف نقاط الفريق بنسبة 10% لمدة 24 ساعة", 900, "تعزيزات", isOwned = false)

@@ -9,17 +9,17 @@ enum class AppTab(val titleAr: String) {
 }
 
 data class UserProfile(
-    val id: String = "84920153",
-    val name: String = "أحمد المنصور",
-    val handle: String = "84920153",
-    val bio: String = "عاشق للتقنية والتحديات البرمجية 💻 | عضو في فريق فرسان الألعاب 🛡️ | أهلاً بكم في صفحتي الشخصية!",
-    val avatarEmoji: String = "👨‍💻",
-    val email: String = "user@example.com",
-    val authProvider: String = "Google",
-    val followersCount: Int = 348,
-    val followingCount: Int = 192,
-    val teamsJoinedCount: Int = 2,
-    val joinDate: String = "عضو منذ يناير 2026",
+    val id: String = "",
+    val name: String = "",
+    val handle: String = "",
+    val bio: String = "",
+    val avatarEmoji: String = "👤",
+    val email: String = "",
+    val authProvider: String = "",
+    val followersCount: Int = 0,
+    val followingCount: Int = 0,
+    val teamsJoinedCount: Int = 0,
+    val joinDate: String = "",
     val isNotificationsEnabled: Boolean = true,
     val privacyLevel: String = "عام للجميع"
 )
