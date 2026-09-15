@@ -50,6 +50,9 @@ import coil.compose.AsyncImage
 import com.example.model.*
 import com.example.ui.theme.*
 import kotlinx.coroutines.delay
+import androidx.compose.foundation.pager.HorizontalPager
+import androidx.compose.foundation.pager.rememberPagerState
+import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -894,9 +897,27 @@ fun CommentsBottomSheet(
 
 @Composable
 fun StoryViewerDialog(
-    story: Story,
+    stories: List<Story>,
+    initialIndex: Int = 0,
     onDismiss: () -> Unit
 ) {
+    if (stories.isEmpty()) return
+
+    val pagerState = rememberPagerState(initialPage = initialIndex) { stories.size }
+    val coroutineScope = rememberCoroutineScope()
+
+    // Auto-advance every 5 seconds, unless it's the last story
+    LaunchedEffect(pagerState.currentPage) {
+        delay(5000)
+        if (pagerState.currentPage < stories.size - 1) {
+            coroutineScope.launch {
+                pagerState.animateScrollToPage(pagerState.currentPage + 1)
+            }
+        } else {
+            onDismiss()
+        }
+    }
+
     Dialog(onDismissRequest = onDismiss) {
         Card(
             modifier = Modifier
@@ -906,144 +927,188 @@ fun StoryViewerDialog(
             shape = RoundedCornerShape(24.dp),
             colors = CardDefaults.cardColors(containerColor = Color.Transparent)
         ) {
-            Box(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .background(
-                        Brush.verticalGradient(
-                            listOf(Color(0xFF3F1968), Color(0xFF140D26))
+            HorizontalPager(
+                state = pagerState,
+                modifier = Modifier.fillMaxSize()
+            ) { page ->
+                val story = stories[page]
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .background(
+                            Brush.verticalGradient(
+                                listOf(Color(0xFF3F1968), Color(0xFF140D26))
+                            )
                         )
-                    )
-                    .padding(20.dp)
-            ) {
-                Column(modifier = Modifier.fillMaxSize()) {
-                    // Timer bar simulator
-                    LinearProgressIndicator(
-                        progress = { 0.75f },
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .height(4.dp)
-                            .clip(RoundedCornerShape(2.dp)),
-                        color = MujtamaGold,
-                        trackColor = Color.White.copy(alpha = 0.3f)
-                    )
-
-                    Spacer(modifier = Modifier.height(14.dp))
-
-                    // Author info
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.SpaceBetween
-                    ) {
+                        .padding(20.dp)
+                ) {
+                    Column(modifier = Modifier.fillMaxSize()) {
+                        // Progress bars for all stories of this user
                         Row(
-                            verticalAlignment = Alignment.CenterVertically,
-                            horizontalArrangement = Arrangement.spacedBy(8.dp)
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.spacedBy(4.dp)
                         ) {
-                            Box(
-                                modifier = Modifier
-                                    .size(40.dp)
-                                    .clip(CircleShape)
-                                    .background(MujtamaTeal),
-                                contentAlignment = Alignment.Center
-                            ) {
-                                Text(
-                                    text = story.authorName.take(1),
-                                    color = Color.White,
-                                    fontWeight = FontWeight.Bold
-                                )
-                            }
-                            Column {
-                                Text(
-                                    text = story.authorName,
-                                    color = Color.White,
-                                    fontWeight = FontWeight.Bold,
-                                    fontSize = 14.sp
-                                )
-                                Text(
-                                    text = story.timeAgo,
-                                    color = Color.White.copy(alpha = 0.7f),
-                                    fontSize = 11.sp
+                            stories.forEachIndexed { index, _ ->
+                                LinearProgressIndicator(
+                                    progress = {
+                                        when {
+                                            index < pagerState.currentPage -> 1f
+                                            index == pagerState.currentPage -> 1f
+                                            else -> 0f
+                                        }
+                                    },
+                                    modifier = Modifier
+                                        .weight(1f)
+                                        .height(4.dp)
+                                        .clip(RoundedCornerShape(2.dp)),
+                                    color = MujtamaGold,
+                                    trackColor = Color.White.copy(alpha = 0.3f)
                                 )
                             }
                         }
 
-                        IconButton(onClick = onDismiss) {
-                            Icon(
-                                imageVector = Icons.Default.Close,
-                                contentDescription = "إغلاق",
-                                tint = Color.White
-                            )
-                        }
-                    }
+                        Spacer(modifier = Modifier.height(14.dp))
 
-                    // Story Media / Text / Visual Canvas
-                    Box(
-                        modifier = Modifier
-                            .weight(1f)
-                            .fillMaxWidth(),
-                        contentAlignment = Alignment.Center
-                    ) {
-                        if (!story.mediaUri.isNullOrBlank()) {
-                            AsyncImage(
-                                model = story.mediaUri,
-                                contentDescription = "محتوى القصة",
-                                modifier = Modifier
-                                    .fillMaxSize()
-                                    .clip(RoundedCornerShape(12.dp)),
-                                contentScale = ContentScale.Crop
-                            )
-                        }
-
-                        if (story.mediaType == StoryMediaType.VIDEO) {
-                            Surface(
-                                shape = RoundedCornerShape(16.dp),
-                                color = Color.Black.copy(alpha = 0.65f),
-                                modifier = Modifier
-                                    .align(Alignment.TopCenter)
-                                    .padding(top = 8.dp)
+                        // Author info
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.SpaceBetween
+                        ) {
+                            Row(
+                                verticalAlignment = Alignment.CenterVertically,
+                                horizontalArrangement = Arrangement.spacedBy(8.dp)
                             ) {
-                                Row(
-                                    modifier = Modifier.padding(horizontal = 10.dp, vertical = 4.dp),
-                                    verticalAlignment = Alignment.CenterVertically,
-                                    horizontalArrangement = Arrangement.spacedBy(4.dp)
+                                Box(
+                                    modifier = Modifier
+                                        .size(40.dp)
+                                        .clip(CircleShape)
+                                        .background(MujtamaTeal),
+                                    contentAlignment = Alignment.Center
                                 ) {
-                                    Icon(
-                                        imageVector = Icons.Default.PlayArrow,
-                                        contentDescription = null,
-                                        tint = Color.White,
-                                        modifier = Modifier.size(16.dp)
+                                    Text(
+                                        text = story.authorName.take(1),
+                                        color = Color.White,
+                                        fontWeight = FontWeight.Bold
+                                    )
+                                }
+                                Column {
+                                    Text(
+                                        text = story.authorName,
+                                        color = Color.White,
+                                        fontWeight = FontWeight.Bold,
+                                        fontSize = 14.sp
                                     )
                                     Text(
-                                        text = "فيديو ستوري",
+                                        text = story.timeAgo,
+                                        color = Color.White.copy(alpha = 0.7f),
+                                        fontSize = 11.sp
+                                    )
+                                }
+                            }
+
+                            IconButton(onClick = onDismiss) {
+                                Icon(
+                                    imageVector = Icons.Default.Close,
+                                    contentDescription = "إغلاق",
+                                    tint = Color.White
+                                )
+                            }
+                        }
+
+                        // Story Media / Text / Visual Canvas
+                        Box(
+                            modifier = Modifier
+                                .weight(1f)
+                                .fillMaxWidth(),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            if (!story.mediaUri.isNullOrBlank()) {
+                                AsyncImage(
+                                    model = story.mediaUri,
+                                    contentDescription = "محتوى القصة",
+                                    modifier = Modifier
+                                        .fillMaxSize()
+                                        .clip(RoundedCornerShape(12.dp)),
+                                    contentScale = ContentScale.Crop
+                                )
+                            }
+
+                            if (story.mediaType == StoryMediaType.VIDEO) {
+                                Surface(
+                                    shape = RoundedCornerShape(16.dp),
+                                    color = Color.Black.copy(alpha = 0.65f),
+                                    modifier = Modifier
+                                        .align(Alignment.TopCenter)
+                                        .padding(top = 8.dp)
+                                ) {
+                                    Row(
+                                        modifier = Modifier.padding(horizontal = 10.dp, vertical = 4.dp),
+                                        verticalAlignment = Alignment.CenterVertically,
+                                        horizontalArrangement = Arrangement.spacedBy(4.dp)
+                                    ) {
+                                        Icon(
+                                            imageVector = Icons.Default.PlayArrow,
+                                            contentDescription = null,
+                                            tint = Color.White,
+                                            modifier = Modifier.size(16.dp)
+                                        )
+                                        Text(
+                                            text = "فيديو ستوري",
+                                            color = Color.White,
+                                            fontSize = 11.sp,
+                                            fontWeight = FontWeight.Bold
+                                        )
+                                    }
+                                }
+                            }
+
+                            if (story.mediaText.isNotBlank()) {
+                                Surface(
+                                    shape = RoundedCornerShape(12.dp),
+                                    color = if (story.mediaUri.isNullOrBlank()) Color.Transparent else Color.Black.copy(alpha = 0.6f),
+                                    modifier = Modifier
+                                        .align(if (story.mediaUri.isNullOrBlank()) Alignment.Center else Alignment.BottomCenter)
+                                        .padding(12.dp)
+                                ) {
+                                    Text(
+                                        text = story.mediaText,
                                         color = Color.White,
-                                        fontSize = 11.sp,
-                                        fontWeight = FontWeight.Bold
+                                        fontSize = if (story.mediaUri.isNullOrBlank()) 22.sp else 15.sp,
+                                        fontWeight = FontWeight.Bold,
+                                        textAlign = TextAlign.Center,
+                                        lineHeight = if (story.mediaUri.isNullOrBlank()) 32.sp else 22.sp,
+                                        modifier = Modifier.padding(8.dp)
                                     )
                                 }
                             }
                         }
 
-                        if (story.mediaText.isNotBlank()) {
-                            Surface(
-                                shape = RoundedCornerShape(12.dp),
-                                color = if (story.mediaUri.isNullOrBlank()) Color.Transparent else Color.Black.copy(alpha = 0.6f),
-                                modifier = Modifier
-                                    .align(if (story.mediaUri.isNullOrBlank()) Alignment.Center else Alignment.BottomCenter)
-                                    .padding(12.dp)
-                            ) {
-                                Text(
-                                    text = story.mediaText,
-                                    color = Color.White,
-                                    fontSize = if (story.mediaUri.isNullOrBlank()) 22.sp else 15.sp,
-                                    fontWeight = FontWeight.Bold,
-                                    textAlign = TextAlign.Center,
-                                    lineHeight = if (story.mediaUri.isNullOrBlank()) 32.sp else 22.sp,
-                                    modifier = Modifier.padding(8.dp)
-                                )
+                        // Quick Story Reactions
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.SpaceEvenly
+                        ) {
+                            listOf("❤️", "🔥", "👏", "🏆", "🌟").forEach { emoji ->
+                                Surface(
+                                    modifier = Modifier
+                                        .size(44.dp)
+                                        .clip(CircleShape)
+                                        .clickable { onDismiss() },
+                                    color = Color.White.copy(alpha = 0.15f)
+                                ) {
+                                    Box(contentAlignment = Alignment.Center) {
+                                        Text(text = emoji, fontSize = 20.sp)
+                                    }
+                                }
                             }
                         }
                     }
+                }
+            }
+        }
+    }
+}
 
                     // Quick Story Reactions
                     Row(
