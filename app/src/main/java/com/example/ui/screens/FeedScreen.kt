@@ -1142,30 +1142,6 @@ fun StoryViewerDialog(
     }
 }
 
-                    // Quick Story Reactions
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.SpaceEvenly
-                    ) {
-                        listOf("❤️", "🔥", "👏", "🏆", "🌟").forEach { emoji ->
-                            Surface(
-                                modifier = Modifier
-                                    .size(44.dp)
-                                    .clip(CircleShape)
-                                    .clickable { onDismiss() },
-                                color = Color.White.copy(alpha = 0.15f)
-                            ) {
-                                Box(contentAlignment = Alignment.Center) {
-                                    Text(text = emoji, fontSize = 20.sp)
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        }
-    }
-}
 
 /**
  * Dialog displayed when camera permission is denied by the user.
