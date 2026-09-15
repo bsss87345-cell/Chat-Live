@@ -2073,77 +2073,178 @@ fun TextStoryView(
 }
 
 @Composable
-fun CreatePostDialog(
+fun FullScreenTextComposer(
     onDismiss: () -> Unit,
-    onPublish: (String, String, PostMediaType) -> Unit
+    onPublish: (String, String) -> Unit
 ) {
     var content by remember { mutableStateOf("") }
-    var tag by remember { mutableStateOf("تحديات_اليوم") }
-    var mediaType by remember { mutableStateOf(PostMediaType.NONE) }
+    var tag by remember { mutableStateOf("") }
 
-    AlertDialog(
+    Dialog(
         onDismissRequest = onDismiss,
-        title = { Text("إنشاء منشور جديد") },
-        text = {
-            Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
+        properties = DialogProperties(usePlatformDefaultWidth = false)
+    ) {
+        Surface(
+            modifier = Modifier.fillMaxSize(),
+            color = MaterialTheme.colorScheme.background
+        ) {
+            Column(modifier = Modifier.fillMaxSize()) {
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(16.dp),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.SpaceBetween
+                ) {
+                    IconButton(onClick = onDismiss) {
+                        Icon(Icons.Default.Close, contentDescription = "إغلاق")
+                    }
+                    Text(
+                        text = "منشور جديد",
+                        style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold)
+                    )
+                    Spacer(modifier = Modifier.width(48.dp))
+                }
+
                 OutlinedTextField(
                     value = content,
                     onValueChange = { content = it },
                     placeholder = { Text("ماذا يدور في ذهنك؟ شارك أعضاء المجتمع...") },
-                    modifier = Modifier.fillMaxWidth(),
-                    minLines = 3,
-                    maxLines = 6
+                    modifier = Modifier
+                        .weight(1f)
+                        .fillMaxWidth()
+                        .padding(horizontal = 16.dp),
+                    colors = OutlinedTextFieldDefaults.colors(
+                        unfocusedBorderColor = Color.Transparent,
+                        focusedBorderColor = Color.Transparent
+                    )
                 )
 
                 OutlinedTextField(
                     value = tag,
                     onValueChange = { tag = it },
-                    label = { Text("الوسم (هاشتاق)") },
-                    modifier = Modifier.fillMaxWidth(),
+                    label = { Text("الوسم (اختياري)") },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 16.dp),
                     singleLine = true
                 )
 
-                Text(
-                    text = "نوع المحتوى المرفق:",
-                    style = MaterialTheme.typography.bodySmall.copy(fontWeight = FontWeight.Bold)
-                )
-
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.spacedBy(8.dp)
+                Button(
+                    onClick = { onPublish(content, tag) },
+                    enabled = content.isNotBlank(),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(16.dp)
                 ) {
-                    FilterChip(
-                        selected = mediaType == PostMediaType.NONE,
-                        onClick = { mediaType = PostMediaType.NONE },
-                        label = { Text("نص فقط") }
-                    )
-                    FilterChip(
-                        selected = mediaType == PostMediaType.IMAGE,
-                        onClick = { mediaType = PostMediaType.IMAGE },
-                        label = { Text("صورة 📷") }
-                    )
-                    FilterChip(
-                        selected = mediaType == PostMediaType.SHORT_VIDEO,
-                        onClick = { mediaType = PostMediaType.SHORT_VIDEO },
-                        label = { Text("فيديو قصير 🎬") }
-                    )
+                    Text("نشر")
                 }
             }
-        },
-        confirmButton = {
-            Button(
-                onClick = { onPublish(content, tag, mediaType) },
-                enabled = content.isNotBlank()
-            ) {
-                Text("نشر الآن")
-            }
-        },
-        dismissButton = {
-            TextButton(onClick = onDismiss) {
-                Text("إلغاء")
+        }
+    }
+}
+
+@Composable
+fun FullScreenMediaComposer(
+    mediaUri: Uri,
+    onDismiss: () -> Unit,
+    onPublish: (String, String, PostMediaType) -> Unit
+) {
+    val context = LocalContext.current
+    var caption by remember { mutableStateOf("") }
+    var tag by remember { mutableStateOf("") }
+    val isVideo = remember(mediaUri) {
+        context.contentResolver.getType(mediaUri)?.startsWith("video") == true
+    }
+
+    Dialog(
+        onDismissRequest = onDismiss,
+        properties = DialogProperties(usePlatformDefaultWidth = false)
+    ) {
+        Surface(
+            modifier = Modifier.fillMaxSize(),
+            color = MaterialTheme.colorScheme.background
+        ) {
+            Column(modifier = Modifier.fillMaxSize()) {
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(16.dp),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.SpaceBetween
+                ) {
+                    IconButton(onClick = onDismiss) {
+                        Icon(Icons.Default.Close, contentDescription = "إغلاق")
+                    }
+                    Text(
+                        text = "منشور جديد",
+                        style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold)
+                    )
+                    Spacer(modifier = Modifier.width(48.dp))
+                }
+
+                Box(
+                    modifier = Modifier
+                        .weight(1f)
+                        .fillMaxWidth()
+                        .padding(horizontal = 16.dp),
+                    contentAlignment = Alignment.Center
+                ) {
+                    if (isVideo) {
+                        Surface(
+                            shape = RoundedCornerShape(12.dp),
+                            color = MaterialTheme.colorScheme.surfaceVariant,
+                            modifier = Modifier.fillMaxSize()
+                        ) {
+                            Box(contentAlignment = Alignment.Center) {
+                                Icon(
+                                    imageVector = Icons.Default.PlayArrow,
+                                    contentDescription = "فيديو",
+                                    modifier = Modifier.size(64.dp)
+                                )
+                            }
+                        }
+                    } else {
+                        AsyncImage(
+                            model = mediaUri,
+                            contentDescription = "الوسائط المختارة",
+                            modifier = Modifier.fillMaxSize(),
+                            contentScale = ContentScale.Fit
+                        )
+                    }
+                }
+
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(16.dp),
+                    verticalArrangement = Arrangement.spacedBy(8.dp)
+                ) {
+                    OutlinedTextField(
+                        value = caption,
+                        onValueChange = { caption = it },
+                        placeholder = { Text("أضف تعليقاً...") },
+                        modifier = Modifier.fillMaxWidth()
+                    )
+                    OutlinedTextField(
+                        value = tag,
+                        onValueChange = { tag = it },
+                        label = { Text("الوسم (اختياري)") },
+                        modifier = Modifier.fillMaxWidth(),
+                        singleLine = true
+                    )
+                    Button(
+                        onClick = {
+                            onPublish(caption, tag, if (isVideo) PostMediaType.SHORT_VIDEO else PostMediaType.IMAGE)
+                        },
+                        modifier = Modifier.fillMaxWidth()
+                    ) {
+                        Text("نشر")
+                    }
+                }
             }
         }
-    )
+    }
 }
 
 @Composable
