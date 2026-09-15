@@ -124,7 +124,12 @@ fun FeedScreen(
             // Quick Create Post Header
             item {
                 QuickCreatePostCard(
-                    onClick = { showCreatePostDialog = true }
+                    onTextClick = { showTextComposer = true },
+                    onGalleryClick = {
+                        galleryLauncher.launch(
+                            PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageAndVideo)
+                        )
+                    }
                 )
             }
 
