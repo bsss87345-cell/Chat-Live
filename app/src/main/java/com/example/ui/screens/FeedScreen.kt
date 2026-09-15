@@ -348,12 +348,14 @@ fun StoriesBar(
 }
 
 @Composable
-fun QuickCreatePostCard(onClick: () -> Unit) {
+fun QuickCreatePostCard(
+    onTextClick: () -> Unit,
+    onGalleryClick: () -> Unit
+) {
     Card(
         modifier = Modifier
             .fillMaxWidth()
             .padding(horizontal = 12.dp)
-            .clickable(onClick = onClick)
             .testTag("quick_create_post_card"),
         shape = RoundedCornerShape(16.dp),
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
@@ -376,7 +378,9 @@ fun QuickCreatePostCard(onClick: () -> Unit) {
                 Text(text = "أ", color = Color.White, fontWeight = FontWeight.Bold, fontSize = 16.sp)
             }
             Surface(
-                modifier = Modifier.weight(1f),
+                modifier = Modifier
+                    .weight(1f)
+                    .clickable(onClick = onTextClick),
                 shape = RoundedCornerShape(24.dp),
                 color = MaterialTheme.colorScheme.surfaceVariant
             ) {
@@ -387,10 +391,10 @@ fun QuickCreatePostCard(onClick: () -> Unit) {
                     fontSize = 13.sp
                 )
             }
-            IconButton(onClick = onClick) {
+            IconButton(onClick = onGalleryClick) {
                 Icon(
                     imageVector = Icons.Default.AddPhotoAlternate,
-                    contentDescription = "إرفاق وسائط",
+                    contentDescription = "إرفاق صورة أو فيديو",
                     tint = MaterialTheme.colorScheme.primary
                 )
             }
