@@ -16,6 +16,9 @@ class SocialAppViewModel : ViewModel() {
     private val _isLoggedIn = MutableStateFlow(false)
     val isLoggedIn: StateFlow<Boolean> = _isLoggedIn.asStateFlow()
 
+    private val _isDarkMode = MutableStateFlow(false)
+    val isDarkMode: StateFlow<Boolean> = _isDarkMode.asStateFlow()
+    
     private val _currentTab = MutableStateFlow(AppTab.FEED)
     val currentTab: StateFlow<AppTab> = _currentTab.asStateFlow()
 
@@ -159,6 +162,10 @@ class SocialAppViewModel : ViewModel() {
         _currentTab.value = tab
     }
 
+    fun toggleDarkMode() {
+        _isDarkMode.value = !_isDarkMode.value
+    }
+    
     // --- Feed Actions ---
     fun toggleLike(postId: String) {
         _posts.update { list ->
