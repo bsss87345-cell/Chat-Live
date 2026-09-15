@@ -68,12 +68,15 @@ fun MainScreen(viewModel: SocialAppViewModel) {
                     enter = slideInVertically(initialOffsetY = { -it }) + fadeIn(),
                     exit = slideOutVertically(targetOffsetY = { -it }) + fadeOut()
                 ) {
+                    val isDarkMode by viewModel.isDarkMode.collectAsStateWithLifecycle()
                     MujtamaTopBar(
                         currentTab = currentTab,
                         walletBalance = walletBalance,
+                        isDarkMode = isDarkMode,
                         onWalletClick = { viewModel.setTab(AppTab.PROFILE) },
                         onNotificationsClick = { viewModel.togglePushNotifications() },
-                        onSearchClick = { viewModel.setTab(AppTab.CHAT) }
+                        onSearchClick = { viewModel.setTab(AppTab.CHAT) },
+                        onToggleDarkMode = { viewModel.toggleDarkMode() }
                     )
                 }
             },
