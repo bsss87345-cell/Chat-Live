@@ -77,6 +77,16 @@ fun FeedScreen(
 ) {
     val context = LocalContext.current
     var showCreatePostDialog by remember { mutableStateOf(false) }
+    var showTextComposer by remember { mutableStateOf(false) }
+    var selectedMediaUri by remember { mutableStateOf<Uri?>(null) }
+
+    val galleryLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.PickVisualMedia()
+    ) { uri: Uri? ->
+        if (uri != null) {
+            selectedMediaUri = uri
+        }
+    }
     var showStoryCreationScreen by remember { mutableStateOf(false) }
     var showCameraPermissionDeniedDialog by remember { mutableStateOf(false) }
     var editingPost by remember { mutableStateOf<Post?>(null) }
