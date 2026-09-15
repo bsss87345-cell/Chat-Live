@@ -198,13 +198,25 @@ fun FeedScreen(
             )
         }
 
-        // Create Post Dialog
-        if (showCreatePostDialog) {
-            CreatePostDialog(
-                onDismiss = { showCreatePostDialog = false },
-                onPublish = { text, tag, mediaType ->
-                    onPublishPost(text, tag, mediaType)
-                    showCreatePostDialog = false
+        // Full-screen text-only composer
+        if (showTextComposer) {
+            FullScreenTextComposer(
+                onDismiss = { showTextComposer = false },
+                onPublish = { text, tag ->
+                    onPublishPost(text, tag, PostMediaType.NONE)
+                    showTextComposer = false
+                }
+            )
+        }
+
+        // Full-screen media (image/video) composer
+        selectedMediaUri?.let { uri ->
+            FullScreenMediaComposer(
+                mediaUri = uri,
+                onDismiss = { selectedMediaUri = null },
+                onPublish = { caption, tag, mediaType ->
+                    onPublishPost(caption, tag, mediaType)
+                    selectedMediaUri = null
                 }
             )
         }
