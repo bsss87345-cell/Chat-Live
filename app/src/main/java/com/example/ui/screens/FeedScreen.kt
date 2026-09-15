@@ -140,10 +140,13 @@ fun FeedScreen(
             }
         }
 
-        // Active Story Viewer Modal
+// Active Story Viewer Modal
         if (activeStory != null) {
+            val userStories = stories.filter { it.authorName == activeStory.authorName }
+            val startIndex = userStories.indexOfFirst { it.id == activeStory.id }.coerceAtLeast(0)
             StoryViewerDialog(
-                story = activeStory,
+                stories = userStories,
+                initialIndex = startIndex,
                 onDismiss = onCloseStory
             )
         }
