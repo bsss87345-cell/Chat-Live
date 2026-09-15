@@ -4,6 +4,8 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Brightness4
+import androidx.compose.material.icons.filled.Brightness7
 import androidx.compose.material.icons.outlined.Notifications
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
@@ -25,11 +27,13 @@ import com.example.ui.theme.MujtamaTeal
 fun MujtamaTopBar(
     currentTab: AppTab,
     walletBalance: Int = 0,
+    isDarkMode: Boolean = false,
     onWalletClick: () -> Unit = {},
     onNotificationsClick: () -> Unit = {},
-    onSearchClick: () -> Unit = {}
+    onSearchClick: () -> Unit = {},
+    onToggleDarkMode: () -> Unit = {}
 ) {
-    TopAppBar(
+    CenterAlignedTopAppBar(
         title = {
             Row(
                 verticalAlignment = Alignment.CenterVertically,
@@ -47,35 +51,25 @@ fun MujtamaTopBar(
                     contentAlignment = Alignment.Center
                 ) {
                     Text(
-                        text = "م",
+                        text = "C",
                         color = Color.White,
                         fontWeight = FontWeight.Bold,
                         fontSize = 18.sp
                     )
                 }
-                Column {
-                    Text(
-                        text = "مجتمعنا",
-                        style = MaterialTheme.typography.titleLarge.copy(
-                            fontWeight = FontWeight.Black,
-                            fontSize = 20.sp
-                        )
+                Text(
+                    text = "Chat Live",
+                    style = MaterialTheme.typography.titleLarge.copy(
+                        fontWeight = FontWeight.Black,
+                        fontSize = 20.sp
                     )
-                    Text(
-                        text = currentTab.titleAr,
-                        style = MaterialTheme.typography.bodySmall.copy(
-                            color = MaterialTheme.colorScheme.primary,
-                            fontSize = 11.sp,
-                            fontWeight = FontWeight.Medium
-                        )
-                    )
-                }
+                )
             }
         },
         actions = {
-            // Notification button in an ergonomically balanced container
+            // Notification button
             Box(
-                modifier = Modifier.padding(end = 8.dp),
+                modifier = Modifier.padding(end = 4.dp),
                 contentAlignment = Alignment.TopEnd
             ) {
                 Surface(
@@ -106,8 +100,31 @@ fun MujtamaTopBar(
                         .background(Color(0xFFE53935))
                 )
             }
+
+            // Dark/Light mode toggle button
+            Surface(
+                shape = CircleShape,
+                color = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.55f),
+                modifier = Modifier
+                    .size(40.dp)
+                    .padding(end = 8.dp)
+            ) {
+                IconButton(
+                    onClick = onToggleDarkMode,
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .testTag("top_bar_theme_toggle_button")
+                ) {
+                    Icon(
+                        imageVector = if (isDarkMode) Icons.Filled.Brightness7 else Icons.Filled.Brightness4,
+                        contentDescription = if (isDarkMode) "التبديل للوضع النهاري" else "التبديل للوضع الليلي",
+                        tint = MaterialTheme.colorScheme.onSurface,
+                        modifier = Modifier.size(22.dp)
+                    )
+                }
+            }
         },
-        colors = TopAppBarDefaults.topAppBarColors(
+        colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
             containerColor = MaterialTheme.colorScheme.surface,
             titleContentColor = MaterialTheme.colorScheme.onSurface
         )
