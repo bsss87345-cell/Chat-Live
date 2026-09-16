@@ -115,9 +115,12 @@ fun ChatScreen(
         ) {
             TabRow(
                 selectedTabIndex = if (chatSubTab == "المحادثات الخاصة") 0 else 1,
-                modifier = Modifier.padding(horizontal = 16.dp, vertical = 6.dp),
+                modifier = Modifier
+                    .padding(horizontal = 16.dp, vertical = 4.dp)
+                    .height(44.dp),
                 containerColor = Color.Transparent,
-                indicator = {}
+                indicator = {},
+                divider = {}
             ) {
                 listOf("المحادثات الخاصة", "غرف الدردشة").forEachIndexed { index, title ->
                     val isSelected = (index == 0 && chatSubTab == "المحادثات الخاصة") ||
