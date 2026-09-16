@@ -302,62 +302,6 @@ val sortedRooms = remember(rooms, searchQuery, roomViewFilter) {
         )
     }
 
-    // نافذة الانضمام عبر رمز الدعوة
-    if (showJoinByCodeDialog) {
-        var inviteCodeInput by remember { mutableStateOf("") }
-        var errorMsg by remember { mutableStateOf<String?>(null) }
-
-        AlertDialog(
-            onDismissRequest = { showJoinByCodeDialog = false },
-            title = {
-                Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(6.dp)) {
-                    Text("✉️")
-                    Text("الانضمام برمز الدعوة", fontSize = 16.sp, fontWeight = FontWeight.Bold)
-                }
-            },
-            text = {
-                Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                    Text("أدخل رمز الدعوة المخصص للغرفة الخاصة:", fontSize = 13.sp)
-                    OutlinedTextField(
-                        value = inviteCodeInput,
-                        onValueChange = {
-                            inviteCodeInput = it
-                            errorMsg = null
-                        },
-                        placeholder = { Text("مثال: GAME-2026") },
-                        singleLine = true,
-                        modifier = Modifier.fillMaxWidth()
-                    )
-                    if (errorMsg != null) {
-                        Text(errorMsg!!, color = MaterialTheme.colorScheme.error, fontSize = 11.sp)
-                    }
-                }
-            },
-            confirmButton = {
-                Button(
-                    onClick = {
-                        val trimmed = inviteCodeInput.trim()
-                        val found = rooms.find { it.inviteCode.equals(trimmed, ignoreCase = true) }
-                        if (found != null) {
-                            onJoinRoom(found.id, "")
-                            onOpenRoom(found.id)
-                            showJoinByCodeDialog = false
-                        } else {
-                            errorMsg = "رمز الدعوة غير صحيح أو الغرفة غير موجودة!"
-                        }
-                    }
-                ) {
-                    Text("انضمام")
-                }
-            },
-            dismissButton = {
-                TextButton(onClick = { showJoinByCodeDialog = false }) {
-                    Text("إلغاء")
-                }
-            }
-        )
-    }
-
     // نافذة إنشاء غرفة دردشة جديدة مع إمكانية رفع صورة الغرفة
     if (showCreateDialog) {
         CreateRoomDialogWithImage(
