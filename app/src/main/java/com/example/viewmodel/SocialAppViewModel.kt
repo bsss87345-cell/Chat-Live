@@ -483,11 +483,22 @@ class SocialAppViewModel : ViewModel() {
         }
     }
 
-    fun joinChatRoom(roomId: String, passwordInput: String = ""): Boolean {
+fun joinChatRoom(roomId: String, passwordInput: String = ""): Boolean {
         val room = _chatRooms.value.find { it.id == roomId } ?: return false
+
+        if (room.blockedMemberIds.contains("me")) {
+            _userMessage.value = "لا يمكنك الانضمام لهذه الغرفة."
+            return false
+        }
+
         if (room.isJoined) {
             _activeRoomId.value = roomId
             return true
+        }
+
+        if (room.isLocked && !room.isOwner) {
+            _userMessage.value = "هذه الغرفة مقفلة حاليًا ولا تقبل أعضاء جدد."
+            return false
         }
 
         if (room.accessType == RoomAccessType.PASSWORD && room.password != passwordInput.trim()) {
@@ -537,6 +548,14 @@ class SocialAppViewModel : ViewModel() {
         }
         _activeRoomId.value = null
         _userMessage.value = "تمت مغادرة الغرفة."
+    }
+
+    fun toggleRoomLock(roomId: String) {
+        _chatRooms.update { list ->
+            list.map {
+                if (it.id == roomId) it.copy(isLocked = !it.isLocked) else it
+            }
+        }
     }
 
     fun sendRoomMessage(roomId: String, text: String, type: ChatMessageType = ChatMessageType.TEXT) {
