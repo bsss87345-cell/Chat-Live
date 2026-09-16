@@ -767,9 +767,10 @@ fun ChatRoomView(
     // Intercept system back button/gesture to leave room smoothly
     BackHandler(onBack = onBack)
 
-    Column(
+Column(
         modifier = Modifier
             .fillMaxSize()
+            .background(chatBackgroundColor)
             .navigationBarsPadding()
     ) {
 // Room Top App Bar
