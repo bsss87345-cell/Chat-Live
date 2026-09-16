@@ -2334,30 +2334,7 @@ fun EditPostDialog(
     )
 }
 
-@Composable
-fun DeletePostConfirmDialog(
-    onDismiss: () -> Unit,
-    onConfirm: () -> Unit
-) {
-    AlertDialog(
-        onDismissRequest = onDismiss,
-        title = { Text("حذف المنشور") },
-        text = { Text("هل أنت متأكد من حذف هذا المنشور؟ لا يمكن التراجع عن هذا الإجراء.") },
-        confirmButton = {
-            Button(
-                onClick = onConfirm,
-                colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.error)
-            ) {
-                Text("حذف")
-            }
-        },
-        dismissButton = {
-            TextButton(onClick = onDismiss) {
-                Text("إلغاء")
-            }
-        }
-    )
-}
+
 
 @Composable
 fun ReportPostDialog(
