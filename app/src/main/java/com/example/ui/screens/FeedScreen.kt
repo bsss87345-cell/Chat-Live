@@ -2281,6 +2281,7 @@ fun FullScreenMediaComposer(
                     modifier = Modifier
                         .align(Alignment.BottomCenter)
                         .fillMaxWidth()
+
 @Composable
 fun FullScreenMediaComposer(
     mediaUri: Uri,
@@ -2404,57 +2405,6 @@ fun FullScreenMediaComposer(
             }
         }
     }
-}
-@Composable
-fun EditPostDialog(
-    post: Post,
-    onDismiss: () -> Unit,
-    onSave: (String) -> Unit
-) {
-    var contentText by remember { mutableStateOf(post.content) }
-
-    AlertDialog(
-        onDismissRequest = onDismiss,
-        title = {
-            Text(
-                text = "تعديل المنشور",
-                fontWeight = FontWeight.Bold,
-                style = MaterialTheme.typography.titleLarge
-            )
-        },
-        text = {
-            Column(
-                modifier = Modifier.fillMaxWidth(),
-                verticalArrangement = Arrangement.spacedBy(8.dp)
-            ) {
-                OutlinedTextField(
-                    value = contentText,
-                    onValueChange = { contentText = it },
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .heightIn(min = 120.dp)
-                        .testTag("edit_post_input"),
-                    shape = RoundedCornerShape(12.dp),
-                    minLines = 3,
-                    maxLines = 6
-                )
-            }
-        },
-        confirmButton = {
-            Button(
-                onClick = { onSave(contentText) },
-                enabled = contentText.isNotBlank(),
-                modifier = Modifier.testTag("save_edit_post_button")
-            ) {
-                Text("حفظ التعديل")
-            }
-        },
-        dismissButton = {
-            TextButton(onClick = onDismiss) {
-                Text("إلغاء")
-            }
-        }
-    )
 }
 
 @Composable
