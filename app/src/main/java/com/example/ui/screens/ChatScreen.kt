@@ -1821,14 +1821,31 @@ fun ChatListView(
         matchesFilter && matchesSearch
     }
 
-    LazyColumn(
+LazyColumn(
         modifier = Modifier.fillMaxSize(),
         contentPadding = PaddingValues(bottom = 80.dp),
         verticalArrangement = Arrangement.spacedBy(8.dp)
     ) {
-// (Push notification banner removed)
+        // Filter Chips Row
+        item {
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 12.dp, vertical = 4.dp),
+                horizontalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                listOf("الكل", "متصل الآن").forEach { filter ->
+                    FilterChip(
+                        selected = chatFilter == filter,
+                        onClick = { onFilterChange(filter) },
+                        label = { Text(filter, fontSize = 12.sp) },
+                        modifier = Modifier.testTag("chat_filter_${if (filter == "الكل") "all" else "online"}")
+                    )
+                }
+            }
+        }
 
-// Conversation List Items
+        // Conversation List Items
         items(filteredConversations, key = { it.id }) { conv ->
             var showOptionsMenu by remember { mutableStateOf(false) }
 
