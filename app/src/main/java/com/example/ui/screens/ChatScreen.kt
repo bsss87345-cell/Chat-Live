@@ -751,6 +751,7 @@ fun ChatRoomView(
     onChangeMemberRole: (String, RoomMemberRole) -> Unit,
     onUpdateSettings: (String, String, Int) -> Unit,
     onLeaveRoom: () -> Unit,
+    onToggleLock: () -> Unit,
     onStartRoomGame: (GameType) -> Unit,
     onPlayGameDirectly: (GameType?) -> Unit
 ) {
@@ -763,7 +764,6 @@ fun ChatRoomView(
     var showAdminsListDialog by remember { mutableStateOf(false) }
     var showBannedListDialog by remember { mutableStateOf(false) }
     var showBackgroundPickerDialog by remember { mutableStateOf(false) }
-    var isRoomLocked by remember { mutableStateOf(false) }
     var chatBackgroundColor by remember { mutableStateOf(Color.Transparent) }
     
     val currentMember = room.members.find { it.id == "me" }
