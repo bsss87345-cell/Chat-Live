@@ -389,7 +389,7 @@ class SocialAppViewModel : ViewModel() {
         _userMessage.value = "تم إرسال دعوة لعبة $gameTitle إلى المحادثة! يمكنك خوض اللعبة بالضغط على 'العب التحدي الآن'."
     }
 
-    // --- Chat Rooms Actions ---
+// --- Chat Rooms Actions ---
     fun setChatSubTab(tab: String) {
         _chatSubTab.value = tab
     }
@@ -399,11 +399,31 @@ class SocialAppViewModel : ViewModel() {
     }
 
     fun openRoom(roomId: String) {
+        val room = _chatRooms.value.find { it.id == roomId } ?: return
+
+        if (room.blockedMemberIds.contains("me")) {
+            _userMessage.value = "لا يمكنك دخول هذه الغرفة."
+            return
+        }
+
+        if (room.isLocked && !room.isOwner && !room.isJoined) {
+            _userMessage.value = "هذه الغرفة مقفلة حاليًا ولا تقبل أعضاء جدد."
+            return
+        }
+
         _activeRoomId.value = roomId
     }
 
     fun closeRoom() {
         _activeRoomId.value = null
+    }
+
+    fun setRoomLocked(roomId: String, locked: Boolean) {
+        _chatRooms.update { list ->
+            list.map {
+                if (it.id == roomId) it.copy(isLocked = locked) else it
+            }
+        }
     }
 
     fun createChatRoom(
