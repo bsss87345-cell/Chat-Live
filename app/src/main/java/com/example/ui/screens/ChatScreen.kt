@@ -1249,18 +1249,18 @@ Column(
                         Text("تغيير خلفية الدردشة")
                     }
 
-                    OutlinedButton(
-                        onClick = { isRoomLocked = !isRoomLocked },
+OutlinedButton(
+                        onClick = { onToggleLock() },
                         modifier = Modifier.fillMaxWidth()
                     ) {
                         Icon(
-                            imageVector = if (isRoomLocked) Icons.Default.Lock else Icons.Default.LockOpen,
+                            imageVector = if (room.isLocked) Icons.Default.Lock else Icons.Default.LockOpen,
                             contentDescription = null,
                             modifier = Modifier.size(16.dp)
                         )
                         Spacer(modifier = Modifier.width(6.dp))
-                        Text(if (isRoomLocked) "الغرفة مقفلة 🔒" else "قفل الغرفة")
-                    }
+                        Text(if (room.isLocked) "الغرفة مقفلة 🔒" else "قفل الغرفة")
+}
                 }
             },
             confirmButton = {},
