@@ -93,53 +93,75 @@ val sortedRooms = remember(rooms, searchQuery, roomViewFilter) {
         horizontalArrangement = Arrangement.spacedBy(10.dp),
         verticalArrangement = Arrangement.spacedBy(10.dp)
     ) {
-        // شريط الإجراءات والبحث (يمتد على كامل العرض)
+// شريط التبويبات والإجراءات الجديد
         item(span = { GridItemSpan(2) }) {
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(bottom = 4.dp),
-                horizontalArrangement = Arrangement.spacedBy(8.dp),
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                OutlinedTextField(
-                    value = searchQuery,
-                    onValueChange = { searchQuery = it },
-                    placeholder = { Text("ابحث عن ID أو اسم الغرفة", fontSize = 12.sp) },
-                    leadingIcon = { Icon(Icons.Default.Search, contentDescription = "بحث") },
-                    trailingIcon = if (searchQuery.isNotEmpty()) {
-                        {
-                            IconButton(onClick = { searchQuery = "" }) {
-                                Icon(Icons.Default.Close, contentDescription = "مسح", modifier = Modifier.size(16.dp))
-                            }
-                        }
-                    } else null,
-                    shape = RoundedCornerShape(20.dp),
+            Column(modifier = Modifier.fillMaxWidth()) {
+                Row(
                     modifier = Modifier
-                        .weight(1f)
-                        .testTag("rooms_search_input"),
-                    singleLine = true
-                )
-
-                // زر إنشاء غرفة دردشة جديدة
-                FilledTonalButton(
-                    onClick = { showCreateDialog = true },
-                    shape = RoundedCornerShape(16.dp),
-                    colors = ButtonDefaults.filledTonalButtonColors(containerColor = MujtamaPrimary),
-                    contentPadding = PaddingValues(horizontal = 12.dp, vertical = 10.dp),
-                    modifier = Modifier.testTag("create_room_button")
+                        .fillMaxWidth()
+                        .padding(bottom = 4.dp),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
                 ) {
-                    Icon(Icons.Default.Add, contentDescription = null, tint = Color.White, modifier = Modifier.size(18.dp))
-                    Spacer(modifier = Modifier.width(4.dp))
-                    Text("إنشاء", color = Color.White, fontSize = 12.sp, fontWeight = FontWeight.Bold)
+                    Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                        FilterChip(
+                            selected = roomViewFilter == "العامة",
+                            onClick = { roomViewFilter = "العامة" },
+                            label = { Text("العامة", fontSize = 12.sp) },
+                            modifier = Modifier.testTag("rooms_tab_public")
+                        )
+                        FilterChip(
+                            selected = roomViewFilter == "الخاص بي",
+                            onClick = { roomViewFilter = "الخاص بي" },
+                            label = { Text("الخاص بي", fontSize = 12.sp) },
+                            modifier = Modifier.testTag("rooms_tab_mine")
+                        )
+                    }
+
+                    Row(horizontalArrangement = Arrangement.spacedBy(4.dp)) {
+                        IconButton(
+                            onClick = { showCreateDialog = true },
+                            modifier = Modifier.testTag("create_room_button")
+                        ) {
+                            Icon(
+                                imageVector = Icons.Default.AddHome,
+                                contentDescription = "إنشاء غرفة",
+                                tint = MujtamaPrimary
+                            )
+                        }
+                        IconButton(
+                            onClick = { showSearchBar = !showSearchBar },
+                            modifier = Modifier.testTag("rooms_search_toggle")
+                        ) {
+                            Icon(
+                                imageVector = Icons.Default.Search,
+                                contentDescription = "بحث",
+                                tint = MujtamaTeal
+                            )
+                        }
+                    }
                 }
 
-                // زر الانضمام عبر كود دعوة
-                IconButton(
-                    onClick = { showJoinByCodeDialog = true },
-                    modifier = Modifier.testTag("join_by_code_button")
-                ) {
-                    Icon(Icons.Default.Link, contentDescription = "رمز دعوة", tint = MujtamaTeal)
+                AnimatedVisibility(visible = showSearchBar) {
+                    OutlinedTextField(
+                        value = searchQuery,
+                        onValueChange = { searchQuery = it },
+                        placeholder = { Text("ابحث عن ID أو اسم الغرفة", fontSize = 12.sp) },
+                        leadingIcon = { Icon(Icons.Default.Search, contentDescription = "بحث") },
+                        trailingIcon = if (searchQuery.isNotEmpty()) {
+                            {
+                                IconButton(onClick = { searchQuery = "" }) {
+                                    Icon(Icons.Default.Close, contentDescription = "مسح", modifier = Modifier.size(16.dp))
+                                }
+                            }
+                        } else null,
+                        shape = RoundedCornerShape(20.dp),
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(top = 6.dp)
+                            .testTag("rooms_search_input"),
+                        singleLine = true
+                    )
                 }
             }
         }
