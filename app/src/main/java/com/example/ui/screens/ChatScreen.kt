@@ -1580,26 +1580,26 @@ private fun VoiceSeatItem(
                         )
                     }
                 )
-                // حواف دائرية ناعمة مع تأثير التوهج عند التحدث
+// حواف دائرية أوضح مع تأثير التوهج عند التحدث
                 .border(
-                    width = if (isSpeaking) 2.dp else 1.dp,
+                    width = if (isSpeaking) 3.dp else 2.dp,
                     brush = when {
                         isSpeaking -> Brush.linearGradient(
                             listOf(
                                 MujtamaTeal.copy(alpha = glowAlpha),
-                                Color.White.copy(alpha = 0.7f)
+                                Color.White.copy(alpha = 0.9f)
                             )
                         )
                         isOccupied -> Brush.linearGradient(
                             listOf(
-                                MaterialTheme.colorScheme.primary.copy(alpha = 0.55f),
-                                Color.White.copy(alpha = 0.25f)
+                                MaterialTheme.colorScheme.primary.copy(alpha = 0.85f),
+                                Color.White.copy(alpha = 0.5f)
                             )
                         )
                         else -> Brush.linearGradient(
                             listOf(
-                                Color.White.copy(alpha = 0.15f),
-                                Color.White.copy(alpha = 0.05f)
+                                MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.45f),
+                                MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.25f)
                             )
                         )
                     },
@@ -1632,7 +1632,6 @@ private fun VoiceSeatItem(
         )
     }
 }
-// -------------------------------------------------------------
 @Composable
 fun RoomMessageBubble(
     message: ChatMessage,
