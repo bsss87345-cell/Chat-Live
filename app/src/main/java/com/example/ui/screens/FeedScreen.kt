@@ -2176,7 +2176,7 @@ fun FullScreenMediaComposer(
         context.contentResolver.getType(mediaUri)?.startsWith("video") == true
     }
 
-Dialog(
+    Dialog(
         onDismissRequest = onDismiss,
         properties = DialogProperties(
             usePlatformDefaultWidth = false,
@@ -2187,86 +2187,93 @@ Dialog(
             modifier = Modifier.fillMaxSize(),
             color = MaterialTheme.colorScheme.background
         ) {
-            Column(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .imePadding()
-            ) {
-                Row(
+            Box(modifier = Modifier.fillMaxSize()) {
+                Column(
                     modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(16.dp),
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.SpaceBetween
+                        .fillMaxSize()
+                        .padding(bottom = 80.dp)
                 ) {
-                    IconButton(onClick = onDismiss) {
-                        Icon(Icons.Default.Close, contentDescription = "إغلاق")
-                    }
-                    Text(
-                        text = "منشور جديد",
-                        style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold)
-                    )
-                    Spacer(modifier = Modifier.width(48.dp))
-                }
-
-                Box(
-                    modifier = Modifier
-                        .weight(1f)
-                        .fillMaxWidth()
-                        .padding(horizontal = 16.dp),
-                    contentAlignment = Alignment.Center
-                ) {
-                    if (isVideo) {
-                        Surface(
-                            shape = RoundedCornerShape(12.dp),
-                            color = MaterialTheme.colorScheme.surfaceVariant,
-                            modifier = Modifier.fillMaxSize()
-                        ) {
-                            Box(contentAlignment = Alignment.Center) {
-                                Icon(
-                                    imageVector = Icons.Default.PlayArrow,
-                                    contentDescription = "فيديو",
-                                    modifier = Modifier.size(64.dp)
-                                )
-                            }
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(16.dp),
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.SpaceBetween
+                    ) {
+                        IconButton(onClick = onDismiss) {
+                            Icon(Icons.Default.Close, contentDescription = "إغلاق")
                         }
-                    } else {
-                        AsyncImage(
-                            model = mediaUri,
-                            contentDescription = "الوسائط المختارة",
-                            modifier = Modifier.fillMaxSize(),
-                            contentScale = ContentScale.Fit
+                        Text(
+                            text = "منشور جديد",
+                            style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold)
+                        )
+                        Spacer(modifier = Modifier.width(48.dp))
+                    }
+
+                    Box(
+                        modifier = Modifier
+                            .weight(1f)
+                            .fillMaxWidth()
+                            .padding(horizontal = 16.dp),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        if (isVideo) {
+                            Surface(
+                                shape = RoundedCornerShape(12.dp),
+                                color = MaterialTheme.colorScheme.surfaceVariant,
+                                modifier = Modifier.fillMaxSize()
+                            ) {
+                                Box(contentAlignment = Alignment.Center) {
+                                    Icon(
+                                        imageVector = Icons.Default.PlayArrow,
+                                        contentDescription = "فيديو",
+                                        modifier = Modifier.size(64.dp)
+                                    )
+                                }
+                            }
+                        } else {
+                            AsyncImage(
+                                model = mediaUri,
+                                contentDescription = "الوسائط المختارة",
+                                modifier = Modifier.fillMaxSize(),
+                                contentScale = ContentScale.Fit
+                            )
+                        }
+                    }
+
+                    Column(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = 16.dp),
+                        verticalArrangement = Arrangement.spacedBy(8.dp)
+                    ) {
+                        OutlinedTextField(
+                            value = caption,
+                            onValueChange = { caption = it },
+                            placeholder = { Text("أضف تعليقاً...") },
+                            modifier = Modifier.fillMaxWidth()
+                        )
+                        OutlinedTextField(
+                            value = tag,
+                            onValueChange = { tag = it },
+                            label = { Text("الوسم (اختياري)") },
+                            modifier = Modifier.fillMaxWidth(),
+                            singleLine = true
                         )
                     }
                 }
 
-                Column(
+                Button(
+                    onClick = {
+                        onPublish(caption, tag, if (isVideo) PostMediaType.SHORT_VIDEO else PostMediaType.IMAGE)
+                    },
                     modifier = Modifier
+                        .align(Alignment.BottomCenter)
                         .fillMaxWidth()
-                        .padding(16.dp),
-                    verticalArrangement = Arrangement.spacedBy(8.dp)
+                        .padding(16.dp)
+                        .imePadding()
                 ) {
-                    OutlinedTextField(
-                        value = caption,
-                        onValueChange = { caption = it },
-                        placeholder = { Text("أضف تعليقاً...") },
-                        modifier = Modifier.fillMaxWidth()
-                    )
-                    OutlinedTextField(
-                        value = tag,
-                        onValueChange = { tag = it },
-                        label = { Text("الوسم (اختياري)") },
-                        modifier = Modifier.fillMaxWidth(),
-                        singleLine = true
-                    )
-                    Button(
-                        onClick = {
-                            onPublish(caption, tag, if (isVideo) PostMediaType.SHORT_VIDEO else PostMediaType.IMAGE)
-                        },
-                        modifier = Modifier.fillMaxWidth()
-                    ) {
-                        Text("نشر")
-                    }
+                    Text("نشر")
                 }
             }
         }
