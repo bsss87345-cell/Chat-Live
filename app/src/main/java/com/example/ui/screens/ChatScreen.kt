@@ -1822,189 +1822,134 @@ fun ChatListView(
         contentPadding = PaddingValues(bottom = 80.dp),
         verticalArrangement = Arrangement.spacedBy(8.dp)
     ) {
-        // Push Notification Banner & Status
-        item {
-            Card(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 12.dp, vertical = 6.dp),
-                shape = RoundedCornerShape(16.dp),
-                colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.6f))
-            ) {
-                Row(
+// (Push notification banner removed)
+
+// Conversation List Items
+        items(filteredConversations, key = { it.id }) { conv ->
+            var showOptionsMenu by remember { mutableStateOf(false) }
+
+            Box {
+                Card(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(horizontal = 14.dp, vertical = 10.dp),
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.SpaceBetween
+                        .padding(horizontal = 12.dp)
+                        .combinedClickable(
+                            onClick = { onOpenChat(conv.id) },
+                            onLongClick = { showOptionsMenu = true }
+                        )
+                        .testTag("conversation_item_${conv.id}"),
+                    shape = RoundedCornerShape(16.dp),
+                    colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
+                    elevation = CardDefaults.cardElevation(defaultElevation = 1.dp)
                 ) {
                     Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(14.dp),
                         verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.spacedBy(10.dp)
+                        horizontalArrangement = Arrangement.spacedBy(12.dp)
                     ) {
-                        Icon(
-                            imageVector = if (pushNotificationsEnabled) Icons.Filled.NotificationsActive else Icons.Filled.NotificationsOff,
-                            contentDescription = "التنبيهات الفورية",
-                            tint = if (pushNotificationsEnabled) MujtamaTeal else MaterialTheme.colorScheme.onSurfaceVariant
-                        )
-                        Column {
-                            Text(
-                                text = "الإشعارات الفورية (Push)",
-                                fontWeight = FontWeight.Bold,
-                                fontSize = 13.sp
-                            )
-                            Text(
-                                text = if (pushNotificationsEnabled) "نشطة للرسائل وألعاب التحدي" else "معطلة حالياً",
-                                fontSize = 11.sp,
-                                color = MaterialTheme.colorScheme.onSurfaceVariant
-                            )
-                        }
-                    }
-                    Switch(
-                        checked = pushNotificationsEnabled,
-                        onCheckedChange = { onTogglePushNotifications() },
-                        modifier = Modifier.testTag("push_notifications_toggle")
-                    )
-                }
-            }
-        }
-
-        // Search Bar
-        item {
-            OutlinedTextField(
-                value = searchQuery,
-                onValueChange = { searchQuery = it },
-                placeholder = { Text("بحث في المحادثات والأصدقاء...", fontSize = 13.sp) },
-                leadingIcon = { Icon(Icons.Default.Search, contentDescription = "بحث") },
-                shape = RoundedCornerShape(20.dp),
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 12.dp)
-                    .testTag("chat_search_input"),
-                singleLine = true
-            )
-        }
-
-        // Filter Chips Row
-        item {
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 12.dp, vertical = 4.dp),
-                horizontalArrangement = Arrangement.spacedBy(8.dp)
-            ) {
-                listOf("الكل", "متصل الآن").forEach { filter ->
-                    FilterChip(
-                        selected = chatFilter == filter,
-                        onClick = { onFilterChange(filter) },
-                        label = { Text(filter, fontSize = 12.sp) },
-                        modifier = Modifier.testTag("chat_filter_${if (filter == "الكل") "all" else "online"}")
-                    )
-                }
-            }
-        }
-
-        // Conversation List Items
-        items(filteredConversations, key = { it.id }) { conv ->
-            Card(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 12.dp)
-                    .clickable { onOpenChat(conv.id) }
-                    .testTag("conversation_item_${conv.id}"),
-                shape = RoundedCornerShape(16.dp),
-                colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
-                elevation = CardDefaults.cardElevation(defaultElevation = 1.dp)
-            ) {
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(14.dp),
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.spacedBy(12.dp)
-                ) {
-                    // Avatar with online badge
-                    Box {
-                        Box(
-                            modifier = Modifier
-                                .size(48.dp)
-                                .clip(CircleShape)
-                                .background(
-                                    Brush.linearGradient(
-                                        if (conv.isGroup) listOf(MujtamaPrimary, MujtamaTeal)
-                                        else listOf(MujtamaTeal, MujtamaGold)
-                                    )
-                                ),
-                            contentAlignment = Alignment.Center
-                        ) {
-                            Icon(
-                                imageVector = if (conv.isGroup) Icons.Default.Groups else Icons.Default.Person,
-                                contentDescription = conv.name,
-                                tint = Color.White,
-                                modifier = Modifier.size(24.dp)
-                            )
-                        }
-
-                        if (conv.isOnline) {
+                        // Avatar with online badge
+                        Box {
                             Box(
                                 modifier = Modifier
-                                    .size(14.dp)
+                                    .size(48.dp)
                                     .clip(CircleShape)
-                                    .background(MujtamaOnlineGreen)
-                                    .align(Alignment.BottomEnd)
-                            )
+                                    .background(
+                                        Brush.linearGradient(
+                                            if (conv.isGroup) listOf(MujtamaPrimary, MujtamaTeal)
+                                            else listOf(MujtamaTeal, MujtamaGold)
+                                        )
+                                    ),
+                                contentAlignment = Alignment.Center
+                            ) {
+                                Icon(
+                                    imageVector = if (conv.isGroup) Icons.Default.Groups else Icons.Default.Person,
+                                    contentDescription = conv.name,
+                                    tint = Color.White,
+                                    modifier = Modifier.size(24.dp)
+                                )
+                            }
+
+                            if (conv.isOnline) {
+                                Box(
+                                    modifier = Modifier
+                                        .size(14.dp)
+                                        .clip(CircleShape)
+                                        .background(MujtamaOnlineGreen)
+                                        .align(Alignment.BottomEnd)
+                                )
+                            }
                         }
-                    }
 
-                    // Texts
-                    Column(modifier = Modifier.weight(1f)) {
-                        Row(
-                            modifier = Modifier.fillMaxWidth(),
-                            horizontalArrangement = Arrangement.SpaceBetween,
-                            verticalAlignment = Alignment.CenterVertically
-                        ) {
-                            Text(
-                                text = conv.name,
-                                fontWeight = FontWeight.Bold,
-                                fontSize = 15.sp
-                            )
-                            Text(
-                                text = conv.time,
-                                fontSize = 11.sp,
-                                color = MaterialTheme.colorScheme.onSurfaceVariant
-                            )
-                        }
+                        // Texts
+                        Column(modifier = Modifier.weight(1f)) {
+                            Row(
+                                modifier = Modifier.fillMaxWidth(),
+                                horizontalArrangement = Arrangement.SpaceBetween,
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                Text(
+                                    text = conv.name,
+                                    fontWeight = FontWeight.Bold,
+                                    fontSize = 15.sp
+                                )
+                                Text(
+                                    text = conv.time,
+                                    fontSize = 11.sp,
+                                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                                )
+                            }
 
-                        Spacer(modifier = Modifier.height(4.dp))
+                            Spacer(modifier = Modifier.height(4.dp))
 
-                        Row(
-                            modifier = Modifier.fillMaxWidth(),
-                            horizontalArrangement = Arrangement.SpaceBetween,
-                            verticalAlignment = Alignment.CenterVertically
-                        ) {
-                            Text(
-                                text = conv.lastMessage,
-                                fontSize = 13.sp,
-                                color = MaterialTheme.colorScheme.onSurfaceVariant,
-                                maxLines = 1
-                            )
+                            Row(
+                                modifier = Modifier.fillMaxWidth(),
+                                horizontalArrangement = Arrangement.SpaceBetween,
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                Text(
+                                    text = conv.lastMessage,
+                                    fontSize = 13.sp,
+                                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                    maxLines = 1
+                                )
 
-                            if (conv.unreadCount > 0) {
-                                Badge(
-                                    containerColor = MaterialTheme.colorScheme.primary,
-                                    contentColor = Color.White
-                                ) {
-                                    Text("${conv.unreadCount}")
+                                if (conv.unreadCount > 0) {
+                                    Badge(
+                                        containerColor = MaterialTheme.colorScheme.primary,
+                                        contentColor = Color.White
+                                    ) {
+                                        Text("${conv.unreadCount}")
+                                    }
                                 }
                             }
                         }
                     }
                 }
+
+                DropdownMenu(
+                    expanded = showOptionsMenu,
+                    onDismissRequest = { showOptionsMenu = false }
+                ) {
+                    DropdownMenuItem(
+                        text = { Text("تثبيت المحادثة") },
+                        onClick = { showOptionsMenu = false },
+                        leadingIcon = { Icon(Icons.Default.PushPin, contentDescription = null) }
+                    )
+                    DropdownMenuItem(
+                        text = { Text("حذف المحادثة") },
+                        onClick = { showOptionsMenu = false },
+                        leadingIcon = { Icon(Icons.Default.Delete, contentDescription = null) }
+                    )
+                    DropdownMenuItem(
+                        text = { Text("حظر المستخدم") },
+                        onClick = { showOptionsMenu = false },
+                        leadingIcon = { Icon(Icons.Default.Block, contentDescription = null) }
+                    )
+                }
             }
         }
-    }
-}
-
 // -------------------------------------------------------------
 // DIRECT CONVERSATION DETAIL VIEW (المحادثة الفردية)
 // -------------------------------------------------------------
