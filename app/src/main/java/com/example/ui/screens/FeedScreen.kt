@@ -2334,29 +2334,6 @@ fun EditPostDialog(
     )
 }
 
-
-
-@Composable
-fun ReportPostDialog(
-    onDismiss: () -> Unit,
-    onConfirm: () -> Unit
-) {
-    AlertDialog(
-        onDismissRequest = onDismiss,
-        title = { Text("الإبلاغ عن المنشور") },
-        text = { Text("هل تريد الإبلاغ عن هذا المنشور لمراجعته من قِبل المشرفين؟") },
-        confirmButton = {
-            Button(onClick = onConfirm) {
-                Text("إرسال البلاغ")
-            }
-        },
-        dismissButton = {
-            TextButton(onClick = onDismiss) {
-                Text("إلغاء")
-            }
-        }
-    )
-}
 @Composable
 fun DeletePostConfirmDialog(
     post: Post,
