@@ -68,7 +68,8 @@ fun ChatScreen(
     onMuteRoomMember: (String, String) -> Unit,
     onChangeMemberRole: (String, String, RoomMemberRole) -> Unit,
     onUpdateRoomSettings: (String, String, String, Int) -> Unit,
-    onStartInRoomGame: (String, GameType) -> Unit
+    onStartInRoomGame: (String, GameType) -> Unit,
+    onToggleLock: (String) -> Unit
 ) {
     // 1. If an active direct conversation is open
     if (activeChatId != null) {
@@ -101,6 +102,7 @@ fun ChatScreen(
                 onChangeMemberRole = { memId, newRole -> onChangeMemberRole(activeRoom.id, memId, newRole) },
                 onUpdateSettings = { name, desc, max -> onUpdateRoomSettings(activeRoom.id, name, desc, max) },
                 onLeaveRoom = { onLeaveRoom(activeRoom.id) },
+                onToggleLock = { onToggleLock(activeRoom.id) },
                 onStartRoomGame = { gameType -> onStartInRoomGame(activeRoom.id, gameType) },
                 onPlayGameDirectly = onNavigateToGames
             )
