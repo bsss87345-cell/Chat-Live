@@ -842,10 +842,12 @@ fun ChatRoomView(
                     )
                 }
 
-                // Members List Button
+// Members List Button
                 IconButton(
                     onClick = { showMembersSheet = true },
-                    modifier = Modifier.testTag("room_members_button")
+                    modifier = Modifier
+                        .size(36.dp)
+                        .testTag("room_members_button")
                 ) {
                     Icon(Icons.Default.Group, contentDescription = "الأعضاء", tint = MaterialTheme.colorScheme.primary)
                 }
