@@ -792,12 +792,12 @@ fun ChatRoomView(
                     Icon(Icons.Default.ArrowForward, contentDescription = "رجوع")
                 }
 
-                // Room Image (or empty if none was set)
+// Room Image (or first letter of room name if none was set)
                 Box(
                     modifier = Modifier
                         .size(34.dp)
                         .clip(CircleShape)
-                        .background(if (room.imageUrl.isNullOrBlank()) Color.Transparent else MujtamaPrimary),
+                        .background(if (room.imageUrl.isNullOrBlank()) MujtamaPrimary else Color.Transparent),
                     contentAlignment = Alignment.Center
                 ) {
                     if (!room.imageUrl.isNullOrBlank()) {
@@ -806,6 +806,13 @@ fun ChatRoomView(
                             contentDescription = room.name,
                             contentScale = ContentScale.Crop,
                             modifier = Modifier.fillMaxSize()
+                        )
+                    } else {
+                        Text(
+                            text = room.name.take(1),
+                            color = Color.White,
+                            fontWeight = FontWeight.Bold,
+                            fontSize = 14.sp
                         )
                     }
                 }
