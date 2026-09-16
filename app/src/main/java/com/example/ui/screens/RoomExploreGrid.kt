@@ -120,16 +120,23 @@ val sortedRooms = remember(rooms, searchQuery, roomViewFilter) {
                     }
 
                     Row(horizontalArrangement = Arrangement.spacedBy(4.dp)) {
-                        IconButton(
-                            onClick = { showCreateDialog = true },
+IconButton(
+                            onClick = {
+                                val myRoom = rooms.find { it.isOwner }
+                                if (myRoom != null) {
+                                    onOpenRoom(myRoom.id)
+                                } else {
+                                    showCreateDialog = true
+                                }
+                            },
                             modifier = Modifier.testTag("create_room_button")
                         ) {
                             Icon(
                                 imageVector = Icons.Default.AddHome,
-                                contentDescription = "إنشاء غرفة",
+                                contentDescription = "غرفتي",
                                 tint = MujtamaPrimary
                             )
-                        }
+}
                         IconButton(
                             onClick = { showSearchBar = !showSearchBar },
                             modifier = Modifier.testTag("rooms_search_toggle")
