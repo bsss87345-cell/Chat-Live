@@ -2088,15 +2088,22 @@ fun FullScreenTextComposer(
     var content by remember { mutableStateOf("") }
     var tag by remember { mutableStateOf("") }
 
-    Dialog(
+Dialog(
         onDismissRequest = onDismiss,
-        properties = DialogProperties(usePlatformDefaultWidth = false)
+        properties = DialogProperties(
+            usePlatformDefaultWidth = false,
+            decorFitsSystemWindows = false
+        )
     ) {
         Surface(
             modifier = Modifier.fillMaxSize(),
             color = MaterialTheme.colorScheme.background
         ) {
-            Column(modifier = Modifier.fillMaxSize()) {
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .imePadding()
+            ) {
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
