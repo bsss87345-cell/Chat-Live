@@ -759,7 +759,13 @@ fun ChatRoomView(
     var showSettingsDialog by remember { mutableStateOf(false) }
     var showPinDialog by remember { mutableStateOf(false) }
     var showGamePicker by remember { mutableStateOf(false) }
-
+    var showMembersListDialog by remember { mutableStateOf(false) }
+    var showAdminsListDialog by remember { mutableStateOf(false) }
+    var showBannedListDialog by remember { mutableStateOf(false) }
+    var showBackgroundPickerDialog by remember { mutableStateOf(false) }
+    var isRoomLocked by remember { mutableStateOf(false) }
+    var chatBackgroundColor by remember { mutableStateOf(Color.Transparent) }
+    
     val currentMember = room.members.find { it.id == "me" }
     val isOwnerOrAdmin = room.isOwner || currentMember?.role == RoomMemberRole.ADMIN || currentMember?.role == RoomMemberRole.OWNER
     val isMuted = currentMember?.isMuted == true
