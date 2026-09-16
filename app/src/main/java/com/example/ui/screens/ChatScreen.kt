@@ -126,12 +126,13 @@ fun ChatScreen(
                         selected = isSelected,
                         onClick = { onSubTabChange(title) },
                         modifier = Modifier
-                            .clip(RoundedCornerShape(20.dp))
+                            .padding(horizontal = 4.dp)
+                            .clip(RoundedCornerShape(16.dp))
                             .background(
                                 if (isSelected) MaterialTheme.colorScheme.primary
                                 else MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f)
                             )
-                            .padding(vertical = 10.dp)
+                            .padding(horizontal = 10.dp, vertical = 6.dp)
                             .testTag("chat_subtab_$index"),
                         text = {
                             Row(
