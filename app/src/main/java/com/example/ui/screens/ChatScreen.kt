@@ -2114,9 +2114,10 @@ fun ChatConversationView(
     var inputText by remember { mutableStateOf("") }
     var showGamePicker by remember { mutableStateOf(false) }
 
-    Column(
+Column(
         modifier = Modifier
             .fillMaxSize()
+            .background(chatBackgroundColor)
             .navigationBarsPadding()
     ) {
         // Chat Header
