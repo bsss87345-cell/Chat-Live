@@ -2123,7 +2123,6 @@ fun ChatConversationView(
 Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(chatBackgroundColor)
             .navigationBarsPadding()
     ) {
         // Chat Header
