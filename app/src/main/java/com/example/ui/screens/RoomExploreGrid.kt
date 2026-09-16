@@ -552,13 +552,15 @@ fun CreateRoomDialogWithImage(
     ) -> Unit
 ) {
     var name by remember { mutableStateOf("") }
-    var description by remember { mutableStateOf("") }
-    var category by remember { mutableStateOf("عام") }
-    var accessType by remember { mutableStateOf(RoomAccessType.PUBLIC) }
-    var password by remember { mutableStateOf("") }
-    var maxMembersText by remember { mutableStateOf("100") }
-    var selectedEmoji by remember { mutableStateOf("💬") }
     var selectedImageUrl by remember { mutableStateOf<String?>(null) }
+
+    // القيم الافتراضية الثابتة بعد حذف الحقول من الواجهة
+    val description = ""
+    val category = "عام"
+    val accessType = RoomAccessType.PUBLIC
+    val password: String? = null
+    val maxMembersText = "100"
+    val selectedEmoji = "💬"
 
     // لاقط الصور بدون أذونات خارجية (Android Photo Picker)
     val photoPickerLauncher = rememberLauncherForActivityResult(
@@ -634,86 +636,6 @@ fun CreateRoomDialogWithImage(
                             }
                         }
                     }
-
-                    // نماذج صور سريعة مقترحة لسهولة التجربة
-                    Spacer(modifier = Modifier.height(4.dp))
-                    Text("أو اختر نموذجاً سريعاً:", fontSize = 10.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
-                    LazyRow(horizontalArrangement = Arrangement.spacedBy(6.dp)) {
-                        val presets = listOf(
-                            "🎮 ألعاب" to "https://images.unsplash.com/photo-1542751371-adc38448a05e?q=80&w=800&auto=format&fit=crop",
-                            "⚽ رياضة" to "https://images.unsplash.com/photo-1508098682722-e99c43a406b2?q=80&w=800&auto=format&fit=crop",
-                            "🛡️ فرق" to "https://images.unsplash.com/photo-1550745165-9bc0b252726f?q=80&w=800&auto=format&fit=crop",
-                            "📚 ثقافة" to "https://images.unsplash.com/photo-1457369804613-52c61a468e7d?q=80&w=800&auto=format&fit=crop",
-                            "💡 تقنية" to "https://images.unsplash.com/photo-1518770660439-4636190af475?q=80&w=800&auto=format&fit=crop"
-                        )
-                        items(presets) { (title, url) ->
-                            FilterChip(
-                                selected = selectedImageUrl == url,
-                                onClick = { selectedImageUrl = url },
-                                label = { Text(title, fontSize = 10.sp) }
-                            )
-                        }
-                    }
-                }
-
-                // وصف الغرفة
-                item {
-                    OutlinedTextField(
-                        value = description,
-                        onValueChange = { description = it },
-                        label = { Text("وصف مختصر للغرفة") },
-                        placeholder = { Text("عن ماذا تتحدث هذه الغرفة؟") },
-                        modifier = Modifier.fillMaxWidth(),
-                        maxLines = 2
-                    )
-                }
-
-                // التصنيف والاهتمام
-                item {
-                    Text("التصنيف:", fontSize = 12.sp, fontWeight = FontWeight.SemiBold)
-                    LazyRow(horizontalArrangement = Arrangement.spacedBy(6.dp)) {
-                        items(listOf("ألعاب", "رياضة", "فرق", "عام", "تقنية", "ثقافة")) { cat ->
-                            FilterChip(
-                                selected = category == cat,
-                                onClick = { category = cat },
-                                label = { Text(cat, fontSize = 11.sp) }
-                            )
-                        }
-                    }
-                }
-
-                // نوع الدخول
-                item {
-                    Text("نوع الوصول:", fontSize = 12.sp, fontWeight = FontWeight.SemiBold)
-                    Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                        FilterChip(
-                            selected = accessType == RoomAccessType.PUBLIC,
-                            onClick = { accessType = RoomAccessType.PUBLIC },
-                            label = { Text("عامة 🌐", fontSize = 11.sp) }
-                        )
-                        FilterChip(
-                            selected = accessType == RoomAccessType.PASSWORD,
-                            onClick = { accessType = RoomAccessType.PASSWORD },
-                            label = { Text("بكلمة سر 🔒", fontSize = 11.sp) }
-                        )
-                        FilterChip(
-                            selected = accessType == RoomAccessType.INVITE_ONLY,
-                            onClick = { accessType = RoomAccessType.INVITE_ONLY },
-                            label = { Text("دعوة ✉️", fontSize = 11.sp) }
-                        )
-                    }
-                }
-
-                if (accessType == RoomAccessType.PASSWORD) {
-                    item {
-                        OutlinedTextField(
-                            value = password,
-                            onValueChange = { password = it },
-                            label = { Text("كلمة المرور المطلوبة للدخول") },
-                            modifier = Modifier.fillMaxWidth(),
-                            singleLine = true
-                        )
-                    }
                 }
             }
         },
@@ -726,13 +648,13 @@ fun CreateRoomDialogWithImage(
                         description,
                         category,
                         accessType,
-                        password.ifBlank { null },
+                        password,
                         maxCount,
                         selectedEmoji,
                         selectedImageUrl
                     )
                 },
-                enabled = name.isNotBlank() && description.isNotBlank()
+                enabled = name.isNotBlank()
             ) {
                 Text("إنشاء الغرفة")
             }
