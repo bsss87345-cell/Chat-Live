@@ -132,10 +132,13 @@ data class ChatRoom(
     val maxMembers: Int = 100,
     val isJoined: Boolean = false,
     val isOwner: Boolean = false,
+    val isLocked: Boolean = false,
     val pinnedMessage: String? = null,
     val members: List<RoomMember> = emptyList(),
     val messages: List<ChatMessage> = emptyList(),
-    val imageUrl: String? = null
+    val imageUrl: String? = null,
+    val backgroundImageUrl: String? = null,
+    val blockedMemberIds: List<String> = emptyList()
 )
 
 data class TeamMember(
