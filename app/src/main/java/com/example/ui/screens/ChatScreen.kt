@@ -1187,85 +1187,13 @@ fun ChatRoomView(
         )
     }
 
-    // Room Settings & Actions Dialog
+// Room Settings & Actions Dialog
     if (showSettingsDialog) {
-        var editName by remember { mutableStateOf(room.name) }
-        var editDesc by remember { mutableStateOf(room.description) }
-        var editMax by remember { mutableStateOf(room.maxMembers.toString()) }
-
         AlertDialog(
             onDismissRequest = { showSettingsDialog = false },
             title = { Text("إعدادات وإدارة الغرفة ⚙️") },
             text = {
                 Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
-                    if (isOwnerOrAdmin) {
-                        Text("صلاحيات الإدارة (مشرف/مالك):", fontWeight = FontWeight.Bold, fontSize = 12.sp)
-
-                        OutlinedTextField(
-                            value = editName,
-                            onValueChange = { editName = it },
-                            label = { Text("اسم الغرفة") },
-                            modifier = Modifier.fillMaxWidth(),
-                            singleLine = true
-                        )
-
-                        OutlinedTextField(
-                            value = editDesc,
-                            onValueChange = { editDesc = it },
-                            label = { Text("وصف الغرفة") },
-                            modifier = Modifier.fillMaxWidth(),
-                            maxLines = 2
-                        )
-
-                        OutlinedTextField(
-                            value = editMax,
-                            onValueChange = { editMax = it.filter { c -> c.isDigit() } },
-                            label = { Text("الحد الأقصى للأعضاء") },
-                            modifier = Modifier.fillMaxWidth(),
-                            singleLine = true
-                        )
-
-                        Button(
-                            onClick = {
-                                val max = editMax.toIntOrNull() ?: room.maxMembers
-                                onUpdateSettings(editName, editDesc, max)
-                                showSettingsDialog = false
-                            },
-                            modifier = Modifier.fillMaxWidth(),
-                            colors = ButtonDefaults.buttonColors(containerColor = MujtamaTeal)
-                        ) {
-                            Text("حفظ التعديلات")
-                        }
-
-                        // Button to pin message
-                        OutlinedButton(
-                            onClick = {
-                                showSettingsDialog = false
-                                showPinDialog = true
-                            },
-                            modifier = Modifier.fillMaxWidth()
-                        ) {
-                            Icon(Icons.Default.PushPin, contentDescription = null, modifier = Modifier.size(16.dp))
-                            Spacer(modifier = Modifier.width(6.dp))
-                            Text("تثبيت إعلان جديد في أعلى الغرفة")
-                        }
-                    }
-
-                    HorizontalDivider()
-
-                    // Leave room button
-                    Button(
-                        onClick = {
-                            showSettingsDialog = false
-                            onLeaveRoom()
-                        },
-                        colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.error),
-                        modifier = Modifier.fillMaxWidth()
-                    ) {
-                        Icon(Icons.Default.ExitToApp, contentDescription = null, modifier = Modifier.size(16.dp))
-                        Spacer(modifier = Modifier.width(6.dp))
-                        Text("مغادرة الغرفة")
-                    }
                 }
             },
             confirmButton = {},
