@@ -3,6 +3,9 @@ package com.example.ui.screens
 import android.Manifest
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.view.WindowManager
+import androidx.compose.ui.platform.LocalView
+import androidx.compose.ui.window.DialogWindowProvider
 import android.net.Uri
 import android.provider.Settings
 import androidx.activity.compose.rememberLauncherForActivityResult
@@ -2096,6 +2099,14 @@ fun FullScreenTextComposer(
             decorFitsSystemWindows = false
         )
     ) {
+        val view = LocalView.current
+        SideEffect {
+            val window = (view.parent as? DialogWindowProvider)?.window
+            window?.setLayout(
+                WindowManager.LayoutParams.MATCH_PARENT,
+                WindowManager.LayoutParams.MATCH_PARENT
+            )
+        }
         Surface(
             modifier = Modifier.fillMaxSize(),
             color = MaterialTheme.colorScheme.background
@@ -2270,6 +2281,121 @@ fun FullScreenMediaComposer(
                     modifier = Modifier
                         .align(Alignment.BottomCenter)
                         .fillMaxWidth()
+@Composable
+fun FullScreenMediaComposer(
+    mediaUri: Uri,
+    onDismiss: () -> Unit,
+    onPublish: (String, String, PostMediaType) -> Unit
+) {
+    val context = LocalContext.current
+    var caption by remember { mutableStateOf("") }
+    var tag by remember { mutableStateOf("") }
+    val isVideo = remember(mediaUri) {
+        context.contentResolver.getType(mediaUri)?.startsWith("video") == true
+    }
+
+    Dialog(
+        onDismissRequest = onDismiss,
+        properties = DialogProperties(
+            usePlatformDefaultWidth = false,
+            decorFitsSystemWindows = false
+        )
+    ) {
+        val view = LocalView.current
+        SideEffect {
+            val window = (view.parent as? DialogWindowProvider)?.window
+            window?.setLayout(
+                WindowManager.LayoutParams.MATCH_PARENT,
+                WindowManager.LayoutParams.MATCH_PARENT
+            )
+        }
+        Surface(
+            modifier = Modifier.fillMaxSize(),
+            color = MaterialTheme.colorScheme.background
+        ) {
+            Box(modifier = Modifier.fillMaxSize()) {
+                Column(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(bottom = 80.dp)
+                ) {
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(16.dp),
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.SpaceBetween
+                    ) {
+                        IconButton(onClick = onDismiss) {
+                            Icon(Icons.Default.Close, contentDescription = "إغلاق")
+                        }
+                        Text(
+                            text = "منشور جديد",
+                            style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold)
+                        )
+                        Spacer(modifier = Modifier.width(48.dp))
+                    }
+
+                    Box(
+                        modifier = Modifier
+                            .weight(1f)
+                            .fillMaxWidth()
+                            .padding(horizontal = 16.dp),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        if (isVideo) {
+                            Surface(
+                                shape = RoundedCornerShape(12.dp),
+                                color = MaterialTheme.colorScheme.surfaceVariant,
+                                modifier = Modifier.fillMaxSize()
+                            ) {
+                                Box(contentAlignment = Alignment.Center) {
+                                    Icon(
+                                        imageVector = Icons.Default.PlayArrow,
+                                        contentDescription = "فيديو",
+                                        modifier = Modifier.size(64.dp)
+                                    )
+                                }
+                            }
+                        } else {
+                            AsyncImage(
+                                model = mediaUri,
+                                contentDescription = "الوسائط المختارة",
+                                modifier = Modifier.fillMaxSize(),
+                                contentScale = ContentScale.Fit
+                            )
+                        }
+                    }
+
+                    Column(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = 16.dp),
+                        verticalArrangement = Arrangement.spacedBy(8.dp)
+                    ) {
+                        OutlinedTextField(
+                            value = caption,
+                            onValueChange = { caption = it },
+                            placeholder = { Text("أضف تعليقاً...") },
+                            modifier = Modifier.fillMaxWidth()
+                        )
+                        OutlinedTextField(
+                            value = tag,
+                            onValueChange = { tag = it },
+                            label = { Text("الوسم (اختياري)") },
+                            modifier = Modifier.fillMaxWidth(),
+                            singleLine = true
+                        )
+                    }
+                }
+
+                Button(
+                    onClick = {
+                        onPublish(caption, tag, if (isVideo) PostMediaType.SHORT_VIDEO else PostMediaType.IMAGE)
+                    },
+                    modifier = Modifier
+                        .align(Alignment.BottomCenter)
+                        .fillMaxWidth()
                         .padding(16.dp)
                         .imePadding()
                 ) {
@@ -2279,7 +2405,6 @@ fun FullScreenMediaComposer(
         }
     }
 }
-
 @Composable
 fun EditPostDialog(
     post: Post,
