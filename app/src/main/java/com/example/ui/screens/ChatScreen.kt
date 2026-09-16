@@ -1194,11 +1194,182 @@ fun ChatRoomView(
             title = { Text("إعدادات وإدارة الغرفة ⚙️") },
             text = {
                 Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
+                    OutlinedButton(
+                        onClick = {
+                            showSettingsDialog = false
+                            showMembersListDialog = true
+                        },
+                        modifier = Modifier.fillMaxWidth()
+                    ) {
+                        Icon(Icons.Default.Group, contentDescription = null, modifier = Modifier.size(16.dp))
+                        Spacer(modifier = Modifier.width(6.dp))
+                        Text("الأعضاء")
+                    }
+
+                    OutlinedButton(
+                        onClick = {
+                            showSettingsDialog = false
+                            showAdminsListDialog = true
+                        },
+                        modifier = Modifier.fillMaxWidth()
+                    ) {
+                        Icon(Icons.Default.Security, contentDescription = null, modifier = Modifier.size(16.dp))
+                        Spacer(modifier = Modifier.width(6.dp))
+                        Text("المشرفون")
+                    }
+
+                    OutlinedButton(
+                        onClick = {
+                            showSettingsDialog = false
+                            showBannedListDialog = true
+                        },
+                        modifier = Modifier.fillMaxWidth()
+                    ) {
+                        Icon(Icons.Default.Block, contentDescription = null, modifier = Modifier.size(16.dp))
+                        Spacer(modifier = Modifier.width(6.dp))
+                        Text("المحظورون")
+                    }
+
+                    OutlinedButton(
+                        onClick = {
+                            showSettingsDialog = false
+                            showBackgroundPickerDialog = true
+                        },
+                        modifier = Modifier.fillMaxWidth()
+                    ) {
+                        Icon(Icons.Default.Wallpaper, contentDescription = null, modifier = Modifier.size(16.dp))
+                        Spacer(modifier = Modifier.width(6.dp))
+                        Text("تغيير خلفية الدردشة")
+                    }
+
+                    OutlinedButton(
+                        onClick = { isRoomLocked = !isRoomLocked },
+                        modifier = Modifier.fillMaxWidth()
+                    ) {
+                        Icon(
+                            imageVector = if (isRoomLocked) Icons.Default.Lock else Icons.Default.LockOpen,
+                            contentDescription = null,
+                            modifier = Modifier.size(16.dp)
+                        )
+                        Spacer(modifier = Modifier.width(6.dp))
+                        Text(if (isRoomLocked) "الغرفة مقفلة 🔒" else "قفل الغرفة")
+                    }
                 }
             },
             confirmButton = {},
             dismissButton = {
                 TextButton(onClick = { showSettingsDialog = false }) {
+                    Text("إغلاق")
+                }
+            }
+        )
+    }
+
+    // Members List Dialog
+    if (showMembersListDialog) {
+        AlertDialog(
+            onDismissRequest = { showMembersListDialog = false },
+            title = { Text("أعضاء الغرفة (${room.members.size})") },
+            text = {
+                LazyColumn(verticalArrangement = Arrangement.spacedBy(6.dp)) {
+                    items(room.members) { member ->
+                        Text(text = member.name, fontSize = 13.sp)
+                    }
+                }
+            },
+            confirmButton = {},
+            dismissButton = {
+                TextButton(onClick = { showMembersListDialog = false }) {
+                    Text("إغلاق")
+                }
+            }
+        )
+    }
+
+    // Admins List Dialog
+    if (showAdminsListDialog) {
+        val admins = room.members.filter { it.role == RoomMemberRole.ADMIN || it.role == RoomMemberRole.OWNER }
+        AlertDialog(
+            onDismissRequest = { showAdminsListDialog = false },
+            title = { Text("مشرفو الغرفة (${admins.size})") },
+            text = {
+                if (admins.isEmpty()) {
+                    Text("لا يوجد مشرفون حالياً.", fontSize = 13.sp)
+                } else {
+                    LazyColumn(verticalArrangement = Arrangement.spacedBy(6.dp)) {
+                        items(admins) { member ->
+                            Text(text = "${member.name} (${member.role.labelAr})", fontSize = 13.sp)
+                        }
+                    }
+                }
+            },
+            confirmButton = {},
+            dismissButton = {
+                TextButton(onClick = { showAdminsListDialog = false }) {
+                    Text("إغلاق")
+                }
+            }
+        )
+    }
+
+    // Banned List Dialog
+    if (showBannedListDialog) {
+        AlertDialog(
+            onDismissRequest = { showBannedListDialog = false },
+            title = { Text("المستخدمون المحظورون") },
+            text = {
+                Text("لا يوجد مستخدمون محظورون حالياً.", fontSize = 13.sp)
+            },
+            confirmButton = {},
+            dismissButton = {
+                TextButton(onClick = { showBannedListDialog = false }) {
+                    Text("إغلاق")
+                }
+            }
+        )
+    }
+
+    // Chat Background Picker Dialog
+    if (showBackgroundPickerDialog) {
+        val backgroundOptions = listOf(
+            "افتراضي" to Color.Transparent,
+            "أزرق فاتح" to Color(0xFFE3F2FD),
+            "أخضر فاتح" to Color(0xFFE8F5E9),
+            "بنفسجي فاتح" to Color(0xFFF3E5F5),
+            "رمادي داكن" to Color(0xFF263238)
+        )
+        AlertDialog(
+            onDismissRequest = { showBackgroundPickerDialog = false },
+            title = { Text("اختر خلفية الدردشة") },
+            text = {
+                Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                    backgroundOptions.forEach { (label, color) ->
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .clickable {
+                                    chatBackgroundColor = color
+                                    showBackgroundPickerDialog = false
+                                }
+                                .padding(vertical = 8.dp),
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.spacedBy(10.dp)
+                        ) {
+                            Box(
+                                modifier = Modifier
+                                    .size(28.dp)
+                                    .clip(CircleShape)
+                                    .background(color)
+                                    .border(1.dp, Color.Gray.copy(alpha = 0.3f), CircleShape)
+                            )
+                            Text(label, fontSize = 13.sp)
+                        }
+                    }
+                }
+            },
+            confirmButton = {},
+            dismissButton = {
+                TextButton(onClick = { showBackgroundPickerDialog = false }) {
                     Text("إغلاق")
                 }
             }
