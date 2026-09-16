@@ -1469,21 +1469,21 @@ private fun OwnerVoiceSeat(
                         )
                     )
                 )
-                // حواف دائرية ناعمة مع تأثير توهج حيوي عند التحدث
+// حواف دائرية أوضح مع تأثير توهج حيوي عند التحدث
                 .border(
-                    width = if (isSpeaking) 2.dp else 1.5.dp,
+                    width = if (isSpeaking) 3.dp else 2.5.dp,
                     brush = if (isSpeaking) {
                         Brush.linearGradient(
                             listOf(
                                 MujtamaGold.copy(alpha = glowAlpha),
-                                Color.White.copy(alpha = 0.7f)
+                                Color.White.copy(alpha = 0.95f)
                             )
                         )
                     } else {
                         Brush.linearGradient(
                             listOf(
-                                MujtamaGold.copy(alpha = 0.65f),
-                                Color.White.copy(alpha = 0.25f)
+                                MujtamaGold.copy(alpha = 0.9f),
+                                Color.White.copy(alpha = 0.4f)
                             )
                         )
                     },
