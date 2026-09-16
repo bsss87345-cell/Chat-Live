@@ -175,7 +175,7 @@ fun MainScreen(viewModel: SocialAppViewModel) {
                                     viewModel.createChatRoom(name, desc, cat, access, pass, max, emoji, imgUrl)
                                 },
                                 onJoinRoom = { roomId, pass -> viewModel.joinChatRoom(roomId, pass) },
-                                onLeaveRoom = { viewModel.leaveChatRoom(it) },
+                                onToggleLock = { viewModel.toggleRoomLock(it) },
                                 onSendRoomMessage = { roomId, text, type -> viewModel.sendRoomMessage(roomId, text, type) },
                                 onPinRoomMessage = { roomId, text -> viewModel.pinRoomMessage(roomId, text) },
                                 onUnpinRoomMessage = { viewModel.unpinRoomMessage(it) },
