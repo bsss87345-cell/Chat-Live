@@ -770,7 +770,7 @@ fun ChatRoomView(
             .fillMaxSize()
             .navigationBarsPadding()
     ) {
-        // Room Top App Bar
+// Room Top App Bar
         Surface(
             tonalElevation = 4.dp,
             color = MaterialTheme.colorScheme.surface
@@ -778,25 +778,35 @@ fun ChatRoomView(
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(horizontal = 6.dp, vertical = 6.dp),
+                    .padding(horizontal = 6.dp, vertical = 4.dp)
+                    .heightIn(min = 0.dp),
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.spacedBy(6.dp)
             ) {
-                IconButton(onClick = onBack) {
+                IconButton(
+                    onClick = onBack,
+                    modifier = Modifier.size(36.dp)
+                ) {
                     Icon(Icons.Default.ArrowForward, contentDescription = "رجوع")
                 }
 
-                // Room Emoji & Title
+                // Room Image (or empty if none was set)
                 Box(
                     modifier = Modifier
-                        .size(38.dp)
+                        .size(34.dp)
                         .clip(CircleShape)
-                        .background(MujtamaPrimary),
+                        .background(if (room.imageUrl.isNullOrBlank()) Color.Transparent else MujtamaPrimary),
                     contentAlignment = Alignment.Center
                 ) {
-                    Text(text = room.iconEmoji, fontSize = 20.sp)
+                    if (!room.imageUrl.isNullOrBlank()) {
+                        AsyncImage(
+                            model = room.imageUrl,
+                            contentDescription = room.name,
+                            contentScale = ContentScale.Crop,
+                            modifier = Modifier.fillMaxSize()
+                        )
+                    }
                 }
-
                 Column(modifier = Modifier.weight(1f)) {
                     Row(
                         verticalAlignment = Alignment.CenterVertically,
