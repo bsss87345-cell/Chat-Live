@@ -64,12 +64,17 @@ fun ExploreRoomsGridView(
     var showSearchBar by remember { mutableStateOf(false) }
     
     // ترتيب تلقائي حسب عدد الأعضاء من الأكثر إلى الأقل (الغرف الأكثر نشاطاً أولاً)
-    val sortedRooms = remember(rooms, searchQuery) {
+val sortedRooms = remember(rooms, searchQuery, roomViewFilter) {
         val query = searchQuery.trim()
-        val filtered = if (query.isBlank()) {
-            rooms
+        val byTab = if (roomViewFilter == "الخاص بي") {
+            rooms.filter { it.isJoined }
         } else {
-            rooms.filter { room ->
+            rooms
+        }
+        val filtered = if (query.isBlank()) {
+            byTab
+        } else {
+            byTab.filter { room ->
                 room.id.contains(query, ignoreCase = true) ||
                         room.id.removePrefix("room_").equals(query, ignoreCase = true) ||
                         room.inviteCode.contains(query, ignoreCase = true) ||
@@ -77,7 +82,7 @@ fun ExploreRoomsGridView(
             }
         }
         filtered.sortedByDescending { it.memberCount }
-    }
+}
 
     LazyVerticalGrid(
         columns = GridCells.Fixed(2),
