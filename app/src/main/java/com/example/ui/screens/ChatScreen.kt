@@ -852,10 +852,12 @@ fun ChatRoomView(
                     Icon(Icons.Default.Group, contentDescription = "الأعضاء", tint = MaterialTheme.colorScheme.primary)
                 }
 
-                // Room Settings / More Menu
+// Room Settings / More Menu
                 IconButton(
                     onClick = { showSettingsDialog = true },
-                    modifier = Modifier.testTag("room_settings_button")
+                    modifier = Modifier
+                        .size(36.dp)
+                        .testTag("room_settings_button")
                 ) {
                     Icon(Icons.Default.MoreVert, contentDescription = "خيارات الغرفة")
                 }
