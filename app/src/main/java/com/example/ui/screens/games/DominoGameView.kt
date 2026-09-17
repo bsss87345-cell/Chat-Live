@@ -672,7 +672,7 @@ fun DominoGameView(
                 DominoQuickChatDialog2P(
                     onDismiss = { showChatDialog = false },
                     onSelectPhrase = { phrase ->
-                        statusMessage = "أنت: $phrase"
+                        userChatBubbleText = phrase
                         showChatDialog = false
                     }
                 )
