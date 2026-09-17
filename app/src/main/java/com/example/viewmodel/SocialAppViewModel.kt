@@ -486,7 +486,7 @@ class SocialAppViewModel : ViewModel() {
 fun joinChatRoom(roomId: String, passwordInput: String = ""): Boolean {
         val room = _chatRooms.value.find { it.id == roomId } ?: return false
 
-        if (room.blockedMemberIds.contains("me")) {
+        if (room.blockedMembers.any { it.id == "me" }) {
             _userMessage.value = "لا يمكنك الانضمام لهذه الغرفة."
             return false
         }
