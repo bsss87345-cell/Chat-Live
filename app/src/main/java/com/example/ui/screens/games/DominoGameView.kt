@@ -1408,15 +1408,16 @@ fun DominoPlayAreaSerpentine(
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.Start
         ) {
-            // 1. صورة المستخدم من اليمين مع مؤقت الدور الـ 15 ثانية
+           // 1. صورة المستخدم من اليمين مع مؤقت الدور الـ 15 ثانية
             PlayerAvatarWithTimerRing(
                 name = "أنت",
                 emoji = "😎",
                 avatarBg = Color(0xFF1976D2),
                 isCurrentTurn = isUserTurn,
-                timeRemaining = timeRemaining
-            )
-
+                timeRemaining = timeRemaining,
+                chatBubbleText = chatBubbleText,
+                giftBubbleText = giftBubbleText
+            ) 
             Spacer(modifier = Modifier.width(8.dp))
 
             // 2. أيقونتان منفصلتان جنباً إلى جنب: أيقونة الهدايا (🎁) وأيقونة الدردشة (💬)
