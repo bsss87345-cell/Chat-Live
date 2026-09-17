@@ -401,7 +401,7 @@ class SocialAppViewModel : ViewModel() {
     fun openRoom(roomId: String) {
         val room = _chatRooms.value.find { it.id == roomId } ?: return
 
-        if (room.blockedMemberIds.contains("me")) {
+        if (room.blockedMembers.any { it.id == "me" }) {
             _userMessage.value = "لا يمكنك دخول هذه الغرفة."
             return
         }
