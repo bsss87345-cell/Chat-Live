@@ -178,7 +178,6 @@ fun MainScreen(viewModel: SocialAppViewModel) {
                                 onLeaveRoom = { viewModel.leaveChatRoom(it) },
                                 onToggleLock = { viewModel.toggleRoomLock(it) },
                                 onUpdateBackground = { roomId, uri -> viewModel.updateRoomBackground(roomId, uri) },
-                                onUpdateBackground = { roomId, uri -> viewModel.updateRoomBackground(roomId, uri) },
                                 onBlockMember = { roomId, memId -> viewModel.blockRoomMember(roomId, memId) },
                                 onUnblockMember = { roomId, memId -> viewModel.unblockRoomMember(roomId, memId) },
                                 onSendRoomMessage = { roomId, text, type -> viewModel.sendRoomMessage(roomId, text, type) },
