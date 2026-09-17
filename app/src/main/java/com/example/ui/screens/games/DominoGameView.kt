@@ -958,6 +958,8 @@ fun PlayerAvatarWithTimerRing(
     avatarBg: Color,
     isCurrentTurn: Boolean,
     timeRemaining: Int,
+    chatBubbleText: String? = null,
+    giftBubbleText: String? = null,
     modifier: Modifier = Modifier
 ) {
     val progress = remember(timeRemaining) {
@@ -972,11 +974,18 @@ fun PlayerAvatarWithTimerRing(
         Color(0xFF5A3B28)
     }
 
-    Column(
+  Column(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.spacedBy(2.dp),
         modifier = modifier
     ) {
+        val liveBubbleText = giftBubbleText ?: chatBubbleText
+        AnimatedVisibility(visible = liveBubbleText != null) {
+            if (liveBubbleText != null) {
+                LiveBubbleOverAvatar(text = liveBubbleText, isGift = giftBubbleText != null)
+            }
+        }
+
         Box(
             modifier = Modifier.size(48.dp),
             contentAlignment = Alignment.Center
@@ -1041,6 +1050,30 @@ fun PlayerAvatarWithTimerRing(
             color = Color(0xFFF7E2C6),
             fontSize = 10.sp,
             fontWeight = FontWeight.Bold
+        )
+    }
+}
+
+/**
+ * فقاعة مربعة صغيرة تظهر فوق صورة اللاعب عند إرسال رسالة دردشة أو هدية حية أثناء اللعب
+ */
+@Composable
+fun LiveBubbleOverAvatar(text: String, isGift: Boolean, modifier: Modifier = Modifier) {
+    Surface(
+        shape = RoundedCornerShape(8.dp),
+        color = if (isGift) Color(0xFF3E1909) else Color(0xFF14100D).copy(alpha = 0.92f),
+        border = androidx.compose.foundation.BorderStroke(1.2.dp, Color(0xFFD4AF37)),
+        shadowElevation = 6.dp,
+        modifier = modifier.widthIn(max = 92.dp)
+    ) {
+        Text(
+            text = text,
+            color = Color(0xFFF7E2C6),
+            fontSize = 10.sp,
+            fontWeight = FontWeight.Bold,
+            textAlign = TextAlign.Center,
+            maxLines = 2,
+            modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp)
         )
     }
 }
@@ -1321,15 +1354,16 @@ fun DominoPlayAreaSerpentine(
 }
 /**
  * صف المستخدم:
- * صورة المستخدم من اليمين (مع مؤقت الدور الـ 15 ثانية)،
- * بجانبها أيقونتان منفصلتان جنباً إلى جنب — أيقونة الهدايا (🎁) وأيقونة الدردشة (💬) — بدون دمجهما في أيقونة واحدة!
- * ثم قطع المستخدم مكشوفة (Face-up) مع التحديد البصري (Highlight) للقطع المتوافقة عند اختيار طرف على الطاولة
- */
-@Composable
-fun UserRowLuxury(
-    userTiles: List<DominoTile>,
-    isUserTurn: Boolean,
-    timeRemaining: Int,
+ // 1. صورة المستخدم من اليمين مع مؤقت الدور الـ 15 ثانية
+            PlayerAvatarWithTimerRing(
+                name = "أنت",
+                emoji = "😎",
+                avatarBg = Color(0xFF1976D2),
+                isCurrentTurn = isUserTurn,
+                timeRemaining = timeRemaining,
+                chatBubbleText = chatBubbleText,
+                giftBubbleText = giftBubbleText
+            )
     leftEnd: Int,
     rightEnd: Int,
     selectedChainEnd: SelectedChainEnd,
