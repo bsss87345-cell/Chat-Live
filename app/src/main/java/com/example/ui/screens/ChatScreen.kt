@@ -1354,53 +1354,34 @@ OutlinedButton(
         )
     }
 
-    // Chat Background Picker Dialog
+// Chat Background Picker Dialog
     if (showBackgroundPickerDialog) {
-        val backgroundOptions = listOf(
-            "افتراضي" to Color.Transparent,
-            "أزرق فاتح" to Color(0xFFE3F2FD),
-            "أخضر فاتح" to Color(0xFFE8F5E9),
-            "بنفسجي فاتح" to Color(0xFFF3E5F5),
-            "رمادي داكن" to Color(0xFF263238)
-        )
         AlertDialog(
             onDismissRequest = { showBackgroundPickerDialog = false },
-            title = { Text("اختر خلفية الدردشة") },
+            title = { Text("خلفية الدردشة") },
             text = {
-                Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                    backgroundOptions.forEach { (label, color) ->
-                        Row(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .clickable {
-                                    chatBackgroundColor = color
-                                    showBackgroundPickerDialog = false
-                                }
-                                .padding(vertical = 8.dp),
-                            verticalAlignment = Alignment.CenterVertically,
-                            horizontalArrangement = Arrangement.spacedBy(10.dp)
-                        ) {
-                            Box(
-                                modifier = Modifier
-                                    .size(28.dp)
-                                    .clip(CircleShape)
-                                    .background(color)
-                                    .border(1.dp, Color.Gray.copy(alpha = 0.3f), CircleShape)
-                            )
-                            Text(label, fontSize = 13.sp)
-                        }
-                    }
+                Text("اختر صورة من معرض هاتفك لتكون خلفية هذه الغرفة.")
+            },
+            confirmButton = {
+                TextButton(onClick = {
+                    photoPickerLauncher.launch(
+                        PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly)
+                    )
+                    showBackgroundPickerDialog = false
+                }) {
+                    Text("اختيار صورة")
                 }
             },
-            confirmButton = {},
             dismissButton = {
-                TextButton(onClick = { showBackgroundPickerDialog = false }) {
-                    Text("إغلاق")
+                TextButton(onClick = {
+                    onUpdateBackground("")
+                    showBackgroundPickerDialog = false
+                }) {
+                    Text("إعادة الافتراضي")
                 }
             }
         )
     }
-
     // Pin Message Dialog
     if (showPinDialog) {
         var pinInput by remember { mutableStateOf("") }
