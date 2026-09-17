@@ -1265,7 +1265,16 @@ fun DominoPlayAreaSerpentine(
 
             val centerOrientation = boardChain[centerIndex].orientation
             val (centerW, centerH) = rawDims(centerOrientation)
-            result[centerIndex] = Placement(centerX - centerW / 2, centerY - centerH / 2, centerW, centerH, centerOrientation)
+            val centerPlacement = Placement(centerX - centerW / 2, centerY - centerH / 2, centerW, centerH, centerOrientation)
+            result[centerIndex] = centerPlacement
+
+            // قائمة مشتركة بكل القطع الموضوعة فعلياً (من الذراعين معاً) لمنع أي تراكب بينها
+            val placedSoFar = mutableListOf(centerPlacement)
+
+            fun overlaps(a: Placement, b: Placement): Boolean =
+                a.x < b.x + b.w && a.x + a.w > b.x && a.y < b.y + b.h && a.y + a.h > b.y
+
+            fun overlapsAny(p: Placement): Boolean = placedSoFar.any { overlaps(p, it) }
 
             fun clockwise(d: SnakeDir): SnakeDir = when (d) {
                 SnakeDir.DOWN -> SnakeDir.RIGHT
@@ -1291,30 +1300,34 @@ fun DominoPlayAreaSerpentine(
                 for (idx in indices) {
                     val orientation = boardChain[idx].orientation
 
-                    fun place(direction: SnakeDir): Placement {
+                    fun place(direction: SnakeDir, extraPush: Dp): Placement {
                         val renderOrientation = effectiveOrientation(orientation, direction)
                         val (w, h) = rawDims(renderOrientation)
                         val cx: Dp
                         val cy: Dp
                         when (direction) {
-                            SnakeDir.UP -> { cx = lastCenterX; cy = lastCenterY - lastH / 2 - tileSpacing - h / 2 }
-                            SnakeDir.DOWN -> { cx = lastCenterX; cy = lastCenterY + lastH / 2 + tileSpacing + h / 2 }
-                            SnakeDir.LEFT -> { cx = lastCenterX - lastW / 2 - tileSpacing - w / 2; cy = lastCenterY }
-                            SnakeDir.RIGHT -> { cx = lastCenterX + lastW / 2 + tileSpacing + w / 2; cy = lastCenterY }
+                            SnakeDir.UP -> { cx = lastCenterX; cy = lastCenterY - lastH / 2 - tileSpacing - extraPush - h / 2 }
+                            SnakeDir.DOWN -> { cx = lastCenterX; cy = lastCenterY + lastH / 2 + tileSpacing + extraPush + h / 2 }
+                            SnakeDir.LEFT -> { cx = lastCenterX - lastW / 2 - tileSpacing - extraPush - w / 2; cy = lastCenterY }
+                            SnakeDir.RIGHT -> { cx = lastCenterX + lastW / 2 + tileSpacing + extraPush + w / 2; cy = lastCenterY }
                         }
                         return Placement(cx - w / 2, cy - h / 2, w, h, renderOrientation)
                     }
 
                     var currentDir = dir
-                    var p = place(currentDir)
+                    var extraPush = 0.dp
+                    var p = place(currentDir, extraPush)
 
-                    // انعطاف حلزوني مستمر بدوران ثابت الجهة (كل ذراع يدور بنفس الاتجاه دائماً):
-                    // هذا يضمن أن كل انعطاف يفتح مساحة جديدة فعلياً بدل التردد بين نفس الاتجاهين،
-                    // فتُغطى منطقة اللعب بالكامل بشكل حلزوني منتظم دون أي تراكب أو تكدّس للقطع
+                    // انعطاف حلزوني مستمر بدوران ثابت الجهة، مع منع أي تراكب مع القطع الموضوعة مسبقاً
+                    // (من نفس الذراع أو الذراع الآخر): إذا تعذّر إيجاد اتجاه خالٍ بعد دورة كاملة (4 محاولات)،
+                    // تُدفع القطعة مسافة إضافية للخارج ويُعاد فحص الاتجاهات الأربعة من جديد
                     var turnAttempts = 0
-                    while (exceedsLimit(p, currentDir) && turnAttempts < 4) {
+                    while ((exceedsLimit(p, currentDir) || overlapsAny(p)) && turnAttempts < 16) {
                         currentDir = rotate(currentDir)
-                        p = place(currentDir)
+                        if (turnAttempts > 0 && turnAttempts % 4 == 0) {
+                            extraPush += tileSpacing + 2.dp
+                        }
+                        p = place(currentDir, extraPush)
                         turnAttempts++
                     }
                     dir = currentDir
@@ -1325,6 +1338,7 @@ fun DominoPlayAreaSerpentine(
                     p = p.copy(x = safeX, y = safeY)
 
                     result[idx] = p
+                    placedSoFar.add(p)
                     lastCenterX = p.x + p.w / 2
                     lastCenterY = p.y + p.h / 2
                     lastW = p.w
@@ -1337,7 +1351,6 @@ fun DominoPlayAreaSerpentine(
 
             result
         }
-
         boardChain.forEachIndexed { index, placed ->
             val p = placements.getOrNull(index) ?: return@forEachIndexed
             val isLeftEnd = index == 0
