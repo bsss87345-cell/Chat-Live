@@ -670,24 +670,6 @@ fun DominoGameView(
                 )
             }
 
-            if (selectedEndDialogTile != null) {
-                val tile = selectedEndDialogTile!!
-                DominoChooseEndDialog2P(
-                    tile = tile,
-                    leftVal = leftEnd,
-                    rightVal = rightEnd,
-                    onSelectLeft = {
-                        selectedEndDialogTile = null
-                        executePlayerPlay(tile, playOnLeft = true)
-                    },
-                    onSelectRight = {
-                        selectedEndDialogTile = null
-                        executePlayerPlay(tile, playOnLeft = false)
-                    },
-                    onDismiss = { selectedEndDialogTile = null }
-                )
-            }
-
             // شاشة النتيجة النهائية عند وصول الرصيد إلى 100 نقطة بالضبط
             if (isGameWonFinal) {
                 DominoFinalVictoryDialog(
