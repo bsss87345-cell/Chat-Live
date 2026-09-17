@@ -557,7 +557,13 @@ fun joinChatRoom(roomId: String, passwordInput: String = ""): Boolean {
             }
         }
     }
-
+fun updateRoomBackground(roomId: String, imageUrl: String) {
+        _chatRooms.update { list ->
+            list.map {
+                if (it.id == roomId) it.copy(backgroundImageUrl = imageUrl.ifBlank { null }) else it
+            }
+        }
+}
     fun sendRoomMessage(roomId: String, text: String, type: ChatMessageType = ChatMessageType.TEXT) {
         if (text.isBlank() && type == ChatMessageType.TEXT) return
         val room = _chatRooms.value.find { it.id == roomId } ?: return
