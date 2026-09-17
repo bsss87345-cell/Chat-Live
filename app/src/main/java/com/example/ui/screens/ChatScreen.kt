@@ -762,6 +762,8 @@ fun ChatRoomView(
     onLeaveRoom: () -> Unit,
     onToggleLock: () -> Unit,
     onUpdateBackground: (String) -> Unit,
+    onBlockMember: (String) -> Unit,
+    onUnblockMember: (String) -> Unit,
     onStartRoomGame: (GameType) -> Unit,
     onPlayGameDirectly: (GameType?) -> Unit
 ) {
