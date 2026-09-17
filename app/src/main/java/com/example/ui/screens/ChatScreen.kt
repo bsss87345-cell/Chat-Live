@@ -1189,6 +1189,21 @@ Box(modifier = Modifier.fillMaxSize()) {
                                         )
                                     }
 
+                                    // Block member (Owner only)
+                                    if (room.isOwner && member.id != "me") {
+                                        IconButton(
+                                            onClick = { onBlockMember(member.id) },
+                                            modifier = Modifier.size(28.dp)
+                                        ) {
+                                            Icon(
+                                                imageVector = Icons.Default.Block,
+                                                contentDescription = "حظر",
+                                                tint = MaterialTheme.colorScheme.error,
+                                                modifier = Modifier.size(16.dp)
+                                            )
+                                        }
+                                    }
+
                                     // Promote/Demote (Owner only)
                                     if (room.isOwner) {
                                         IconButton(
