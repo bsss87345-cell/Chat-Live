@@ -103,6 +103,7 @@ fun ChatScreen(
                 onUpdateSettings = { name, desc, max -> onUpdateRoomSettings(activeRoom.id, name, desc, max) },
                 onLeaveRoom = { onLeaveRoom(activeRoom.id) },
                 onToggleLock = { onToggleLock(activeRoom.id) },
+                onUpdateBackground = { uri -> onUpdateBackground(activeRoom.id, uri) },
                 onStartRoomGame = { gameType -> onStartInRoomGame(activeRoom.id, gameType) },
                 onPlayGameDirectly = onNavigateToGames
             )
