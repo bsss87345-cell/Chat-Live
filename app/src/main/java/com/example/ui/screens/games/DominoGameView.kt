@@ -1172,8 +1172,6 @@ fun DominoPlayAreaSerpentine(
     fun rawDims(orientation: TileOrientation): Pair<Dp, Dp> =
         if (orientation == TileOrientation.VERTICAL) baseTileW to baseTileH else baseTileH to baseTileW
 
-    // يحدد الاتجاه الفعلي لرسم القطعة (طولية أم عرضية) بحيث تبقى القطع "المزدوجة"
-    // عمودية دائماً على مسار السلسلة، أياً كان اتجاه المسار الحالي (عمودي أو أفقي)
     fun effectiveOrientation(originalOrientation: TileOrientation, dir: SnakeDir): TileOrientation {
         val isCrosswise = originalOrientation == TileOrientation.HORIZONTAL
         val pathIsVertical = dir == SnakeDir.UP || dir == SnakeDir.DOWN
@@ -1196,6 +1194,13 @@ fun DominoPlayAreaSerpentine(
         val rightLimit = maxWidth - margin
         val centerX = maxWidth / 2
         val centerY = maxHeight / 2
+
+        fun exceedsLimit(pl: Placement, direction: SnakeDir): Boolean = when (direction) {
+            SnakeDir.UP -> pl.y < topLimit
+            SnakeDir.DOWN -> (pl.y + pl.h) > bottomLimit
+            SnakeDir.LEFT -> pl.x < leftLimit
+            SnakeDir.RIGHT -> (pl.x + pl.w) > rightLimit
+        }
 
         val placements = remember(boardChain, centerIndex, maxWidth, maxHeight) {
             val result = arrayOfNulls<Placement>(boardChain.size)
@@ -1229,24 +1234,28 @@ fun DominoPlayAreaSerpentine(
                         return Placement(cx - w / 2, cy - h / 2, w, h, renderOrientation)
                     }
 
-                    var p = place(dir)
-                    val needsTurn = when (dir) {
-                        SnakeDir.UP -> p.y < topLimit
-                        SnakeDir.DOWN -> (p.y + p.h) > bottomLimit
-                        SnakeDir.LEFT -> p.x < leftLimit
-                        SnakeDir.RIGHT -> (p.x + p.w) > rightLimit
-                    }
+                    var currentDir = dir
+                    var p = place(currentDir)
 
-                    if (needsTurn) {
-                        dir = if (dir == SnakeDir.UP || dir == SnakeDir.DOWN) {
+                    // إعادة فحص متكررة: لو الانعطاف نفسه أنتج تجاوزاً لحد آخر، نصحح مجدداً
+                    var turnAttempts = 0
+                    while (exceedsLimit(p, currentDir) && turnAttempts < 4) {
+                        currentDir = if (currentDir == SnakeDir.UP || currentDir == SnakeDir.DOWN) {
                             val newDir = jog
                             jog = if (jog == SnakeDir.RIGHT) SnakeDir.LEFT else SnakeDir.RIGHT
                             newDir
                         } else {
                             initialDir
                         }
-                        p = place(dir)
+                        p = place(currentDir)
+                        turnAttempts++
                     }
+                    dir = currentDir
+
+                    // طبقة حماية نهائية: تضمن بقاء القطعة داخل حدود منطقة اللعب دائماً
+                    val safeX = p.x.coerceIn(leftLimit, (rightLimit - p.w).coerceAtLeast(leftLimit))
+                    val safeY = p.y.coerceIn(topLimit, (bottomLimit - p.h).coerceAtLeast(topLimit))
+                    p = p.copy(x = safeX, y = safeY)
 
                     result[idx] = p
                     lastCenterX = p.x + p.w / 2
@@ -1256,6 +1265,60 @@ fun DominoPlayAreaSerpentine(
                 }
             }
 
+            walk((centerIndex - 1 downTo 0).toList(), SnakeDir.UP, SnakeDir.LEFT)
+            walk((centerIndex + 1 until boardChain.size).toList(), SnakeDir.DOWN, SnakeDir.RIGHT)
+
+            result
+        }
+
+        boardChain.forEachIndexed { index, placed ->
+            val p = placements.getOrNull(index) ?: return@forEachIndexed
+            val isLeftEnd = index == 0
+            val isRightEnd = index == boardChain.size - 1
+            val isEnd = isLeftEnd || isRightEnd
+
+            val isSelected = when {
+                isLeftEnd && selectedChainEnd == SelectedChainEnd.LEFT -> true
+                isRightEnd && selectedChainEnd == SelectedChainEnd.RIGHT -> true
+                else -> false
+            }
+
+            val hasMatchingTile = when {
+                boardChain.size == 1 -> userTiles.any {
+                    it.left == leftEnd || it.right == leftEnd || it.left == rightEnd || it.right == rightEnd
+                }
+                isLeftEnd -> userTiles.any { it.left == leftEnd || it.right == leftEnd }
+                isRightEnd -> userTiles.any { it.left == rightEnd || it.right == rightEnd }
+                else -> false
+            }
+
+            Box(
+                modifier = Modifier
+                    .align(Alignment.TopStart)
+                    .offset(x = p.x, y = p.y)
+            ) {
+                ClassicDominoTileView2P(
+                    tile = placed.tile,
+                    orientation = p.renderOrientation,
+                    isLeftEnd = isLeftEnd,
+                    isRightEnd = isRightEnd,
+                    isSelected = isSelected,
+                    isPlayableEnd = isUserTurn && isEnd && hasMatchingTile,
+                    scale = 1.0f
+                )
+
+                if (isUserTurn && isEnd) {
+                    Box(
+                        modifier = Modifier
+                            .align(Alignment.Center)
+                            .sizeIn(minWidth = 48.dp, minHeight = 48.dp)
+                            .clickable { onEndTileClick(isLeftEnd) }
+                    )
+                }
+            }
+        }
+    }
+}
             walk((centerIndex - 1 downTo 0).toList(), SnakeDir.UP, SnakeDir.LEFT)
             walk((centerIndex + 1 until boardChain.size).toList(), SnakeDir.DOWN, SnakeDir.RIGHT)
 
