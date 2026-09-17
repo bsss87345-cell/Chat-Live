@@ -75,7 +75,9 @@ fun ChatScreen(
     onUpdateRoomSettings: (String, String, String, Int) -> Unit,
     onStartInRoomGame: (String, GameType) -> Unit,
     onToggleLock: (String) -> Unit,
-    onUpdateBackground: (String, String) -> Unit
+    onUpdateBackground: (String, String) -> Unit,
+    onBlockMember: (String, String) -> Unit,
+    onUnblockMember: (String, String) -> Unit
 ) {
     // 1. If an active direct conversation is open
     if (activeChatId != null) {
