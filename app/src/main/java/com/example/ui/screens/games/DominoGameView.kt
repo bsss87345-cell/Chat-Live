@@ -1220,7 +1220,12 @@ fun DominoPlayAreaSerpentine(
 
     val baseTileW = 33.dp
     val baseTileH = 58.dp
-    val tileSpacing = 4.dp
+    // تقليل المسافة بين القطع تدريجياً كلما زاد عدد القطع بالسلسلة لإفساح مجال أكبر
+    val tileSpacing = when {
+        boardChain.size <= 10 -> 4.dp
+        boardChain.size <= 18 -> 2.5.dp
+        else -> 1.dp
+    }
 
     fun rawDims(orientation: TileOrientation): Pair<Dp, Dp> =
         if (orientation == TileOrientation.VERTICAL) baseTileW to baseTileH else baseTileH to baseTileW
@@ -1262,9 +1267,22 @@ fun DominoPlayAreaSerpentine(
             val (centerW, centerH) = rawDims(centerOrientation)
             result[centerIndex] = Placement(centerX - centerW / 2, centerY - centerH / 2, centerW, centerH, centerOrientation)
 
-            fun walk(indices: List<Int>, initialDir: SnakeDir, jogStart: SnakeDir) {
+            fun clockwise(d: SnakeDir): SnakeDir = when (d) {
+                SnakeDir.DOWN -> SnakeDir.RIGHT
+                SnakeDir.RIGHT -> SnakeDir.UP
+                SnakeDir.UP -> SnakeDir.LEFT
+                SnakeDir.LEFT -> SnakeDir.DOWN
+            }
+
+            fun counterClockwise(d: SnakeDir): SnakeDir = when (d) {
+                SnakeDir.UP -> SnakeDir.RIGHT
+                SnakeDir.RIGHT -> SnakeDir.DOWN
+                SnakeDir.DOWN -> SnakeDir.LEFT
+                SnakeDir.LEFT -> SnakeDir.UP
+            }
+
+            fun walk(indices: List<Int>, initialDir: SnakeDir, rotate: (SnakeDir) -> SnakeDir) {
                 var dir = initialDir
-                var jog = jogStart
                 var lastCenterX = centerX
                 var lastCenterY = centerY
                 var lastW = centerW
@@ -1290,16 +1308,12 @@ fun DominoPlayAreaSerpentine(
                     var currentDir = dir
                     var p = place(currentDir)
 
-                    // إعادة فحص متكررة: لو الانعطاف نفسه أنتج تجاوزاً لحد آخر، نصحح مجدداً
+                    // انعطاف حلزوني مستمر بدوران ثابت الجهة (كل ذراع يدور بنفس الاتجاه دائماً):
+                    // هذا يضمن أن كل انعطاف يفتح مساحة جديدة فعلياً بدل التردد بين نفس الاتجاهين،
+                    // فتُغطى منطقة اللعب بالكامل بشكل حلزوني منتظم دون أي تراكب أو تكدّس للقطع
                     var turnAttempts = 0
                     while (exceedsLimit(p, currentDir) && turnAttempts < 4) {
-                        currentDir = if (currentDir == SnakeDir.UP || currentDir == SnakeDir.DOWN) {
-                            val newDir = jog
-                            jog = if (jog == SnakeDir.RIGHT) SnakeDir.LEFT else SnakeDir.RIGHT
-                            newDir
-                        } else {
-                            initialDir
-                        }
+                        currentDir = rotate(currentDir)
                         p = place(currentDir)
                         turnAttempts++
                     }
@@ -1318,8 +1332,8 @@ fun DominoPlayAreaSerpentine(
                 }
             }
 
-            walk((centerIndex - 1 downTo 0).toList(), SnakeDir.UP, SnakeDir.LEFT)
-            walk((centerIndex + 1 until boardChain.size).toList(), SnakeDir.DOWN, SnakeDir.RIGHT)
+            walk((centerIndex - 1 downTo 0).toList(), SnakeDir.UP, ::counterClockwise)
+            walk((centerIndex + 1 until boardChain.size).toList(), SnakeDir.DOWN, ::clockwise)
 
             result
         }
