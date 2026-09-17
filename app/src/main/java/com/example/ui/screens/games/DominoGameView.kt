@@ -637,7 +637,9 @@ fun DominoGameView(
                     selectedChainEnd = selectedChainEnd,
                     onTileClick = { onUserTileClicked(it) },
                     onGiftClick = { showGiftDialog = true },
-                    onChatClick = { showChatDialog = true }
+                    onChatClick = { showChatDialog = true },
+                    chatBubbleText = userChatBubbleText,
+                    giftBubbleText = userGiftBubbleText
                 )
             }
 
