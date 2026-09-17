@@ -138,7 +138,7 @@ data class ChatRoom(
     val messages: List<ChatMessage> = emptyList(),
     val imageUrl: String? = null,
     val backgroundImageUrl: String? = null,
-    val blockedMemberIds: List<String> = emptyList()
+    val blockedMembers: List<RoomMember> = emptyList()
 )
 
 data class TeamMember(
