@@ -564,6 +564,32 @@ fun updateRoomBackground(roomId: String, imageUrl: String) {
             }
         }
 }
+fun blockRoomMember(roomId: String, memberId: String) {
+        _chatRooms.update { list ->
+            list.map { room ->
+                if (room.id == roomId) {
+                    val memberToBlock = room.members.find { it.id == memberId }
+                    if (memberToBlock != null) {
+                        room.copy(
+                            members = room.members.filter { it.id != memberId },
+                            memberCount = (room.memberCount - 1).coerceAtLeast(0),
+                            blockedMembers = room.blockedMembers + memberToBlock
+                        )
+                    } else room
+                } else room
+            }
+        }
+    }
+
+    fun unblockRoomMember(roomId: String, memberId: String) {
+        _chatRooms.update { list ->
+            list.map { room ->
+                if (room.id == roomId) {
+                    room.copy(blockedMembers = room.blockedMembers.filter { it.id != memberId })
+                } else room
+            }
+        }
+    }
     fun sendRoomMessage(roomId: String, text: String, type: ChatMessageType = ChatMessageType.TEXT) {
         if (text.isBlank() && type == ChatMessageType.TEXT) return
         val room = _chatRooms.value.find { it.id == roomId } ?: return
