@@ -257,6 +257,24 @@ fun DominoGameView(
     var showChatDialog by remember { mutableStateOf(false) }
     var showGiftDialog by remember { mutableStateOf(false) }
     var showSettingsDialog by remember { mutableStateOf(false) }
+
+    // فقاعات الدردشة والهدايا الحية فوق صورة المستخدم
+    var userChatBubbleText by remember { mutableStateOf<String?>(null) }
+    var userGiftBubbleText by remember { mutableStateOf<String?>(null) }
+
+    LaunchedEffect(userChatBubbleText) {
+        if (userChatBubbleText != null) {
+            delay(3500)
+            userChatBubbleText = null
+        }
+    }
+
+    LaunchedEffect(userGiftBubbleText) {
+        if (userGiftBubbleText != null) {
+            delay(3000)
+            userGiftBubbleText = null
+        }
+    }
     
     // إعدادات الصوت والاهتزاز
     var soundEnabled by remember { mutableStateOf(true) }
