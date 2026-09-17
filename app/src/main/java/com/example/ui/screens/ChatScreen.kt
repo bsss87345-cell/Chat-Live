@@ -1346,13 +1346,30 @@ OutlinedButton(
         )
     }
 
-    // Banned List Dialog
+// Banned List Dialog
     if (showBannedListDialog) {
         AlertDialog(
             onDismissRequest = { showBannedListDialog = false },
             title = { Text("المستخدمون المحظورون") },
             text = {
-                Text("لا يوجد مستخدمون محظورون حالياً.", fontSize = 13.sp)
+                if (room.blockedMembers.isEmpty()) {
+                    Text("لا يوجد مستخدمون محظورون حالياً.", fontSize = 13.sp)
+                } else {
+                    Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
+                        room.blockedMembers.forEach { member ->
+                            Row(
+                                modifier = Modifier.fillMaxWidth(),
+                                horizontalArrangement = Arrangement.SpaceBetween,
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                Text(member.name, fontSize = 13.sp)
+                                TextButton(onClick = { onUnblockMember(member.id) }) {
+                                    Text("إلغاء الحظر", fontSize = 12.sp)
+                                }
+                            }
+                        }
+                    }
+                }
             },
             confirmButton = {},
             dismissButton = {
