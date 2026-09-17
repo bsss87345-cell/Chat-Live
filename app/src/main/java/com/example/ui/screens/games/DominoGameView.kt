@@ -1319,56 +1319,6 @@ fun DominoPlayAreaSerpentine(
         }
     }
 }
-            
-
-        boardChain.forEachIndexed { index, placed ->
-            val p = placements.getOrNull(index) ?: return@forEachIndexed
-            val isLeftEnd = index == 0
-            val isRightEnd = index == boardChain.size - 1
-            val isEnd = isLeftEnd || isRightEnd
-
-            val isSelected = when {
-                isLeftEnd && selectedChainEnd == SelectedChainEnd.LEFT -> true
-                isRightEnd && selectedChainEnd == SelectedChainEnd.RIGHT -> true
-                else -> false
-            }
-
-            val hasMatchingTile = when {
-                boardChain.size == 1 -> userTiles.any {
-                    it.left == leftEnd || it.right == leftEnd || it.left == rightEnd || it.right == rightEnd
-                }
-                isLeftEnd -> userTiles.any { it.left == leftEnd || it.right == leftEnd }
-                isRightEnd -> userTiles.any { it.left == rightEnd || it.right == rightEnd }
-                else -> false
-            }
-
-            Box(
-                modifier = Modifier
-                    .align(Alignment.TopStart)
-                    .offset(x = p.x, y = p.y)
-            ) {
-                ClassicDominoTileView2P(
-                    tile = placed.tile,
-                    orientation = p.renderOrientation,
-                    isLeftEnd = isLeftEnd,
-                    isRightEnd = isRightEnd,
-                    isSelected = isSelected,
-                    isPlayableEnd = isUserTurn && isEnd && hasMatchingTile,
-                    scale = 1.0f
-                )
-
-                if (isUserTurn && isEnd) {
-                    Box(
-                        modifier = Modifier
-                            .align(Alignment.Center)
-                            .sizeIn(minWidth = 48.dp, minHeight = 48.dp)
-                            .clickable { onEndTileClick(isLeftEnd) }
-                    )
-                }
-            }
-        }
-    }
-}
 /**
  * صف المستخدم:
  * صورة المستخدم من اليمين (مع مؤقت الدور الـ 15 ثانية)،
