@@ -818,14 +818,14 @@ Box(modifier = Modifier.fillMaxSize()) {
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(horizontal = 6.dp, vertical = 4.dp)
+                    .padding(horizontal = 6.dp, vertical = 2.dp)
                     .heightIn(min = 0.dp),
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.spacedBy(6.dp)
             ) {
                 IconButton(
                     onClick = onBack,
-                    modifier = Modifier.size(36.dp)
+                    modifier = Modifier.size(30.dp)
                 ) {
                     Icon(Icons.Default.ArrowForward, contentDescription = "رجوع")
                 }
@@ -833,7 +833,7 @@ Box(modifier = Modifier.fillMaxSize()) {
 // Room Image (or first letter of room name if none was set)
                 Box(
                     modifier = Modifier
-                        .size(34.dp)
+                        .size(28.dp)
                         .clip(CircleShape)
                         .background(if (room.imageUrl.isNullOrBlank()) MujtamaPrimary else Color.Transparent),
                     contentAlignment = Alignment.Center
@@ -850,7 +850,7 @@ Box(modifier = Modifier.fillMaxSize()) {
                             text = room.name.take(1),
                             color = Color.White,
                             fontWeight = FontWeight.Bold,
-                            fontSize = 14.sp
+                            fontSize = 13.sp
                         )
                     }
                 }
@@ -860,16 +860,19 @@ Box(modifier = Modifier.fillMaxSize()) {
                         horizontalArrangement = Arrangement.spacedBy(4.dp)
                     ) {
                         Text(
+                            text = "انضمام",
+                            fontWeight = FontWeight.Bold,
+                            fontSize = 12.sp,
+                            color = MaterialTheme.colorScheme.primary
+                        )
+                        Text(
                             text = room.name,
                             fontWeight = FontWeight.Bold,
                             fontSize = 14.sp,
                             maxLines = 1
                         )
-                        if (room.isOwner) {
-                            Text("👑", fontSize = 11.sp)
-                        }
                     }
-                    // 1. معرّف الغرفة (Room ID) المكوّن من 8 أرقام بين اسم الغرفة ومتصل الآن
+                    // معرّف الغرفة (Room ID) المكوّن من 8 أرقام
                     val displayId = if (room.id.filter { it.isDigit() }.length == 8) {
                         room.id.filter { it.isDigit() }
                     } else {
@@ -882,18 +885,13 @@ Box(modifier = Modifier.fillMaxSize()) {
                         color = MaterialTheme.colorScheme.primary,
                         modifier = Modifier.testTag("room_topbar_id")
                     )
-                    Text(
-                        text = "${room.memberCount} عضو • ${room.members.count { it.isOnline }} متصل الآن",
-                        fontSize = 11.sp,
-                        color = MujtamaOnlineGreen
-                    )
                 }
 
 // Members List Button
                 IconButton(
                     onClick = { showMembersSheet = true },
                     modifier = Modifier
-                        .size(36.dp)
+                        .size(30.dp)
                         .testTag("room_members_button")
                 ) {
                     Icon(Icons.Default.Group, contentDescription = "الأعضاء", tint = MaterialTheme.colorScheme.primary)
@@ -904,7 +902,7 @@ Box(modifier = Modifier.fillMaxSize()) {
                     IconButton(
                         onClick = { showSettingsDialog = true },
                         modifier = Modifier
-                            .size(36.dp)
+                            .size(30.dp)
                             .testTag("room_settings_button")
                     ) {
                         Icon(Icons.Default.MoreVert, contentDescription = "خيارات الغرفة")
