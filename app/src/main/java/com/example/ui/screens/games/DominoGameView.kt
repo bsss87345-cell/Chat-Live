@@ -1319,11 +1319,7 @@ fun DominoPlayAreaSerpentine(
         }
     }
 }
-            walk((centerIndex - 1 downTo 0).toList(), SnakeDir.UP, SnakeDir.LEFT)
-            walk((centerIndex + 1 until boardChain.size).toList(), SnakeDir.DOWN, SnakeDir.RIGHT)
-
-            result
-        }
+            
 
         boardChain.forEachIndexed { index, placed ->
             val p = placements.getOrNull(index) ?: return@forEachIndexed
