@@ -767,7 +767,14 @@ fun ChatRoomView(
     var showAdminsListDialog by remember { mutableStateOf(false) }
     var showBannedListDialog by remember { mutableStateOf(false) }
     var showBackgroundPickerDialog by remember { mutableStateOf(false) }
-    var chatBackgroundColor by remember { mutableStateOf(Color.Transparent) }
+    val photoPickerLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.PickVisualMedia(),
+        onResult = { uri: Uri? ->
+            if (uri != null) {
+                onUpdateBackground(uri.toString())
+            }
+        }
+    )
     
     val currentMember = room.members.find { it.id == "me" }
     val isOwnerOrAdmin = room.isOwner || currentMember?.role == RoomMemberRole.ADMIN || currentMember?.role == RoomMemberRole.OWNER
