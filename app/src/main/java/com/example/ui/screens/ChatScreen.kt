@@ -783,10 +783,18 @@ fun ChatRoomView(
     // Intercept system back button/gesture to leave room smoothly
     BackHandler(onBack = onBack)
 
-Column(
+Box(modifier = Modifier.fillMaxSize()) {
+    if (!room.backgroundImageUrl.isNullOrBlank()) {
+        AsyncImage(
+            model = room.backgroundImageUrl,
+            contentDescription = null,
+            contentScale = ContentScale.Crop,
+            modifier = Modifier.fillMaxSize()
+        )
+    }
+    Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(chatBackgroundColor)
             .navigationBarsPadding()
     ) {
 // Room Top App Bar
