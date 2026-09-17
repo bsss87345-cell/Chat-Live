@@ -114,6 +114,7 @@ fun ChatScreen(
                 onUpdateBackground = { uri -> onUpdateBackground(activeRoom.id, uri) },
                 onBlockMember = { memId -> onBlockMember(activeRoom.id, memId) },
                 onUnblockMember = { memId -> onUnblockMember(activeRoom.id, memId) },
+                onJoinRoom = { onJoinRoom(activeRoom.id, "") },
                 onStartRoomGame = { gameType -> onStartInRoomGame(activeRoom.id, gameType) },
                 onPlayGameDirectly = onNavigateToGames
             )
