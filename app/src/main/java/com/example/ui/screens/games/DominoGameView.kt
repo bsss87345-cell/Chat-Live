@@ -694,8 +694,8 @@ fun DominoGameView(
 }
 
 /**
- * رسم الطاولة البيضاوية الخضراء والخلفية الخشبية الماهوجني مع الإضاءة والزخرفة:
- * - سطح الطاولة بلون أخضر داكن (قماش كلاسيكي فاخر)، بيضاوية الشكل ممتدة بالطول.
+ * رسم الطاولة المربعة/المستطيلة الخضراء والخلفية الخشبية الماهوجني مع الإضاءة والزخرفة:
+ * - سطح الطاولة بلون أخضر داكن (قماش كلاسيكي فاخر)، مستطيلة الشكل بحواف دائرية ناعمة.
  * - إطار خارجي ذهبي بزخرفة بسيطة.
  * - خلفية الشاشة خارج الطاولة بني خشبي داكن فاخر (خشب الجوز/الماهوجني) بملمس حبيبات الخشب.
  * - سبوت لايت ناعمة في منتصف الطاولة.
@@ -733,15 +733,16 @@ fun LuxuryDominoOvalTableCanvas(modifier: Modifier = Modifier) {
             currentY += lineSpacing
         }
 
-        // 2. الطاولة البيضاوية الممتدة بالطول (Oval table stretched vertically)
-        val ovalInsetX = 14.dp.toPx()
-        val ovalInsetY = 24.dp.toPx()
-        val ovalWidth = w - ovalInsetX * 2
-        val ovalHeight = h - ovalInsetY * 2
+        // 2. الطاولة المستطيلة بحواف دائرية (Rounded rectangle table)
+        val tableInsetX = 8.dp.toPx()
+        val tableInsetY = 16.dp.toPx()
+        val tableWidth = w - tableInsetX * 2
+        val tableHeight = h - tableInsetY * 2
+        val tableCorner = CornerRadius(22.dp.toPx(), 22.dp.toPx())
 
         // الإطار الخارجي الذهبي بزخرفة ناعمة
         val outerGoldThickness = 4.dp.toPx()
-        drawOval(
+        drawRoundRect(
             brush = Brush.sweepGradient(
                 colors = listOf(
                     Color(0xFFD4AF37),
@@ -751,17 +752,19 @@ fun LuxuryDominoOvalTableCanvas(modifier: Modifier = Modifier) {
                 ),
                 center = Offset(w * 0.5f, h * 0.5f)
             ),
-            topLeft = Offset(ovalInsetX, ovalInsetY),
-            size = Size(ovalWidth, ovalHeight),
+            topLeft = Offset(tableInsetX, tableInsetY),
+            size = Size(tableWidth, tableHeight),
+            cornerRadius = tableCorner,
             style = Stroke(width = outerGoldThickness)
         )
 
         // خط الزخرفة الذهبي المنقط الداخلي
         val innerDashedInset = 5.dp.toPx()
-        drawOval(
+        drawRoundRect(
             color = Color(0xFFE4BC7E).copy(alpha = 0.75f),
-            topLeft = Offset(ovalInsetX + innerDashedInset, ovalInsetY + innerDashedInset),
-            size = Size(ovalWidth - innerDashedInset * 2, ovalHeight - innerDashedInset * 2),
+            topLeft = Offset(tableInsetX + innerDashedInset, tableInsetY + innerDashedInset),
+            size = Size(tableWidth - innerDashedInset * 2, tableHeight - innerDashedInset * 2),
+            cornerRadius = CornerRadius(18.dp.toPx(), 18.dp.toPx()),
             style = Stroke(
                 width = 1.2.dp.toPx(),
                 pathEffect = PathEffect.dashPathEffect(floatArrayOf(5.dp.toPx(), 4.dp.toPx()), 0f)
@@ -769,7 +772,7 @@ fun LuxuryDominoOvalTableCanvas(modifier: Modifier = Modifier) {
         )
 
         // 3. سطح الطاولة الأخضر الداكن (قماش كلاسيكي فاخر) مع سبوت لايت ناعمة في المنتصف
-        drawOval(
+        drawRoundRect(
             brush = Brush.radialGradient(
                 colors = listOf(
                     Color(0xFF145E3B), // سبوت لايت مشرق وناعم في المركز
@@ -778,17 +781,19 @@ fun LuxuryDominoOvalTableCanvas(modifier: Modifier = Modifier) {
                     Color(0xFF04190E)  // أطراف داكنة وظلال على الحواف
                 ),
                 center = Offset(w * 0.5f, h * 0.5f),
-                radius = ovalWidth * 0.75f
+                radius = tableWidth * 0.75f
             ),
-            topLeft = Offset(ovalInsetX + 6.dp.toPx(), ovalInsetY + 6.dp.toPx()),
-            size = Size(ovalWidth - 12.dp.toPx(), ovalHeight - 12.dp.toPx())
+            topLeft = Offset(tableInsetX + 6.dp.toPx(), tableInsetY + 6.dp.toPx()),
+            size = Size(tableWidth - 12.dp.toPx(), tableHeight - 12.dp.toPx()),
+            cornerRadius = CornerRadius(16.dp.toPx(), 16.dp.toPx())
         )
 
         // حزام ذهبي رقيق في منتصف القماش لتحديد ملعب الدومينو
-        drawOval(
+        drawRoundRect(
             color = Color(0xFFC7985D).copy(alpha = 0.35f),
-            topLeft = Offset(ovalInsetX + 18.dp.toPx(), ovalInsetY + 28.dp.toPx()),
-            size = Size(ovalWidth - 36.dp.toPx(), ovalHeight - 56.dp.toPx()),
+            topLeft = Offset(tableInsetX + 18.dp.toPx(), tableInsetY + 24.dp.toPx()),
+            size = Size(tableWidth - 36.dp.toPx(), tableHeight - 48.dp.toPx()),
+            cornerRadius = CornerRadius(12.dp.toPx(), 12.dp.toPx()),
             style = Stroke(width = 0.8.dp.toPx())
         )
     }
