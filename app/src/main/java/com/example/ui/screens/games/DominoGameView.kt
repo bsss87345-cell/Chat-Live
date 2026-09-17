@@ -428,7 +428,7 @@ fun DominoGameView(
         val canPlayRight = tile.left == currentR || tile.right == currentR
 
         if (canPlayLeft && canPlayRight && currentL != currentR) {
-            selectedEndDialogTile = tile
+            statusMessage = "هذا الحجر يطابق الطرفين! اضغط على الطرف المطلوب في السلسلة أولاً 👆"
         } else if (canPlayLeft) {
             executePlayerPlay(tile, playOnLeft = true)
         } else if (canPlayRight) {
