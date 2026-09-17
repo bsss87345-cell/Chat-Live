@@ -78,6 +78,7 @@ fun ChatScreen(
     onUpdateBackground: (String, String) -> Unit,
     onBlockMember: (String, String) -> Unit,
     onUnblockMember: (String, String) -> Unit
+) {
     // 1. If an active direct conversation is open
     if (activeChatId != null) {
         val activeConv = conversations.find { it.id == activeChatId }
