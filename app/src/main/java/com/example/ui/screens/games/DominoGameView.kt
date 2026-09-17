@@ -1497,6 +1497,132 @@ fun DominoPlayAreaSerpentine(
 }
 
 /**
+ * صف المستخدم:
+ * صورة المستخدم من اليمين (مع مؤقت الدور الـ 15 ثانية)،
+ * بجانبها أيقونتان منفصلتان جنباً إلى جنب — أيقونة الهدايا (🎁) وأيقونة الدردشة (💬) — بدون دمجهما في أيقونة واحدة!
+ * ثم قطع المستخدم مكشوفة (Face-up) مع التحديد البصري (Highlight) للقطع المتوافقة عند اختيار طرف على الطاولة
+ */
+@Composable
+fun UserRowLuxury(
+    userTiles: List<DominoTile>,
+    isUserTurn: Boolean,
+    timeRemaining: Int,
+    leftEnd: Int,
+    rightEnd: Int,
+    selectedChainEnd: SelectedChainEnd,
+    onTileClick: (DominoTile) -> Unit,
+    onGiftClick: () -> Unit,
+    onChatClick: () -> Unit,
+    chatBubbleText: String? = null,
+    giftBubbleText: String? = null,
+    modifier: Modifier = Modifier
+) {
+    val scrollState = rememberScrollState()
+
+    Surface(
+        shape = RoundedCornerShape(16.dp),
+        color = Color(0xFF2B1207).copy(alpha = 0.95f),
+        border = androidx.compose.foundation.BorderStroke(1.2.dp, Color(0xFFC7985D)),
+        shadowElevation = 8.dp,
+        modifier = modifier.fillMaxWidth()
+    ) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 8.dp, vertical = 6.dp),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.Start
+        ) {
+            // 1. صورة المستخدم من اليمين مع مؤقت الدور الـ 15 ثانية
+            PlayerAvatarWithTimerRing(
+                name = "أنت",
+                emoji = "😎",
+                avatarBg = Color(0xFF1976D2),
+                isCurrentTurn = isUserTurn,
+                timeRemaining = timeRemaining,
+                chatBubbleText = chatBubbleText,
+                giftBubbleText = giftBubbleText
+            )
+
+            Spacer(modifier = Modifier.width(8.dp))
+
+            // 2. أيقونتان منفصلتان جنباً إلى جنب: أيقونة الهدايا (🎁) وأيقونة الدردشة (💬)
+            Row(
+                horizontalArrangement = Arrangement.spacedBy(6.dp),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                // أيقونة الهدايا المنفصلة 🎁
+                IconButton(
+                    onClick = onGiftClick,
+                    modifier = Modifier
+                        .size(36.dp)
+                        .clip(CircleShape)
+                        .background(Color(0xFF3E1909))
+                        .border(1.2.dp, Color(0xFFD4AF37), CircleShape)
+                        .testTag("domino_gift_button")
+                ) {
+                    Text(text = "🎁", fontSize = 16.sp)
+                }
+
+                // أيقونة الدردشة المنفصلة 💬
+                IconButton(
+                    onClick = onChatClick,
+                    modifier = Modifier
+                        .size(36.dp)
+                        .clip(CircleShape)
+                        .background(Color(0xFF3E1909))
+                        .border(1.2.dp, Color(0xFFD4AF37), CircleShape)
+                        .testTag("domino_chat_button")
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.ChatBubble,
+                        contentDescription = "الدردشة",
+                        tint = Color(0xFFF7E2C6),
+                        modifier = Modifier.size(17.dp)
+                    )
+                }
+            }
+
+            Spacer(modifier = Modifier.width(8.dp))
+
+            // 3. قطع المستخدم مكشوفة (Face-up) في شريط تمرير سلس مع إبراز وتحديد القطع المتوافقة
+            Row(
+                modifier = Modifier
+                    .weight(1f)
+                    .horizontalScroll(scrollState),
+                horizontalArrangement = Arrangement.spacedBy(6.dp),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                userTiles.forEach { tile ->
+                    // تحديد بصري واضح (Highlight) إذا تم الضغط على طرف في الطاولة وتوافق الحجر معه
+                    val isHighlighted = isUserTurn && when (selectedChainEnd) {
+                        SelectedChainEnd.LEFT -> tile.left == leftEnd || tile.right == leftEnd
+                        SelectedChainEnd.RIGHT -> tile.left == rightEnd || tile.right == rightEnd
+                        SelectedChainEnd.NONE -> false
+                    }
+
+                    // تعتيم خفيف للقطع غير المتوافقة عند اختيار طرف محدد لتأكيد الـ Highlight
+                    val isDimmed = isUserTurn && selectedChainEnd != SelectedChainEnd.NONE && !isHighlighted
+
+                    val isPlayable = isUserTurn && (
+                        tile.left == leftEnd || tile.right == leftEnd ||
+                        tile.left == rightEnd || tile.right == rightEnd
+                    )
+
+                    StandingUserTile2P(
+                        tile = tile,
+                        isPlayable = isPlayable,
+                        isHighlighted = isHighlighted,
+                        isDimmed = isDimmed,
+                        onClick = { onTileClick(tile) }
+                    )
+                }
+            }
+        }
+    }
+}
+
+/**
  * حجر الدومينو المكشوف للمستخدم:
  * خلفية عاجية/كريمية دافئة، حواف ذهبية وبنية، نقاط سوداء كلاسيكية بارزة (Embossed)،
  * مع مسمار ذهبي في المنتصف وتحديد بصري واضح (Highlight) عند توافق الحجر مع الطرف المختار
