@@ -683,12 +683,12 @@ fun DominoGameView(
                     opponentName = displayName,
                     onSendGift = { giftName ->
                         statusMessage = "أرسلت $giftName إلى $displayName! 🎁"
+                        userGiftBubbleText = giftName
                         showGiftDialog = false
                     },
                     onDismiss = { showGiftDialog = false }
                 )
             }
-
             // شاشة النتيجة النهائية عند وصول الرصيد إلى 100 نقطة بالضبط
             if (isGameWonFinal) {
                 DominoFinalVictoryDialog(
