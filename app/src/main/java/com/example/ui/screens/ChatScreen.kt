@@ -1424,7 +1424,7 @@ OutlinedButton(
                 }
             }
         )
-        // Game Picker Dialog
+// Game Picker Dialog
         if (showGamePicker) {
             GamePickerDialog(
                 onDismiss = { showGamePicker = false },
@@ -1435,6 +1435,7 @@ OutlinedButton(
             )
         }
     }
+}
 }
 
 // -------------------------------------------------------------
