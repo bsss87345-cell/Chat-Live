@@ -860,12 +860,15 @@ Box(modifier = Modifier.fillMaxSize()) {
                         verticalAlignment = Alignment.CenterVertically,
                         horizontalArrangement = Arrangement.spacedBy(4.dp)
                     ) {
-                        Text(
-                            text = "انضمام",
-                            fontWeight = FontWeight.Bold,
-                            fontSize = 12.sp,
-                            color = MaterialTheme.colorScheme.primary
-                        )
+                        if (!room.isJoined && !room.isOwner) {
+                            Text(
+                                text = "انضمام",
+                                fontWeight = FontWeight.Bold,
+                                fontSize = 12.sp,
+                                color = MaterialTheme.colorScheme.primary,
+                                modifier = Modifier.clickable { onJoinRoom() }
+                            )
+                        }
                         Text(
                             text = room.name,
                             fontWeight = FontWeight.Bold,
