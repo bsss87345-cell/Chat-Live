@@ -552,6 +552,7 @@ fun DominoGameView(
             modifier = Modifier
                 .fillMaxSize()
                 .background(Color(0xFF140804))
+                .systemBarsPadding()
                 .testTag("domino_luxury_portrait_screen")
         ) {
             // رسم الطاولة البيضاوية الخضراء والخلفية الخشبية الماهوجني مع الإضاءة والزخرفة
