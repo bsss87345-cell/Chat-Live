@@ -1138,14 +1138,20 @@ fun DominoFaceDownTileView(modifier: Modifier = Modifier) {
 
 /**
  * منطقة اللعب المركزية:
- * 1. آلية التصغير التلقائي (Dynamic Scaling): تبقى جميع القطع الموضوعة ظاهرة بالكامل
- *    على الشاشة طوال الجولة ضمن المساحة الثابتة بين صف الخصم وصف المستخدم (دون الحاجة لتمرير/Scroll).
- * 2. يتم تصغير حجم القطع (عرضاً وارتفاعاً) تلقائياً وبشكل متناسب كلما طالت السلسلة وتجاوزت المساحة الافتراضية.
- * 3. التصغير تدريجي وسلس للغاية (Animated Scaling) مع كل قطعة جديدة تُضاف.
- * 4. الحفاظ على نقطة انطلاق السلسلة من منتصف الطاولة تماماً والتمدد المتماثل للأعلى وللأسفل مع ثبات المنتصف الأصلي.
+ * 1. الانعطاف التلقائي (Auto-turn / Zigzag Layout): تحافظ جميع القطع على حجمها
+ *    الطبيعي الثابت دائماً دون أي تصغير.
+ * 2. عند اقتراب السلسلة (لأعلى أو لأسفل) من حافة منطقة اللعب، تنعطف تلقائياً
+ *    بزاوية 90 درجة وتكمل أفقياً، وإذا اقتربت لاحقاً من حافة جانبية تنعطف مجدداً
+ *    للاتجاه العمودي، بنمط متعرج/حلزوني (S) حتى نهاية الجولة.
+ * 3. جميع القطع تبقى مرئية بالكامل ضمن حدود منطقة اللعب مهما طالت السلسلة.
+ * 4. الحفاظ على نقطة انطلاق السلسلة من منتصف الطاولة تماماً والتمدد المتماثل
+ *    للأعلى وللأسفل مع ثبات المنتصف الأصلي.
  * 5. بقاء صفي الخصم والمستخدم بحجمهما الطبيعي الكامل دون أي تصغير.
  * 6. الحفاظ على نظافة ساحة اللعب مع التحديد التفاعلي (Highlight) للأطراف المفتوحة.
  */
+
+private enum class SnakeDir { UP, DOWN, LEFT, RIGHT }
+
 @Composable
 fun DominoPlayAreaSerpentine(
     boardChain: List<PlacedBoardTile>,
@@ -1163,7 +1169,6 @@ fun DominoPlayAreaSerpentine(
         return
     }
 
-    // معرف أول حجر موضوع في منتصف الطاولة
     val centerTileId = remember(initialTileId) {
         if (initialTileId.isNotEmpty()) initialTileId else (boardChain.firstOrNull()?.tile?.id ?: "")
     }
@@ -1173,174 +1178,151 @@ fun DominoPlayAreaSerpentine(
         if (idx >= 0) idx else (boardChain.size / 2).coerceAtLeast(0)
     }
 
-    // الأبعاد الأساسية الافتراضية للقطعة بحجم 100%
     val baseTileW = 33.dp
     val baseTileH = 58.dp
-    val baseTileSpacing = 4.dp
+    val tileSpacing = 4.dp
 
-    fun getBaseDimensions(orientation: TileOrientation): Pair<Dp, Dp> {
-        return if (orientation == TileOrientation.VERTICAL) {
-            Pair(baseTileW, baseTileH)
-        } else {
-            Pair(baseTileH, baseTileW)
-        }
+    fun rawDims(orientation: TileOrientation): Pair<Dp, Dp> =
+        if (orientation == TileOrientation.VERTICAL) baseTileW to baseTileH else baseTileH to baseTileW
+
+    // يحدد الاتجاه الفعلي لرسم القطعة (طولية أم عرضية) بحيث تبقى القطع "المزدوجة"
+    // عمودية دائماً على مسار السلسلة، أياً كان اتجاه المسار الحالي (عمودي أو أفقي)
+    fun effectiveOrientation(originalOrientation: TileOrientation, dir: SnakeDir): TileOrientation {
+        val isCrosswise = originalOrientation == TileOrientation.HORIZONTAL
+        val pathIsVertical = dir == SnakeDir.UP || dir == SnakeDir.DOWN
+        val shouldRenderWide = if (pathIsVertical) isCrosswise else !isCrosswise
+        return if (shouldRenderWide) TileOrientation.HORIZONTAL else TileOrientation.VERTICAL
     }
 
-    val centerOrientation = boardChain.getOrNull(centerIndex)?.orientation ?: TileOrientation.HORIZONTAL
-    val centerBaseH = getBaseDimensions(centerOrientation).second
-
-    // حساب أقصى تمدد غير مصغر للسلسلة نحو الأعلى والأسفل انطلاقاً من مركز الحجر الأولي
-    val unscaledTopExtent = remember(boardChain, centerIndex) {
-        var extent = centerBaseH / 2
-        for (i in centerIndex - 1 downTo 0) {
-            val h = getBaseDimensions(boardChain[i].orientation).second
-            extent += baseTileSpacing + h
-        }
-        extent
-    }
-
-    val unscaledBottomExtent = remember(boardChain, centerIndex) {
-        var extent = centerBaseH / 2
-        for (i in centerIndex + 1 until boardChain.size) {
-            val h = getBaseDimensions(boardChain[i].orientation).second
-            extent += baseTileSpacing + h
-        }
-        extent
-    }
+    data class Placement(val x: Dp, val y: Dp, val w: Dp, val h: Dp, val renderOrientation: TileOrientation)
 
     BoxWithConstraints(
         modifier = modifier
             .fillMaxSize()
-            .clipToBounds(), // عزل تام لمنع تداخل أي حجر مع صفوف معلومات اللاعبين
+            .clipToBounds(),
         contentAlignment = Alignment.Center
     ) {
-        val viewportHeight = maxHeight
-        val centerY = viewportHeight / 2
-        val safetyMargin = 14.dp
-        val availableHalfHeight = (centerY - safetyMargin).coerceAtLeast(40.dp)
+        val margin = 10.dp
+        val topLimit = margin
+        val bottomLimit = maxHeight - margin
+        val leftLimit = margin
+        val rightLimit = maxWidth - margin
+        val centerX = maxWidth / 2
+        val centerY = maxHeight / 2
 
-        // تحديد أقصى امتداد عمودي للسلسلة من المركز
-        val maxExtent = maxOf(unscaledTopExtent, unscaledBottomExtent)
+        val placements = remember(boardChain, centerIndex, maxWidth, maxHeight) {
+            val result = arrayOfNulls<Placement>(boardChain.size)
 
-        // حساب نسبة التصغير التلقائي المتناسبة (عرضاً وارتفاعاً) بحيث تتسع السلسلة كاملة
-        // مع وضع حد أدنى مناسب (0.18f) يضمن استيعاب 35+ قطعة مع وضوح الأرقام تماماً
-        val targetScale = remember(maxExtent, availableHalfHeight) {
-            if (maxExtent > availableHalfHeight && maxExtent > 0.dp) {
-                (availableHalfHeight / maxExtent).coerceIn(0.18f, 1.0f)
-            } else {
-                1.0f
-            }
-        }
+            val centerOrientation = boardChain[centerIndex].orientation
+            val (centerW, centerH) = rawDims(centerOrientation)
+            result[centerIndex] = Placement(centerX - centerW / 2, centerY - centerH / 2, centerW, centerH, centerOrientation)
 
-        // حركة تصغير وتكبير تدريجية وسلسة (Smooth Animated Scaling) عند إضافة أي قطعة جديدة
-        val animatedScale by animateFloatAsState(
-            targetValue = targetScale,
-            animationSpec = tween(durationMillis = 350, easing = FastOutSlowInEasing),
-            label = "DominoDynamicScale"
-        )
+            fun walk(indices: List<Int>, initialDir: SnakeDir, jogStart: SnakeDir) {
+                var dir = initialDir
+                var jog = jogStart
+                var lastCenterX = centerX
+                var lastCenterY = centerY
+                var lastW = centerW
+                var lastH = centerH
 
-        val currentSpacing = baseTileSpacing * animatedScale
+                for (idx in indices) {
+                    val orientation = boardChain[idx].orientation
 
-        fun getScaledDimensions(orientation: TileOrientation): Pair<Dp, Dp> {
-            return if (orientation == TileOrientation.VERTICAL) {
-                Pair(baseTileW * animatedScale, baseTileH * animatedScale)
-            } else {
-                Pair(baseTileH * animatedScale, baseTileW * animatedScale)
-            }
-        }
-
-        // حساب المواقع العمودية الدقيقة لجميع القطع مع بقاء الحجر الأولي ثابتاً في منتصف الطاولة
-        val currentCenterH = getScaledDimensions(centerOrientation).second
-        val centerTopY = centerY - (currentCenterH / 2)
-
-        val tileTopPositions = remember(boardChain, centerIndex, animatedScale, centerTopY, currentSpacing) {
-            val positions = MutableList(boardChain.size) { 0.dp }
-            if (boardChain.isEmpty()) return@remember positions
-
-            positions[centerIndex] = centerTopY
-
-            // تمدد السلسلة نحو الأعلى (الطرف الأيسر / العلوي)
-            var currentTop = centerTopY
-            for (i in centerIndex - 1 downTo 0) {
-                val h = getScaledDimensions(boardChain[i].orientation).second
-                val bottomOfThis = currentTop - currentSpacing
-                val topOfThis = bottomOfThis - h
-                positions[i] = topOfThis
-                currentTop = topOfThis
-            }
-
-            // تمدد السلسلة نحو الأسفل (الطرف الأيمن / السفلي)
-            var currentBottom = centerTopY + currentCenterH
-            for (i in centerIndex + 1 until boardChain.size) {
-                val h = getScaledDimensions(boardChain[i].orientation).second
-                val topOfThis = currentBottom + currentSpacing
-                val bottomOfThis = topOfThis + h
-                positions[i] = topOfThis
-                currentBottom = bottomOfThis
-            }
-
-            positions
-        }
-
-        // عرض ساحة اللعب: جميع القطع ظاهرة بالكامل دون أي تمرير ودون خروج أي قطعة خارج حدود الطاولة
-        Box(
-            modifier = Modifier.fillMaxSize(),
-            contentAlignment = Alignment.TopCenter
-        ) {
-            boardChain.forEachIndexed { index, placed ->
-                val tileTopY = tileTopPositions.getOrElse(index) { 0.dp }
-                val isLeftEnd = index == 0
-                val isRightEnd = index == boardChain.size - 1
-                val isEnd = isLeftEnd || isRightEnd
-
-                val isSelected = when {
-                    isLeftEnd && selectedChainEnd == SelectedChainEnd.LEFT -> true
-                    isRightEnd && selectedChainEnd == SelectedChainEnd.RIGHT -> true
-                    else -> false
-                }
-
-                // فحص إذا كان للمستخدم قطعة متوافقة مع هذا الطرف تحديداً
-                val hasMatchingTile = when {
-                    boardChain.size == 1 -> userTiles.any {
-                        it.left == leftEnd || it.right == leftEnd || it.left == rightEnd || it.right == rightEnd
+                    fun place(direction: SnakeDir): Placement {
+                        val renderOrientation = effectiveOrientation(orientation, direction)
+                        val (w, h) = rawDims(renderOrientation)
+                        val cx: Dp
+                        val cy: Dp
+                        when (direction) {
+                            SnakeDir.UP -> { cx = lastCenterX; cy = lastCenterY - lastH / 2 - tileSpacing - h / 2 }
+                            SnakeDir.DOWN -> { cx = lastCenterX; cy = lastCenterY + lastH / 2 + tileSpacing + h / 2 }
+                            SnakeDir.LEFT -> { cx = lastCenterX - lastW / 2 - tileSpacing - w / 2; cy = lastCenterY }
+                            SnakeDir.RIGHT -> { cx = lastCenterX + lastW / 2 + tileSpacing + w / 2; cy = lastCenterY }
+                        }
+                        return Placement(cx - w / 2, cy - h / 2, w, h, renderOrientation)
                     }
-                    isLeftEnd -> userTiles.any { it.left == leftEnd || it.right == leftEnd }
-                    isRightEnd -> userTiles.any { it.left == rightEnd || it.right == rightEnd }
-                    else -> false
-                }
 
-                Box(
-                    modifier = Modifier
-                        .align(Alignment.TopCenter)
-                        .offset(y = tileTopY)
-                ) {
-                    ClassicDominoTileView2P(
-                        tile = placed.tile,
-                        orientation = placed.orientation,
-                        isLeftEnd = isLeftEnd,
-                        isRightEnd = isRightEnd,
-                        isSelected = isSelected,
-                        isPlayableEnd = isUserTurn && isEnd && hasMatchingTile,
-                        scale = animatedScale
+                    var p = place(dir)
+                    val needsTurn = when (dir) {
+                        SnakeDir.UP -> p.y < topLimit
+                        SnakeDir.DOWN -> (p.y + p.h) > bottomLimit
+                        SnakeDir.LEFT -> p.x < leftLimit
+                        SnakeDir.RIGHT -> (p.x + p.w) > rightLimit
+                    }
+
+                    if (needsTurn) {
+                        dir = if (dir == SnakeDir.UP || dir == SnakeDir.DOWN) {
+                            val newDir = jog
+                            jog = if (jog == SnakeDir.RIGHT) SnakeDir.LEFT else SnakeDir.RIGHT
+                            newDir
+                        } else {
+                            initialDir
+                        }
+                        p = place(dir)
+                    }
+
+                    result[idx] = p
+                    lastCenterX = p.x + p.w / 2
+                    lastCenterY = p.y + p.h / 2
+                    lastW = p.w
+                    lastH = p.h
+                }
+            }
+
+            walk((centerIndex - 1 downTo 0).toList(), SnakeDir.UP, SnakeDir.LEFT)
+            walk((centerIndex + 1 until boardChain.size).toList(), SnakeDir.DOWN, SnakeDir.RIGHT)
+
+            result
+        }
+
+        boardChain.forEachIndexed { index, placed ->
+            val p = placements.getOrNull(index) ?: return@forEachIndexed
+            val isLeftEnd = index == 0
+            val isRightEnd = index == boardChain.size - 1
+            val isEnd = isLeftEnd || isRightEnd
+
+            val isSelected = when {
+                isLeftEnd && selectedChainEnd == SelectedChainEnd.LEFT -> true
+                isRightEnd && selectedChainEnd == SelectedChainEnd.RIGHT -> true
+                else -> false
+            }
+
+            val hasMatchingTile = when {
+                boardChain.size == 1 -> userTiles.any {
+                    it.left == leftEnd || it.right == leftEnd || it.left == rightEnd || it.right == rightEnd
+                }
+                isLeftEnd -> userTiles.any { it.left == leftEnd || it.right == leftEnd }
+                isRightEnd -> userTiles.any { it.left == rightEnd || it.right == rightEnd }
+                else -> false
+            }
+
+            Box(
+                modifier = Modifier
+                    .align(Alignment.TopStart)
+                    .offset(x = p.x, y = p.y)
+            ) {
+                ClassicDominoTileView2P(
+                    tile = placed.tile,
+                    orientation = p.renderOrientation,
+                    isLeftEnd = isLeftEnd,
+                    isRightEnd = isRightEnd,
+                    isSelected = isSelected,
+                    isPlayableEnd = isUserTurn && isEnd && hasMatchingTile,
+                    scale = 1.0f
+                )
+
+                if (isUserTurn && isEnd) {
+                    Box(
+                        modifier = Modifier
+                            .align(Alignment.Center)
+                            .sizeIn(minWidth = 48.dp, minHeight = 48.dp)
+                            .clickable { onEndTileClick(isLeftEnd) }
                     )
-
-                    // مساحة لمس مريحة وموسعة للضغط على الأطراف المفتوحة حتى مع تصغير الحجم
-                    if (isUserTurn && isEnd) {
-                        Box(
-                            modifier = Modifier
-                                .align(Alignment.Center)
-                                .sizeIn(minWidth = 48.dp, minHeight = 48.dp)
-                                .clickable {
-                                    onEndTileClick(isLeftEnd)
-                                }
-                        )
-                    }
                 }
             }
         }
     }
 }
-
 /**
  * صف المستخدم:
  * صورة المستخدم من اليمين (مع مؤقت الدور الـ 15 ثانية)،
