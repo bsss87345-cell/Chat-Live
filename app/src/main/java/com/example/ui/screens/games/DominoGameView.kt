@@ -257,8 +257,7 @@ fun DominoGameView(
     var showChatDialog by remember { mutableStateOf(false) }
     var showGiftDialog by remember { mutableStateOf(false) }
     var showSettingsDialog by remember { mutableStateOf(false) }
-    var selectedEndDialogTile by remember { mutableStateOf<DominoTile?>(null) }
-
+    
     // إعدادات الصوت والاهتزاز
     var soundEnabled by remember { mutableStateOf(true) }
     var vibrationEnabled by remember { mutableStateOf(true) }
