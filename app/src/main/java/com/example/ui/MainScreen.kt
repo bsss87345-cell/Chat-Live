@@ -105,6 +105,31 @@ fun MainScreen(viewModel: SocialAppViewModel) {
                     .fillMaxSize()
                     .padding(innerPadding)
             ) {
+                if (showAccountSettings) {
+                    val posts by viewModel.posts.collectAsStateWithLifecycle()
+                    val userProfile by viewModel.userProfile.collectAsStateWithLifecycle()
+                    val walletFilter by viewModel.walletFilter.collectAsStateWithLifecycle()
+                    val transactions by viewModel.transactions.collectAsStateWithLifecycle()
+                    val storeItems by viewModel.storeItems.collectAsStateWithLifecycle()
+
+                    AccountSettingsScreen(
+                        userProfile = userProfile,
+                        posts = posts,
+                        balance = walletBalance,
+                        walletFilter = walletFilter,
+                        transactions = transactions,
+                        storeItems = storeItems,
+                        onToggleNotifications = { viewModel.toggleProfileNotifications() },
+                        onLogout = { viewModel.logoutUser() },
+                        onFilterChange = { viewModel.setWalletFilter(it) },
+                        onBuyItem = { viewModel.buyStoreItem(it) },
+                        onLikePost = { viewModel.toggleLike(it) },
+                        onCommentPost = { viewModel.openComments(it) },
+                        onSharePost = { viewModel.sharePost(it) },
+                        onNavigateToRecharge = {},
+                        onBack = { viewModel.closeAccountSettings() }
+                    )
+                } else {
                 Crossfade(targetState = currentTab, label = "tab_transition") { tab ->
                     when (tab) {
                         AppTab.FEED -> {
