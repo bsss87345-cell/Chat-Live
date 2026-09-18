@@ -67,7 +67,7 @@ fun MainScreen(viewModel: SocialAppViewModel) {
             modifier = Modifier.fillMaxSize(),
             topBar = {
                 AnimatedVisibility(
-                    visible = !hideBars,
+                    visible = currentTab == AppTab.FEED,
                     enter = slideInVertically(initialOffsetY = { -it }) + fadeIn(),
                     exit = slideOutVertically(targetOffsetY = { -it }) + fadeOut()
                 ) {
