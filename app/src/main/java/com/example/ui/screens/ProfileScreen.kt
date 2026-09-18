@@ -115,10 +115,10 @@ fun ProfileScreen(
                     // Settings menu icon (top-right corner)
                     Row(
                         modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.Start
+                        horizontalArrangement = Arrangement.End
                     ) {
                         IconButton(
-                            onClick = { selectedSubTab = 2 },
+                            onClick = { /* TODO: will open full settings page */ },
                             modifier = Modifier
                                 .size(32.dp)
                                 .testTag("profile_settings_menu_button")
