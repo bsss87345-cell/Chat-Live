@@ -1115,12 +1115,13 @@ fun PlayerAvatarWithTimerRing(
                 }
             }
 
-            // صورة اللاعب
+            // صورة اللاعب مع إطار ذهبي ثابت حول الصورة فقط (بدون القطع)
             Box(
                 modifier = Modifier
                     .size(38.dp)
                     .clip(CircleShape)
-                    .background(avatarBg),
+                    .background(avatarBg)
+                    .border(2.dp, Color(0xFFD4AF37), CircleShape),
                 contentAlignment = Alignment.Center
             ) {
                 Text(text = emoji, fontSize = 20.sp)
