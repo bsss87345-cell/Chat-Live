@@ -68,8 +68,8 @@ fun MainScreen(viewModel: SocialAppViewModel) {
             topBar = {
                 AnimatedVisibility(
                     visible = currentTab == AppTab.FEED,
-                    enter = slideInVertically(initialOffsetY = { -it }) + fadeIn(),
-                    exit = slideOutVertically(targetOffsetY = { -it }) + fadeOut()
+                    enter = fadeIn(animationSpec = tween(durationMillis = 180)),
+                    exit = fadeOut(animationSpec = tween(durationMillis = 120))
                 ) {
                     val isDarkMode by viewModel.isDarkMode.collectAsStateWithLifecycle()
                     MujtamaTopBar(
