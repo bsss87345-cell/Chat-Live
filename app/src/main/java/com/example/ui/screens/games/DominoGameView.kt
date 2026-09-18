@@ -1652,7 +1652,7 @@ fun StandingUserTile2P(
         modifier = modifier
             .offset(y = yOffset)
             .graphicsLayer { this.alpha = alpha }
-            .size(width = 38.dp, height = 74.dp)
+            .size(width = 30.dp, height = 58.dp)
             .testTag("user_standing_tile_${tile.id}")
     ) {
         Box(
