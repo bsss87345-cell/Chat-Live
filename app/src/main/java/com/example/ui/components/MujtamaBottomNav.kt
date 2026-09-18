@@ -86,7 +86,7 @@ fun MujtamaBottomNav(
                     Text(
                         text = item.tab.titleAr,
                         fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Normal,
-                        fontSize = 11.sp
+                        fontSize = 14.sp
                     )
                 },
                 colors = NavigationBarItemDefaults.colors(
