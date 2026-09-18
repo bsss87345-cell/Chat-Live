@@ -58,7 +58,8 @@ fun MujtamaBottomNav(
 
     NavigationBar(
         containerColor = MaterialTheme.colorScheme.surface,
-        tonalElevation = 8.dp
+        tonalElevation = 8.dp,
+        modifier = Modifier.height(64.dp)
     ) {
         items.forEach { item ->
             val isSelected = currentTab == item.tab
