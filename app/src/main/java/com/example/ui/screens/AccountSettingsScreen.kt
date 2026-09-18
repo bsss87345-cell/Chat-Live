@@ -101,58 +101,56 @@ fun AccountSettingsScreen(
             )
         }
 
-        // Sub-Tabs Navigation
+        // Sub-Tabs Navigation (vertical list: إعدادات الحساب, منشوراتي, النقاط والرصيد)
         Surface(
             shape = RoundedCornerShape(18.dp),
             color = MaterialTheme.colorScheme.surface,
             tonalElevation = 1.dp,
-            modifier = Modifier.padding(horizontal = 12.dp)
+            modifier = Modifier
+                .padding(horizontal = 12.dp)
+                .fillMaxWidth()
         ) {
-            TabRow(
-                selectedTabIndex = selectedSubTab,
-                modifier = Modifier.padding(4.dp),
-                containerColor = Color.Transparent,
-                indicator = {}
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(4.dp),
+                verticalArrangement = Arrangement.spacedBy(4.dp)
             ) {
                 val subTabs = listOf(
-                    Triple("النقاط والرصيد", Icons.Default.Stars, 0),
+                    Triple("إعدادات الحساب", Icons.Default.Settings, 2),
                     Triple("منشوراتي", Icons.Default.Article, 1),
-                    Triple("إعدادات الحساب", Icons.Default.Settings, 2)
+                    Triple("النقاط والرصيد", Icons.Default.Stars, 0)
                 )
 
                 subTabs.forEach { (label, icon, index) ->
                     val isSelected = selectedSubTab == index
-                    Tab(
-                        selected = isSelected,
-                        onClick = { selectedSubTab = index },
+                    Row(
                         modifier = Modifier
+                            .fillMaxWidth()
                             .clip(RoundedCornerShape(14.dp))
                             .background(
                                 if (isSelected) MaterialTheme.colorScheme.primary
                                 else Color.Transparent
                             )
-                            .padding(vertical = 8.dp)
+                            .clickable { selectedSubTab = index }
+                            .padding(horizontal = 14.dp, vertical = 12.dp)
                             .testTag("account_settings_subtab_$index"),
-                        text = {
-                            Row(
-                                verticalAlignment = Alignment.CenterVertically,
-                                horizontalArrangement = Arrangement.spacedBy(4.dp)
-                            ) {
-                                Icon(
-                                    imageVector = icon,
-                                    contentDescription = null,
-                                    tint = if (isSelected) Color.White else MaterialTheme.colorScheme.onSurface,
-                                    modifier = Modifier.size(16.dp)
-                                )
-                                Text(
-                                    text = label,
-                                    fontSize = 11.sp,
-                                    fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Normal,
-                                    color = if (isSelected) Color.White else MaterialTheme.colorScheme.onSurface
-                                )
-                            }
-                        }
-                    )
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(8.dp)
+                    ) {
+                        Icon(
+                            imageVector = icon,
+                            contentDescription = null,
+                            tint = if (isSelected) Color.White else MaterialTheme.colorScheme.onSurface,
+                            modifier = Modifier.size(18.dp)
+                        )
+                        Text(
+                            text = label,
+                            fontSize = 13.sp,
+                            fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Normal,
+                            color = if (isSelected) Color.White else MaterialTheme.colorScheme.onSurface
+                        )
+                    }
                 }
             }
         }
