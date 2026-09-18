@@ -1228,7 +1228,7 @@ fun DominoFaceDownTileView(modifier: Modifier = Modifier) {
         color = Color(0xFF361009), // عنابي / بني غامق
         border = androidx.compose.foundation.BorderStroke(1.2.dp, Color(0xFFD4AF37)), // حواف ذهبية
         shadowElevation = 3.dp,
-        modifier = modifier.size(width = 24.dp, height = 44.dp)
+        modifier = modifier.size(width = 19.dp, height = 35.dp)
     ) {
         Canvas(modifier = Modifier.fillMaxSize()) {
             val w = size.width
