@@ -54,7 +54,6 @@ fun ProfileScreen(
     onOpenAccountSettings: () -> Unit = {},
     onUpdateAvatarImage: (Uri) -> Unit = {}
 ) {
-    var showEditProfileDialog by remember { mutableStateOf(false) }
     var showEditBioDialog by remember { mutableStateOf(false) }
     var showFollowersDialog by remember { mutableStateOf(false) }
     var showFollowingDialog by remember { mutableStateOf(false) }
