@@ -1279,8 +1279,8 @@ private enum class SnakeDir { UP, DOWN, LEFT, RIGHT }
 @Composable
 fun DominoPlayAreaSerpentine(
     boardChain: List<PlacedBoardTile>,
-    leftEnd: Int,
-    rightEnd: Int,
+    leftEnd: Int?,
+    rightEnd: Int?,
     selectedChainEnd: SelectedChainEnd,
     userTiles: List<DominoTile>,
     isUserTurn: Boolean,
