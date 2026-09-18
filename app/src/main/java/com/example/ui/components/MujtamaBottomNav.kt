@@ -83,13 +83,7 @@ fun MujtamaBottomNav(
                         )
                     }
                 },
-                label = {
-                    Text(
-                        text = item.tab.titleAr,
-                        fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Normal,
-                        fontSize = 14.sp
-                    )
-                },
+                
                 colors = NavigationBarItemDefaults.colors(
                     selectedIconColor = MaterialTheme.colorScheme.primary,
                     selectedTextColor = MaterialTheme.colorScheme.primary,
