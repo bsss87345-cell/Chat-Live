@@ -1508,110 +1508,102 @@ fun UserRowLuxury(
 ) {
     val scrollState = rememberScrollState()
 
-    Surface(
-        shape = RoundedCornerShape(16.dp),
-        color = Color.Transparent,
-        border = androidx.compose.foundation.BorderStroke(1.2.dp, Color(0xFFC7985D)),
-        shadowElevation = 0.dp,
-        modifier = modifier.fillMaxWidth()
+    Column(
+        modifier = modifier
+            .fillMaxWidth()
+            .padding(horizontal = 8.dp, vertical = 6.dp),
+        verticalArrangement = Arrangement.spacedBy(6.dp)
     ) {
-        Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 8.dp, vertical = 6.dp),
-            verticalArrangement = Arrangement.spacedBy(6.dp)
+        // الصف الأول: صورة المستخدم + أيقونتا الهدية والدردشة (بدون القطع)
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.Start
         ) {
-            // الصف الأول: صورة المستخدم + أيقونتا الهدية والدردشة (بدون القطع)
+            // 1. صورة المستخدم من اليمين مع مؤقت الدور الـ 15 ثانية
+            PlayerAvatarWithTimerRing(
+                name = "أنت",
+                emoji = "😎",
+                avatarBg = Color(0xFF1976D2),
+                isCurrentTurn = isUserTurn,
+                timeRemaining = timeRemaining,
+                chatBubbleText = chatBubbleText,
+                giftBubbleText = giftBubbleText
+            )
+
+            Spacer(modifier = Modifier.width(8.dp))
+
+            // 2. أيقونتان منفصلتان جنباً إلى جنب: أيقونة الهدايا (🎁) وأيقونة الدردشة (💬) - بحجم مصغّر مناسب
             Row(
-                modifier = Modifier.fillMaxWidth(),
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.Start
-            ) {
-                // 1. صورة المستخدم من اليمين مع مؤقت الدور الـ 15 ثانية
-                PlayerAvatarWithTimerRing(
-                    name = "أنت",
-                    emoji = "😎",
-                    avatarBg = Color(0xFF1976D2),
-                    isCurrentTurn = isUserTurn,
-                    timeRemaining = timeRemaining,
-                    chatBubbleText = chatBubbleText,
-                    giftBubbleText = giftBubbleText
-                )
-
-                Spacer(modifier = Modifier.width(8.dp))
-
-                // 2. أيقونتان منفصلتان جنباً إلى جنب: أيقونة الهدايا (🎁) وأيقونة الدردشة (💬)
-                Row(
-                    horizontalArrangement = Arrangement.spacedBy(6.dp),
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    // أيقونة الهدايا المنفصلة 🎁
-                    IconButton(
-                        onClick = onGiftClick,
-                        modifier = Modifier
-                            .size(36.dp)
-                            .clip(CircleShape)
-                            .background(Color(0xFF3E1909))
-                            .border(1.2.dp, Color(0xFFD4AF37), CircleShape)
-                            .testTag("domino_gift_button")
-                    ) {
-                        Text(text = "🎁", fontSize = 16.sp)
-                    }
-
-                    // أيقونة الدردشة المنفصلة 💬
-                    IconButton(
-                        onClick = onChatClick,
-                        modifier = Modifier
-                            .size(36.dp)
-                            .clip(CircleShape)
-                            .background(Color(0xFF3E1909))
-                            .border(1.2.dp, Color(0xFFD4AF37), CircleShape)
-                            .testTag("domino_chat_button")
-                    ) {
-                        Icon(
-                            imageVector = Icons.Default.ChatBubble,
-                            contentDescription = "الدردشة",
-                            tint = Color(0xFFF7E2C6),
-                            modifier = Modifier.size(17.dp)
-                        )
-                    }
-                }
-            }
-
-            // الصف الثاني: قطع المستخدم مكشوفة (Face-up) بصف منفصل أسفل بلوك الصورة والأيقونات
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .horizontalScroll(scrollState),
-                horizontalArrangement = Arrangement.spacedBy(6.dp),
+                horizontalArrangement = Arrangement.spacedBy(5.dp),
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                userTiles.forEach { tile ->
-                    // تحديد بصري واضح (Highlight) إذا تم الضغط على طرف في الطاولة وتوافق الحجر معه
-                    val isHighlighted = isUserTurn && when (selectedChainEnd) {
-                        SelectedChainEnd.LEFT -> tile.left == leftEnd || tile.right == leftEnd
-                        SelectedChainEnd.RIGHT -> tile.left == rightEnd || tile.right == rightEnd
-                        SelectedChainEnd.NONE -> false
-                    }
+                // أيقونة الهدايا المنفصلة 🎁
+                IconButton(
+                    onClick = onGiftClick,
+                    modifier = Modifier
+                        .size(27.dp)
+                        .clip(CircleShape)
+                        .background(Color(0xFF3E1909))
+                        .border(1.dp, Color(0xFFD4AF37), CircleShape)
+                        .testTag("domino_gift_button")
+                ) {
+                    Text(text = "🎁", fontSize = 12.sp)
+                }
 
-                    // تعتيم خفيف للقطع غير المتوافقة عند اختيار طرف محدد لتأكيد الـ Highlight
-                    val isDimmed = isUserTurn && selectedChainEnd != SelectedChainEnd.NONE && !isHighlighted
-
-                    val isBoardEmptyForOpening = leftEnd == null && rightEnd == null
-                    val isPlayable = isUserTurn && (
-                        isBoardEmptyForOpening ||
-                        tile.left == leftEnd || tile.right == leftEnd ||
-                        tile.left == rightEnd || tile.right == rightEnd
-                    )
-
-                    StandingUserTile2P(
-                        tile = tile,
-                        isPlayable = isPlayable,
-                        isHighlighted = isHighlighted,
-                        isDimmed = isDimmed,
-                        onClick = { onTileClick(tile) }
+                // أيقونة الدردشة المنفصلة 💬
+                IconButton(
+                    onClick = onChatClick,
+                    modifier = Modifier
+                        .size(27.dp)
+                        .clip(CircleShape)
+                        .background(Color(0xFF3E1909))
+                        .border(1.dp, Color(0xFFD4AF37), CircleShape)
+                        .testTag("domino_chat_button")
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.ChatBubble,
+                        contentDescription = "الدردشة",
+                        tint = Color(0xFFF7E2C6),
+                        modifier = Modifier.size(13.dp)
                     )
                 }
+            }
+        }
+
+        // الصف الثاني: قطع المستخدم مكشوفة (Face-up) بصف منفصل - تبقى وحدها على الطاولة بدون أي إطار محيط
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .horizontalScroll(scrollState),
+            horizontalArrangement = Arrangement.spacedBy(6.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            userTiles.forEach { tile ->
+                // تحديد بصري واضح (Highlight) إذا تم الضغط على طرف في الطاولة وتوافق الحجر معه
+                val isHighlighted = isUserTurn && when (selectedChainEnd) {
+                    SelectedChainEnd.LEFT -> tile.left == leftEnd || tile.right == leftEnd
+                    SelectedChainEnd.RIGHT -> tile.left == rightEnd || tile.right == rightEnd
+                    SelectedChainEnd.NONE -> false
+                }
+
+                // تعتيم خفيف للقطع غير المتوافقة عند اختيار طرف محدد لتأكيد الـ Highlight
+                val isDimmed = isUserTurn && selectedChainEnd != SelectedChainEnd.NONE && !isHighlighted
+
+                val isBoardEmptyForOpening = leftEnd == null && rightEnd == null
+                val isPlayable = isUserTurn && (
+                    isBoardEmptyForOpening ||
+                    tile.left == leftEnd || tile.right == leftEnd ||
+                    tile.left == rightEnd || tile.right == rightEnd
+                )
+
+                StandingUserTile2P(
+                    tile = tile,
+                    isPlayable = isPlayable,
+                    isHighlighted = isHighlighted,
+                    isDimmed = isDimmed,
+                    onClick = { onTileClick(tile) }
+                )
             }
         }
     }
