@@ -615,7 +615,7 @@ fun AccountSettingsScreen(
 
                             HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f))
 
-                            SettingsActionRow(
+                            AccountSettingsActionRow(
                                 icon = Icons.Default.Translate,
                                 title = "تغيير اللغة",
                                 subtitle = "اللغة الحالية: $currentLanguage",
