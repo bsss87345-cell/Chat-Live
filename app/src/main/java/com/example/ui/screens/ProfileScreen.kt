@@ -486,8 +486,9 @@ fun ProfileScreen(
 }
 
 @Composable
-fun ProfileStatItem(title: String, count: String) {
+fun ProfileStatItem(title: String, count: String, onClick: (() -> Unit)? = null) {
     Column(
+        modifier = if (onClick != null) Modifier.clickable { onClick() } else Modifier,
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.spacedBy(2.dp)
     ) {
