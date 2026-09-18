@@ -88,6 +88,18 @@ class SocialAppViewModel : ViewModel() {
         }
     }
 
+    // --- Account Settings Page State ---
+    private val _showAccountSettings = MutableStateFlow(false)
+    val showAccountSettings: StateFlow<Boolean> = _showAccountSettings.asStateFlow()
+
+    fun openAccountSettings() {
+        _showAccountSettings.value = true
+    }
+
+    fun closeAccountSettings() {
+        _showAccountSettings.value = false
+    }
+
     // --- Games State ---
     private val _activeGameType = MutableStateFlow<GameType?>(null)
     val activeGameType: StateFlow<GameType?> = _activeGameType.asStateFlow()
