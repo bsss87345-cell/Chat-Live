@@ -56,8 +56,14 @@ fun ProfileScreen(
 ) {
     var showEditProfileDialog by remember { mutableStateOf(false) }
     var showEditBioDialog by remember { mutableStateOf(false) }
-    var showLogoutDialog by remember { mutableStateOf(false) }
-    var showRechargeDialog by remember { mutableStateOf(false) }
+    var showFollowersDialog by remember { mutableStateOf(false) }
+    var showFollowingDialog by remember { mutableStateOf(false) }
+
+    val avatarImageLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.PickVisualMedia()
+    ) { uri: Uri? ->
+        uri?.let { onUpdateAvatarImage(it) }
+    }
 
     // User's own posts or activity (used for the header stats count)
     val userPosts = posts.filter {
