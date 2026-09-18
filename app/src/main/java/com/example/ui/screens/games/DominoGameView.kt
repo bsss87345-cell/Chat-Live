@@ -1514,69 +1514,73 @@ fun UserRowLuxury(
         shadowElevation = 0.dp,
         modifier = modifier.fillMaxWidth()
     ) {
-        Row(
+        Column(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(horizontal = 8.dp, vertical = 6.dp),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.Start
+            verticalArrangement = Arrangement.spacedBy(6.dp)
         ) {
-            // 1. صورة المستخدم من اليمين مع مؤقت الدور الـ 15 ثانية
-            PlayerAvatarWithTimerRing(
-                name = "أنت",
-                emoji = "😎",
-                avatarBg = Color(0xFF1976D2),
-                isCurrentTurn = isUserTurn,
-                timeRemaining = timeRemaining,
-                chatBubbleText = chatBubbleText,
-                giftBubbleText = giftBubbleText
-            )
-
-            Spacer(modifier = Modifier.width(8.dp))
-
-            // 2. أيقونتان منفصلتان جنباً إلى جنب: أيقونة الهدايا (🎁) وأيقونة الدردشة (💬)
+            // الصف الأول: صورة المستخدم + أيقونتا الهدية والدردشة (بدون القطع)
             Row(
-                horizontalArrangement = Arrangement.spacedBy(6.dp),
-                verticalAlignment = Alignment.CenterVertically
+                modifier = Modifier.fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.Start
             ) {
-                // أيقونة الهدايا المنفصلة 🎁
-                IconButton(
-                    onClick = onGiftClick,
-                    modifier = Modifier
-                        .size(36.dp)
-                        .clip(CircleShape)
-                        .background(Color(0xFF3E1909))
-                        .border(1.2.dp, Color(0xFFD4AF37), CircleShape)
-                        .testTag("domino_gift_button")
-                ) {
-                    Text(text = "🎁", fontSize = 16.sp)
-                }
+                // 1. صورة المستخدم من اليمين مع مؤقت الدور الـ 15 ثانية
+                PlayerAvatarWithTimerRing(
+                    name = "أنت",
+                    emoji = "😎",
+                    avatarBg = Color(0xFF1976D2),
+                    isCurrentTurn = isUserTurn,
+                    timeRemaining = timeRemaining,
+                    chatBubbleText = chatBubbleText,
+                    giftBubbleText = giftBubbleText
+                )
 
-                // أيقونة الدردشة المنفصلة 💬
-                IconButton(
-                    onClick = onChatClick,
-                    modifier = Modifier
-                        .size(36.dp)
-                        .clip(CircleShape)
-                        .background(Color(0xFF3E1909))
-                        .border(1.2.dp, Color(0xFFD4AF37), CircleShape)
-                        .testTag("domino_chat_button")
+                Spacer(modifier = Modifier.width(8.dp))
+
+                // 2. أيقونتان منفصلتان جنباً إلى جنب: أيقونة الهدايا (🎁) وأيقونة الدردشة (💬)
+                Row(
+                    horizontalArrangement = Arrangement.spacedBy(6.dp),
+                    verticalAlignment = Alignment.CenterVertically
                 ) {
-                    Icon(
-                        imageVector = Icons.Default.ChatBubble,
-                        contentDescription = "الدردشة",
-                        tint = Color(0xFFF7E2C6),
-                        modifier = Modifier.size(17.dp)
-                    )
+                    // أيقونة الهدايا المنفصلة 🎁
+                    IconButton(
+                        onClick = onGiftClick,
+                        modifier = Modifier
+                            .size(36.dp)
+                            .clip(CircleShape)
+                            .background(Color(0xFF3E1909))
+                            .border(1.2.dp, Color(0xFFD4AF37), CircleShape)
+                            .testTag("domino_gift_button")
+                    ) {
+                        Text(text = "🎁", fontSize = 16.sp)
+                    }
+
+                    // أيقونة الدردشة المنفصلة 💬
+                    IconButton(
+                        onClick = onChatClick,
+                        modifier = Modifier
+                            .size(36.dp)
+                            .clip(CircleShape)
+                            .background(Color(0xFF3E1909))
+                            .border(1.2.dp, Color(0xFFD4AF37), CircleShape)
+                            .testTag("domino_chat_button")
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.ChatBubble,
+                            contentDescription = "الدردشة",
+                            tint = Color(0xFFF7E2C6),
+                            modifier = Modifier.size(17.dp)
+                        )
+                    }
                 }
             }
 
-            Spacer(modifier = Modifier.width(8.dp))
-
-            // 3. قطع المستخدم مكشوفة (Face-up) في شريط تمرير سلس مع إبراز وتحديد القطع المتوافقة
+            // الصف الثاني: قطع المستخدم مكشوفة (Face-up) بصف منفصل أسفل بلوك الصورة والأيقونات
             Row(
                 modifier = Modifier
-                    .weight(1f)
+                    .fillMaxWidth()
                     .horizontalScroll(scrollState),
                 horizontalArrangement = Arrangement.spacedBy(6.dp),
                 verticalAlignment = Alignment.CenterVertically
