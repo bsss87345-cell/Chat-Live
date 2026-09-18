@@ -236,9 +236,372 @@ fun DominoGameView(
         )
     }
 
-m
-    
-                // سحب تلقائي للخصم
+val leftEnd: Int? = boardChain.firstOrNull()?.tile?.left
+    val rightEnd: Int? = boardChain.lastOrNull()?.tile?.right
+
+    // نظام النقاط: يبدأ من 0 ومقيد بحد أقصى 100 بالضبط
+    var userScore by remember { mutableIntStateOf(0) }
+    var currentRound by remember { mutableIntStateOf(1) }
+
+    // أدوار اللعب ومؤقت الـ 15 ثانية الدقيق
+    var isUserTurn by remember { mutableStateOf(true) }
+    var turnTimeRemaining by remember { mutableIntStateOf(15) }
+    var isAutoDrawing by remember { mutableStateOf(false) }
+
+    // آلية تحديد طرف السلسلة على الطاولة (من المنتصف/الأطراف المفتوحة)
+    var selectedChainEnd by remember { mutableStateOf(SelectedChainEnd.NONE) }
+
+    var statusMessage by remember { mutableStateOf("دورك للعب! اختر حجراً مناسباً للطرفين [$leftEnd] أو [$rightEnd]") }
+    var isGameWonFinal by remember { mutableStateOf(false) }
+    var showExitDialog by remember { mutableStateOf(false) }
+    var showChatDialog by remember { mutableStateOf(false) }
+    var showGiftDialog by remember { mutableStateOf(false) }
+    var showSettingsDialog by remember { mutableStateOf(false) }
+
+    // فقاعات الدردشة والهدايا الحية فوق صورة المستخدم
+    var userChatBubbleText by remember { mutableStateOf<String?>(null) }
+    var userGiftBubbleText by remember { mutableStateOf<String?>(null) }
+
+    LaunchedEffect(userChatBubbleText) {
+        if (userChatBubbleText != null) {
+            delay(3500)
+            userChatBubbleText = null
+        }
+    }
+
+    LaunchedEffect(userGiftBubbleText) {
+        if (userGiftBubbleText != null) {
+            delay(3000)
+            userGiftBubbleText = null
+        }
+    }
+
+    // إعدادات الصوت والاهتزاز
+    var soundEnabled by remember { mutableStateOf(true) }
+    var vibrationEnabled by remember { mutableStateOf(true) }
+
+    // تشغيل التأثير عند وضع أي قطعة
+    fun onTilePlayedFeedback() {
+        DominoSoundAndHapticHelper.playWoodClack(context, haptic, soundEnabled, vibrationEnabled)
+    }
+
+    // إضافة النقاط بحد أقصى 100 بالضبط وفحص الفوز التلقائي (تُستدعى فقط عند نهاية الجولة الآن)
+    fun addPointsToUser(points: Int) {
+        val newScore = min(100, userScore + points)
+        userScore = newScore
+        if (newScore >= 100) {
+            isGameWonFinal = true
+            onWinReward(250)
+            statusMessage = "🎉 انتصار ساحق! حققت 100/100 نقطة وفزت بالمباراة!"
+        }
+    }
+
+    // هل يملك هذا اللاعب حجراً صالحاً للعب على أي من الطرفين المفتوحين؟
+    fun canPlay(hand: List<DominoTile>, l: Int, r: Int): Boolean =
+        hand.any { it.left == l || it.right == l || it.left == r || it.right == r }
+
+    // قيمة يد اللاعب المتبقية: أحجار الدبل تُحسب بضعف قيمتها، وبقية الأحجار بقيمتها العادية
+    fun handValue(hand: List<DominoTile>): Int =
+        hand.sumOf { if (it.isDouble) it.pipSum * 2 else it.pipSum }
+
+    // بدء جولة جديدة: يعاد توزيع الأحجار الـ 28 من جديد، ويبدأ الفائز بالجولة السابقة
+    fun startNewRound(starterIsUser: Boolean) {
+        val reshuffled = initialDeck.shuffled()
+        userTiles = reshuffled.subList(0, 7)
+        opponentTiles = reshuffled.subList(7, 14)
+        boneyardTiles = reshuffled.subList(14, 28)
+        boardChain = emptyList()
+        selectedChainEnd = SelectedChainEnd.NONE
+        isUserTurn = starterIsUser
+        currentRound++
+        statusMessage = if (starterIsUser)
+            "بدأت جولة جديدة! أنت تبدأ 🀄 اختر أي حجر من يدك لافتتاح الطاولة."
+        else
+            "بدأت جولة جديدة! $displayName يبدأ هذه الجولة."
+    }
+
+    // حالة "الطاولة المغلقة": لا أحد يقدر يلعب ولا يوجد سحب متبقٍ
+    fun resolveBlockEnding() {
+        if (isGameWonFinal) return
+        val userTotal = handValue(userTiles)
+        val opponentTotal = handValue(opponentTiles)
+        when {
+            userTotal < opponentTotal -> {
+                val diff = opponentTotal - userTotal
+                statusMessage = "🔒 الطاولة مغلقة! فزت بفارق $diff نقطة (يدك أخف من يد $displayName)."
+                addPointsToUser(diff)
+                if (userScore < 100) startNewRound(starterIsUser = true)
+            }
+            opponentTotal < userTotal -> {
+                statusMessage = "🔒 الطاولة مغلقة! فاز $displayName بفارق ${userTotal - opponentTotal} نقطة (يده أخف من يدك)."
+                startNewRound(starterIsUser = false)
+            }
+            else -> {
+                statusMessage = "🔒 الطاولة مغلقة بتعادل تام في النقاط! لا نقاط لهذه الجولة."
+                startNewRound(starterIsUser = true)
+            }
+        }
+    }
+
+    // مؤقت الدور: 15 ثانية بالضبط، يُعاد ضبطه بصرياً عند أي تبديل دور، لكن التمرير الإجباري
+    // عند انتهاء الوقت يُطبَّق فقط على دور المستخدم
+    LaunchedEffect(isUserTurn, isGameWonFinal, isAutoDrawing) {
+        turnTimeRemaining = 15
+        if (isGameWonFinal || isAutoDrawing || !isUserTurn) return@LaunchedEffect
+        while (turnTimeRemaining > 0 && !isGameWonFinal && !isAutoDrawing && isUserTurn) {
+            delay(1000)
+            turnTimeRemaining--
+        }
+        if (turnTimeRemaining == 0 && !isGameWonFinal && !isAutoDrawing && isUserTurn) {
+            statusMessage = "⏱️ انتهى وقتك (15 ثانية)! تم تمرير دورك تلقائياً إلى $displayName."
+            selectedChainEnd = SelectedChainEnd.NONE
+            isUserTurn = false
+        }
+    }
+
+    // فحص انتهاء الجولة بالفوز التام (نفاذ يد أحد اللاعبين بالكامل)
+    fun checkRoundEnd() {
+        if (isGameWonFinal || boardChain.isEmpty()) return
+        if (userTiles.isEmpty()) {
+            val roundPoints = handValue(opponentTiles)
+            statusMessage = "🎉 أنهيت جميع قطعك وفزت بالجولة! (+$roundPoints نقطة من يد $displayName)"
+            addPointsToUser(roundPoints)
+            if (userScore < 100) startNewRound(starterIsUser = true)
+        } else if (opponentTiles.isEmpty()) {
+            statusMessage = "أنهى $displayName قطعه وفاز بالجولة."
+            startNewRound(starterIsUser = false)
+        }
+    }
+
+    LaunchedEffect(userTiles.size, opponentTiles.size) {
+        checkRoundEnd()
+    }
+
+    // تنفيذ لعب الحجر من قبل المستخدم (بدون أي نقاط فورية — النقاط تُحسب فقط عند نهاية الجولة)
+    fun executePlayerPlay(tile: DominoTile, playOnLeft: Boolean) {
+        val currentL = boardChain.first().tile.left
+        val currentR = boardChain.last().tile.right
+
+        if (playOnLeft) {
+            val orientedTile = if (tile.right == currentL) tile else tile.reversed()
+            val orientation = if (orientedTile.isDouble) TileOrientation.HORIZONTAL else TileOrientation.VERTICAL
+            boardChain = listOf(PlacedBoardTile(orientedTile, orientation)) + boardChain
+            userTiles = userTiles.filter { it.id != tile.id }
+            onTilePlayedFeedback()
+            statusMessage = "وضعت [${orientedTile.left}|${orientedTile.right}] بنجاح!"
+            selectedChainEnd = SelectedChainEnd.NONE
+            isUserTurn = false
+        } else {
+            val orientedTile = if (tile.left == currentR) tile else tile.reversed()
+            val orientation = if (orientedTile.isDouble) TileOrientation.HORIZONTAL else TileOrientation.VERTICAL
+            boardChain = boardChain + PlacedBoardTile(orientedTile, orientation)
+            userTiles = userTiles.filter { it.id != tile.id }
+            onTilePlayedFeedback()
+            statusMessage = "وضعت [${orientedTile.left}|${orientedTile.right}] بنجاح!"
+            selectedChainEnd = SelectedChainEnd.NONE
+            isUserTurn = false
+        }
+    }
+
+    // الضغط على طرف موضوع على الطاولة لتحديد القطع المتوافقة في اليد
+    fun onBoardEndClicked(isLeft: Boolean) {
+        if (!isUserTurn || isGameWonFinal || isAutoDrawing || boardChain.isEmpty()) return
+
+        val currentL = boardChain.first().tile.left
+        val currentR = boardChain.last().tile.right
+
+        if (boardChain.size == 1) {
+            val hasMatchL = userTiles.any { it.left == currentL || it.right == currentL }
+            val hasMatchR = userTiles.any { it.left == currentR || it.right == currentR }
+            if (hasMatchL || hasMatchR) {
+                selectedChainEnd = if (selectedChainEnd == SelectedChainEnd.NONE) {
+                    if (hasMatchL) SelectedChainEnd.LEFT else SelectedChainEnd.RIGHT
+                } else {
+                    SelectedChainEnd.NONE
+                }
+                if (selectedChainEnd != SelectedChainEnd.NONE) {
+                    haptic.performHapticFeedback(HapticFeedbackType.LongPress)
+                }
+            } else {
+                selectedChainEnd = SelectedChainEnd.NONE
+            }
+            return
+        }
+
+        if (isLeft) {
+            val hasMatch = userTiles.any { it.left == currentL || it.right == currentL }
+            if (hasMatch) {
+                selectedChainEnd = if (selectedChainEnd == SelectedChainEnd.LEFT) {
+                    SelectedChainEnd.NONE
+                } else {
+                    SelectedChainEnd.LEFT
+                }
+                if (selectedChainEnd == SelectedChainEnd.LEFT) {
+                    haptic.performHapticFeedback(HapticFeedbackType.LongPress)
+                }
+            } else {
+                selectedChainEnd = SelectedChainEnd.NONE
+            }
+        } else {
+            val hasMatch = userTiles.any { it.left == currentR || it.right == currentR }
+            if (hasMatch) {
+                selectedChainEnd = if (selectedChainEnd == SelectedChainEnd.RIGHT) {
+                    SelectedChainEnd.NONE
+                } else {
+                    SelectedChainEnd.RIGHT
+                }
+                if (selectedChainEnd == SelectedChainEnd.RIGHT) {
+                    haptic.performHapticFeedback(HapticFeedbackType.LongPress)
+                }
+            } else {
+                selectedChainEnd = SelectedChainEnd.NONE
+            }
+        }
+    }
+
+    fun onUserTileClicked(tile: DominoTile) {
+        if (!isUserTurn || isGameWonFinal || isAutoDrawing) {
+            statusMessage = "انتظر دورك للعب!"
+            return
+        }
+
+        // افتتاح جولة جديدة (غير الأولى): الطاولة فارغة، يمكن وضع أي حجر لبدء السلسلة
+        if (boardChain.isEmpty()) {
+            val orientation = if (tile.isDouble) TileOrientation.VERTICAL else TileOrientation.HORIZONTAL
+            boardChain = listOf(PlacedBoardTile(tile, orientation))
+            userTiles = userTiles.filter { it.id != tile.id }
+            onTilePlayedFeedback()
+            statusMessage = "افتتحت الجولة بحجر [${tile.left}|${tile.right}]!"
+            selectedChainEnd = SelectedChainEnd.NONE
+            isUserTurn = false
+            return
+        }
+
+        val currentL = boardChain.first().tile.left
+        val currentR = boardChain.last().tile.right
+
+        if (selectedChainEnd == SelectedChainEnd.LEFT) {
+            if (tile.left == currentL || tile.right == currentL) {
+                executePlayerPlay(tile, playOnLeft = true)
+                selectedChainEnd = SelectedChainEnd.NONE
+            }
+            return
+        } else if (selectedChainEnd == SelectedChainEnd.RIGHT) {
+            if (tile.left == currentR || tile.right == currentR) {
+                executePlayerPlay(tile, playOnLeft = false)
+                selectedChainEnd = SelectedChainEnd.NONE
+            }
+            return
+        }
+
+        val canPlayLeft = tile.left == currentL || tile.right == currentL
+        val canPlayRight = tile.left == currentR || tile.right == currentR
+
+        if (canPlayLeft && canPlayRight && currentL != currentR) {
+            statusMessage = "هذا الحجر يطابق الطرفين! اضغط على الطرف المطلوب في السلسلة أولاً 👆"
+        } else if (canPlayLeft) {
+            executePlayerPlay(tile, playOnLeft = true)
+        } else if (canPlayRight) {
+            executePlayerPlay(tile, playOnLeft = false)
+        } else {
+            statusMessage = "هذا الحجر لا يطابق أي من الطرفين المفتوحين [$currentL] أو [$currentR] ⚠️"
+        }
+    }
+
+    // دور المستخدم/الخصم: افتتاح الطاولة الفارغة، السحب التلقائي، ولعب الخصم (AI)، مع اكتشاف "الطاولة المغلقة"
+    LaunchedEffect(isUserTurn, boardChain.size, isGameWonFinal) {
+        if (isGameWonFinal) return@LaunchedEffect
+
+        if (boardChain.isEmpty()) {
+            if (!isUserTurn) {
+                delay(1000)
+                if (isGameWonFinal) return@LaunchedEffect
+                val openingTile = opponentTiles.filter { it.isDouble }.maxByOrNull { it.pipSum }
+                    ?: opponentTiles.maxByOrNull { it.pipSum }
+                if (openingTile != null) {
+                    val orientation = if (openingTile.isDouble) TileOrientation.VERTICAL else TileOrientation.HORIZONTAL
+                    boardChain = listOf(PlacedBoardTile(openingTile, orientation))
+                    opponentTiles = opponentTiles.filter { it.id != openingTile.id }
+                    onTilePlayedFeedback()
+                    statusMessage = "افتتح $displayName الجولة بحجر [${openingTile.left}|${openingTile.right}]."
+                    delay(500)
+                    isUserTurn = true
+                }
+            }
+            return@LaunchedEffect
+        }
+
+        val currentL = boardChain.first().tile.left
+        val currentR = boardChain.last().tile.right
+
+        if (isUserTurn) {
+            val hasValidMove = canPlay(userTiles, currentL, currentR)
+            if (!hasValidMove) {
+                isAutoDrawing = true
+                statusMessage = "لا تملك حركة صالحة! جاري السحب التلقائي..."
+                delay(600)
+
+                var foundPlayable = false
+                while (!foundPlayable && boneyardTiles.isNotEmpty() && !isGameWonFinal) {
+                    val drawn = boneyardTiles.first()
+                    boneyardTiles = boneyardTiles.drop(1)
+                    userTiles = userTiles + drawn
+                    onTilePlayedFeedback()
+
+                    val isDrawnPlayable = (drawn.left == currentL || drawn.right == currentL || drawn.left == currentR || drawn.right == currentR)
+                    if (isDrawnPlayable) {
+                        foundPlayable = true
+                        statusMessage = "تم سحب حجر صالح للعب [${drawn.left}|${drawn.right}]! يمكنك لعبه الآن."
+                        break
+                    } else {
+                        statusMessage = "سحب [${drawn.left}|${drawn.right}] (غير صالح)، جاري السحب مجدداً..."
+                        delay(500)
+                    }
+                }
+
+                if (!foundPlayable && boneyardTiles.isEmpty()) {
+                    val opponentCanPlay = canPlay(opponentTiles, currentL, currentR)
+                    if (!opponentCanPlay) {
+                        statusMessage = "نفد بنك السحب ولا يوجد لدى أي طرف حركة صالحة! الطاولة مغلقة."
+                        delay(800)
+                        isAutoDrawing = false
+                        resolveBlockEnding()
+                    } else {
+                        statusMessage = "نفد بنك السحب ولا توجد لديك حركة صالحة! تم تمرير الدور تلقائياً."
+                        delay(800)
+                        isAutoDrawing = false
+                        isUserTurn = false
+                    }
+                } else {
+                    isAutoDrawing = false
+                }
+            }
+        } else {
+            delay(1000)
+            if (isGameWonFinal) return@LaunchedEffect
+
+            val matchLeft = opponentTiles.find { it.left == currentL || it.right == currentL }
+            val matchRight = opponentTiles.find { it.left == currentR || it.right == currentR }
+
+            if (matchLeft != null) {
+                val tileToPlay = if (matchLeft.right == currentL) matchLeft else matchLeft.reversed()
+                val orientation = if (tileToPlay.isDouble) TileOrientation.HORIZONTAL else TileOrientation.VERTICAL
+                boardChain = listOf(PlacedBoardTile(tileToPlay, orientation)) + boardChain
+                opponentTiles = opponentTiles.filter { it.id != matchLeft.id }
+                onTilePlayedFeedback()
+                statusMessage = "$displayName لعب [${tileToPlay.left}|${tileToPlay.right}] على الطرف العلوي."
+                delay(500)
+                isUserTurn = true
+            } else if (matchRight != null) {
+                val tileToPlay = if (matchRight.left == currentR) matchRight else matchRight.reversed()
+                val orientation = if (tileToPlay.isDouble) TileOrientation.HORIZONTAL else TileOrientation.VERTICAL
+                boardChain = boardChain + PlacedBoardTile(tileToPlay, orientation)
+                opponentTiles = opponentTiles.filter { it.id != matchRight.id }
+                onTilePlayedFeedback()
+                statusMessage = "$displayName لعب [${tileToPlay.left}|${tileToPlay.right}] على الطرف السفلي."
+                delay(500)
+                isUserTurn = true
+            } else {
                 statusMessage = "$displayName لا يملك حركة صالحة، يسحب تلقائياً..."
                 var opponentFound = false
 
@@ -269,13 +632,21 @@ m
                 }
 
                 if (!opponentFound && boneyardTiles.isEmpty()) {
-                    statusMessage = "$displayName لا يملك حركة ونفد بنك السحب، مرّر الدور لك."
+                    val userCanPlay = canPlay(userTiles, currentL, currentR)
+                    if (!userCanPlay) {
+                        statusMessage = "نفد بنك السحب ولا يوجد لدى أي طرف حركة صالحة! الطاولة مغلقة."
+                        delay(500)
+                        resolveBlockEnding()
+                        return@LaunchedEffect
+                    } else {
+                        statusMessage = "$displayName لا يملك حركة ونفد بنك السحب، مرّر الدور لك."
+                    }
                 }
                 delay(500)
                 isUserTurn = true
             }
         }
-    }
+    }    
 
     // فرض اتجاه اليمين لليسار لكامل واجهة الشاشة
     CompositionLocalProvider(LocalLayoutDirection provides LayoutDirection.Rtl) {
