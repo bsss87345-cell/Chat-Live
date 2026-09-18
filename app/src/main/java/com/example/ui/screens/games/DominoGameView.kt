@@ -1509,9 +1509,9 @@ fun UserRowLuxury(
 
     Surface(
         shape = RoundedCornerShape(16.dp),
-        color = Color(0xFF2B1207).copy(alpha = 0.95f),
+        color = Color.Transparent,
         border = androidx.compose.foundation.BorderStroke(1.2.dp, Color(0xFFC7985D)),
-        shadowElevation = 8.dp,
+        shadowElevation = 0.dp,
         modifier = modifier.fillMaxWidth()
     ) {
         Row(
