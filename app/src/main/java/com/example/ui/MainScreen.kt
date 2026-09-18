@@ -87,8 +87,8 @@ fun MainScreen(viewModel: SocialAppViewModel) {
             bottomBar = {
                 AnimatedVisibility(
                     visible = !hideBars,
-                    enter = slideInVertically(initialOffsetY = { it }) + fadeIn(),
-                    exit = slideOutVertically(targetOffsetY = { it }) + fadeOut()
+                    enter = fadeIn(animationSpec = tween(durationMillis = 180)),
+                    exit = fadeOut(animationSpec = tween(durationMillis = 120))
                 ) {
                     MujtamaBottomNav(
                         currentTab = currentTab,
