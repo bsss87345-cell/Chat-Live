@@ -42,7 +42,9 @@ fun AccountSettingsScreen(
     onNavigateToRecharge: () -> Unit,
     onBack: () -> Unit
 ) {
-    var selectedSubTab by remember { mutableStateOf(2) } // 0: النقاط والرصيد, 1: منشوراتي, 2: إعدادات الحساب
+    // null = showing the main vertical menu list; 0/1/2 = which full page is open
+    var openPage by remember { mutableStateOf<Int?>(null) }
+
     var showEditProfileDialog by remember { mutableStateOf(false) }
     var showLogoutDialog by remember { mutableStateOf(false) }
     var showRechargeDialog by remember { mutableStateOf(false) }
@@ -78,854 +80,889 @@ fun AccountSettingsScreen(
             .fillMaxSize()
             .testTag("account_settings_screen")
     ) {
-        // Top bar with back button
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 12.dp, vertical = 10.dp),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(8.dp)
-        ) {
-            IconButton(
-                onClick = onBack,
-                modifier = Modifier.testTag("account_settings_back_button")
-            ) {
-                Icon(
-                    imageVector = Icons.Default.ArrowBack,
-                    contentDescription = "رجوع"
-                )
-            }
-            Text(
-                text = "القائمة",
-                style = MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.Bold)
-            )
-        }
-
-        // Sub-Tabs Navigation (vertical list: إعدادات الحساب, منشوراتي, النقاط والرصيد)
-        Surface(
-            shape = RoundedCornerShape(18.dp),
-            color = MaterialTheme.colorScheme.surface,
-            tonalElevation = 1.dp,
-            modifier = Modifier
-                .padding(horizontal = 12.dp)
-                .fillMaxWidth()
-        ) {
-            Column(
+        if (openPage == null) {
+            // -------------------------------------------------------------
+            // MAIN MENU (الإعدادات الأساسية) — unchanged
+            // -------------------------------------------------------------
+            Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(4.dp),
-                verticalArrangement = Arrangement.spacedBy(4.dp)
+                    .padding(horizontal = 12.dp, vertical = 10.dp),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(8.dp)
             ) {
-                val subTabs = listOf(
-                    Triple("إعدادات الحساب", Icons.Default.Settings, 2),
-                    Triple("منشوراتي", Icons.Default.Article, 1),
-                    Triple("النقاط والرصيد", Icons.Default.Stars, 0)
-                )
-
-                subTabs.forEach { (label, icon, index) ->
-                    val isSelected = selectedSubTab == index
-                    Row(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .clip(RoundedCornerShape(14.dp))
-                            .background(
-                                if (isSelected) MaterialTheme.colorScheme.primary
-                                else Color.Transparent
-                            )
-                            .clickable { selectedSubTab = index }
-                            .padding(horizontal = 14.dp, vertical = 12.dp)
-                            .testTag("account_settings_subtab_$index"),
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.spacedBy(8.dp)
-                    ) {
-                        Icon(
-                            imageVector = icon,
-                            contentDescription = null,
-                            tint = if (isSelected) Color.White else MaterialTheme.colorScheme.onSurface,
-                            modifier = Modifier.size(18.dp)
-                        )
-                        Text(
-                            text = label,
-                            fontSize = 13.sp,
-                            fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Normal,
-                            color = if (isSelected) Color.White else MaterialTheme.colorScheme.onSurface
-                        )
-                    }
-                }
-            }
-        }
-
-        LazyColumn(
-            modifier = Modifier
-                .fillMaxSize()
-                .testTag("account_settings_content"),
-            contentPadding = PaddingValues(start = 12.dp, end = 12.dp, top = 10.dp, bottom = 80.dp),
-            verticalArrangement = Arrangement.spacedBy(14.dp)
-        ) {
-            // -------------------------------------------------------------
-            // Sub-Tab 0: Points & Wallet Subsection
-            // -------------------------------------------------------------
-            if (selectedSubTab == 0) {
-                item {
-                    Card(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .testTag("profile_points_balance_card"),
-                        shape = RoundedCornerShape(16.dp),
-                        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
-                        elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
-                    ) {
-                        Row(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(horizontal = 16.dp, vertical = 10.dp),
-                            verticalAlignment = Alignment.CenterVertically,
-                            horizontalArrangement = Arrangement.SpaceBetween
-                        ) {
-                            Row(
-                                verticalAlignment = Alignment.CenterVertically,
-                                horizontalArrangement = Arrangement.spacedBy(8.dp)
-                            ) {
-                                Box(
-                                    modifier = Modifier
-                                        .size(32.dp)
-                                        .clip(CircleShape)
-                                        .background(MujtamaGold.copy(alpha = 0.15f)),
-                                    contentAlignment = Alignment.Center
-                                ) {
-                                    Icon(
-                                        imageVector = Icons.Default.Stars,
-                                        contentDescription = "النقاط",
-                                        tint = MujtamaGold,
-                                        modifier = Modifier.size(20.dp)
-                                    )
-                                }
-                                Row(
-                                    verticalAlignment = Alignment.CenterVertically,
-                                    horizontalArrangement = Arrangement.spacedBy(4.dp)
-                                ) {
-                                    Text(
-                                        text = "$balance",
-                                        fontSize = 19.sp,
-                                        fontWeight = FontWeight.Black,
-                                        color = MaterialTheme.colorScheme.onSurface
-                                    )
-                                    Text(
-                                        text = "نقطة",
-                                        fontSize = 12.sp,
-                                        fontWeight = FontWeight.Bold,
-                                        color = MujtamaGold
-                                    )
-                                }
-                            }
-
-                            Button(
-                                onClick = {
-                                    onNavigateToRecharge()
-                                    showRechargeDialog = true
-                                },
-                                shape = RoundedCornerShape(20.dp),
-                                colors = ButtonDefaults.buttonColors(
-                                    containerColor = MujtamaGold,
-                                    contentColor = Color(0xFF221500)
-                                ),
-                                contentPadding = PaddingValues(horizontal = 14.dp, vertical = 6.dp),
-                                modifier = Modifier.testTag("recharge_points_button")
-                            ) {
-                                Icon(
-                                    imageVector = Icons.Default.AddCircleOutline,
-                                    contentDescription = null,
-                                    modifier = Modifier.size(16.dp)
-                                )
-                                Spacer(modifier = Modifier.width(4.dp))
-                                Text(
-                                    text = "شحن",
-                                    fontWeight = FontWeight.Bold,
-                                    fontSize = 12.sp
-                                )
-                            }
-                        }
-                    }
-                }
-
-                item {
-                    Card(
-                        modifier = Modifier.fillMaxWidth(),
-                        shape = RoundedCornerShape(16.dp),
-                        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f))
-                    ) {
-                        Row(
-                            modifier = Modifier.padding(12.dp),
-                            verticalAlignment = Alignment.Top,
-                            horizontalArrangement = Arrangement.spacedBy(10.dp)
-                        ) {
-                            Icon(
-                                imageVector = Icons.Default.Security,
-                                contentDescription = null,
-                                tint = MujtamaTeal,
-                                modifier = Modifier.size(24.dp)
-                            )
-                            Column(verticalArrangement = Arrangement.spacedBy(3.dp)) {
-                                Text(
-                                    text = "ضمان الأمان والنزاهة للنقاط",
-                                    fontWeight = FontWeight.Bold,
-                                    fontSize = 12.sp,
-                                    color = MaterialTheme.colorScheme.onSurface
-                                )
-                                Text(
-                                    text = "• الرصيد يُشحن حصرياً من قبل إدارة التطبيق كمكافآت للمسابقات والنشاط.\n• لا يوجد أي سحب نقدي أو تحويل خارج التطبيق.\n• جميع الألعاب مجانية بدون أي رهان مالي بين المستخدمين.",
-                                    fontSize = 10.sp,
-                                    lineHeight = 15.sp,
-                                    color = MaterialTheme.colorScheme.onSurfaceVariant
-                                )
-                            }
-                        }
-                    }
-                }
-
-                item {
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.SpaceBetween,
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Text(
-                            text = "سجل عمليات النقاط (كسب / إنفاق) 📜",
-                            style = MaterialTheme.typography.titleSmall.copy(fontWeight = FontWeight.Bold)
-                        )
-
-                        Row(horizontalArrangement = Arrangement.spacedBy(4.dp)) {
-                            listOf("الكل", "كسب (+)", "إنفاق (-)").forEach { filter ->
-                                FilterChip(
-                                    selected = walletFilter == filter,
-                                    onClick = { onFilterChange(filter) },
-                                    label = { Text(filter, fontSize = 10.sp) }
-                                )
-                            }
-                        }
-                    }
-                }
-
-                items(filteredTransactions, key = { it.id }) { tx ->
-                    val isEarn = tx.type == TransactionType.EARN
-                    Card(
-                        modifier = Modifier.fillMaxWidth(),
-                        shape = RoundedCornerShape(12.dp),
-                        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
-                        elevation = CardDefaults.cardElevation(defaultElevation = 1.dp)
-                    ) {
-                        Row(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(horizontal = 12.dp, vertical = 8.dp),
-                            verticalAlignment = Alignment.CenterVertically,
-                            horizontalArrangement = Arrangement.spacedBy(10.dp)
-                        ) {
-                            Box(
-                                modifier = Modifier
-                                    .size(34.dp)
-                                    .clip(CircleShape)
-                                    .background(
-                                        if (isEarn) MujtamaOnlineGreen.copy(alpha = 0.15f)
-                                        else MaterialTheme.colorScheme.error.copy(alpha = 0.15f)
-                                    ),
-                                contentAlignment = Alignment.Center
-                            ) {
-                                Icon(
-                                    imageVector = if (isEarn) Icons.Default.ArrowDownward else Icons.Default.ArrowUpward,
-                                    contentDescription = null,
-                                    tint = if (isEarn) MujtamaOnlineGreen else MaterialTheme.colorScheme.error,
-                                    modifier = Modifier.size(18.dp)
-                                )
-                            }
-
-                            Column(modifier = Modifier.weight(1f)) {
-                                Text(
-                                    text = tx.title,
-                                    fontWeight = FontWeight.Bold,
-                                    fontSize = 12.sp
-                                )
-                                Text(
-                                    text = "${tx.note} • ${tx.date}",
-                                    fontSize = 10.sp,
-                                    color = MaterialTheme.colorScheme.onSurfaceVariant
-                                )
-                            }
-
-                            Text(
-                                text = if (isEarn) "+${tx.points}" else "-${tx.points}",
-                                fontWeight = FontWeight.Black,
-                                fontSize = 14.sp,
-                                color = if (isEarn) MujtamaOnlineGreen else MaterialTheme.colorScheme.error
-                            )
-                        }
-                    }
-                }
-
-                item {
-                    Text(
-                        text = "متجر المكافآت والأوسمة الافتراضية 🎁",
-                        style = MaterialTheme.typography.titleSmall.copy(fontWeight = FontWeight.Bold),
-                        modifier = Modifier.padding(top = 6.dp)
+                IconButton(
+                    onClick = onBack,
+                    modifier = Modifier.testTag("account_settings_back_button")
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.ArrowBack,
+                        contentDescription = "رجوع"
                     )
                 }
+                Text(
+                    text = "القائمة",
+                    style = MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.Bold)
+                )
+            }
 
-                items(storeItems, key = { it.id }) { item ->
-                    Card(
-                        modifier = Modifier.fillMaxWidth(),
-                        shape = RoundedCornerShape(14.dp),
-                        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
-                        elevation = CardDefaults.cardElevation(defaultElevation = 1.dp)
-                    ) {
+            Surface(
+                shape = RoundedCornerShape(18.dp),
+                color = MaterialTheme.colorScheme.surface,
+                tonalElevation = 1.dp,
+                modifier = Modifier
+                    .padding(horizontal = 12.dp)
+                    .fillMaxWidth()
+            ) {
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(4.dp),
+                    verticalArrangement = Arrangement.spacedBy(4.dp)
+                ) {
+                    val menuItems = listOf(
+                        Triple("إعدادات الحساب", Icons.Default.Settings, 2),
+                        Triple("منشوراتي", Icons.Default.Article, 1),
+                        Triple("النقاط والرصيد", Icons.Default.Stars, 0)
+                    )
+
+                    menuItems.forEach { (label, icon, index) ->
                         Row(
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .padding(12.dp),
+                                .clip(RoundedCornerShape(14.dp))
+                                .clickable { openPage = index }
+                                .padding(horizontal = 14.dp, vertical = 12.dp)
+                                .testTag("account_settings_menu_item_$index"),
                             verticalAlignment = Alignment.CenterVertically,
-                            horizontalArrangement = Arrangement.spacedBy(10.dp)
+                            horizontalArrangement = Arrangement.spacedBy(8.dp)
                         ) {
-                            Box(
-                                modifier = Modifier
-                                    .size(40.dp)
-                                    .clip(CircleShape)
-                                    .background(if (item.isOwned) MujtamaTeal.copy(alpha = 0.2f) else MujtamaGold.copy(alpha = 0.2f)),
-                                contentAlignment = Alignment.Center
-                            ) {
-                                Icon(
-                                    imageVector = when (item.category) {
-                                        "إطارات" -> Icons.Default.FilterFrames
-                                        "أوسمة" -> Icons.Default.MilitaryTech
-                                        else -> Icons.Default.Palette
-                                    },
-                                    contentDescription = null,
-                                    tint = if (item.isOwned) MujtamaTeal else MujtamaGold,
-                                    modifier = Modifier.size(22.dp)
-                                )
-                            }
-
-                            Column(modifier = Modifier.weight(1f)) {
-                                Text(text = item.title, fontWeight = FontWeight.Bold, fontSize = 13.sp)
-                                Text(text = item.description, fontSize = 10.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
-                                Text(text = "${item.cost} نقطة", fontWeight = FontWeight.Bold, fontSize = 11.sp, color = MujtamaGold)
-                            }
-
-                            if (item.isOwned) {
-                                Surface(
-                                    shape = RoundedCornerShape(8.dp),
-                                    color = MujtamaTeal.copy(alpha = 0.15f)
-                                ) {
-                                    Text(
-                                        text = "مملوك لديك ✓",
-                                        fontSize = 10.sp,
-                                        fontWeight = FontWeight.Bold,
-                                        color = MujtamaTeal,
-                                        modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp)
-                                    )
-                                }
-                            } else {
-                                Button(
-                                    onClick = { onBuyItem(item) },
-                                    enabled = balance >= item.cost,
-                                    shape = RoundedCornerShape(10.dp),
-                                    colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary),
-                                    contentPadding = PaddingValues(horizontal = 10.dp, vertical = 4.dp)
-                                ) {
-                                    Text("استبدال", fontSize = 11.sp)
-                                }
-                            }
+                            Icon(
+                                imageVector = icon,
+                                contentDescription = null,
+                                tint = MaterialTheme.colorScheme.onSurface,
+                                modifier = Modifier.size(18.dp)
+                            )
+                            Text(
+                                text = label,
+                                fontSize = 13.sp,
+                                fontWeight = FontWeight.Normal,
+                                color = MaterialTheme.colorScheme.onSurface,
+                                modifier = Modifier.weight(1f)
+                            )
+                            Icon(
+                                imageVector = Icons.Default.ChevronLeft,
+                                contentDescription = null,
+                                tint = MaterialTheme.colorScheme.onSurfaceVariant
+                            )
                         }
                     }
                 }
             }
+        } else {
+            // -------------------------------------------------------------
+            // FULL-SCREEN SUB-PAGE — back button returns to the main menu
+            // -------------------------------------------------------------
+            val pageTitle = when (openPage) {
+                2 -> "إعدادات الحساب"
+                1 -> "منشوراتي"
+                else -> "النقاط والرصيد"
+            }
 
-            // -------------------------------------------------------------
-            // Sub-Tab 1: My Posts & Recent Activity
-            // -------------------------------------------------------------
-            if (selectedSubTab == 1) {
-                item {
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.SpaceBetween,
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Text(
-                            text = "منشوراتي ونشاطي الأخير (${userPosts.size}) 📝",
-                            style = MaterialTheme.typography.titleSmall.copy(fontWeight = FontWeight.Bold)
-                        )
-                    }
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 12.dp, vertical = 10.dp),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                IconButton(
+                    onClick = { openPage = null },
+                    modifier = Modifier.testTag("account_settings_page_back_button")
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.ArrowBack,
+                        contentDescription = "رجوع"
+                    )
                 }
+                Text(
+                    text = pageTitle,
+                    style = MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.Bold)
+                )
+            }
 
-                if (userPosts.isEmpty()) {
+            LazyColumn(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .testTag("account_settings_content"),
+                contentPadding = PaddingValues(start = 12.dp, end = 12.dp, top = 10.dp, bottom = 80.dp),
+                verticalArrangement = Arrangement.spacedBy(14.dp)
+            ) {
+                // -------------------------------------------------------------
+                // Page: النقاط والرصيد
+                // -------------------------------------------------------------
+                if (openPage == 0) {
                     item {
                         Card(
-                            modifier = Modifier.fillMaxWidth(),
-                            shape = RoundedCornerShape(14.dp)
-                        ) {
-                            Column(
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .padding(24.dp),
-                                horizontalAlignment = Alignment.CenterHorizontally,
-                                verticalArrangement = Arrangement.spacedBy(8.dp)
-                            ) {
-                                Icon(Icons.Default.PostAdd, contentDescription = null, tint = MujtamaPrimary, modifier = Modifier.size(40.dp))
-                                Text("لم تقم بنشر أي مشاركة بعد!", fontWeight = FontWeight.Bold)
-                                Text("شارك أفكارك وتحدياتك مع أصدقائك في مجتمعنا الآن.", fontSize = 12.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
-                            }
-                        }
-                    }
-                } else {
-                    items(userPosts, key = { it.id }) { post ->
-                        Card(
-                            modifier = Modifier.fillMaxWidth(),
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .testTag("profile_points_balance_card"),
                             shape = RoundedCornerShape(16.dp),
                             colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
                             elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
+                        ) {
+                            Row(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(horizontal = 16.dp, vertical = 10.dp),
+                                verticalAlignment = Alignment.CenterVertically,
+                                horizontalArrangement = Arrangement.SpaceBetween
+                            ) {
+                                Row(
+                                    verticalAlignment = Alignment.CenterVertically,
+                                    horizontalArrangement = Arrangement.spacedBy(8.dp)
+                                ) {
+                                    Box(
+                                        modifier = Modifier
+                                            .size(32.dp)
+                                            .clip(CircleShape)
+                                            .background(MujtamaGold.copy(alpha = 0.15f)),
+                                        contentAlignment = Alignment.Center
+                                    ) {
+                                        Icon(
+                                            imageVector = Icons.Default.Stars,
+                                            contentDescription = "النقاط",
+                                            tint = MujtamaGold,
+                                            modifier = Modifier.size(20.dp)
+                                        )
+                                    }
+                                    Row(
+                                        verticalAlignment = Alignment.CenterVertically,
+                                        horizontalArrangement = Arrangement.spacedBy(4.dp)
+                                    ) {
+                                        Text(
+                                            text = "$balance",
+                                            fontSize = 19.sp,
+                                            fontWeight = FontWeight.Black,
+                                            color = MaterialTheme.colorScheme.onSurface
+                                        )
+                                        Text(
+                                            text = "نقطة",
+                                            fontSize = 12.sp,
+                                            fontWeight = FontWeight.Bold,
+                                            color = MujtamaGold
+                                        )
+                                    }
+                                }
+
+                                Button(
+                                    onClick = {
+                                        onNavigateToRecharge()
+                                        showRechargeDialog = true
+                                    },
+                                    shape = RoundedCornerShape(20.dp),
+                                    colors = ButtonDefaults.buttonColors(
+                                        containerColor = MujtamaGold,
+                                        contentColor = Color(0xFF221500)
+                                    ),
+                                    contentPadding = PaddingValues(horizontal = 14.dp, vertical = 6.dp),
+                                    modifier = Modifier.testTag("recharge_points_button")
+                                ) {
+                                    Icon(
+                                        imageVector = Icons.Default.AddCircleOutline,
+                                        contentDescription = null,
+                                        modifier = Modifier.size(16.dp)
+                                    )
+                                    Spacer(modifier = Modifier.width(4.dp))
+                                    Text(
+                                        text = "شحن",
+                                        fontWeight = FontWeight.Bold,
+                                        fontSize = 12.sp
+                                    )
+                                }
+                            }
+                        }
+                    }
+
+                    item {
+                        Card(
+                            modifier = Modifier.fillMaxWidth(),
+                            shape = RoundedCornerShape(16.dp),
+                            colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f))
+                        ) {
+                            Row(
+                                modifier = Modifier.padding(12.dp),
+                                verticalAlignment = Alignment.Top,
+                                horizontalArrangement = Arrangement.spacedBy(10.dp)
+                            ) {
+                                Icon(
+                                    imageVector = Icons.Default.Security,
+                                    contentDescription = null,
+                                    tint = MujtamaTeal,
+                                    modifier = Modifier.size(24.dp)
+                                )
+                                Column(verticalArrangement = Arrangement.spacedBy(3.dp)) {
+                                    Text(
+                                        text = "ضمان الأمان والنزاهة للنقاط",
+                                        fontWeight = FontWeight.Bold,
+                                        fontSize = 12.sp,
+                                        color = MaterialTheme.colorScheme.onSurface
+                                    )
+                                    Text(
+                                        text = "• الرصيد يُشحن حصرياً من قبل إدارة التطبيق كمكافآت للمسابقات والنشاط.\n• لا يوجد أي سحب نقدي أو تحويل خارج التطبيق.\n• جميع الألعاب مجانية بدون أي رهان مالي بين المستخدمين.",
+                                        fontSize = 10.sp,
+                                        lineHeight = 15.sp,
+                                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                                    )
+                                }
+                            }
+                        }
+                    }
+
+                    item {
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.SpaceBetween,
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Text(
+                                text = "سجل عمليات النقاط (كسب / إنفاق) 📜",
+                                style = MaterialTheme.typography.titleSmall.copy(fontWeight = FontWeight.Bold)
+                            )
+
+                            Row(horizontalArrangement = Arrangement.spacedBy(4.dp)) {
+                                listOf("الكل", "كسب (+)", "إنفاق (-)").forEach { filter ->
+                                    FilterChip(
+                                        selected = walletFilter == filter,
+                                        onClick = { onFilterChange(filter) },
+                                        label = { Text(filter, fontSize = 10.sp) }
+                                    )
+                                }
+                            }
+                        }
+                    }
+
+                    items(filteredTransactions, key = { it.id }) { tx ->
+                        val isEarn = tx.type == TransactionType.EARN
+                        Card(
+                            modifier = Modifier.fillMaxWidth(),
+                            shape = RoundedCornerShape(12.dp),
+                            colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
+                            elevation = CardDefaults.cardElevation(defaultElevation = 1.dp)
+                        ) {
+                            Row(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(horizontal = 12.dp, vertical = 8.dp),
+                                verticalAlignment = Alignment.CenterVertically,
+                                horizontalArrangement = Arrangement.spacedBy(10.dp)
+                            ) {
+                                Box(
+                                    modifier = Modifier
+                                        .size(34.dp)
+                                        .clip(CircleShape)
+                                        .background(
+                                            if (isEarn) MujtamaOnlineGreen.copy(alpha = 0.15f)
+                                            else MaterialTheme.colorScheme.error.copy(alpha = 0.15f)
+                                        ),
+                                    contentAlignment = Alignment.Center
+                                ) {
+                                    Icon(
+                                        imageVector = if (isEarn) Icons.Default.ArrowDownward else Icons.Default.ArrowUpward,
+                                        contentDescription = null,
+                                        tint = if (isEarn) MujtamaOnlineGreen else MaterialTheme.colorScheme.error,
+                                        modifier = Modifier.size(18.dp)
+                                    )
+                                }
+
+                                Column(modifier = Modifier.weight(1f)) {
+                                    Text(
+                                        text = tx.title,
+                                        fontWeight = FontWeight.Bold,
+                                        fontSize = 12.sp
+                                    )
+                                    Text(
+                                        text = "${tx.note} • ${tx.date}",
+                                        fontSize = 10.sp,
+                                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                                    )
+                                }
+
+                                Text(
+                                    text = if (isEarn) "+${tx.points}" else "-${tx.points}",
+                                    fontWeight = FontWeight.Black,
+                                    fontSize = 14.sp,
+                                    color = if (isEarn) MujtamaOnlineGreen else MaterialTheme.colorScheme.error
+                                )
+                            }
+                        }
+                    }
+
+                    item {
+                        Text(
+                            text = "متجر المكافآت والأوسمة الافتراضية 🎁",
+                            style = MaterialTheme.typography.titleSmall.copy(fontWeight = FontWeight.Bold),
+                            modifier = Modifier.padding(top = 6.dp)
+                        )
+                    }
+
+                    items(storeItems, key = { it.id }) { item ->
+                        Card(
+                            modifier = Modifier.fillMaxWidth(),
+                            shape = RoundedCornerShape(14.dp),
+                            colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
+                            elevation = CardDefaults.cardElevation(defaultElevation = 1.dp)
+                        ) {
+                            Row(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(12.dp),
+                                verticalAlignment = Alignment.CenterVertically,
+                                horizontalArrangement = Arrangement.spacedBy(10.dp)
+                            ) {
+                                Box(
+                                    modifier = Modifier
+                                        .size(40.dp)
+                                        .clip(CircleShape)
+                                        .background(if (item.isOwned) MujtamaTeal.copy(alpha = 0.2f) else MujtamaGold.copy(alpha = 0.2f)),
+                                    contentAlignment = Alignment.Center
+                                ) {
+                                    Icon(
+                                        imageVector = when (item.category) {
+                                            "إطارات" -> Icons.Default.FilterFrames
+                                            "أوسمة" -> Icons.Default.MilitaryTech
+                                            else -> Icons.Default.Palette
+                                        },
+                                        contentDescription = null,
+                                        tint = if (item.isOwned) MujtamaTeal else MujtamaGold,
+                                        modifier = Modifier.size(22.dp)
+                                    )
+                                }
+
+                                Column(modifier = Modifier.weight(1f)) {
+                                    Text(text = item.title, fontWeight = FontWeight.Bold, fontSize = 13.sp)
+                                    Text(text = item.description, fontSize = 10.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                                    Text(text = "${item.cost} نقطة", fontWeight = FontWeight.Bold, fontSize = 11.sp, color = MujtamaGold)
+                                }
+
+                                if (item.isOwned) {
+                                    Surface(
+                                        shape = RoundedCornerShape(8.dp),
+                                        color = MujtamaTeal.copy(alpha = 0.15f)
+                                    ) {
+                                        Text(
+                                            text = "مملوك لديك ✓",
+                                            fontSize = 10.sp,
+                                            fontWeight = FontWeight.Bold,
+                                            color = MujtamaTeal,
+                                            modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp)
+                                        )
+                                    }
+                                } else {
+                                    Button(
+                                        onClick = { onBuyItem(item) },
+                                        enabled = balance >= item.cost,
+                                        shape = RoundedCornerShape(10.dp),
+                                        colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary),
+                                        contentPadding = PaddingValues(horizontal = 10.dp, vertical = 4.dp)
+                                    ) {
+                                        Text("استبدال", fontSize = 11.sp)
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+
+                // -------------------------------------------------------------
+                // Page: منشوراتي
+                // -------------------------------------------------------------
+                if (openPage == 1) {
+                    item {
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.SpaceBetween,
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Text(
+                                text = "منشوراتي ونشاطي الأخير (${userPosts.size}) 📝",
+                                style = MaterialTheme.typography.titleSmall.copy(fontWeight = FontWeight.Bold)
+                            )
+                        }
+                    }
+
+                    if (userPosts.isEmpty()) {
+                        item {
+                            Card(
+                                modifier = Modifier.fillMaxWidth(),
+                                shape = RoundedCornerShape(14.dp)
+                            ) {
+                                Column(
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .padding(24.dp),
+                                    horizontalAlignment = Alignment.CenterHorizontally,
+                                    verticalArrangement = Arrangement.spacedBy(8.dp)
+                                ) {
+                                    Icon(Icons.Default.PostAdd, contentDescription = null, tint = MujtamaPrimary, modifier = Modifier.size(40.dp))
+                                    Text("لم تقم بنشر أي مشاركة بعد!", fontWeight = FontWeight.Bold)
+                                    Text("شارك أفكارك وتحدياتك مع أصدقائك في مجتمعنا الآن.", fontSize = 12.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                                }
+                            }
+                        }
+                    } else {
+                        items(userPosts, key = { it.id }) { post ->
+                            Card(
+                                modifier = Modifier.fillMaxWidth(),
+                                shape = RoundedCornerShape(16.dp),
+                                colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
+                                elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
+                            ) {
+                                Column(
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .padding(14.dp),
+                                    verticalArrangement = Arrangement.spacedBy(8.dp)
+                                ) {
+                                    Row(
+                                        modifier = Modifier.fillMaxWidth(),
+                                        horizontalArrangement = Arrangement.SpaceBetween,
+                                        verticalAlignment = Alignment.CenterVertically
+                                    ) {
+                                        Row(
+                                            verticalAlignment = Alignment.CenterVertically,
+                                            horizontalArrangement = Arrangement.spacedBy(8.dp)
+                                        ) {
+                                            Box(
+                                                modifier = Modifier
+                                                    .size(36.dp)
+                                                    .clip(CircleShape)
+                                                    .background(MujtamaPrimary),
+                                                contentAlignment = Alignment.Center
+                                            ) {
+                                                Text(userProfile.avatarEmoji, fontSize = 18.sp)
+                                            }
+                                            Column {
+                                                Text(text = userProfile.name, fontWeight = FontWeight.Bold, fontSize = 13.sp)
+                                                Text(text = post.timeAgo, fontSize = 10.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                                            }
+                                        }
+
+                                        if (post.tag != null) {
+                                            Surface(
+                                                shape = RoundedCornerShape(6.dp),
+                                                color = MujtamaPrimary.copy(alpha = 0.15f)
+                                            ) {
+                                                Text(
+                                                    text = post.tag,
+                                                    fontSize = 10.sp,
+                                                    color = MujtamaPrimary,
+                                                    fontWeight = FontWeight.Bold,
+                                                    modifier = Modifier.padding(horizontal = 6.dp, vertical = 2.dp)
+                                                )
+                                            }
+                                        }
+                                    }
+
+                                    Text(
+                                        text = post.content,
+                                        fontSize = 13.sp,
+                                        lineHeight = 18.sp
+                                    )
+
+                                    HorizontalDivider(modifier = Modifier.padding(vertical = 4.dp))
+
+                                    Row(
+                                        modifier = Modifier.fillMaxWidth(),
+                                        horizontalArrangement = Arrangement.SpaceAround,
+                                        verticalAlignment = Alignment.CenterVertically
+                                    ) {
+                                        TextButton(onClick = { onLikePost(post.id) }) {
+                                            Icon(
+                                                imageVector = if (post.isLiked) Icons.Default.Favorite else Icons.Default.FavoriteBorder,
+                                                contentDescription = "إعجاب",
+                                                tint = if (post.isLiked) Color.Red else MaterialTheme.colorScheme.onSurfaceVariant,
+                                                modifier = Modifier.size(16.dp)
+                                            )
+                                            Spacer(modifier = Modifier.width(4.dp))
+                                            Text("${post.likesCount}", fontSize = 11.sp)
+                                        }
+
+                                        TextButton(onClick = { onCommentPost(post.id) }) {
+                                            Icon(Icons.Default.ChatBubbleOutline, contentDescription = "تعليق", modifier = Modifier.size(16.dp))
+                                            Spacer(modifier = Modifier.width(4.dp))
+                                            Text("${post.commentsCount}", fontSize = 11.sp)
+                                        }
+
+                                        TextButton(onClick = { onSharePost(post) }) {
+                                            Icon(Icons.Default.Share, contentDescription = "مشاركة", modifier = Modifier.size(16.dp))
+                                            Spacer(modifier = Modifier.width(4.dp))
+                                            Text("مشاركة", fontSize = 11.sp)
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+
+                // -------------------------------------------------------------
+                // Page: إعدادات الحساب
+                // -------------------------------------------------------------
+                if (openPage == 2) {
+                    item {
+                        Card(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .testTag("account_settings_card"),
+                            shape = RoundedCornerShape(18.dp),
+                            colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface)
                         ) {
                             Column(
                                 modifier = Modifier
                                     .fillMaxWidth()
                                     .padding(14.dp),
-                                verticalArrangement = Arrangement.spacedBy(8.dp)
+                                verticalArrangement = Arrangement.spacedBy(10.dp)
                             ) {
-                                Row(
-                                    modifier = Modifier.fillMaxWidth(),
-                                    horizontalArrangement = Arrangement.SpaceBetween,
-                                    verticalAlignment = Alignment.CenterVertically
-                                ) {
-                                    Row(
-                                        verticalAlignment = Alignment.CenterVertically,
-                                        horizontalArrangement = Arrangement.spacedBy(8.dp)
-                                    ) {
-                                        Box(
-                                            modifier = Modifier
-                                                .size(36.dp)
-                                                .clip(CircleShape)
-                                                .background(MujtamaPrimary),
-                                            contentAlignment = Alignment.Center
-                                        ) {
-                                            Text(userProfile.avatarEmoji, fontSize = 18.sp)
-                                        }
-                                        Column {
-                                            Text(text = userProfile.name, fontWeight = FontWeight.Bold, fontSize = 13.sp)
-                                            Text(text = post.timeAgo, fontSize = 10.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
-                                        }
-                                    }
-
-                                    if (post.tag != null) {
-                                        Surface(
-                                            shape = RoundedCornerShape(6.dp),
-                                            color = MujtamaPrimary.copy(alpha = 0.15f)
-                                        ) {
-                                            Text(
-                                                text = post.tag,
-                                                fontSize = 10.sp,
-                                                color = MujtamaPrimary,
-                                                fontWeight = FontWeight.Bold,
-                                                modifier = Modifier.padding(horizontal = 6.dp, vertical = 2.dp)
-                                            )
-                                        }
-                                    }
-                                }
-
                                 Text(
-                                    text = post.content,
-                                    fontSize = 13.sp,
-                                    lineHeight = 18.sp
+                                    text = "إعدادات الحساب ⚙️",
+                                    fontWeight = FontWeight.Bold,
+                                    fontSize = 15.sp,
+                                    color = MaterialTheme.colorScheme.onSurface
                                 )
 
-                                HorizontalDivider(modifier = Modifier.padding(vertical = 4.dp))
+                                AccountSettingsActionRow(
+                                    icon = Icons.Default.Person,
+                                    title = "تعديل الملف الشخصي",
+                                    subtitle = "الاسم، النبذة التعريفية، والصورة الرمزية",
+                                    onClick = { showEditProfileDialog = true }
+                                )
 
-                                Row(
-                                    modifier = Modifier.fillMaxWidth(),
-                                    horizontalArrangement = Arrangement.SpaceAround,
-                                    verticalAlignment = Alignment.CenterVertically
-                                ) {
-                                    TextButton(onClick = { onLikePost(post.id) }) {
-                                        Icon(
-                                            imageVector = if (post.isLiked) Icons.Default.Favorite else Icons.Default.FavoriteBorder,
-                                            contentDescription = "إعجاب",
-                                            tint = if (post.isLiked) Color.Red else MaterialTheme.colorScheme.onSurfaceVariant,
-                                            modifier = Modifier.size(16.dp)
-                                        )
-                                        Spacer(modifier = Modifier.width(4.dp))
-                                        Text("${post.likesCount}", fontSize = 11.sp)
-                                    }
+                                HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f))
 
-                                    TextButton(onClick = { onCommentPost(post.id) }) {
-                                        Icon(Icons.Default.ChatBubbleOutline, contentDescription = "تعليق", modifier = Modifier.size(16.dp))
-                                        Spacer(modifier = Modifier.width(4.dp))
-                                        Text("${post.commentsCount}", fontSize = 11.sp)
-                                    }
+                                AccountSettingsActionRow(
+                                    icon = Icons.Default.SupportAgent,
+                                    title = "تواصل مباشر مع الدعم",
+                                    subtitle = "محادثة فورية مع فريق الدعم الفني وخدمة العملاء",
+                                    onClick = { showSupportChatDialog = true }
+                                )
 
-                                    TextButton(onClick = { onSharePost(post) }) {
-                                        Icon(Icons.Default.Share, contentDescription = "مشاركة", modifier = Modifier.size(16.dp))
-                                        Spacer(modifier = Modifier.width(4.dp))
-                                        Text("مشاركة", fontSize = 11.sp)
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-            }
+                                HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f))
 
-            // -------------------------------------------------------------
-            // Sub-Tab 2: Account Settings
-            // -------------------------------------------------------------
-            if (selectedSubTab == 2) {
-                item {
-                    Card(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .testTag("account_settings_card"),
-                        shape = RoundedCornerShape(18.dp),
-                        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface)
-                    ) {
-                        Column(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(14.dp),
-                            verticalArrangement = Arrangement.spacedBy(10.dp)
-                        ) {
-                            Text(
-                                text = "إعدادات الحساب ⚙️",
-                                fontWeight = FontWeight.Bold,
-                                fontSize = 15.sp,
-                                color = MaterialTheme.colorScheme.onSurface
-                            )
+                                AccountSettingsActionRow(
+                                    icon = Icons.Default.Translate,
+                                    title = "تغيير اللغة",
+                                    subtitle = "اللغة الحالية: $currentLanguage",
+                                    onClick = { showLanguageDialog = true }
+                                )
 
-                            AccountSettingsActionRow(
-                                icon = Icons.Default.Person,
-                                title = "تعديل الملف الشخصي",
-                                subtitle = "الاسم، النبذة التعريفية، والصورة الرمزية",
-                                onClick = { showEditProfileDialog = true }
-                            )
+                                HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f))
 
-                            HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f))
+                                AccountSettingsActionRow(
+                                    icon = Icons.Default.ReportProblem,
+                                    title = "إبلاغ عن مشكلة",
+                                    subtitle = "إرسال تقرير فني عن أي خلل أو عطل في التطبيق",
+                                    onClick = { showReportProblemDialog = true }
+                                )
 
-                            AccountSettingsActionRow(
-                                icon = Icons.Default.SupportAgent,
-                                title = "تواصل مباشر مع الدعم",
-                                subtitle = "محادثة فورية مع فريق الدعم الفني وخدمة العملاء",
-                                onClick = { showSupportChatDialog = true }
-                            )
+                                HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f))
 
-                            HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f))
-
-                            AccountSettingsActionRow(
-                                icon = Icons.Default.Translate,
-                                title = "تغيير اللغة",
-                                subtitle = "اللغة الحالية: $currentLanguage",
-                                onClick = { showLanguageDialog = true }
-                            )
-
-                            HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f))
-
-                            AccountSettingsActionRow(
-                                icon = Icons.Default.ReportProblem,
-                                title = "إبلاغ عن مشكلة",
-                                subtitle = "إرسال تقرير فني عن أي خلل أو عطل في التطبيق",
-                                onClick = { showReportProblemDialog = true }
-                            )
-
-                            HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f))
-
-                            Surface(
-                                shape = RoundedCornerShape(14.dp),
-                                color = if (isSettingsExpanded) MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.25f)
-                                        else MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.4f),
-                                border = androidx.compose.foundation.BorderStroke(
-                                    1.dp,
-                                    if (isSettingsExpanded) MaterialTheme.colorScheme.primary.copy(alpha = 0.5f)
-                                    else MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f)
-                                ),
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .clip(RoundedCornerShape(14.dp))
-                                    .clickable { isSettingsExpanded = !isSettingsExpanded }
-                                    .testTag("settings_dropdown_button")
-                            ) {
-                                Row(
-                                    modifier = Modifier
-                                        .fillMaxWidth()
-                                        .padding(horizontal = 14.dp, vertical = 12.dp),
-                                    verticalAlignment = Alignment.CenterVertically,
-                                    horizontalArrangement = Arrangement.SpaceBetween
-                                ) {
-                                    Row(
-                                        verticalAlignment = Alignment.CenterVertically,
-                                        horizontalArrangement = Arrangement.spacedBy(10.dp)
-                                    ) {
-                                        Box(
-                                            modifier = Modifier
-                                                .size(36.dp)
-                                                .clip(CircleShape)
-                                                .background(MaterialTheme.colorScheme.primary.copy(alpha = 0.15f)),
-                                            contentAlignment = Alignment.Center
-                                        ) {
-                                            Icon(
-                                                imageVector = Icons.Default.Settings,
-                                                contentDescription = null,
-                                                tint = MaterialTheme.colorScheme.primary,
-                                                modifier = Modifier.size(20.dp)
-                                            )
-                                        }
-                                        Column {
-                                            Text(
-                                                text = "الإعدادات",
-                                                fontWeight = FontWeight.Bold,
-                                                fontSize = 14.sp
-                                            )
-                                            Text(
-                                                text = if (isSettingsExpanded) "اضغط للطي" else "الإشعارات، قائمة الحظر، والسياسات",
-                                                fontSize = 11.sp,
-                                                color = MaterialTheme.colorScheme.onSurfaceVariant
-                                            )
-                                        }
-                                    }
-
-                                    Icon(
-                                        imageVector = if (isSettingsExpanded) Icons.Default.ExpandLess else Icons.Default.ExpandMore,
-                                        contentDescription = if (isSettingsExpanded) "طي القائمة" else "فتح القائمة",
-                                        tint = MaterialTheme.colorScheme.primary
-                                    )
-                                }
-                            }
-
-                            AnimatedVisibility(visible = isSettingsExpanded) {
-                                Card(
+                                Surface(
                                     shape = RoundedCornerShape(14.dp),
-                                    colors = CardDefaults.cardColors(
-                                        containerColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.35f)
-                                    ),
+                                    color = if (isSettingsExpanded) MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.25f)
+                                            else MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.4f),
                                     border = androidx.compose.foundation.BorderStroke(
                                         1.dp,
-                                        MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.4f)
+                                        if (isSettingsExpanded) MaterialTheme.colorScheme.primary.copy(alpha = 0.5f)
+                                        else MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f)
                                     ),
-                                    modifier = Modifier.fillMaxWidth()
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .clip(RoundedCornerShape(14.dp))
+                                        .clickable { isSettingsExpanded = !isSettingsExpanded }
+                                        .testTag("settings_dropdown_button")
                                 ) {
-                                    Column(
+                                    Row(
                                         modifier = Modifier
                                             .fillMaxWidth()
-                                            .padding(12.dp),
-                                        verticalArrangement = Arrangement.spacedBy(10.dp)
+                                            .padding(horizontal = 14.dp, vertical = 12.dp),
+                                        verticalAlignment = Alignment.CenterVertically,
+                                        horizontalArrangement = Arrangement.SpaceBetween
                                     ) {
                                         Row(
-                                            modifier = Modifier.fillMaxWidth(),
-                                            horizontalArrangement = Arrangement.SpaceBetween,
-                                            verticalAlignment = Alignment.CenterVertically
+                                            verticalAlignment = Alignment.CenterVertically,
+                                            horizontalArrangement = Arrangement.spacedBy(10.dp)
                                         ) {
-                                            Row(
-                                                verticalAlignment = Alignment.CenterVertically,
-                                                horizontalArrangement = Arrangement.spacedBy(10.dp),
-                                                modifier = Modifier.weight(1f)
+                                            Box(
+                                                modifier = Modifier
+                                                    .size(36.dp)
+                                                    .clip(CircleShape)
+                                                    .background(MaterialTheme.colorScheme.primary.copy(alpha = 0.15f)),
+                                                contentAlignment = Alignment.Center
                                             ) {
                                                 Icon(
-                                                    imageVector = if (userProfile.isNotificationsEnabled) Icons.Default.NotificationsActive else Icons.Default.NotificationsOff,
+                                                    imageVector = Icons.Default.Settings,
                                                     contentDescription = null,
-                                                    tint = if (userProfile.isNotificationsEnabled) MujtamaPrimary else MaterialTheme.colorScheme.onSurfaceVariant,
-                                                    modifier = Modifier.size(22.dp)
+                                                    tint = MaterialTheme.colorScheme.primary,
+                                                    modifier = Modifier.size(20.dp)
                                                 )
-                                                Column {
-                                                    Text(
-                                                        text = "تمكين الإشعارات",
-                                                        fontWeight = FontWeight.Bold,
-                                                        fontSize = 13.sp
-                                                    )
-                                                    Text(
-                                                        text = if (userProfile.isNotificationsEnabled) "التنبيهات مفعلة لجميع الأنشطة" else "التنبيهات معطلة",
-                                                        fontSize = 11.sp,
-                                                        color = MaterialTheme.colorScheme.onSurfaceVariant
-                                                    )
-                                                }
                                             }
-                                            Switch(
-                                                checked = userProfile.isNotificationsEnabled,
-                                                onCheckedChange = { onToggleNotifications() },
-                                                modifier = Modifier.testTag("notifications_toggle")
-                                            )
+                                            Column {
+                                                Text(
+                                                    text = "الإعدادات",
+                                                    fontWeight = FontWeight.Bold,
+                                                    fontSize = 14.sp
+                                                )
+                                                Text(
+                                                    text = if (isSettingsExpanded) "اضغط للطي" else "الإشعارات، قائمة الحظر، والسياسات",
+                                                    fontSize = 11.sp,
+                                                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                                                )
+                                            }
                                         }
 
-                                        HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.3f))
+                                        Icon(
+                                            imageVector = if (isSettingsExpanded) Icons.Default.ExpandLess else Icons.Default.ExpandMore,
+                                            contentDescription = if (isSettingsExpanded) "طي القائمة" else "فتح القائمة",
+                                            tint = MaterialTheme.colorScheme.primary
+                                        )
+                                    }
+                                }
 
-                                        Row(
+                                AnimatedVisibility(visible = isSettingsExpanded) {
+                                    Card(
+                                        shape = RoundedCornerShape(14.dp),
+                                        colors = CardDefaults.cardColors(
+                                            containerColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.35f)
+                                        ),
+                                        border = androidx.compose.foundation.BorderStroke(
+                                            1.dp,
+                                            MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.4f)
+                                        ),
+                                        modifier = Modifier.fillMaxWidth()
+                                    ) {
+                                        Column(
                                             modifier = Modifier
                                                 .fillMaxWidth()
-                                                .clip(RoundedCornerShape(8.dp))
-                                                .clickable { showBlockedListDialog = true }
-                                                .padding(vertical = 4.dp),
-                                            horizontalArrangement = Arrangement.SpaceBetween,
-                                            verticalAlignment = Alignment.CenterVertically
+                                                .padding(12.dp),
+                                            verticalArrangement = Arrangement.spacedBy(10.dp)
                                         ) {
                                             Row(
-                                                verticalAlignment = Alignment.CenterVertically,
-                                                horizontalArrangement = Arrangement.spacedBy(10.dp)
+                                                modifier = Modifier.fillMaxWidth(),
+                                                horizontalArrangement = Arrangement.SpaceBetween,
+                                                verticalAlignment = Alignment.CenterVertically
                                             ) {
-                                                Icon(
-                                                    imageVector = Icons.Default.Block,
-                                                    contentDescription = null,
-                                                    tint = MaterialTheme.colorScheme.error,
-                                                    modifier = Modifier.size(22.dp)
-                                                )
-                                                Column {
-                                                    Text(
-                                                        text = "قائمة الحظر",
-                                                        fontWeight = FontWeight.Bold,
-                                                        fontSize = 13.sp
+                                                Row(
+                                                    verticalAlignment = Alignment.CenterVertically,
+                                                    horizontalArrangement = Arrangement.spacedBy(10.dp),
+                                                    modifier = Modifier.weight(1f)
+                                                ) {
+                                                    Icon(
+                                                        imageVector = if (userProfile.isNotificationsEnabled) Icons.Default.NotificationsActive else Icons.Default.NotificationsOff,
+                                                        contentDescription = null,
+                                                        tint = if (userProfile.isNotificationsEnabled) MujtamaPrimary else MaterialTheme.colorScheme.onSurfaceVariant,
+                                                        modifier = Modifier.size(22.dp)
                                                     )
-                                                    Text(
-                                                        text = "${blockedUsersList.size} مستخدمين محظورين",
-                                                        fontSize = 11.sp,
-                                                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                                                    Column {
+                                                        Text(
+                                                            text = "تمكين الإشعارات",
+                                                            fontWeight = FontWeight.Bold,
+                                                            fontSize = 13.sp
+                                                        )
+                                                        Text(
+                                                            text = if (userProfile.isNotificationsEnabled) "التنبيهات مفعلة لجميع الأنشطة" else "التنبيهات معطلة",
+                                                            fontSize = 11.sp,
+                                                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                                                        )
+                                                    }
+                                                }
+                                                Switch(
+                                                    checked = userProfile.isNotificationsEnabled,
+                                                    onCheckedChange = { onToggleNotifications() },
+                                                    modifier = Modifier.testTag("notifications_toggle")
+                                                )
+                                            }
+
+                                            HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.3f))
+
+                                            Row(
+                                                modifier = Modifier
+                                                    .fillMaxWidth()
+                                                    .clip(RoundedCornerShape(8.dp))
+                                                    .clickable { showBlockedListDialog = true }
+                                                    .padding(vertical = 4.dp),
+                                                horizontalArrangement = Arrangement.SpaceBetween,
+                                                verticalAlignment = Alignment.CenterVertically
+                                            ) {
+                                                Row(
+                                                    verticalAlignment = Alignment.CenterVertically,
+                                                    horizontalArrangement = Arrangement.spacedBy(10.dp)
+                                                ) {
+                                                    Icon(
+                                                        imageVector = Icons.Default.Block,
+                                                        contentDescription = null,
+                                                        tint = MaterialTheme.colorScheme.error,
+                                                        modifier = Modifier.size(22.dp)
+                                                    )
+                                                    Column {
+                                                        Text(
+                                                            text = "قائمة الحظر",
+                                                            fontWeight = FontWeight.Bold,
+                                                            fontSize = 13.sp
+                                                        )
+                                                        Text(
+                                                            text = "${blockedUsersList.size} مستخدمين محظورين",
+                                                            fontSize = 11.sp,
+                                                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                                                        )
+                                                    }
+                                                }
+
+                                                Row(
+                                                    verticalAlignment = Alignment.CenterVertically,
+                                                    horizontalArrangement = Arrangement.spacedBy(4.dp)
+                                                ) {
+                                                    Surface(
+                                                        shape = RoundedCornerShape(10.dp),
+                                                        color = MaterialTheme.colorScheme.error.copy(alpha = 0.1f)
+                                                    ) {
+                                                        Text(
+                                                            text = "${blockedUsersList.size}",
+                                                            color = MaterialTheme.colorScheme.error,
+                                                            fontSize = 11.sp,
+                                                            fontWeight = FontWeight.Bold,
+                                                            modifier = Modifier.padding(horizontal = 6.dp, vertical = 2.dp)
+                                                        )
+                                                    }
+                                                    Icon(
+                                                        imageVector = Icons.Default.ChevronLeft,
+                                                        contentDescription = null,
+                                                        tint = MaterialTheme.colorScheme.onSurfaceVariant
                                                     )
                                                 }
                                             }
 
+                                            HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.3f))
+
                                             Row(
-                                                verticalAlignment = Alignment.CenterVertically,
-                                                horizontalArrangement = Arrangement.spacedBy(4.dp)
+                                                modifier = Modifier
+                                                    .fillMaxWidth()
+                                                    .clip(RoundedCornerShape(8.dp))
+                                                    .clickable { showPolicyDialog = true }
+                                                    .padding(vertical = 4.dp),
+                                                horizontalArrangement = Arrangement.SpaceBetween,
+                                                verticalAlignment = Alignment.CenterVertically
                                             ) {
-                                                Surface(
-                                                    shape = RoundedCornerShape(10.dp),
-                                                    color = MaterialTheme.colorScheme.error.copy(alpha = 0.1f)
+                                                Row(
+                                                    verticalAlignment = Alignment.CenterVertically,
+                                                    horizontalArrangement = Arrangement.spacedBy(10.dp)
                                                 ) {
-                                                    Text(
-                                                        text = "${blockedUsersList.size}",
-                                                        color = MaterialTheme.colorScheme.error,
-                                                        fontSize = 11.sp,
-                                                        fontWeight = FontWeight.Bold,
-                                                        modifier = Modifier.padding(horizontal = 6.dp, vertical = 2.dp)
+                                                    Icon(
+                                                        imageVector = Icons.Default.Policy,
+                                                        contentDescription = null,
+                                                        tint = MujtamaTeal,
+                                                        modifier = Modifier.size(22.dp)
                                                     )
+                                                    Column {
+                                                        Text(
+                                                            text = "سياسة البرنامج",
+                                                            fontWeight = FontWeight.Bold,
+                                                            fontSize = 13.sp
+                                                        )
+                                                        Text(
+                                                            text = "شروط الاستخدام والخصوصية",
+                                                            fontSize = 11.sp,
+                                                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                                                        )
+                                                    }
                                                 }
+
                                                 Icon(
                                                     imageVector = Icons.Default.ChevronLeft,
                                                     contentDescription = null,
                                                     tint = MaterialTheme.colorScheme.onSurfaceVariant
                                                 )
                                             }
-                                        }
 
-                                        HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.3f))
+                                            HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.3f))
 
-                                        Row(
-                                            modifier = Modifier
-                                                .fillMaxWidth()
-                                                .clip(RoundedCornerShape(8.dp))
-                                                .clickable { showPolicyDialog = true }
-                                                .padding(vertical = 4.dp),
-                                            horizontalArrangement = Arrangement.SpaceBetween,
-                                            verticalAlignment = Alignment.CenterVertically
-                                        ) {
                                             Row(
-                                                verticalAlignment = Alignment.CenterVertically,
-                                                horizontalArrangement = Arrangement.spacedBy(10.dp)
+                                                modifier = Modifier
+                                                    .fillMaxWidth()
+                                                    .padding(vertical = 4.dp),
+                                                horizontalArrangement = Arrangement.SpaceBetween,
+                                                verticalAlignment = Alignment.CenterVertically
                                             ) {
-                                                Icon(
-                                                    imageVector = Icons.Default.Policy,
-                                                    contentDescription = null,
-                                                    tint = MujtamaTeal,
-                                                    modifier = Modifier.size(22.dp)
-                                                )
-                                                Column {
-                                                    Text(
-                                                        text = "سياسة البرنامج",
-                                                        fontWeight = FontWeight.Bold,
-                                                        fontSize = 13.sp
+                                                Row(
+                                                    verticalAlignment = Alignment.CenterVertically,
+                                                    horizontalArrangement = Arrangement.spacedBy(10.dp)
+                                                ) {
+                                                    Icon(
+                                                        imageVector = Icons.Default.Info,
+                                                        contentDescription = null,
+                                                        tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                                                        modifier = Modifier.size(22.dp)
                                                     )
+                                                    Column {
+                                                        Text(
+                                                            text = "النسخة الحالية",
+                                                            fontWeight = FontWeight.Bold,
+                                                            fontSize = 13.sp
+                                                        )
+                                                        Text(
+                                                            text = "الإصدار 1.2.0 (Build 104)",
+                                                            fontSize = 11.sp,
+                                                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                                                        )
+                                                    }
+                                                }
+
+                                                Surface(
+                                                    shape = RoundedCornerShape(8.dp),
+                                                    color = MujtamaOnlineGreen.copy(alpha = 0.15f)
+                                                ) {
                                                     Text(
-                                                        text = "شروط الاستخدام والخصوصية",
-                                                        fontSize = 11.sp,
-                                                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                                                        text = "أحدث إصدار ✓",
+                                                        color = MujtamaOnlineGreen,
+                                                        fontSize = 10.sp,
+                                                        fontWeight = FontWeight.Bold,
+                                                        modifier = Modifier.padding(horizontal = 6.dp, vertical = 3.dp)
                                                     )
                                                 }
                                             }
 
-                                            Icon(
-                                                imageVector = Icons.Default.ChevronLeft,
-                                                contentDescription = null,
-                                                tint = MaterialTheme.colorScheme.onSurfaceVariant
-                                            )
-                                        }
+                                            HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.3f))
 
-                                        HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.3f))
-
-                                        Row(
-                                            modifier = Modifier
-                                                .fillMaxWidth()
-                                                .padding(vertical = 4.dp),
-                                            horizontalArrangement = Arrangement.SpaceBetween,
-                                            verticalAlignment = Alignment.CenterVertically
-                                        ) {
-                                            Row(
-                                                verticalAlignment = Alignment.CenterVertically,
-                                                horizontalArrangement = Arrangement.spacedBy(10.dp)
+                                            Button(
+                                                onClick = { showLogoutDialog = true },
+                                                colors = ButtonDefaults.buttonColors(
+                                                    containerColor = MaterialTheme.colorScheme.errorContainer,
+                                                    contentColor = MaterialTheme.colorScheme.onErrorContainer
+                                                ),
+                                                border = androidx.compose.foundation.BorderStroke(
+                                                    1.dp,
+                                                    MaterialTheme.colorScheme.error.copy(alpha = 0.4f)
+                                                ),
+                                                shape = RoundedCornerShape(12.dp),
+                                                modifier = Modifier
+                                                    .fillMaxWidth()
+                                                    .padding(top = 4.dp)
+                                                    .testTag("logout_button")
                                             ) {
                                                 Icon(
-                                                    imageVector = Icons.Default.Info,
+                                                    imageVector = Icons.Default.Logout,
                                                     contentDescription = null,
-                                                    tint = MaterialTheme.colorScheme.onSurfaceVariant,
-                                                    modifier = Modifier.size(22.dp)
+                                                    tint = MaterialTheme.colorScheme.error,
+                                                    modifier = Modifier.size(18.dp)
                                                 )
-                                                Column {
-                                                    Text(
-                                                        text = "النسخة الحالية",
-                                                        fontWeight = FontWeight.Bold,
-                                                        fontSize = 13.sp
-                                                    )
-                                                    Text(
-                                                        text = "الإصدار 1.2.0 (Build 104)",
-                                                        fontSize = 11.sp,
-                                                        color = MaterialTheme.colorScheme.onSurfaceVariant
-                                                    )
-                                                }
-                                            }
-
-                                            Surface(
-                                                shape = RoundedCornerShape(8.dp),
-                                                color = MujtamaOnlineGreen.copy(alpha = 0.15f)
-                                            ) {
+                                                Spacer(modifier = Modifier.width(8.dp))
                                                 Text(
-                                                    text = "أحدث إصدار ✓",
-                                                    color = MujtamaOnlineGreen,
-                                                    fontSize = 10.sp,
+                                                    text = "تسجيل الخروج",
                                                     fontWeight = FontWeight.Bold,
-                                                    modifier = Modifier.padding(horizontal = 6.dp, vertical = 3.dp)
+                                                    fontSize = 13.sp,
+                                                    color = MaterialTheme.colorScheme.error
                                                 )
                                             }
-                                        }
-
-                                        HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.3f))
-
-                                        Button(
-                                            onClick = { showLogoutDialog = true },
-                                            colors = ButtonDefaults.buttonColors(
-                                                containerColor = MaterialTheme.colorScheme.errorContainer,
-                                                contentColor = MaterialTheme.colorScheme.onErrorContainer
-                                            ),
-                                            border = androidx.compose.foundation.BorderStroke(
-                                                1.dp,
-                                                MaterialTheme.colorScheme.error.copy(alpha = 0.4f)
-                                            ),
-                                            shape = RoundedCornerShape(12.dp),
-                                            modifier = Modifier
-                                                .fillMaxWidth()
-                                                .padding(top = 4.dp)
-                                                .testTag("logout_button")
-                                        ) {
-                                            Icon(
-                                                imageVector = Icons.Default.Logout,
-                                                contentDescription = null,
-                                                tint = MaterialTheme.colorScheme.error,
-                                                modifier = Modifier.size(18.dp)
-                                            )
-                                            Spacer(modifier = Modifier.width(8.dp))
-                                            Text(
-                                                text = "تسجيل الخروج",
-                                                fontWeight = FontWeight.Bold,
-                                                fontSize = 13.sp,
-                                                color = MaterialTheme.colorScheme.error
-                                            )
                                         }
                                     }
                                 }
@@ -1589,4 +1626,3 @@ private fun AccountSettingsActionRow(
         Icon(Icons.Default.ChevronLeft, contentDescription = null, tint = MaterialTheme.colorScheme.onSurfaceVariant)
     }
 }
-
