@@ -597,7 +597,7 @@ fun AccountSettingsScreen(
                                 color = MaterialTheme.colorScheme.onSurface
                             )
 
-                            SettingsActionRow(
+                            AccountSettingsActionRow(
                                 icon = Icons.Default.Person,
                                 title = "تعديل الملف الشخصي",
                                 subtitle = "الاسم، النبذة التعريفية، والصورة الرمزية",
