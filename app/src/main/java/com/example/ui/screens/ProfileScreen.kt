@@ -365,110 +365,33 @@ fun ProfileScreen(
         )
     }
 
-    // Logout Confirmation Dialog
-    if (showLogoutDialog) {
+    // Followers List Dialog
+    if (showFollowersDialog) {
         AlertDialog(
-            onDismissRequest = { showLogoutDialog = false },
-            title = { Text("تأكيد تسجيل الخروج 🚪") },
-            text = { Text("هل أنت متأكد من رغبتك في تسجيل الخروج من حسابك؟ ستظل بياناتك ورصيد نقاطك محفوظة بالكامل.") },
+            onDismissRequest = { showFollowersDialog = false },
+            title = { Text("المتابعون") },
+            text = { Text("قائمة المتابعين ستظهر هنا قريباً.") },
             confirmButton = {
-                Button(
-                    onClick = {
-                        showLogoutDialog = false
-                        onLogout()
-                    },
-                    colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.error)
-                ) {
-                    Text("تسجيل الخروج")
-                }
-            },
-            dismissButton = {
-                TextButton(onClick = { showLogoutDialog = false }) {
-                    Text("إلغاء")
+                TextButton(onClick = { showFollowersDialog = false }) {
+                    Text("إغلاق")
                 }
             }
         )
     }
 
-    // Recharge Points Dialog (شحن الرصيد والمكافآت)
-    if (showRechargeDialog) {
+    // Following List Dialog
+    if (showFollowingDialog) {
         AlertDialog(
-            onDismissRequest = { showRechargeDialog = false },
-            title = {
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.spacedBy(8.dp)
-                ) {
-                    Icon(
-                        imageVector = Icons.Default.Stars,
-                        contentDescription = null,
-                        tint = MujtamaGold,
-                        modifier = Modifier.size(24.dp)
-                    )
-                    Text("شحن رصيد النقاط والمكافآت ⚡")
+            onDismissRequest = { showFollowingDialog = false },
+            title = { Text("يتابع") },
+            text = { Text("قائمة الحسابات التي تتابعها ستظهر هنا قريباً.") },
+            confirmButton = {
+                TextButton(onClick = { showFollowingDialog = false }) {
+                    Text("إغلاق")
                 }
-            },
-            text = {
-                Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
-                    Text(
-                        text = "رصيدك الحالي: $balance نقطة",
-                        fontWeight = FontWeight.Bold,
-                        fontSize = 14.sp,
-                        color = MaterialTheme.colorScheme.primary
-                    )
-
-                    Card(
-                        shape = RoundedCornerShape(12.dp),
-                        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.6f))
-                    ) {
-                        Column(
-                            modifier = Modifier.padding(12.dp),
-                            verticalArrangement = Arrangement.spacedBy(8.dp)
-                        ) {
-                            Row(
-                                modifier = Modifier.fillMaxWidth(),
-                                horizontalArrangement = Arrangement.SpaceBetween,
-                                verticalAlignment = Alignment.CenterVertically
-                            ) {
-                                Text("هدية الدخول اليومية", fontWeight = FontWeight.Bold, fontSize = 13.sp)
-                                Text("+150 نقطة", fontWeight = FontWeight.Black, color = MujtamaGold, fontSize = 12.sp)
-                            }
-                            Text(
-                                "احصل على مكافأة مجانية يومية فور تسجيل الدخول لدعم نشاطك.",
-                                fontSize = 11.sp,
-                                color = MaterialTheme.colorScheme.onSurfaceVariant
-                            )
-                            Button(
-                                onClick = {
-                                    onClaimDailyBonus()
-                                    showRechargeDialog = false
-                                },
-                                enabled = !dailyBonusClaimed,
-                                shape = RoundedCornerShape(10.dp),
-                                colors = ButtonDefaults.buttonColors(containerColor = MujtamaGold, contentColor = Color(0xFF221500)),
-                                modifier = Modifier.fillMaxWidth()
-                            ) {
-                                Text(
-                                    text = if (dailyBonusClaimed) "تم استلام هدية اليوم ✓" else "شحن هدية اليوم الآن (+150)",
-                                    fontWeight = FontWeight.Bold,
-                                    fontSize = 11.sp
-                                )
-                            }
-                        }
-                    }
-
-                    Surface(
-                        shape = RoundedCornerShape(10.dp),
-                        color = MujtamaTeal.copy(alpha = 0.1f)
-                    ) {
-                        Row(
-                            modifier = Modifier.padding(10.dp),
-                            verticalAlignment = Alignment.CenterVertically,
-                            horizontalArrangement = Arrangement.spacedBy(8.dp)
-                        ) {
-                            Icon(Icons.Default.EmojiEvents, contentDescription = null, tint = MujtamaTeal, modifier = Modifier.size(20.dp))
-                            Text(
-                                text = "يمكنك أيضاً زيادة رصيدك بالمشاركة في تحديات الغرف الصوتية، الفوز بالألعاب، ومسابقات الفريق التفاعلية.",
+            }
+        )
+    }
                                 fontSize = 11.sp,
                                 color = MaterialTheme.colorScheme.onSurface
                             )
