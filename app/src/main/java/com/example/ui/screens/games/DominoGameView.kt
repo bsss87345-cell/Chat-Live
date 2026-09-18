@@ -1303,8 +1303,8 @@ fun DominoPlayAreaSerpentine(
         if (idx >= 0) idx else (boardChain.size / 2).coerceAtLeast(0)
     }
 
-    val baseTileW = 33.dp
-    val baseTileH = 58.dp
+    val baseTileW = 26.dp
+    val baseTileH = 46.dp
     // تقليل المسافة بين القطع تدريجياً كلما زاد عدد القطع بالسلسلة لإفساح مجال أكبر
     val tileSpacing = when {
         boardChain.size <= 10 -> 4.dp
