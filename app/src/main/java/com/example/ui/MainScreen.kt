@@ -42,11 +42,12 @@ fun MainScreen(viewModel: SocialAppViewModel) {
             val userMessage by viewModel.userMessage.collectAsStateWithLifecycle()
             val activeRoomId by viewModel.activeRoomId.collectAsStateWithLifecycle()
             val activeGameType by viewModel.activeGameType.collectAsStateWithLifecycle()
+            val showAccountSettings by viewModel.showAccountSettings.collectAsStateWithLifecycle()
 
-        // Hide top bar and bottom navigation when user is inside any chat room or active game
+        // Hide top bar and bottom navigation when user is inside any chat room, active game, or the account settings page
         val isInsideRoom = currentTab == AppTab.CHAT && activeRoomId != null
         val isInsideGame = currentTab == AppTab.GAMES && activeGameType != null
-        val hideBars = isInsideRoom || isInsideGame
+        val hideBars = isInsideRoom || isInsideGame || showAccountSettings
 
         val snackbarHostState = remember { SnackbarHostState() }
         val coroutineScope = rememberCoroutineScope()
