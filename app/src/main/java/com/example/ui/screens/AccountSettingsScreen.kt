@@ -606,7 +606,7 @@ fun AccountSettingsScreen(
 
                             HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f))
 
-                            SettingsActionRow(
+                            AccountSettingsActionRow(
                                 icon = Icons.Default.SupportAgent,
                                 title = "تواصل مباشر مع الدعم",
                                 subtitle = "محادثة فورية مع فريق الدعم الفني وخدمة العملاء",
