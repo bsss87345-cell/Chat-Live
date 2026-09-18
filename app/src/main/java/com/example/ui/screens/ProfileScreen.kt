@@ -51,7 +51,8 @@ fun ProfileScreen(
     onCommentPost: (String) -> Unit,
     onSharePost: (Post) -> Unit,
     onNavigateToRecharge: () -> Unit = {},
-    onOpenAccountSettings: () -> Unit = {}
+    onOpenAccountSettings: () -> Unit = {},
+    onUpdateAvatarImage: (Uri) -> Unit = {}
 ) {
     var showEditProfileDialog by remember { mutableStateOf(false) }
     var showEditBioDialog by remember { mutableStateOf(false) }
