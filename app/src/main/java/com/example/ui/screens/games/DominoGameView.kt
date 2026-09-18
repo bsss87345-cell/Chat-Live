@@ -811,73 +811,8 @@ fun LuxuryDominoOvalTableCanvas(modifier: Modifier = Modifier) {
         val w = size.width
         val h = size.height
 
-        // 1. خلفية الخشب الداكن الفاخر (الجوز / الماهوجني) مع تدرج وملمس
+        // ملء الشاشة بالكامل بنفس ألوان القماش الأخضر الفاخر الحالية، بدون أي إطار أو زوايا أو حدود خارجية
         drawRect(
-            brush = Brush.radialGradient(
-                colors = listOf(
-                    Color(0xFF2B1309), // بني ماهوجني عميق في المنتصف
-                    Color(0xFF1B0A04), // بني جوز داكن
-                    Color(0xFF0F0502)  // حواف خشبية شبه سوداء
-                ),
-                center = Offset(w * 0.5f, h * 0.5f),
-                radius = h * 0.65f
-            )
-        )
-
-        // خطوط ملمس الخشب الدقيقة (Wood Grain)
-        val woodLineColor = Color(0xFF381A0E).copy(alpha = 0.28f)
-        val lineSpacing = 16.dp.toPx()
-        var currentY = 0f
-        while (currentY < h) {
-            drawLine(
-                color = woodLineColor,
-                start = Offset(0f, currentY),
-                end = Offset(w, currentY + 8.dp.toPx()),
-                strokeWidth = 1.2.dp.toPx()
-            )
-            currentY += lineSpacing
-        }
-
-        // 2. الطاولة المستطيلة بحواف دائرية - هوامش أصغر لملء الشاشة أكثر ومنع ظهور حواف خشبية سوداء واسعة
-        val tableInsetX = 0.dp.toPx()
-        val tableInsetY = 0.dp.toPx()
-        val tableWidth = w - tableInsetX * 2
-        val tableHeight = h - tableInsetY * 2
-        val tableCorner = CornerRadius(8.dp.toPx(), 8.dp.toPx())
-
-        // الإطار الخارجي الذهبي بزخرفة ناعمة
-        val outerGoldThickness = 4.dp.toPx()
-        drawRoundRect(
-            brush = Brush.sweepGradient(
-                colors = listOf(
-                    Color(0xFFD4AF37),
-                    Color(0xFFF7E2C6),
-                    Color(0xFFAA8036),
-                    Color(0xFFD4AF37)
-                ),
-                center = Offset(w * 0.5f, h * 0.5f)
-            ),
-            topLeft = Offset(tableInsetX, tableInsetY),
-            size = Size(tableWidth, tableHeight),
-            cornerRadius = tableCorner,
-            style = Stroke(width = outerGoldThickness)
-        )
-
-        // خط الزخرفة الذهبي المنقط الداخلي
-        val innerDashedInset = 5.dp.toPx()
-        drawRoundRect(
-            color = Color(0xFFE4BC7E).copy(alpha = 0.75f),
-            topLeft = Offset(tableInsetX + innerDashedInset, tableInsetY + innerDashedInset),
-            size = Size(tableWidth - innerDashedInset * 2, tableHeight - innerDashedInset * 2),
-            cornerRadius = CornerRadius(18.dp.toPx(), 18.dp.toPx()),
-            style = Stroke(
-                width = 1.2.dp.toPx(),
-                pathEffect = PathEffect.dashPathEffect(floatArrayOf(5.dp.toPx(), 4.dp.toPx()), 0f)
-            )
-        )
-
-        // 3. سطح الطاولة الأخضر الداكن (قماش كلاسيكي فاخر) مع سبوت لايت ناعمة في المنتصف
-        drawRoundRect(
             brush = Brush.radialGradient(
                 colors = listOf(
                     Color(0xFF145E3B), // سبوت لايت مشرق وناعم في المركز
@@ -885,21 +820,9 @@ fun LuxuryDominoOvalTableCanvas(modifier: Modifier = Modifier) {
                     Color(0xFF072918), // أخضر داكن فاخر
                     Color(0xFF04190E)  // أطراف داكنة وظلال على الحواف
                 ),
-                center = Offset(w * 0.5f, h * 0.5f),
-                radius = tableWidth * 0.75f
-            ),
-            topLeft = Offset(tableInsetX + 6.dp.toPx(), tableInsetY + 6.dp.toPx()),
-            size = Size(tableWidth - 12.dp.toPx(), tableHeight - 12.dp.toPx()),
-            cornerRadius = CornerRadius(16.dp.toPx(), 16.dp.toPx())
-        )
-
-        // حزام ذهبي رقيق في منتصف القماش لتحديد ملعب الدومينو
-        drawRoundRect(
-            color = Color(0xFFC7985D).copy(alpha = 0.35f),
-            topLeft = Offset(tableInsetX + 18.dp.toPx(), tableInsetY + 24.dp.toPx()),
-            size = Size(tableWidth - 36.dp.toPx(), tableHeight - 48.dp.toPx()),
-            cornerRadius = CornerRadius(12.dp.toPx(), 12.dp.toPx()),
-            style = Stroke(width = 0.8.dp.toPx())
+                center = Offset(w * 0.5f, h * 0.4f),
+                radius = h * 0.75f
+            )
         )
     }
 }
