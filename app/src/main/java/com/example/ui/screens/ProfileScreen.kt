@@ -375,20 +375,6 @@ fun ProfileScreen(
             }
         )
     }
-                                fontSize = 11.sp,
-                                color = MaterialTheme.colorScheme.onSurface
-                            )
-                        }
-                    }
-                }
-            },
-            confirmButton = {
-                TextButton(onClick = { showRechargeDialog = false }) {
-                    Text("إغلاق")
-                }
-            }
-        )
-    }
 }
 
 @Composable
