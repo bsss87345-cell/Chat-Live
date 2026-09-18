@@ -839,11 +839,11 @@ fun LuxuryDominoOvalTableCanvas(modifier: Modifier = Modifier) {
         }
 
         // 2. الطاولة المستطيلة بحواف دائرية - هوامش أصغر لملء الشاشة أكثر ومنع ظهور حواف خشبية سوداء واسعة
-        val tableInsetX = 3.dp.toPx()
-        val tableInsetY = 6.dp.toPx()
+        val tableInsetX = 0.dp.toPx()
+        val tableInsetY = 0.dp.toPx()
         val tableWidth = w - tableInsetX * 2
         val tableHeight = h - tableInsetY * 2
-        val tableCorner = CornerRadius(22.dp.toPx(), 22.dp.toPx())
+        val tableCorner = CornerRadius(8.dp.toPx(), 8.dp.toPx())
 
         // الإطار الخارجي الذهبي بزخرفة ناعمة
         val outerGoldThickness = 4.dp.toPx()
