@@ -79,7 +79,7 @@ fun MujtamaBottomNav(
                         Icon(
                             imageVector = if (isSelected) item.selectedIcon else item.unselectedIcon,
                             contentDescription = item.tab.titleAr,
-                            modifier = Modifier.size(24.dp)
+                            modifier = Modifier.size(22.dp)
                         )
                     }
                 },
