@@ -1569,7 +1569,7 @@ fun AccountSettingsScreen(
 }
 
 @Composable
-fun SettingsActionRow(
+private fun SettingsActionRow(
     icon: androidx.compose.ui.graphics.vector.ImageVector,
     title: String,
     subtitle: String,
