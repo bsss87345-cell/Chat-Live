@@ -1820,8 +1820,8 @@ fun ClassicDominoTileView2P(
     modifier: Modifier = Modifier
 ) {
     val isVertical = orientation == TileOrientation.VERTICAL
-    val width = (if (isVertical) 33.dp else 58.dp) * scale
-    val height = (if (isVertical) 58.dp else 33.dp) * scale
+    val width = (if (isVertical) 26.dp else 46.dp) * scale
+    val height = (if (isVertical) 46.dp else 26.dp) * scale
 
     val borderColor = when {
         isSelected -> Color(0xFFFFD700) // ذهبي ناصع للطرف المختار
