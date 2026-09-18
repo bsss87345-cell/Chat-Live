@@ -112,6 +112,26 @@ fun ProfileScreen(
                     horizontalAlignment = Alignment.CenterHorizontally,
                     verticalArrangement = Arrangement.spacedBy(12.dp)
                 ) {
+                    // Settings menu icon (top-right corner)
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.Start
+                    ) {
+                        IconButton(
+                            onClick = { selectedSubTab = 2 },
+                            modifier = Modifier
+                                .size(32.dp)
+                                .testTag("profile_settings_menu_button")
+                        ) {
+                            Icon(
+                                imageVector = Icons.Default.Menu,
+                                contentDescription = "الإعدادات",
+                                tint = MaterialTheme.colorScheme.onSurface,
+                                modifier = Modifier.size(22.dp)
+                            )
+                        }
+                    }
+
                     // Avatar with Edit Badge
                     Box(
                         modifier = Modifier.size(86.dp),
