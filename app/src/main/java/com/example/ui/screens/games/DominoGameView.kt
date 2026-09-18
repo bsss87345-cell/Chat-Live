@@ -236,103 +236,7 @@ fun DominoGameView(
         )
     }
 
-    val leftEnd = boardChain.first().tile.left
-    val rightEnd = boardChain.last().tile.right
-
-    // نظام النقاط: يبدأ من 0 ومقيد بحد أقصى 100 بالضبط
-    var userScore by remember { mutableIntStateOf(0) }
-    var currentRound by remember { mutableIntStateOf(1) }
-
-    // أدوار اللعب ومؤقت الـ 15 ثانية الدقيق
-    var isUserTurn by remember { mutableStateOf(true) }
-    var turnTimeRemaining by remember { mutableIntStateOf(15) }
-    var isAutoDrawing by remember { mutableStateOf(false) }
-
-    // آلية تحديد طرف السلسلة على الطاولة (من المنتصف/الأطراف المفتوحة)
-    var selectedChainEnd by remember { mutableStateOf(SelectedChainEnd.NONE) }
-
-    var statusMessage by remember { mutableStateOf("دورك للعب! اختر حجراً مناسباً للطرفين [$leftEnd] أو [$rightEnd]") }
-    var isGameWonFinal by remember { mutableStateOf(false) }
-    var showExitDialog by remember { mutableStateOf(false) }
-    var showChatDialog by remember { mutableStateOf(false) }
-    var showGiftDialog by remember { mutableStateOf(false) }
-    var showSettingsDialog by remember { mutableStateOf(false) }
-
-    // فقاعات الدردشة والهدايا الحية فوق صورة المستخدم
-    var userChatBubbleText by remember { mutableStateOf<String?>(null) }
-    var userGiftBubbleText by remember { mutableStateOf<String?>(null) }
-
-    LaunchedEffect(userChatBubbleText) {
-        if (userChatBubbleText != null) {
-            delay(3500)
-            userChatBubbleText = null
-        }
-    }
-
-    LaunchedEffect(userGiftBubbleText) {
-        if (userGiftBubbleText != null) {
-            delay(3000)
-            userGiftBubbleText = null
-        }
-    }
-    
-    // إعدادات الصوت والاهتزاز
-    var soundEnabled by remember { mutableStateOf(true) }
-    var vibrationEnabled by remember { mutableStateOf(true) }
-
-    // تشغيل التأثير عند وضع أي قطعة
-    fun onTilePlayedFeedback() {
-        DominoSoundAndHapticHelper.playWoodClack(context, haptic, soundEnabled, vibrationEnabled)
-    }
-
-    // إضافة النقاط بحد أقصى 100 بالضبط وفحص الفوز التلقائي
-    fun addPointsToUser(points: Int) {
-        val newScore = min(100, userScore + points)
-        userScore = newScore
-        if (newScore >= 100) {
-            isGameWonFinal = true
-            onWinReward(250)
-            statusMessage = "🎉 انتصار ساحق! حققت 100/100 نقطة وفزت بالمباراة!"
-        }
-    }
-
-    // مؤقت الدور: 15 ثانية بالضبط، يتناقص بصرياً ويتحول للأحمر في آخر 5 ثوانٍ
-    LaunchedEffect(isUserTurn, isGameWonFinal, isAutoDrawing) {
-        if (isGameWonFinal || isAutoDrawing) return@LaunchedEffect
-        if (!isUserTurn) {
-            selectedChainEnd = SelectedChainEnd.NONE
-        }
-        turnTimeRemaining = 15
-        while (turnTimeRemaining > 0 && !isGameWonFinal && !isAutoDrawing) {
-            delay(1000)
-            turnTimeRemaining--
-        }
-        if (turnTimeRemaining == 0 && !isGameWonFinal && !isAutoDrawing) {
-            statusMessage = if (isUserTurn) "انتهى وقتك (15 ثانية)! تم تمرير الدور للخصم." else "انتهى وقت الخصم وتم تمرير الدور إليك."
-            selectedChainEnd = SelectedChainEnd.NONE
-            isUserTurn = !isUserTurn
-        }
-    }
-
-    // فحص انتهاء الجولة العادية
-    fun checkRoundEnd() {
-        if (isGameWonFinal) return
-        if (userTiles.isEmpty()) {
-            addPointsToUser(35)
-            statusMessage = "🎉 أنهيت جميع قطعك وكسبت الجولة! (+35 نقطة)"
-            if (userScore < 100) {
-                currentRound++
-            }
-        } else if (opponentTiles.isEmpty()) {
-            statusMessage = "أنهى $displayName قطعه وفاز بالجولة."
-            currentRound++
-        }
-    }
-
-    LaunchedEffect(userTiles.size, opponentTiles.size) {
-        checkRoundEnd()
-    }
-
+m
     // تنفيذ لعب الحجر من قبل المستخدم
     fun executePlayerPlay(tile: DominoTile, playOnLeft: Boolean) {
         val currentL = boardChain.first().tile.left
@@ -475,30 +379,7 @@ fun DominoGameView(
                 while (!foundPlayable && boneyardTiles.isNotEmpty() && !isGameWonFinal) {
                     val drawn = boneyardTiles.first()
                     boneyardTiles = boneyardTiles.drop(1)
-                    userTiles = userTiles + drawn
-                    onTilePlayedFeedback()
 
-                    val isDrawnPlayable = (drawn.left == currentL || drawn.right == currentL || drawn.left == currentR || drawn.right == currentR)
-                    if (isDrawnPlayable) {
-                        foundPlayable = true
-                        statusMessage = "تم سحب حجر صالح للعب [${drawn.left}|${drawn.right}]! يمكنك لعبه الآن."
-                        break
-                    } else {
-                        statusMessage = "سحب [${drawn.left}|${drawn.right}] (غير صالح)، جاري السحب مجدداً..."
-                        delay(500)
-                    }
-                }
-
-                if (!foundPlayable && boneyardTiles.isEmpty()) {
-                    statusMessage = "نفد بنك السحب ولا توجد حركة صالحة! تم تمرير الدور تلقائياً."
-                    delay(800)
-                    isAutoDrawing = false
-                    isUserTurn = false
-                } else {
-                    isAutoDrawing = false
-                }
-            }
-        } else {
             // دور الخصم الذكي (AI) مع السحب التلقائي
             delay(1000)
             if (isGameWonFinal) return@LaunchedEffect
