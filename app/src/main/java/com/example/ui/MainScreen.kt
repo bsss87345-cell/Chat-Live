@@ -288,7 +288,8 @@ fun MainScreen(viewModel: SocialAppViewModel) {
                                 onBuyItem = { viewModel.buyStoreItem(it) },
                                 onLikePost = { viewModel.toggleLike(it) },
                                 onCommentPost = { viewModel.openComments(it) },
-                                onSharePost = { viewModel.sharePost(it) }
+                                onSharePost = { viewModel.sharePost(it) },
+                                onOpenAccountSettings = { viewModel.openAccountSettings() }
                                 )
                         }
                     }
