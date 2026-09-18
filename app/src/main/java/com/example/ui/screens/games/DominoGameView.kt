@@ -16,6 +16,8 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.horizontalScroll
+import androidx.compose.foundation.gestures.detectDragGestures
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
@@ -1226,14 +1228,26 @@ fun DominoPlayAreaSerpentine(
         if (idx >= 0) idx else (boardChain.size / 2).coerceAtLeast(0)
     }
 
-    val baseTileW = 26.dp
-    val baseTileH = 46.dp
-    // تقليل المسافة بين القطع تدريجياً كلما زاد عدد القطع بالسلسلة لإفساح مجال أكبر
-    val tileSpacing = when {
+    // 1. التصغير التلقائي المتدرج (Auto-Scaling): كلما زاد عدد القطع الملعوبة، تُصغَّر جميعها تلقائياً
+    // للحفاظ على أكبر قدر ممكن من السلسلة مرئياً بدون تحريك يدوي
+    val dynamicScale = remember(boardChain.size) {
+        when {
+            boardChain.size <= 10 -> 1f
+            boardChain.size <= 16 -> 0.85f
+            boardChain.size <= 22 -> 0.72f
+            boardChain.size <= 26 -> 0.62f
+            else -> 0.5f
+        }
+    }
+    val minScale = 0.5f
+
+    val baseTileW = 26.dp * dynamicScale
+    val baseTileH = 46.dp * dynamicScale
+    val tileSpacing = (when {
         boardChain.size <= 10 -> 4.dp
         boardChain.size <= 18 -> 2.5.dp
         else -> 1.dp
-    }
+    }) * dynamicScale
 
     fun rawDims(orientation: TileOrientation): Pair<Dp, Dp> =
         if (orientation == TileOrientation.VERTICAL) baseTileW to baseTileH else baseTileH to baseTileW
@@ -1247,10 +1261,31 @@ fun DominoPlayAreaSerpentine(
 
     data class Placement(val x: Dp, val y: Dp, val w: Dp, val h: Dp, val renderOrientation: TileOrientation)
 
+    // 4. السحب اليدوي (Pan) الاحتياطي بالإصبع، يعمل دائماً كطبقة أمان فوق إعادة التوسيط التلقائية
+    var manualPanX by remember { mutableFloatStateOf(0f) }
+    var manualPanY by remember { mutableFloatStateOf(0f) }
+    val panOffsetX = remember { Animatable(0f) }
+    val panOffsetY = remember { Animatable(0f) }
+
+    // إعادة تصفير السحب اليدوي عند بداية جولة جديدة (سلسلة بحجر واحد فقط)
+    LaunchedEffect(boardChain.size == 1) {
+        if (boardChain.size == 1) {
+            manualPanX = 0f
+            manualPanY = 0f
+        }
+    }
+
     BoxWithConstraints(
         modifier = modifier
             .fillMaxSize()
-            .clipToBounds(),
+            .clipToBounds()
+            .pointerInput(Unit) {
+                detectDragGestures { change, dragAmount ->
+                    change.consume()
+                    manualPanX += dragAmount.x
+                    manualPanY += dragAmount.y
+                }
+            },
         contentAlignment = Alignment.Center
     ) {
         val margin = 10.dp
@@ -1268,7 +1303,7 @@ fun DominoPlayAreaSerpentine(
             SnakeDir.RIGHT -> (pl.x + pl.w) > rightLimit
         }
 
-        val placements = remember(boardChain, centerIndex, maxWidth, maxHeight) {
+        val placements = remember(boardChain, centerIndex, maxWidth, maxHeight, dynamicScale) {
             val result = arrayOfNulls<Placement>(boardChain.size)
 
             val centerOrientation = boardChain[centerIndex].orientation
@@ -1276,7 +1311,6 @@ fun DominoPlayAreaSerpentine(
             val centerPlacement = Placement(centerX - centerW / 2, centerY - centerH / 2, centerW, centerH, centerOrientation)
             result[centerIndex] = centerPlacement
 
-            // قائمة مشتركة بكل القطع الموضوعة فعلياً (من الذراعين معاً) لمنع أي تراكب بينها
             val placedSoFar = mutableListOf(centerPlacement)
 
             fun overlaps(a: Placement, b: Placement): Boolean =
@@ -1326,9 +1360,6 @@ fun DominoPlayAreaSerpentine(
                     var extraPush = 0.dp
                     var p = place(currentDir, extraPush)
 
-                    // انعطاف حلزوني مستمر بدوران ثابت الجهة، مع منع أي تراكب مع القطع الموضوعة مسبقاً
-                    // (من نفس الذراع أو الذراع الآخر): إذا تعذّر إيجاد اتجاه خالٍ بعد دورة كاملة (4 محاولات)،
-                    // تُدفع القطعة مسافة إضافية للخارج ويُعاد فحص الاتجاهات الأربعة من جديد
                     var turnAttempts = 0
                     while ((exceedsLimit(p, currentDir) || overlapsAny(p)) && turnAttempts < 16) {
                         currentDir = rotate(currentDir)
@@ -1340,7 +1371,6 @@ fun DominoPlayAreaSerpentine(
                     }
                     dir = currentDir
 
-                    // طبقة حماية نهائية: تضمن بقاء القطعة داخل حدود منطقة اللعب دائماً
                     val safeX = p.x.coerceIn(leftLimit, (rightLimit - p.w).coerceAtLeast(leftLimit))
                     val safeY = p.y.coerceIn(topLimit, (bottomLimit - p.h).coerceAtLeast(topLimit))
                     p = p.copy(x = safeX, y = safeY)
@@ -1359,49 +1389,79 @@ fun DominoPlayAreaSerpentine(
 
             result
         }
-        boardChain.forEachIndexed { index, placed ->
-            val p = placements.getOrNull(index) ?: return@forEachIndexed
-            val isLeftEnd = index == 0
-            val isRightEnd = index == boardChain.size - 1
-            val isEnd = isLeftEnd || isRightEnd
 
-            val isSelected = when {
-                isLeftEnd && selectedChainEnd == SelectedChainEnd.LEFT -> true
-                isRightEnd && selectedChainEnd == SelectedChainEnd.RIGHT -> true
-                else -> false
+        // 3. التجميع المحوري: توسيط مركز ثقل السلسلة كاملة بحركة ناعمة كل ما تغيّر طولها،
+        // بحيث تبقى الأطراف المفتوحة قريبة من منتصف الشاشة قدر الإمكان
+        LaunchedEffect(boardChain.size, dynamicScale) {
+            val nonNull = placements.filterNotNull()
+            if (nonNull.isNotEmpty()) {
+                val minX = nonNull.minOf { it.x }
+                val maxX = nonNull.maxOf { it.x + it.w }
+                val minY = nonNull.minOf { it.y }
+                val maxY = nonNull.maxOf { it.y + it.h }
+                val massCenterX = (minX + maxX) / 2
+                val massCenterY = (minY + maxY) / 2
+                val desiredOffsetX = centerX - massCenterX
+                val desiredOffsetY = centerY - massCenterY
+                panOffsetX.animateTo(desiredOffsetX.value, animationSpec = tween(450))
+                panOffsetY.animateTo(desiredOffsetY.value, animationSpec = tween(450))
+                manualPanX = 0f
+                manualPanY = 0f
             }
+        }
 
-            val hasMatchingTile = when {
-                boardChain.size == 1 -> userTiles.any {
-                    it.left == leftEnd || it.right == leftEnd || it.left == rightEnd || it.right == rightEnd
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .graphicsLayer {
+                    translationX = panOffsetX.value.dp.toPx() + manualPanX
+                    translationY = panOffsetY.value.dp.toPx() + manualPanY
                 }
-                isLeftEnd -> userTiles.any { it.left == leftEnd || it.right == leftEnd }
-                isRightEnd -> userTiles.any { it.left == rightEnd || it.right == rightEnd }
-                else -> false
-            }
+        ) {
+            boardChain.forEachIndexed { index, placed ->
+                val p = placements.getOrNull(index) ?: return@forEachIndexed
+                val isLeftEnd = index == 0
+                val isRightEnd = index == boardChain.size - 1
+                val isEnd = isLeftEnd || isRightEnd
 
-            Box(
-                modifier = Modifier
-                    .align(Alignment.TopStart)
-                    .offset(x = p.x, y = p.y)
-            ) {
-                ClassicDominoTileView2P(
-                    tile = placed.tile,
-                    orientation = p.renderOrientation,
-                    isLeftEnd = isLeftEnd,
-                    isRightEnd = isRightEnd,
-                    isSelected = isSelected,
-                    isPlayableEnd = isUserTurn && isEnd && hasMatchingTile,
-                    scale = 1.0f
-                )
+                val isSelected = when {
+                    isLeftEnd && selectedChainEnd == SelectedChainEnd.LEFT -> true
+                    isRightEnd && selectedChainEnd == SelectedChainEnd.RIGHT -> true
+                    else -> false
+                }
 
-                if (isUserTurn && isEnd) {
-                    Box(
-                        modifier = Modifier
-                            .align(Alignment.Center)
-                            .sizeIn(minWidth = 48.dp, minHeight = 48.dp)
-                            .clickable { onEndTileClick(isLeftEnd) }
+                val hasMatchingTile = when {
+                    boardChain.size == 1 -> userTiles.any {
+                        it.left == leftEnd || it.right == leftEnd || it.left == rightEnd || it.right == rightEnd
+                    }
+                    isLeftEnd -> userTiles.any { it.left == leftEnd || it.right == leftEnd }
+                    isRightEnd -> userTiles.any { it.left == rightEnd || it.right == rightEnd }
+                    else -> false
+                }
+
+                Box(
+                    modifier = Modifier
+                        .align(Alignment.TopStart)
+                        .offset(x = p.x, y = p.y)
+                ) {
+                    ClassicDominoTileView2P(
+                        tile = placed.tile,
+                        orientation = p.renderOrientation,
+                        isLeftEnd = isLeftEnd,
+                        isRightEnd = isRightEnd,
+                        isSelected = isSelected,
+                        isPlayableEnd = isUserTurn && isEnd && hasMatchingTile,
+                        scale = dynamicScale
                     )
+
+                    if (isUserTurn && isEnd) {
+                        Box(
+                            modifier = Modifier
+                                .align(Alignment.Center)
+                                .sizeIn(minWidth = 48.dp, minHeight = 48.dp)
+                                .clickable { onEndTileClick(isLeftEnd) }
+                        )
+                    }
                 }
             }
         }
