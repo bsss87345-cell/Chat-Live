@@ -624,7 +624,7 @@ fun AccountSettingsScreen(
 
                             HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f))
 
-                            SettingsActionRow(
+                            AccountSettingsActionRow(
                                 icon = Icons.Default.ReportProblem,
                                 title = "إبلاغ عن مشكلة",
                                 subtitle = "إرسال تقرير فني عن أي خلل أو عطل في التطبيق",
