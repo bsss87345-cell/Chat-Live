@@ -200,18 +200,21 @@ fun MainScreen(viewModel: SocialAppViewModel) {
                         }
 
                         AppTab.GAMES -> {
-                            val activeGame by viewModel.activeGameType.collectAsStateWithLifecycle()
-                            val activeMode by viewModel.activeGameMode.collectAsStateWithLifecycle()
-                            val activeOpponent by viewModel.activeGameOpponent.collectAsStateWithLifecycle()
-
-                            GamesScreen(
-                                activeGame = activeGame,
-                                activeMode = activeMode,
-                                activeOpponent = activeOpponent,
-                                onLaunchGame = { game, mode, opp -> viewModel.launchGame(game, mode, opp) },
-                                onExitGame = { viewModel.exitGame() },
-                                onWinReward = { reward, gameName -> viewModel.rewardGameWin(reward, gameName) }
-                            )
+                            Box(
+                                modifier = Modifier.fillMaxSize(),
+                                contentAlignment = Alignment.Center
+                            ) {
+                                Column(
+                                    horizontalAlignment = Alignment.CenterHorizontally,
+                                    verticalArrangement = Arrangement.spacedBy(12.dp)
+                                ) {
+                                    Text(text = "🎮", fontSize = 48.sp)
+                                    Text(
+                                        text = "سوف يتم إضافة محتوى لاحقاً",
+                                        style = MaterialTheme.typography.titleMedium
+                                    )
+                                }
+                            }
                         }
 
                         AppTab.TEAM -> {
