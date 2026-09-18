@@ -1592,7 +1592,9 @@ fun UserRowLuxury(
                     // تعتيم خفيف للقطع غير المتوافقة عند اختيار طرف محدد لتأكيد الـ Highlight
                     val isDimmed = isUserTurn && selectedChainEnd != SelectedChainEnd.NONE && !isHighlighted
 
+                    val isBoardEmptyForOpening = leftEnd == null && rightEnd == null
                     val isPlayable = isUserTurn && (
+                        isBoardEmptyForOpening ||
                         tile.left == leftEnd || tile.right == leftEnd ||
                         tile.left == rightEnd || tile.right == rightEnd
                     )
