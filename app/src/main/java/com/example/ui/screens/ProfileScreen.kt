@@ -169,28 +169,11 @@ fun ProfileScreen(
                         horizontalAlignment = Alignment.CenterHorizontally,
                         verticalArrangement = Arrangement.spacedBy(2.dp)
                     ) {
-                        Row(
-                            verticalAlignment = Alignment.CenterVertically,
-                            horizontalArrangement = Arrangement.spacedBy(6.dp)
-                        ) {
-                            Text(
-                                text = userProfile.name,
-                                fontWeight = FontWeight.Black,
-                                fontSize = 19.sp
-                            )
-                            Surface(
-                                shape = RoundedCornerShape(6.dp),
-                                color = MujtamaPrimary.copy(alpha = 0.15f)
-                            ) {
-                                Text(
-                                    text = "عضو نشط 🌟",
-                                    color = MujtamaPrimary,
-                                    fontSize = 10.sp,
-                                    fontWeight = FontWeight.Bold,
-                                    modifier = Modifier.padding(horizontal = 6.dp, vertical = 2.dp)
-                                )
-                            }
-                        }
+                        Text(
+                            text = userProfile.name,
+                            fontWeight = FontWeight.Black,
+                            fontSize = 19.sp
+                        )
                         Text(
                             text = "ID: ${userProfile.id} • ${userProfile.joinDate}",
                             fontSize = 11.sp,
