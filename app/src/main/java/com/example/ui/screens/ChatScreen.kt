@@ -1115,7 +1115,21 @@ Box(modifier = Modifier.fillMaxSize()) {
                                             .background(MujtamaPrimary),
                                         contentAlignment = Alignment.Center
                                     ) {
-                                        Text(text = member.name.take(1), color = Color.White, fontWeight = FontWeight.Bold)
+                                        val avatarBitmap = remember(myAvatarUrl) {
+                                            if (isTargetSelf && myAvatarUrl.isNotEmpty()) {
+                                                BitmapFactory.decodeFile(myAvatarUrl)?.asImageBitmap()
+                                            } else null
+                                        }
+                                        if (avatarBitmap != null) {
+                                            Image(
+                                                bitmap = avatarBitmap,
+                                                contentDescription = null,
+                                                contentScale = ContentScale.Crop,
+                                                modifier = Modifier.fillMaxSize()
+                                            )
+                                        } else {
+                                            Text(text = member.name.take(1), color = Color.White, fontWeight = FontWeight.Bold)
+                                        }
                                     }
                                     if (member.isOnline) {
                                         Box(
