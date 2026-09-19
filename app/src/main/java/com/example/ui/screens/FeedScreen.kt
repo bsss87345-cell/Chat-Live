@@ -1389,9 +1389,9 @@ fun StoryCreationDialog(
                     modifier = Modifier.fillMaxSize(),
                     lensFacing = lensFacing,
                     torchEnabled = isFlashOn,
-                    imageCapture = imageCapture
+                    imageCapture = imageCapture,
+                    videoCapture = videoCapture
                 )
-
                 // Top Controls: Close, Flash, Flip Camera, and Active Mode Badge
                 StoryTopBar(
                     currentMode = currentMode,
