@@ -271,7 +271,6 @@ fun MainScreen(viewModel: SocialAppViewModel) {
                         AppTab.PROFILE -> {
                             val userProfile by viewModel.userProfile.collectAsStateWithLifecycle()
                             val posts by viewModel.posts.collectAsStateWithLifecycle()
-                            val dailyBonusClaimed by viewModel.dailyBonusClaimed.collectAsStateWithLifecycle()
                             val walletFilter by viewModel.walletFilter.collectAsStateWithLifecycle()
                             val transactions by viewModel.transactions.collectAsStateWithLifecycle()
                             val storeItems by viewModel.storeItems.collectAsStateWithLifecycle()
