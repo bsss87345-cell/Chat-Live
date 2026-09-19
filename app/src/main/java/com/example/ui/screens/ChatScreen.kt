@@ -1823,7 +1823,8 @@ fun RoomMessageBubble(
     message: ChatMessage,
     isOwnerOrAdmin: Boolean,
     onDeleteMessage: () -> Unit,
-    onPlayGame: () -> Unit
+    onPlayGame: () -> Unit,
+    myAvatarUrl: String = ""
 ) {
     val bubbleColor = if (message.isFromMe) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.surfaceVariant
     val textColor = if (message.isFromMe) Color.White else MaterialTheme.colorScheme.onSurface
@@ -1832,6 +1833,25 @@ fun RoomMessageBubble(
         modifier = Modifier.fillMaxWidth(),
         contentAlignment = if (message.isFromMe) Alignment.CenterEnd else Alignment.CenterStart
     ) {
+        Row(
+            verticalAlignment = Alignment.Bottom,
+            horizontalArrangement = Arrangement.spacedBy(6.dp)
+        ) {
+            if (message.isFromMe && myAvatarUrl.isNotEmpty()) {
+                val myRoomMsgAvatarBitmap = remember(myAvatarUrl) {
+                    BitmapFactory.decodeFile(myAvatarUrl)?.asImageBitmap()
+                }
+                if (myRoomMsgAvatarBitmap != null) {
+                    Image(
+                        bitmap = myRoomMsgAvatarBitmap,
+                        contentDescription = null,
+                        contentScale = ContentScale.Crop,
+                        modifier = Modifier
+                            .size(28.dp)
+                            .clip(CircleShape)
+                    )
+                }
+            }
         Column(
             horizontalAlignment = if (message.isFromMe) Alignment.End else Alignment.Start,
             modifier = Modifier.widthIn(max = 290.dp)
@@ -1996,6 +2016,7 @@ fun RoomMessageBubble(
                     )
                 }
             }
+        }
         }
     }
 }
