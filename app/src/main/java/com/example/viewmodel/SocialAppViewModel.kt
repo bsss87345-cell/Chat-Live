@@ -945,6 +945,11 @@ fun blockRoomMember(roomId: String, memberId: String) {
         _userMessage.value = "تم حفظ معلومات الملف الشخصي بنجاح!"
     }
 
+    fun updateUserAvatarUrl(url: String) {
+        _userProfile.update { it.copy(avatarUrl = url) }
+        _userMessage.value = "تم تحديث صورة الملف الشخصي بنجاح!"
+    }
+
     fun toggleProfileNotifications() {
         _userProfile.update {
             it.copy(isNotificationsEnabled = !it.isNotificationsEnabled)
