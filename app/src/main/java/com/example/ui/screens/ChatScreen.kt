@@ -771,7 +771,8 @@ fun ChatRoomView(
     onUnblockMember: (String) -> Unit,
     onJoinRoom: () -> Unit,
     onStartRoomGame: (GameType) -> Unit,
-    onPlayGameDirectly: (GameType?) -> Unit
+    onPlayGameDirectly: (GameType?) -> Unit,
+    myAvatarUrl: String = ""
 ) {
     var inputText by remember { mutableStateOf("") }
     var showMembersSheet by remember { mutableStateOf(false) }
