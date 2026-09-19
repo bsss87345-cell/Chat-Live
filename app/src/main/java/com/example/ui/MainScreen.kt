@@ -282,8 +282,6 @@ fun MainScreen(viewModel: SocialAppViewModel) {
                         AppTab.PROFILE -> {
                             val userProfile by viewModel.userProfile.collectAsStateWithLifecycle()
                             val posts by viewModel.posts.collectAsStateWithLifecycle()
-                            val storeItems by viewModel.storeItems.collectAsStateWithLifecycle()
-
                             ProfileScreen(
                                 userProfile = userProfile,
                                 posts = posts,
