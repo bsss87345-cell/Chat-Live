@@ -288,7 +288,6 @@ fun MainScreen(viewModel: SocialAppViewModel) {
                                 balance = walletBalance,
                                 onUpdateBio = { viewModel.updateUserBio(it) },
                                 onLogout = { viewModel.logoutUser() },
-                                onSharePost = { viewModel.sharePost(it) },
                                 onOpenAccountSettings = { viewModel.openAccountSettings() },
                                 onUpdateAvatarImage = { viewModel.updateUserAvatarUrl(it) }
                                 )
