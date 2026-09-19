@@ -49,6 +49,23 @@ class SocialAppViewModel : ViewModel() {
     private val _pushNotificationsEnabled = MutableStateFlow(true)
     val pushNotificationsEnabled: StateFlow<Boolean> = _pushNotificationsEnabled.asStateFlow()
 
+    // --- In-app Notifications Center ---
+    private val _notifications = MutableStateFlow<List<AppNotification>>(emptyList())
+    val notifications: StateFlow<List<AppNotification>> = _notifications.asStateFlow()
+
+    fun addNotification(type: NotificationType, text: String) {
+        val item = AppNotification(
+            id = java.util.UUID.randomUUID().toString(),
+            type = type,
+            text = text
+        )
+        _notifications.value = listOf(item) + _notifications.value
+    }
+
+    fun markAllNotificationsRead() {
+        _notifications.value = _notifications.value.map { it.copy(isRead = true) }
+    }
+
     // --- Chat Rooms State ---
     private val _chatSubTab = MutableStateFlow("المحادثات الخاصة") // "المحادثات الخاصة" أو "غرف الدردشة"
     val chatSubTab: StateFlow<String> = _chatSubTab.asStateFlow()
