@@ -2570,6 +2570,7 @@ fun ChatMessageBubble(
                 }
             }
         }
+        }
     }
 }
 
