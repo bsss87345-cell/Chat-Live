@@ -74,14 +74,24 @@ fun MujtamaTopBar(
                         )
                     }
                 }
-                // Unread dot indicator
-                Box(
-                    modifier = Modifier
-                        .padding(top = 8.dp, end = 8.dp)
-                        .size(9.dp)
-                        .clip(CircleShape)
-                        .background(Color(0xFFE53935))
-                )
+                // Unread count badge
+                if (unreadCount > 0) {
+                    Box(
+                        modifier = Modifier
+                            .defaultMinSize(minWidth = 16.dp, minHeight = 16.dp)
+                            .clip(CircleShape)
+                            .background(Color(0xFFE53935))
+                            .padding(horizontal = 4.dp),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Text(
+                            text = if (unreadCount > 9) "9+" else unreadCount.toString(),
+                            color = Color.White,
+                            fontSize = 10.sp,
+                            fontWeight = FontWeight.Bold
+                        )
+                    }
+                }
             }
 
             // Dark/Light mode toggle button
