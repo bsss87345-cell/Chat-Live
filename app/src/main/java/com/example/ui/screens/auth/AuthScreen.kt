@@ -351,7 +351,7 @@ private fun SignupContent(
             text = title,
             fontSize = 26.sp,
             fontWeight = FontWeight.Black,
-            color = MaterialTheme.colorScheme.onBackground
+            color = Color.White
         )
 
         Spacer(modifier = Modifier.height(10.dp))
