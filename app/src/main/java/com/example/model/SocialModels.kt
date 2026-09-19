@@ -214,3 +214,11 @@ data class FriendRequest(
 )
 
 enum class NotificationType { LIKE, COMMENT, FOLLOW, SYSTEM }
+
+data class AppNotification(
+    val id: String,
+    val type: NotificationType,
+    val text: String,
+    val timeMillis: Long = System.currentTimeMillis(),
+    val isRead: Boolean = false
+)
