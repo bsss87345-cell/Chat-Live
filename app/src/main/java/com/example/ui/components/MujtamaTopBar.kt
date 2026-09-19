@@ -30,6 +30,7 @@ fun MujtamaTopBar(
     isDarkMode: Boolean = false,
     onWalletClick: () -> Unit = {},
     onNotificationsClick: () -> Unit = {},
+    unreadCount: Int = 0,
     onSearchClick: () -> Unit = {},
     onToggleDarkMode: () -> Unit = {}
 ) {
