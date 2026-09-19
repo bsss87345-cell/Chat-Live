@@ -286,8 +286,7 @@ fun MainScreen(viewModel: SocialAppViewModel) {
                                 userProfile = userProfile,
                                 posts = posts,
                                 balance = walletBalance,
-                                storeItems = storeItems,
-                                onUpdateBio = { viewModel.updateUserBio(it) },
+                                onUpdateBio
                                 onUpdateProfile = { name, bio, emoji -> viewModel.updateUserProfile(name, bio, emoji) },
                                 onToggleNotifications = { viewModel.toggleProfileNotifications() },
                                 onTogglePrivacy = { viewModel.toggleProfilePrivacy() },
