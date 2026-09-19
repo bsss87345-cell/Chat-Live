@@ -957,7 +957,7 @@ fun blockRoomMember(roomId: String, memberId: String) {
                 handle = generatedId,
                 name = account.name,
                 email = account.email,
-                authProvider = account.provider.providerNameAr,
+                authProvider = "بريد إلكتروني",
                 avatarEmoji = account.avatarEmoji
             )
         }
