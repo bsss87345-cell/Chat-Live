@@ -1921,12 +1921,27 @@ fun StoryReviewView(
 ) {
     Box(modifier = Modifier.fillMaxSize()) {
         // Media Preview
-        AsyncImage(
-            model = mediaUri,
-            contentDescription = "معاينة القصة",
-            modifier = Modifier.fillMaxSize(),
-            contentScale = ContentScale.Crop
-        )
+        if (isVideo) {
+            AndroidView(
+                modifier = Modifier.fillMaxSize(),
+                factory = { ctx ->
+                    android.widget.VideoView(ctx).apply {
+                        setVideoPath(mediaUri)
+                        setOnPreparedListener { mp ->
+                            mp.isLooping = true
+                            start()
+                        }
+                    }
+                }
+            )
+        } else {
+            AsyncImage(
+                model = mediaUri,
+                contentDescription = "معاينة القصة",
+                modifier = Modifier.fillMaxSize(),
+                contentScale = ContentScale.Crop
+            )
+        }
 
         // Subtle gradient overlay at top and bottom
         Box(
