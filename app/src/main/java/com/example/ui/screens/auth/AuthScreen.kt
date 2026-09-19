@@ -267,9 +267,9 @@ private fun LoginContent(
         modifier = Modifier.fillMaxWidth(),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Spacer(modifier = Modifier.height(24.dp))
+        Spacer(modifier = Modifier.height(4.dp))
 
-        AppBrandHeader(modifier = Modifier.padding(bottom = 36.dp))
+        AppBrandHeader(modifier = Modifier.padding(bottom = 24.dp))
 
         AuthErrorBanner(message = errorMessage, onDismiss = onDismissError)
 
