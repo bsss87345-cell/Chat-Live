@@ -335,6 +335,7 @@ fun ProfileScreen(
         )
     }
 }
+
 private fun saveAvatarToInternalStorage(context: Context, uri: Uri): String? {
     return try {
         val bounds = BitmapFactory.Options().apply { inJustDecodeBounds = true }
