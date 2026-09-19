@@ -1925,10 +1925,18 @@ fun StoryReviewView(
             AndroidView(
                 modifier = Modifier.fillMaxSize(),
                 factory = { ctx ->
-                    android.widget.VideoView(ctx).apply {
+                    object : android.widget.VideoView(ctx) {
+                        override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
+                            setMeasuredDimension(
+                                android.view.View.MeasureSpec.getSize(widthMeasureSpec),
+                                android.view.View.MeasureSpec.getSize(heightMeasureSpec)
+                            )
+                        }
+                    }.apply {
                         setVideoPath(mediaUri)
                         setOnPreparedListener { mp ->
                             mp.isLooping = true
+                            mp.setVideoScalingMode(android.media.MediaPlayer.VIDEO_SCALING_MODE_SCALE_TO_FIT_WITH_CROPPING)
                             start()
                         }
                     }
