@@ -478,15 +478,7 @@ class SocialAppViewModel : ViewModel() {
         _activeRoomId.value = newRoom.id
         _userMessage.value = "تم إنشاء غرفة الدردشة '${newRoom.name}' بنجاح وأنت الآن المالك!"
     }
-
-    fun updateRoomImage(roomId: String, imageUrl: String) {
-        _chatRooms.update { list ->
-            list.map {
-                if (it.id == roomId) it.copy(imageUrl = imageUrl) else it
-            }
-        }
-    }
-
+    
 fun joinChatRoom(roomId: String, passwordInput: String = ""): Boolean {
         val room = _chatRooms.value.find { it.id == roomId } ?: return false
 
