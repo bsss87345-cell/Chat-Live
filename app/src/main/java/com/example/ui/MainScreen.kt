@@ -280,7 +280,6 @@ fun MainScreen(viewModel: SocialAppViewModel) {
                                 userProfile = userProfile,
                                 posts = posts,
                                 balance = walletBalance,
-                                dailyBonusClaimed = dailyBonusClaimed,
                                 walletFilter = walletFilter,
                                 transactions = transactions,
                                 storeItems = storeItems,
