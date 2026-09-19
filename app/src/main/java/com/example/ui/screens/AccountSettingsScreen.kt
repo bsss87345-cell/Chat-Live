@@ -1224,8 +1224,7 @@ fun AccountSettingsScreen(
         )
     }
 
-    // Change Language Dialog (تغيير اللغة)
-    if (showLanguageDialog) {
+    ٨
         var tempSelectedLang by remember { mutableStateOf(currentLanguage) }
         val languages = listOf(
             Pair("العربية", "العربية (الافتراضية)"),
