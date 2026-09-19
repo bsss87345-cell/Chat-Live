@@ -43,7 +43,6 @@ fun ProfileScreen(
     userProfile: UserProfile,
     posts: List<Post>,
     balance: Int,
-    dailyBonusClaimed: Boolean = false,
     walletFilter: String,
     transactions: List<WalletTransaction>,
     storeItems: List<StoreItem>,
