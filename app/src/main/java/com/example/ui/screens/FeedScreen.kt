@@ -1324,6 +1324,14 @@ fun StoryCreationDialog(
         }
     }
 
+    // Request microphone permission once when the story creator opens
+    val audioPermissionLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.RequestPermission()
+    ) { }
+    LaunchedEffect(Unit) {
+        audioPermissionLauncher.launch(Manifest.permission.RECORD_AUDIO)
+    }
+
     // Google Play Policy compliant zero-permission media picker
     val galleryPicker = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.PickVisualMedia()
