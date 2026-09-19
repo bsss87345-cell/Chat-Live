@@ -2406,6 +2406,25 @@ fun ChatMessageBubble(
         modifier = Modifier.fillMaxWidth(),
         contentAlignment = if (message.isFromMe) Alignment.CenterEnd else Alignment.CenterStart
     ) {
+        Row(
+            verticalAlignment = Alignment.Bottom,
+            horizontalArrangement = Arrangement.spacedBy(6.dp)
+        ) {
+            if (message.isFromMe && myAvatarUrl.isNotEmpty()) {
+                val myMsgAvatarBitmap = remember(myAvatarUrl) {
+                    BitmapFactory.decodeFile(myAvatarUrl)?.asImageBitmap()
+                }
+                if (myMsgAvatarBitmap != null) {
+                    Image(
+                        bitmap = myMsgAvatarBitmap,
+                        contentDescription = null,
+                        contentScale = ContentScale.Crop,
+                        modifier = Modifier
+                            .size(28.dp)
+                            .clip(CircleShape)
+                    )
+                }
+            }
         Column(
             horizontalAlignment = if (message.isFromMe) Alignment.End else Alignment.Start,
             modifier = Modifier.widthIn(max = 290.dp)
