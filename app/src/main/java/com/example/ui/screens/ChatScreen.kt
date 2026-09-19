@@ -1855,20 +1855,6 @@ fun RoomMessageBubble(
                         modifier = Modifier.padding(bottom = 2.dp)
                     )
                 }
-
-                if (message.isFromMe || isOwnerOrAdmin) {
-                    IconButton(
-                        onClick = onDeleteMessage,
-                        modifier = Modifier.size(18.dp)
-                    ) {
-                        Icon(
-                            Icons.Default.DeleteOutline,
-                            contentDescription = "حذف الرسالة",
-                            tint = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.6f),
-                            modifier = Modifier.size(12.dp)
-                        )
-                    }
-                }
             }
 
             Surface(
