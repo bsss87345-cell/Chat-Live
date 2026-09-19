@@ -1462,7 +1462,18 @@ fun StoryCreationDialog(
                             },
                             testTag = "side_button_mode_text"
                         )
-
+                        if (currentMode == StoryCreationMode.TEXT) {
+                            StorySideToolButton(
+                                icon = Icons.Outlined.Palette,
+                                label = "الخلفية",
+                                isSelected = false,
+                                onClick = {
+                                    selectedGradientIndex =
+                                        (selectedGradientIndex + 1) % gradientPalettes.size
+                                },
+                                testTag = "side_button_bg_color"
+                            )
+                        }
                         // 2. زر فيديو — لتفعيل وضع تسجيل فيديو بدلاً من صورة ثابتة
                         StorySideToolButton(
                             icon = Icons.Outlined.Videocam,
