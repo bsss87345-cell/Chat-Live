@@ -2185,7 +2185,8 @@ fun ChatConversationView(
     onBack: () -> Unit,
     onSendMessage: (String, ChatMessageType) -> Unit,
     onStartGame: (GameType) -> Unit,
-    onPlayGameDirectly: (GameType?) -> Unit
+    onPlayGameDirectly: (GameType?) -> Unit,
+    myAvatarUrl: String = ""
 ) {
     var inputText by remember { mutableStateOf("") }
     var showGamePicker by remember { mutableStateOf(false) }
