@@ -1435,11 +1435,38 @@ fun StoryCreationDialog(
                     },
                     onToggleRecordVideo = {
                         if (isRecording) {
+                            activeRecording?.stop()
                             isRecording = false
-                            isVideoStory = true
-                            capturedMediaUri = "https://images.unsplash.com/photo-1579208575657-c595a05383b7?auto=format&fit=crop&w=800&q=80"
-                            isReviewing = true
                         } else {
+                            val videoFile = File(
+                                context.filesDir,
+                                "story_${System.currentTimeMillis()}.mp4"
+                            )
+                            val outputOptions = FileOutputOptions.Builder(videoFile).build()
+                            val hasAudioPermission = ContextCompat.checkSelfPermission(
+                                context,
+                                Manifest.permission.RECORD_AUDIO
+                            ) == PackageManager.PERMISSION_GRANTED
+
+                            val pendingRecording =
+                                videoCapture.output.prepareRecording(context, outputOptions)
+                            val recordingToStart = if (hasAudioPermission) {
+                                pendingRecording.withAudioEnabled()
+                            } else {
+                                pendingRecording
+                            }
+                            activeRecording = recordingToStart.start(
+                                ContextCompat.getMainExecutor(context)
+                            ) { event ->
+                                if (event is VideoRecordEvent.Finalize) {
+                                    if (!event.hasError()) {
+                                        capturedMediaUri = videoFile.absolutePath
+                                        isVideoStory = true
+                                        isReviewing = true
+                                    }
+                                    activeRecording = null
+                                }
+                            }
                             isRecording = true
                         }
                     }
