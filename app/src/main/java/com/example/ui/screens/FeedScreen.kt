@@ -1909,26 +1909,7 @@ fun StoryReviewView(
                 .padding(16.dp),
             verticalArrangement = Arrangement.spacedBy(12.dp)
         ) {
-            OutlinedTextField(
-                value = caption,
-                onValueChange = onCaptionChange,
-                placeholder = { Text("أضف تعليقاً على القصة... ✍️", color = Color.White.copy(alpha = 0.6f)) },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .testTag("story_caption_input"),
-                colors = OutlinedTextFieldDefaults.colors(
-                    focusedTextColor = Color.White,
-                    unfocusedTextColor = Color.White,
-                    focusedBorderColor = MujtamaGold,
-                    unfocusedBorderColor = Color.White.copy(alpha = 0.4f),
-                    focusedContainerColor = Color.Black.copy(alpha = 0.45f),
-                    unfocusedContainerColor = Color.Black.copy(alpha = 0.45f)
-                ),
-                shape = RoundedCornerShape(16.dp),
-                maxLines = 3
-            )
-
-            Button(
+                        Button(
                 onClick = onPublish,
                 modifier = Modifier
                     .fillMaxWidth()
