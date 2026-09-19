@@ -162,7 +162,7 @@ fun AuthScreen(
             Spacer(modifier = Modifier.height(16.dp))
 
             // -------------------------------------------------------------
-            // 1. شعار التطبيق وهوية "مجتمعنا"
+            // 1. شعار التطبيق وهوية "Chat Live"
             // -------------------------------------------------------------
             AppBrandHeader(modifier = Modifier.padding(bottom = 28.dp))
 
