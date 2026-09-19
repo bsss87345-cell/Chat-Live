@@ -135,6 +135,7 @@ fun MainScreen(viewModel: SocialAppViewModel) {
                 Crossfade(targetState = currentTab, label = "tab_transition") { tab ->
                     when (tab) {
                         AppTab.FEED -> {
+                            val userProfile by viewModel.userProfile.collectAsStateWithLifecycle()
                             val stories by viewModel.stories.collectAsStateWithLifecycle()
                             val posts by viewModel.posts.collectAsStateWithLifecycle()
                             val activeStory by viewModel.activeStory.collectAsStateWithLifecycle()
