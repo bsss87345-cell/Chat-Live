@@ -152,70 +152,12 @@ fun AppBrandHeader(modifier: Modifier = Modifier) {
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.spacedBy(10.dp)
     ) {
-        // الشعار الأيقوني (درع المجتمع المتلألئ)
-        Box(
-            modifier = Modifier
-                .size(86.dp)
-                .shadow(16.dp, shape = CircleShape, spotColor = MujtamaPrimary)
-                .clip(CircleShape)
-                .background(
-                    Brush.radialGradient(
-                        colors = listOf(
-                            Color(0xFF7E57C2),
-                            MujtamaPrimary,
-                            Color(0xFF311B92)
-                        )
-                    )
-                )
-                .border(2.5.dp, Brush.linearGradient(listOf(MujtamaGold, Color(0xFFFFF9C4), MujtamaGold)), CircleShape),
-            contentAlignment = Alignment.Center
-        ) {
-            Canvas(modifier = Modifier.size(48.dp)) {
-                val w = size.width
-                val h = size.height
-
-                // رمز درع الحماية والمجتمع
-                val shieldPath = Path().apply {
-                    moveTo(w * 0.5f, 0f)
-                    cubicTo(w * 0.85f, h * 0.05f, w * 0.95f, h * 0.35f, w * 0.95f, h * 0.55f)
-                    cubicTo(w * 0.95f, h * 0.82f, w * 0.5f, h, w * 0.5f, h)
-                    cubicTo(w * 0.5f, h, w * 0.05f, h * 0.82f, w * 0.05f, h * 0.55f)
-                    cubicTo(w * 0.05f, h * 0.35f, w * 0.15f, h * 0.05f, w * 0.5f, 0f)
-                    close()
-                }
-
-                drawPath(
-                    path = shieldPath,
-                    color = Color.White.copy(alpha = 0.22f),
-                    style = Fill
-                )
-                drawPath(
-                    path = shieldPath,
-                    color = MujtamaGold,
-                    style = Stroke(width = 2.dp.toPx())
-                )
-
-                // رمز النجمة المضيئة في المنتصف
-                drawCircle(
-                    color = Color.White,
-                    radius = 5.dp.toPx(),
-                    center = Offset(w * 0.5f, h * 0.45f)
-                )
-            }
-
-            Text(
-                text = "✨",
-                fontSize = 20.sp,
-                modifier = Modifier.padding(top = 2.dp)
-            )
-        }
-
         // اسم التطبيق
         Text(
             text = "Chat Live",
             fontSize = 32.sp,
             fontWeight = FontWeight.Black,
-            color = MaterialTheme.colorScheme.onBackground
+            color = Color.White
         )
 
         // الشعار اللفظي
