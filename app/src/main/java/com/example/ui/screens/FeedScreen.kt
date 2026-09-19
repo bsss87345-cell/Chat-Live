@@ -382,6 +382,7 @@ fun StoriesBar(
 
 @Composable
 fun QuickCreatePostCard(
+    userProfile: UserProfile,
     onTextClick: () -> Unit,
     onGalleryClick: () -> Unit
 ) {
