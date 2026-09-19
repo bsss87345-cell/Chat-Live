@@ -1001,7 +1001,8 @@ Box(modifier = Modifier.fillMaxSize()) {
                     message = message,
                     isOwnerOrAdmin = isOwnerOrAdmin,
                     onDeleteMessage = { onDeleteMessage(message.id) },
-                    onPlayGame = { onPlayGameDirectly(findGameTypeFromTitle(message.gameTitle)) }
+                    onPlayGame = { onPlayGameDirectly(findGameTypeFromTitle(message.gameTitle)) },
+                    myAvatarUrl = myAvatarUrl
                 )
             }
         }
