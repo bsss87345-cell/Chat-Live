@@ -43,7 +43,7 @@ fun ProfileScreen(
     userProfile: UserProfile,
     posts: List<Post>,
     balance: Int,
-    walletFilter: String,
+    walletFilter: String = "",
     transactions: List<WalletTransaction>,
     storeItems: List<StoreItem>,
     onUpdateBio: (String) -> Unit,
