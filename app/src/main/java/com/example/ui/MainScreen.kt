@@ -89,6 +89,7 @@ fun MainScreen(viewModel: SocialAppViewModel) {
                         isDarkMode = isDarkMode,
                         onWalletClick = { viewModel.setTab(AppTab.PROFILE) },
                         onNotificationsClick = { viewModel.openNotifications() },
+                        unreadCount = viewModel.notifications.collectAsStateWithLifecycle().value.count { !it.isRead },
                         onSearchClick = { viewModel.setTab(AppTab.CHAT) },
                         onToggleDarkMode = { viewModel.toggleDarkMode() }
                     )
