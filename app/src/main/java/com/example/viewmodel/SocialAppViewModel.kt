@@ -209,6 +209,8 @@ class SocialAppViewModel : ViewModel() {
     
     // --- Feed Actions ---
     fun toggleLike(postId: String) {
+        // TEMP-NOTIF
+        if (_posts.value.find { it.id == postId }?.isLiked == false) addNotification(NotificationType.LIKE, "أعجبك منشور (تجربة)")
         _posts.update { list ->
             list.map { post ->
                 if (post.id == postId) {
