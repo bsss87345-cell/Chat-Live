@@ -45,8 +45,6 @@ fun ProfileScreen(
     balance: Int,
     onUpdateBio: (String) -> Unit,
     onLogout: () -> Unit,
-    onFilterChange: (String) -> Unit,
-    onBuyItem: (StoreItem) -> Unit,
     onLikePost: (String) -> Unit,
     onCommentPost: (String) -> Unit,
     onSharePost: (Post) -> Unit,
