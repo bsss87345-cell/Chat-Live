@@ -140,6 +140,7 @@ fun FeedScreen(
             // Quick Create Post Header
             item {
                 QuickCreatePostCard(
+                    userProfile = userProfile,
                     onTextClick = { showTextComposer = true },
                     onGalleryClick = {
                         galleryLauncher.launch(
