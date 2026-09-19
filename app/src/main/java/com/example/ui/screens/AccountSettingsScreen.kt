@@ -1617,7 +1617,7 @@ fun AccountSettingsScreen(
                 ) {
                     item {
                         Text(
-                            text = "مرحباً بك في مجتمعنا! تسري هذه السياسة على جميع مستخدمي المنصة.",
+                            text = "مرحباً بك في Chat Live! تسري هذه السياسة على جميع مستخدمي المنصة.",
                             fontSize = 11.sp,
                             color = MaterialTheme.colorScheme.onSurfaceVariant
                         )
