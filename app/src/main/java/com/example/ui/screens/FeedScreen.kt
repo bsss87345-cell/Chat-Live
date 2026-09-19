@@ -2069,8 +2069,10 @@ fun TextStoryView(
                     minLines = 3,
                     maxLines = 8
                 )
-            } 
-
+            }
+        }
+    }
+}
 @Composable
 fun FullScreenTextComposer(
     onDismiss: () -> Unit,
