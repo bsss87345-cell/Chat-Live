@@ -150,7 +150,20 @@ fun ProfileScreen(
                                 .border(3.dp, MaterialTheme.colorScheme.surface, CircleShape),
                             contentAlignment = Alignment.Center
                         ) {
-                            Text(text = userProfile.avatarEmoji, fontSize = 42.sp)
+                            val avatarBitmap = remember(userProfile.avatarUrl) {
+                                if (userProfile.avatarUrl.isBlank()) null
+                                else BitmapFactory.decodeFile(userProfile.avatarUrl)?.asImageBitmap()
+                            }
+                            if (avatarBitmap != null) {
+                                Image(
+                                    bitmap = avatarBitmap,
+                                    contentDescription = "صورة الملف الشخصي",
+                                    contentScale = ContentScale.Crop,
+                                    modifier = Modifier.fillMaxSize()
+                                )
+                            } else {
+                                Text(text = userProfile.avatarEmoji, fontSize = 42.sp)
+                            }
                         }
 
                         // Edit avatar icon button
