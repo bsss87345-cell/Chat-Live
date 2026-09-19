@@ -127,6 +127,8 @@ fun MainScreen(viewModel: SocialAppViewModel) {
                         onCommentPost = { viewModel.openComments(it) },
                         onSharePost = { viewModel.sharePost(it) },
                         onNavigateToRecharge = {},
+                        onUpdateProfile = { name, bio, emoji -> viewModel.updateUserProfile(name, bio, emoji) },
+                        onUpdateBio = { viewModel.updateUserBio(it) },
                         onBack = { viewModel.closeAccountSettings() }
                     )
                 } else {
