@@ -15,7 +15,6 @@ data class UserProfile(
     val bio: String = "",
     val avatarEmoji: String = "👤",
     val avatarUrl: String = "",
-    val avatarImageUri: String = "",
     val email: String = "",
     val authProvider: String = "",
     val followersCount: Int = 0,
