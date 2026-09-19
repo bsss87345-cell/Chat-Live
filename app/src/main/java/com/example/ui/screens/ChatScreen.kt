@@ -92,7 +92,8 @@ fun ChatScreen(
                 onBack = onCloseChat,
                 onSendMessage = { text, type -> onSendMessage(activeConv.id, text, type) },
                 onStartGame = { gameType -> onStartGameInChat(activeConv.id, gameType) },
-                onPlayGameDirectly = onNavigateToGames
+                onPlayGameDirectly = onNavigateToGames,
+                myAvatarUrl = myAvatarUrl
             )
             return
         }
