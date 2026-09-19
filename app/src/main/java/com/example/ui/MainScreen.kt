@@ -288,7 +288,6 @@ fun MainScreen(viewModel: SocialAppViewModel) {
                                 balance = walletBalance,
                                 onUpdateBio = { viewModel.updateUserBio(it) },
                                 onLogout = { viewModel.logoutUser() },
-                                onClaimDailyBonus = { viewModel.claimDailyBonus() },
                                 onFilterChange = { viewModel.setWalletFilter(it) },
                                 onBuyItem = { viewModel.buyStoreItem(it) },
                                 onLikePost = { viewModel.toggleLike(it) },
