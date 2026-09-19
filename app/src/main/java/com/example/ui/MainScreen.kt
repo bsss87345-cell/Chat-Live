@@ -78,7 +78,7 @@ fun MainScreen(viewModel: SocialAppViewModel) {
                         walletBalance = walletBalance,
                         isDarkMode = isDarkMode,
                         onWalletClick = { viewModel.setTab(AppTab.PROFILE) },
-                        onNotificationsClick = { viewModel.togglePushNotifications() },
+                        onNotificationsClick = { viewModel.openNotifications() },
                         onSearchClick = { viewModel.setTab(AppTab.CHAT) },
                         onToggleDarkMode = { viewModel.toggleDarkMode() }
                     )
