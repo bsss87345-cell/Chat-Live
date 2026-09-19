@@ -174,8 +174,10 @@ fun MainScreen(viewModel: SocialAppViewModel) {
                             val chatRooms by viewModel.chatRooms.collectAsStateWithLifecycle()
                             val activeRoomId by viewModel.activeRoomId.collectAsStateWithLifecycle()
                             val roomCategoryFilter by viewModel.roomCategoryFilter.collectAsStateWithLifecycle()
+                            val userProfile by viewModel.userProfile.collectAsStateWithLifecycle()
 
                             ChatScreen(
+                                myAvatarUrl = userProfile.avatarUrl,
                                 conversations = conversations,
                                 activeChatId = activeChatId,
                                 chatFilter = chatFilter,
