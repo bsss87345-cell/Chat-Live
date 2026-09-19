@@ -201,6 +201,60 @@ fun AccountSettingsScreen(
                 verticalArrangement = Arrangement.spacedBy(14.dp)
             ) {
                 // -------------------------------------------------------------
+                // Page: تعديل الملف الشخصي
+                // -------------------------------------------------------------
+                if (openPage == 3) {
+                    item {
+                        var nameInput by remember { mutableStateOf(userProfile.name) }
+                        var bioInput by remember { mutableStateOf(userProfile.bio) }
+
+                        Card(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .testTag("edit_profile_card"),
+                            shape = RoundedCornerShape(18.dp),
+                            colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface)
+                        ) {
+                            Column(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(16.dp),
+                                verticalArrangement = Arrangement.spacedBy(12.dp)
+                            ) {
+                                OutlinedTextField(
+                                    value = nameInput,
+                                    onValueChange = { nameInput = it },
+                                    label = { Text("الاسم المعروض") },
+                                    modifier = Modifier.fillMaxWidth(),
+                                    singleLine = true
+                                )
+
+                                OutlinedTextField(
+                                    value = bioInput,
+                                    onValueChange = { bioInput = it },
+                                    label = { Text("النبذة التعريفية") },
+                                    modifier = Modifier.fillMaxWidth(),
+                                    maxLines = 4
+                                )
+
+                                Button(
+                                    onClick = {
+                                        onUpdateProfile(nameInput, bioInput, userProfile.avatarEmoji)
+                                        onUpdateBio(bioInput)
+                                        openPage = null
+                                    },
+                                    enabled = nameInput.isNotBlank(),
+                                    shape = RoundedCornerShape(12.dp),
+                                    modifier = Modifier.fillMaxWidth()
+                                ) {
+                                    Text("حفظ التغييرات")
+                                }
+                            }
+                        }
+                    }
+                }
+
+                // -------------------------------------------------------------
                 // Page: النقاط والرصيد
                 // -------------------------------------------------------------
                 if (openPage == 0) {
