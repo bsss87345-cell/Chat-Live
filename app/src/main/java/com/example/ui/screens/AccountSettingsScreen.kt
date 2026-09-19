@@ -1224,7 +1224,54 @@ fun AccountSettingsScreen(
         )
     }
 
-    ٨
+// Logout Confirmation Dialog (تأكيد تسجيل الخروج)
+    if (showLogoutDialog) {
+        AlertDialog(
+            onDismissRequest = { showLogoutDialog = false },
+            title = {
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(8.dp)
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.Logout,
+                        contentDescription = null,
+                        tint = MaterialTheme.colorScheme.error
+                    )
+                    Text("تسجيل الخروج", fontWeight = FontWeight.Bold, fontSize = 15.sp)
+                }
+            },
+            text = {
+                Text(
+                    text = "هل أنت متأكد من رغبتك بتسجيل الخروج من حسابك؟",
+                    fontSize = 12.sp,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+            },
+            confirmButton = {
+                Button(
+                    onClick = {
+                        showLogoutDialog = false
+                        onLogout()
+                    },
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = MaterialTheme.colorScheme.error,
+                        contentColor = MaterialTheme.colorScheme.onError
+                    )
+                ) {
+                    Text("تسجيل الخروج")
+                }
+            },
+            dismissButton = {
+                TextButton(onClick = { showLogoutDialog = false }) {
+                    Text("إلغاء")
+                }
+            }
+        )
+    }
+
+    // Change Language Dialog (تغيير اللغة)
+    if (showLanguageDialog) {
         var tempSelectedLang by remember { mutableStateOf(currentLanguage) }
         val languages = listOf(
             Pair("العربية", "العربية (الافتراضية)"),
