@@ -1274,6 +1274,13 @@ fun StoryCreationDialog(
 ) {
     val context = LocalContext.current
     val imageCapture = remember { ImageCapture.Builder().build() }
+    val videoCapture = remember {
+        val recorder = Recorder.Builder()
+            .setQualitySelector(QualitySelector.from(Quality.SD))
+            .build()
+        VideoCapture.withOutput(recorder)
+    }
+    var activeRecording by remember { mutableStateOf<Recording?>(null) }
     var currentMode by remember { mutableStateOf(StoryCreationMode.PHOTO) }
     var lensFacing by remember { mutableIntStateOf(CameraSelector.LENS_FACING_BACK) }
     var isFlashOn by remember { mutableStateOf(false) }
