@@ -1057,7 +1057,7 @@ fun AccountSettingsScreen(
         var supportMessages by remember {
             mutableStateOf(
                 listOf(
-                    Pair("فريق الدعم الفني 🎧", "مرحباً بك في مركز الدعم الفني لمجتمعنا! كيف يمكننا مساعدتك اليوم؟")
+                    Pair("فريق الدعم الفني 🎧", "مرحباً بك في مركز الدعم الفني! كيف يمكننا مساعدتك اليوم؟")
                 )
             )
         }
