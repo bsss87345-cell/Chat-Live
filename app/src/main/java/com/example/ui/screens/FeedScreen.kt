@@ -1508,14 +1508,14 @@ fun StorySideToolButton(
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = Modifier
-            .clip(RoundedCornerShape(16.dp))
+            .clip(RoundedCornerShape(14.dp))
             .clickable(onClick = onClick)
-            .padding(horizontal = 6.dp, vertical = 6.dp)
+            .padding(horizontal = 4.dp, vertical = 4.dp)
             .testTag(testTag)
     ) {
         Box(
             modifier = Modifier
-                .size(46.dp)
+                .size(38.dp)
                 .clip(CircleShape)
                 .background(
                     if (isSelected) MujtamaPrimary else Color.Black.copy(alpha = 0.5f)
@@ -1531,13 +1531,13 @@ fun StorySideToolButton(
                 imageVector = icon,
                 contentDescription = label,
                 tint = if (isSelected) Color.White else Color.White.copy(alpha = 0.9f),
-                modifier = Modifier.size(24.dp)
+                modifier = Modifier.size(20.dp)
             )
         }
-        Spacer(modifier = Modifier.height(4.dp))
+        Spacer(modifier = Modifier.height(3.dp))
         Text(
             text = label,
-            fontSize = 11.sp,
+            fontSize = 10.sp,
             fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Medium,
             color = if (isSelected) MujtamaGold else Color.White
         )
