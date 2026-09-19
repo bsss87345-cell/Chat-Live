@@ -1839,7 +1839,7 @@ fun RoomMessageBubble(
             horizontalArrangement = Arrangement.spacedBy(6.dp)
         ) {
         Column(
-            horizontalAlignment = if (message.isFromMe) Alignment.End else Alignment.Start,
+            horizontalAlignment = Alignment.Start,
             modifier = Modifier.widthIn(max = 290.dp)
         ) {
             Row(
