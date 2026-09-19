@@ -2305,7 +2305,8 @@ Column(
             items(conversation.messages, key = { it.id }) { message ->
                 ChatMessageBubble(
                     message = message,
-                    onPlayGame = { onPlayGameDirectly(findGameTypeFromTitle(message.gameTitle)) }
+                    onPlayGame = { onPlayGameDirectly(findGameTypeFromTitle(message.gameTitle)) },
+                    myAvatarUrl = myAvatarUrl
                 )
             }
         }
