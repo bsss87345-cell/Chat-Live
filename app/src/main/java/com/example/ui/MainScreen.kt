@@ -288,7 +288,6 @@ fun MainScreen(viewModel: SocialAppViewModel) {
                                 userProfile = userProfile,
                                 posts = posts,
                                 balance = walletBalance,
-                                transactions = transactions,
                                 storeItems = storeItems,
                                 onUpdateBio = { viewModel.updateUserBio(it) },
                                 onUpdateProfile = { name, bio, emoji -> viewModel.updateUserProfile(name, bio, emoji) },
