@@ -1300,7 +1300,7 @@ fun StoryCreationDialog(
     var activeRecording by remember { mutableStateOf<Recording?>(null) }
     var currentMode by remember { mutableStateOf(StoryCreationMode.PHOTO) }
     var lensFacing by remember { mutableIntStateOf(CameraSelector.LENS_FACING_BACK) }
-    var isFlashOn by remember { mutableStateOf(false) }
+    var flashMode by remember { mutableStateOf(FlashMode.OFF) }
     // Media Review state (when photo captured, video recorded, or gallery item picked)
     var capturedMediaUri by remember { mutableStateOf<String?>(null) }
     var isReviewing by remember { mutableStateOf(false) }
