@@ -1272,11 +1272,13 @@ fun CameraPermissionRationaleDialog(
     )
 }
 
-    enum class FlashMode { OFF, ON, AUTO }
+   enum class FlashMode { OFF, ON, AUTO }
+
+enum class StoryCreationMode {
     PHOTO,  // Camera photo mode (default)
     VIDEO,  // Camera video mode
     TEXT    // Text story mode with gradient backgrounds
-}
+} 
 
 /**
  * Full-screen Story Creation Interface:
