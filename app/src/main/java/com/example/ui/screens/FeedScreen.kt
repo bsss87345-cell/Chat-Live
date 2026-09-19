@@ -1307,6 +1307,21 @@ fun StoryCreationDialog(
     }
     var selectedGradientIndex by remember { mutableIntStateOf(0) }
 
+    // Auto-stop recording after 30 seconds & track duration
+    LaunchedEffect(isRecording) {
+        if (isRecording) {
+            recordDuration = 0
+            while (isRecording && recordDuration < 30) {
+                delay(1000)
+                recordDuration++
+            }
+            if (isRecording) {
+                activeRecording?.stop()
+                isRecording = false
+            }
+        } else {
+            recordDuration = 0
+        }
     }
 
     // Google Play Policy compliant zero-permission media picker
