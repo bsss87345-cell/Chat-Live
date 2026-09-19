@@ -2057,47 +2057,7 @@ fun TextStoryView(
                     minLines = 3,
                     maxLines = 8
                 )
-            }
-
-            // Bottom Palette Selector
-            Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(bottom = 36.dp),
-                horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.spacedBy(10.dp)
-            ) {
-                Text(
-                    text = "اختر لون الخلفية",
-                    color = Color.White.copy(alpha = 0.8f),
-                    fontSize = 12.sp,
-                    fontWeight = FontWeight.Medium
-                )
-
-                Row(
-                    horizontalArrangement = Arrangement.spacedBy(12.dp),
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    gradientPalettes.forEachIndexed { index, palette ->
-                        val isSelected = (index == selectedGradientIndex)
-                        Box(
-                            modifier = Modifier
-                                .size(38.dp)
-                                .clip(CircleShape)
-                                .background(Brush.linearGradient(palette.map { Color(it) }))
-                                .border(
-                                    width = if (isSelected) 3.dp else 1.dp,
-                                    color = if (isSelected) Color.White else Color.White.copy(alpha = 0.4f),
-                                    shape = CircleShape
-                                )
-                                .clickable { onSelectGradient(index) }
-                        )
-                    }
-                }
-            }
-        }
-    }
-}
+            } 
 
 @Composable
 fun FullScreenTextComposer(
