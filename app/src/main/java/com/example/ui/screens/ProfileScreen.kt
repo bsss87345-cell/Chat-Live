@@ -66,10 +66,15 @@ fun ProfileScreen(
     var showFollowersDialog by remember { mutableStateOf(false) }
     var showFollowingDialog by remember { mutableStateOf(false) }
 
+    val context = LocalContext.current
     val avatarImageLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.PickVisualMedia()
     ) { uri: Uri? ->
-        uri?.let { onUpdateAvatarImage(it) }
+        uri?.let {
+            saveAvatarToInternalStorage(context, it)?.let { path ->
+                onUpdateAvatarImage(path)
+            }
+        }
     }
 
     // User's own posts or activity (used for the header stats count)
