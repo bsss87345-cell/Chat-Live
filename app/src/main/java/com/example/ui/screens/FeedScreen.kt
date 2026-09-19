@@ -1561,7 +1561,8 @@ fun StorySideToolButton(
 fun CameraPreviewView(
     modifier: Modifier = Modifier,
     lensFacing: Int = CameraSelector.LENS_FACING_BACK,
-    torchEnabled: Boolean = false
+    torchEnabled: Boolean = false,
+    imageCapture: ImageCapture? = null
 ) {
     val context = LocalContext.current
     val lifecycleOwner = LocalLifecycleOwner.current
@@ -1596,10 +1597,15 @@ fun CameraPreviewView(
                                         it.setSurfaceProvider(previewView.surfaceProvider)
                                     }
                                     cameraProvider.unbindAll()
+                                    val useCases = if (imageCapture != null) {
+                                        arrayOf(preview, imageCapture)
+                                    } else {
+                                        arrayOf(preview)
+                                    }
                                     camera = cameraProvider.bindToLifecycle(
                                         lifecycleOwner,
                                         cameraSelector,
-                                        preview
+                                        *useCases
                                     )
                                     isBound = true
                                 } else {
