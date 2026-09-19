@@ -232,6 +232,8 @@ class SocialAppViewModel : ViewModel() {
 
     fun addComment(postId: String, commentText: String) {
         if (commentText.isBlank()) return
+        // TEMP-NOTIF
+        addNotification(NotificationType.COMMENT, "تعليق جديد (تجربة)")
         val newComment = PostComment(
             id = "c_${System.currentTimeMillis()}",
             authorName = "أنت (أنا)",
