@@ -210,9 +210,9 @@ fun AppBrandHeader(modifier: Modifier = Modifier) {
             )
         }
 
-        // اسم التطبيق بالخط العربي العريض
+        // اسم التطبيق
         Text(
-            text = "مجتمعنا",
+            text = "Chat Live",
             fontSize = 32.sp,
             fontWeight = FontWeight.Black,
             color = MaterialTheme.colorScheme.onBackground
@@ -220,7 +220,7 @@ fun AppBrandHeader(modifier: Modifier = Modifier) {
 
         // الشعار اللفظي
         Text(
-            text = "مجتمعك العربي للتواصل، الألعاب، والمحادثات",
+            text = "دردشتك المباشرة للتواصل والألعاب",
             fontSize = 13.sp,
             fontWeight = FontWeight.Medium,
             color = MaterialTheme.colorScheme.onSurfaceVariant
