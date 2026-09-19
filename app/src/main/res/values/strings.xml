@@ -1,5 +1,6 @@
 <resources>
-    <string name="app_name">مجتمعنا</string>
+    
+    <string name="app_name">Chat Live</string>
     <string name="app_tagline">مجتمعك العربي للتواصل، الألعاب، والمحادثات التفاعلية</string>
     <string name="login_with_facebook">تسجيل الدخول عبر فيسبوك</string>
     <string name="login_with_google">تسجيل الدخول عبر جوجل</string>
