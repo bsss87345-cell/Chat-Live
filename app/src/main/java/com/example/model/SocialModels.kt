@@ -212,3 +212,5 @@ data class FriendRequest(
     val mutualFriendsCount: Int = 0,
     val timeAgo: String = "الآن"
 )
+
+enum class NotificationType { LIKE, COMMENT, FOLLOW, SYSTEM }
