@@ -51,6 +51,16 @@ fun MainScreen(viewModel: SocialAppViewModel) {
 
         val snackbarHostState = remember { SnackbarHostState() }
         val coroutineScope = rememberCoroutineScope()
+        val showNotifications by viewModel.showNotifications.collectAsStateWithLifecycle()
+        val notificationsList by viewModel.notifications.collectAsStateWithLifecycle()
+        val notificationsDark by viewModel.isDarkMode.collectAsStateWithLifecycle()
+        if (showNotifications) {
+            com.example.ui.screens.NotificationsScreen(
+                notifications = notificationsList,
+                isDarkMode = notificationsDark,
+                onClose = { viewModel.closeNotifications() }
+            )
+        }
 
         LaunchedEffect(userMessage) {
             userMessage?.let { msg ->
