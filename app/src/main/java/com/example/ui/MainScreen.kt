@@ -291,7 +291,8 @@ fun MainScreen(viewModel: SocialAppViewModel) {
                                 onLikePost = { viewModel.toggleLike(it) },
                                 onCommentPost = { viewModel.openComments(it) },
                                 onSharePost = { viewModel.sharePost(it) },
-                                onOpenAccountSettings = { viewModel.openAccountSettings() }
+                                onOpenAccountSettings = { viewModel.openAccountSettings() },
+                                onUpdateAvatarImage = { viewModel.updateUserAvatarUrl(it) }
                                 )
                         }
                     }
