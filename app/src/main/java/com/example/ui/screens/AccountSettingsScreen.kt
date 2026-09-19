@@ -596,7 +596,25 @@ fun AccountSettingsScreen(
                                                     .background(MujtamaPrimary),
                                                 contentAlignment = Alignment.Center
                                             ) {
-                                                Text(userProfile.avatarEmoji, fontSize = 18.sp)
+                                                if (userProfile.avatarUrl.isNotBlank()) {
+                                                    val avatarBitmap = remember(userProfile.avatarUrl) {
+                                                        BitmapFactory.decodeFile(userProfile.avatarUrl)?.asImageBitmap()
+                                                    }
+                                                    if (avatarBitmap != null) {
+                                                        Image(
+                                                            bitmap = avatarBitmap,
+                                                            contentDescription = null,
+                                                            modifier = Modifier
+                                                                .fillMaxSize()
+                                                                .clip(CircleShape),
+                                                            contentScale = ContentScale.Crop
+                                                        )
+                                                    } else {
+                                                        Text(userProfile.avatarEmoji, fontSize = 18.sp)
+                                                    }
+                                                } else {
+                                                    Text(userProfile.avatarEmoji, fontSize = 18.sp)
+                                                }
                                             }
                                             Column {
                                                 Text(text = userProfile.name, fontWeight = FontWeight.Bold, fontSize = 13.sp)
