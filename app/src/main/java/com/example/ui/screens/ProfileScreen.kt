@@ -45,7 +45,6 @@ fun ProfileScreen(
     balance: Int,
     onUpdateBio: (String) -> Unit,
     onLogout: () -> Unit,
-    onSharePost: (Post) -> Unit,
     onOpenAccountSettings: () -> Unit = {},
     onUpdateAvatarImage: (String) -> Unit = {}
 ) {
