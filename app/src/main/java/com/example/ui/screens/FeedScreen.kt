@@ -1545,49 +1545,60 @@ fun StorySideToolButton(
 @Composable
 fun CameraPreviewView(
     modifier: Modifier = Modifier,
-    lensFacing: Int = CameraSelector.LENS_FACING_BACK
+    lensFacing: Int = CameraSelector.LENS_FACING_BACK,
+    torchEnabled: Boolean = false
 ) {
     val context = LocalContext.current
     val lifecycleOwner = LocalLifecycleOwner.current
-    var isBound by remember { mutableStateOf(false) }
-    var bindError by remember { mutableStateOf(false) }
+    var isBound by remember(lensFacing) { mutableStateOf(false) }
+    var bindError by remember(lensFacing) { mutableStateOf(false) }
+    var camera by remember(lensFacing) { mutableStateOf<Camera?>(null) }
+
+    LaunchedEffect(torchEnabled, camera) {
+        val cam = camera ?: return@LaunchedEffect
+        if (cam.cameraInfo.hasFlashUnit()) {
+            cam.cameraControl.enableTorch(torchEnabled)
+        }
+    }
 
     Box(modifier = modifier.fillMaxSize()) {
         if (!bindError) {
-            AndroidView(
-                factory = { ctx ->
-                    val previewView = PreviewView(ctx).apply {
-                        scaleType = PreviewView.ScaleType.FILL_CENTER
-                    }
-                    val cameraProviderFuture = ProcessCameraProvider.getInstance(ctx)
-                    cameraProviderFuture.addListener({
-                        try {
-                            val cameraProvider = cameraProviderFuture.get()
-                            val cameraSelector = CameraSelector.Builder()
-                                .requireLensFacing(lensFacing)
-                                .build()
-                            if (cameraProvider.hasCamera(cameraSelector)) {
-                                val preview = Preview.Builder().build().also {
-                                    it.setSurfaceProvider(previewView.surfaceProvider)
+            key(lensFacing) {
+                AndroidView(
+                    factory = { ctx ->
+                        val previewView = PreviewView(ctx).apply {
+                            scaleType = PreviewView.ScaleType.FILL_CENTER
+                        }
+                        val cameraProviderFuture = ProcessCameraProvider.getInstance(ctx)
+                        cameraProviderFuture.addListener({
+                            try {
+                                val cameraProvider = cameraProviderFuture.get()
+                                val cameraSelector = CameraSelector.Builder()
+                                    .requireLensFacing(lensFacing)
+                                    .build()
+                                if (cameraProvider.hasCamera(cameraSelector)) {
+                                    val preview = Preview.Builder().build().also {
+                                        it.setSurfaceProvider(previewView.surfaceProvider)
+                                    }
+                                    cameraProvider.unbindAll()
+                                    camera = cameraProvider.bindToLifecycle(
+                                        lifecycleOwner,
+                                        cameraSelector,
+                                        preview
+                                    )
+                                    isBound = true
+                                } else {
+                                    bindError = true
                                 }
-                                cameraProvider.unbindAll()
-                                cameraProvider.bindToLifecycle(
-                                    lifecycleOwner,
-                                    cameraSelector,
-                                    preview
-                                )
-                                isBound = true
-                            } else {
+                            } catch (e: Exception) {
                                 bindError = true
                             }
-                        } catch (e: Exception) {
-                            bindError = true
-                        }
-                    }, ContextCompat.getMainExecutor(ctx))
-                    previewView
-                },
-                modifier = Modifier.fillMaxSize()
-            )
+                        }, ContextCompat.getMainExecutor(ctx))
+                        previewView
+                    },
+                    modifier = Modifier.fillMaxSize()
+                )
+            }
         }
 
         if (bindError || !isBound) {
@@ -1597,7 +1608,6 @@ fun CameraPreviewView(
         CameraViewfinderOverlay(modifier = Modifier.fillMaxSize())
     }
 }
-
 @Composable
 fun CameraSimulationView(modifier: Modifier = Modifier) {
     Box(
