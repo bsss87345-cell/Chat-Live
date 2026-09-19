@@ -1832,7 +1832,7 @@ fun RoomMessageBubble(
 
     Box(
         modifier = Modifier.fillMaxWidth(),
-        contentAlignment = if (message.isFromMe) Alignment.CenterEnd else Alignment.CenterStart
+        contentAlignment = Alignment.CenterStart
     ) {
         Row(
             verticalAlignment = Alignment.Bottom,
