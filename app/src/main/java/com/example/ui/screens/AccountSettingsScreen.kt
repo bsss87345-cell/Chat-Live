@@ -566,7 +566,7 @@ fun AccountSettingsScreen(
                                 ) {
                                     Icon(Icons.Default.PostAdd, contentDescription = null, tint = MujtamaPrimary, modifier = Modifier.size(40.dp))
                                     Text("لم تقم بنشر أي مشاركة بعد!", fontWeight = FontWeight.Bold)
-                                    Text("شارك أفكارك وتحدياتك مع أصدقائك في مجتمعنا الآن.", fontSize = 12.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                                    Text("شارك أفكارك وتحدياتك مع أصدقائك الآن.", fontSize = 12.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
                                 }
                             }
                         }
