@@ -209,8 +209,6 @@ class SocialAppViewModel : ViewModel() {
     
     // --- Feed Actions ---
     fun toggleLike(postId: String) {
-        // TEMP-NOTIF
-        if (_posts.value.find { it.id == postId }?.isLiked == false) addNotification(NotificationType.LIKE, "أعجبك منشور (تجربة)")
         _posts.update { list ->
             list.map { post ->
                 if (post.id == postId) {
@@ -232,8 +230,6 @@ class SocialAppViewModel : ViewModel() {
 
     fun addComment(postId: String, commentText: String) {
         if (commentText.isBlank()) return
-        // TEMP-NOTIF
-        addNotification(NotificationType.COMMENT, "تعليق جديد (تجربة)")
         val newComment = PostComment(
             id = "c_${System.currentTimeMillis()}",
             authorName = "أنت (أنا)",
@@ -306,8 +302,6 @@ class SocialAppViewModel : ViewModel() {
     }
 
     fun toggleFollowUser(postId: String) {
-        // TEMP-NOTIF
-        if (_posts.value.find { it.id == postId }?.isFollowing == false) addNotification(NotificationType.FOLLOW, "بدأت متابعة مستخدم (تجربة)")
         var isNowFollowing = false
         _posts.update { list ->
             val target = list.find { it.id == postId } ?: return@update list
