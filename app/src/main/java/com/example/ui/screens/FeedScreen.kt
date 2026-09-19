@@ -977,15 +977,25 @@ fun StoryViewerDialog(
     val pagerState = rememberPagerState(initialPage = initialIndex) { stories.size }
     val coroutineScope = rememberCoroutineScope()
 
-    // Auto-advance every 5 seconds, unless it's the last story
-    LaunchedEffect(pagerState.currentPage) {
-        delay(5000)
+    fun goToNextStory() {
         if (pagerState.currentPage < stories.size - 1) {
             coroutineScope.launch {
                 pagerState.animateScrollToPage(pagerState.currentPage + 1)
             }
         } else {
             onDismiss()
+        }
+    }
+
+    val currentStoryForTimer = stories.getOrNull(pagerState.currentPage)
+    val isCurrentVideo = currentStoryForTimer?.mediaType == StoryMediaType.VIDEO &&
+        !currentStoryForTimer.mediaUri.isNullOrBlank()
+
+    // صورة: تقدّم تلقائي بعد 5 ثوانٍ. فيديو: التقدّم يحصل عند اكتمال التشغيل الفعلي أدناه
+    LaunchedEffect(pagerState.currentPage, isCurrentVideo) {
+        if (!isCurrentVideo) {
+            delay(5000)
+            goToNextStory()
         }
     }
 
