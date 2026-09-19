@@ -306,6 +306,8 @@ class SocialAppViewModel : ViewModel() {
     }
 
     fun toggleFollowUser(postId: String) {
+        // TEMP-NOTIF
+        if (_posts.value.find { it.id == postId }?.isFollowing == false) addNotification(NotificationType.FOLLOW, "بدأت متابعة مستخدم (تجربة)")
         var isNowFollowing = false
         _posts.update { list ->
             val target = list.find { it.id == postId } ?: return@update list
