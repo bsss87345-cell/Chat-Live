@@ -335,6 +335,31 @@ fun ProfileScreen(
         )
     }
 }
+private fun saveAvatarToInternalStorage(context: Context, uri: Uri): String? {
+    return try {
+        val bounds = BitmapFactory.Options().apply { inJustDecodeBounds = true }
+        context.contentResolver.openInputStream(uri)?.use {
+            BitmapFactory.decodeStream(it, null, bounds)
+        }
+        var sample = 1
+        while (bounds.outWidth / sample > 1024 || bounds.outHeight / sample > 1024) sample *= 2
+
+        val opts = BitmapFactory.Options().apply { inSampleSize = sample }
+        val bitmap = context.contentResolver.openInputStream(uri)?.use {
+            BitmapFactory.decodeStream(it, null, opts)
+        } ?: return null
+
+        context.filesDir.listFiles()
+            ?.filter { it.name.startsWith("avatar_") }
+            ?.forEach { it.delete() }
+
+        val file = File(context.filesDir, "avatar_${System.currentTimeMillis()}.jpg")
+        file.outputStream().use { bitmap.compress(Bitmap.CompressFormat.JPEG, 90, it) }
+        file.absolutePath
+    } catch (e: Exception) {
+        null
+    }
+}
 
 @Composable
 fun ProfileStatItem(title: String, count: String, onClick: (() -> Unit)? = null) {
