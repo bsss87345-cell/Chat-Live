@@ -1433,12 +1433,26 @@ fun StoryCreationDialog(
                     videoCapture = videoCapture
                 )
                 // Top Controls: Close, Flash, Flip Camera, and Active Mode Badge
+                LaunchedEffect(flashMode) {
+                    imageCapture.flashMode = when (flashMode) {
+                        FlashMode.OFF -> ImageCapture.FLASH_MODE_OFF
+                        FlashMode.ON -> ImageCapture.FLASH_MODE_ON
+                        FlashMode.AUTO -> ImageCapture.FLASH_MODE_AUTO
+                    }
+                }
+
                 StoryTopBar(
                     currentMode = currentMode,
                     isRecording = isRecording,
                     recordDuration = recordDuration,
-                    isFlashOn = isFlashOn,
-                    onToggleFlash = { isFlashOn = !isFlashOn },
+                    flashMode = flashMode,
+                    onToggleFlash = {
+                        flashMode = when (flashMode) {
+                            FlashMode.OFF -> FlashMode.ON
+                            FlashMode.ON -> FlashMode.AUTO
+                            FlashMode.AUTO -> FlashMode.OFF
+                        }
+                    },
                     onFlipCamera = {
                         lensFacing = if (lensFacing == CameraSelector.LENS_FACING_BACK)
                             CameraSelector.LENS_FACING_FRONT
