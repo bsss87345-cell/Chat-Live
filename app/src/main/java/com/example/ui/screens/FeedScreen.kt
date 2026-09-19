@@ -1307,22 +1307,6 @@ fun StoryCreationDialog(
     }
     var selectedGradientIndex by remember { mutableIntStateOf(0) }
 
-    // Recording timer
-    LaunchedEffect(isRecording) {
-        if (isRecording) {
-            recordDuration = 0
-            while (isRecording) {
-                delay(1000)
-                recordDuration++
-                if (recordDuration >= 30) {
-                    isRecording = false
-                    isVideoStory = true
-                    capturedMediaUri = "https://images.unsplash.com/photo-1579208575657-c595a05383b7?auto=format&fit=crop&w=800&q=80"
-                    isReviewing = true
-                    break
-                }
-            }
-        }
     }
 
     // Google Play Policy compliant zero-permission media picker
