@@ -14,6 +14,7 @@ data class UserProfile(
     val handle: String = "",
     val bio: String = "",
     val avatarEmoji: String = "👤",
+    val avatarUrl: String = "",
     val avatarImageUri: String = "",
     val email: String = "",
     val authProvider: String = "",
