@@ -283,6 +283,7 @@ class SocialAppViewModel : ViewModel() {
         )
         _posts.update { listOf(newPost) + it }
         _userMessage.value = "تم نشر منشورك بنجاح في خلاصة المجتمع!"
+        addNotification(NotificationType.SYSTEM, "تم نشر منشورك بنجاح")
     }
 
     fun deletePost(postId: String) {
