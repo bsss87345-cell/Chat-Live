@@ -430,14 +430,6 @@ class SocialAppViewModel : ViewModel() {
         _activeRoomId.value = null
     }
 
-    fun setRoomLocked(roomId: String, locked: Boolean) {
-        _chatRooms.update { list ->
-            list.map {
-                if (it.id == roomId) it.copy(isLocked = locked) else it
-            }
-        }
-    }
-
     fun createChatRoom(
         name: String,
         description: String,
