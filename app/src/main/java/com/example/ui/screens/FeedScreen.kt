@@ -1590,7 +1590,8 @@ fun CameraPreviewView(
     modifier: Modifier = Modifier,
     lensFacing: Int = CameraSelector.LENS_FACING_BACK,
     torchEnabled: Boolean = false,
-    imageCapture: ImageCapture? = null
+    imageCapture: ImageCapture? = null,
+    videoCapture: VideoCapture<Recorder>? = null
 ) {
     val context = LocalContext.current
     val lifecycleOwner = LocalLifecycleOwner.current
@@ -1625,11 +1626,11 @@ fun CameraPreviewView(
                                         it.setSurfaceProvider(previewView.surfaceProvider)
                                     }
                                     cameraProvider.unbindAll()
-                                    val useCases = if (imageCapture != null) {
-                                        arrayOf(preview, imageCapture)
-                                    } else {
-                                        arrayOf(preview)
-                                    }
+                                    val useCases = buildList {
+                                        add(preview)
+                                        if (imageCapture != null) add(imageCapture)
+                                        if (videoCapture != null) add(videoCapture)
+                                    }.toTypedArray()
                                     camera = cameraProvider.bindToLifecycle(
                                         lifecycleOwner,
                                         cameraSelector,
