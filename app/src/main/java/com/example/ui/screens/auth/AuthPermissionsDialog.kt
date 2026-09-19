@@ -126,7 +126,7 @@ fun AuthPermissionsConsentDialog(
 
                 // نص توضيحي رسمي
                 Text(
-                    text = "يطلب تطبيق «مجتمعنا» الإذن للوصول إلى معلومات حسابك التالية لإنشاء ملفك الشخصي وتخصيص معرّف رقمي فريد لك:",
+                    text = "يطلب تطبيق «Chat Live» الإذن للوصول إلى معلومات حسابك التالية لإنشاء ملفك الشخصي وتخصيص معرّف رقمي فريد لك:",
                     fontSize = 12.5.sp,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                     lineHeight = 18.sp
