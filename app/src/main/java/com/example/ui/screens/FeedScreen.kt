@@ -62,6 +62,7 @@ import kotlinx.coroutines.launch
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun FeedScreen(
+    userProfile: UserProfile,
     stories: List<Story>,
     posts: List<Post>,
     activeStory: Story?,
