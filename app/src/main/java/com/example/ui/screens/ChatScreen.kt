@@ -2220,11 +2220,20 @@ Column(
                         .background(MujtamaPrimary),
                     contentAlignment = Alignment.Center
                 ) {
-                    Text(
-                        text = conversation.name.take(1),
-                        color = Color.White,
-                        fontWeight = FontWeight.Bold
-                    )
+                    if (conversation.avatarUrl.isNotEmpty()) {
+                        AsyncImage(
+                            model = conversation.avatarUrl,
+                            contentDescription = conversation.name,
+                            contentScale = ContentScale.Crop,
+                            modifier = Modifier.fillMaxSize()
+                        )
+                    } else {
+                        Text(
+                            text = conversation.name.take(1),
+                            color = Color.White,
+                            fontWeight = FontWeight.Bold
+                        )
+                    }
                 }
 
                 Column(modifier = Modifier.weight(1f)) {
