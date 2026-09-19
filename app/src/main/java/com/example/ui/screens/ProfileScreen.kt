@@ -44,7 +44,6 @@ fun ProfileScreen(
     posts: List<Post>,
     balance: Int,
     onUpdateBio: (String) -> Unit,
-    onToggleNotifications: () -> Unit,
     onTogglePrivacy: () -> Unit,
     onLogout: () -> Unit,
     onClaimDailyBonus: () -> Unit,
