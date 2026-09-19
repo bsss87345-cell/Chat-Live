@@ -120,7 +120,8 @@ fun ChatScreen(
                 onUnblockMember = { memId -> onUnblockMember(activeRoom.id, memId) },
                 onJoinRoom = { onJoinRoom(activeRoom.id, "") },
                 onStartRoomGame = { gameType -> onStartInRoomGame(activeRoom.id, gameType) },
-                onPlayGameDirectly = onNavigateToGames
+                onPlayGameDirectly = onNavigateToGames,
+                myAvatarUrl = myAvatarUrl
             )
             return
         }
