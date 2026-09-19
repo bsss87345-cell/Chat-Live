@@ -635,8 +635,8 @@ fun AccountSettingsScreen(
                                 AccountSettingsActionRow(
                                     icon = Icons.Default.Person,
                                     title = "تعديل الملف الشخصي",
-                                    subtitle = "الاسم، النبذة التعريفية، والصورة الرمزية",
-                                    onClick = { showEditProfileDialog = true }
+                                    subtitle = "الاسم والنبذة التعريفية",
+                                    onClick = { openPage = 3 }
                                 )
 
                                 HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f))
