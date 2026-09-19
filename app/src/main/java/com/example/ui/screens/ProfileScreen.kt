@@ -58,7 +58,6 @@ fun ProfileScreen(
     onLikePost: (String) -> Unit,
     onCommentPost: (String) -> Unit,
     onSharePost: (Post) -> Unit,
-    onNavigateToRecharge: () -> Unit = {},
     onOpenAccountSettings: () -> Unit = {},
     onUpdateAvatarImage: (String) -> Unit = {}
 ) {
