@@ -1415,9 +1415,25 @@ fun StoryCreationDialog(
                     currentMode = currentMode,
                     isRecording = isRecording,
                     onCapturePhoto = {
-                        capturedMediaUri = "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=800&q=80"
-                        isVideoStory = false
-                        isReviewing = true
+                        val photoFile = File(
+                            context.filesDir,
+                            "story_${System.currentTimeMillis()}.jpg"
+                        )
+                        val outputOptions = OutputFileOptions.Builder(photoFile).build()
+                        imageCapture.takePicture(
+                            outputOptions,
+                            ContextCompat.getMainExecutor(context),
+                            object : ImageCapture.OnImageSavedCallback {
+                                override fun onImageSaved(output: ImageCapture.OutputFileResults) {
+                                    capturedMediaUri = photoFile.absolutePath
+                                    isVideoStory = false
+                                    isReviewing = true
+                                }
+                                override fun onError(exception: ImageCaptureException) {
+                                    // Fallback so the flow doesn't break if capture fails
+                                }
+                            }
+                        )
                     },
                     onToggleRecordVideo = {
                         if (isRecording) {
