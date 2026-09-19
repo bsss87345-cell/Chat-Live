@@ -43,7 +43,6 @@ fun ProfileScreen(
     userProfile: UserProfile,
     posts: List<Post>,
     balance: Int,
-    storeItems: List<StoreItem>,
     onUpdateBio: (String) -> Unit,
     onUpdateProfile: (String, String, String) -> Unit,
     onToggleNotifications: () -> Unit,
