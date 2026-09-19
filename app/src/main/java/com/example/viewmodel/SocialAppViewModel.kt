@@ -350,6 +350,7 @@ class SocialAppViewModel : ViewModel() {
             listOf(newStory) + list.filter { !it.isCurrentUser }
         }
         _userMessage.value = "تم نشر قصتك المؤقتة لجميع المتابعين بنجاح!"
+        addNotification(NotificationType.SYSTEM, "تم نشر قصتك بنجاح")
     }
 
     // --- Chat Actions ---
