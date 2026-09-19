@@ -2395,7 +2395,8 @@ Column(
 @Composable
 fun ChatMessageBubble(
     message: ChatMessage,
-    onPlayGame: () -> Unit
+    onPlayGame: () -> Unit,
+    myAvatarUrl: String = ""
 ) {
     val bubbleColor = if (message.isFromMe) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.surfaceVariant
     val textColor = if (message.isFromMe) Color.White else MaterialTheme.colorScheme.onSurface
