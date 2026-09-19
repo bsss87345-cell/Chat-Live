@@ -1906,8 +1906,7 @@ fun StoryReviewView(
                         colors = listOf(Color.Transparent, Color.Black.copy(alpha = 0.9f))
                     )
                 )
-                .navigationBarsPadding()
-                .padding(16.dp),
+                .padding(start = 16.dp, end = 16.dp, top = 16.dp, bottom = 56.dp),
             verticalArrangement = Arrangement.spacedBy(12.dp)
         ) {
             Button(
