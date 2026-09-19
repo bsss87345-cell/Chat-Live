@@ -1104,46 +1104,53 @@ fun StoryViewerDialog(
                                 .fillMaxWidth(),
                             contentAlignment = Alignment.Center
                         ) {
-                            if (!story.mediaUri.isNullOrBlank()) {
-                                AsyncImage(
-                                    model = story.mediaUri,
-                                    contentDescription = "محتوى القصة",
-                                    modifier = Modifier
-                                        .fillMaxSize()
-                                        .clip(RoundedCornerShape(12.dp)),
-                                    contentScale = ContentScale.Crop
-                                )
-                            }
-
-                            if (story.mediaType == StoryMediaType.VIDEO) {
-                                Surface(
-                                    shape = RoundedCornerShape(16.dp),
-                                    color = Color.Black.copy(alpha = 0.65f),
-                                    modifier = Modifier
-                                        .align(Alignment.TopCenter)
-                                        .padding(top = 8.dp)
-                                ) {
-                                    Row(
-                                        modifier = Modifier.padding(horizontal = 10.dp, vertical = 4.dp),
-                                        verticalAlignment = Alignment.CenterVertically,
-                                        horizontalArrangement = Arrangement.spacedBy(4.dp)
-                                    ) {
-                                        Icon(
-                                            imageVector = Icons.Default.PlayArrow,
-                                            contentDescription = null,
-                                            tint = Color.White,
-                                            modifier = Modifier.size(16.dp)
-                                        )
-                                        Text(
-                                            text = "فيديو ستوري",
-                                            color = Color.White,
-                                            fontSize = 11.sp,
-                                            fontWeight = FontWeight.Bold
-                                        )
-                                    }
+                           if (!story.mediaUri.isNullOrBlank()) {
+                                if (story.mediaType == StoryMediaType.VIDEO) {
+                                    val videoViewRef = remember(page) { mutableStateOf<android.widget.VideoView?>(null) }
+                                    AndroidView(
+                                        modifier = Modifier
+                                            .fillMaxSize()
+                                            .clip(RoundedCornerShape(12.dp)),
+                                        factory = { ctx ->
+                                            object : android.widget.VideoView(ctx) {
+                                                override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
+                                                    setMeasuredDimension(
+                                                        android.view.View.MeasureSpec.getSize(widthMeasureSpec),
+                                                        android.view.View.MeasureSpec.getSize(heightMeasureSpec)
+                                                    )
+                                                }
+                                            }.apply {
+                                                setVideoPath(story.mediaUri)
+                                                setOnPreparedListener { mp ->
+                                                    mp.setVideoScalingMode(android.media.MediaPlayer.VIDEO_SCALING_MODE_SCALE_TO_FIT_WITH_CROPPING)
+                                                }
+                                                setOnCompletionListener {
+                                                    if (page == pagerState.currentPage) {
+                                                        goToNextStory()
+                                                    }
+                                                }
+                                                videoViewRef.value = this
+                                            }
+                                        },
+                                        update = { view ->
+                                            if (page == pagerState.currentPage) {
+                                                if (!view.isPlaying) view.start()
+                                            } else {
+                                                if (view.isPlaying) view.pause()
+                                            }
+                                        }
+                                    )
+                                } else {
+                                    AsyncImage(
+                                        model = story.mediaUri,
+                                        contentDescription = "محتوى القصة",
+                                        modifier = Modifier
+                                            .fillMaxSize()
+                                            .clip(RoundedCornerShape(12.dp)),
+                                        contentScale = ContentScale.Crop
+                                    )
                                 }
-                            }
-
+                           } 
                             if (story.mediaText.isNotBlank()) {
                                 Surface(
                                     shape = RoundedCornerShape(12.dp),
