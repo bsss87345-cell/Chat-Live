@@ -409,7 +409,23 @@ fun QuickCreatePostCard(
                     .background(MujtamaPrimary),
                 contentAlignment = Alignment.Center
             ) {
-                Text(text = "أ", color = Color.White, fontWeight = FontWeight.Bold, fontSize = 16.sp)
+                if (userProfile.avatarUrl.isNotBlank()) {
+                    val avatarBitmap = remember(userProfile.avatarUrl) {
+                        BitmapFactory.decodeFile(userProfile.avatarUrl)?.asImageBitmap()
+                    }
+                    if (avatarBitmap != null) {
+                        Image(
+                            bitmap = avatarBitmap,
+                            contentDescription = null,
+                            modifier = Modifier.fillMaxSize().clip(CircleShape),
+                            contentScale = ContentScale.Crop
+                        )
+                    } else {
+                        Text(userProfile.avatarEmoji, fontSize = 16.sp)
+                    }
+                } else {
+                    Text(userProfile.avatarEmoji, fontSize = 16.sp)
+                }
             }
             Surface(
                 modifier = Modifier
