@@ -165,6 +165,7 @@ fun AccountSettingsScreen(
             // FULL-SCREEN SUB-PAGE — back button returns to the main menu
             // -------------------------------------------------------------
             val pageTitle = when (openPage) {
+                3 -> "تعديل الملف الشخصي"
                 2 -> "إعدادات الحساب"
                 1 -> "منشوراتي"
                 else -> "النقاط والرصيد"
