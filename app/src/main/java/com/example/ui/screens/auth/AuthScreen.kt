@@ -460,7 +460,9 @@ private fun AuthPillTextField(
             unfocusedBorderColor = MujtamaDarkTextMuted.copy(alpha = 0.35f),
             focusedContainerColor = MujtamaDarkSurface.copy(alpha = 0.5f),
             unfocusedContainerColor = MujtamaDarkSurface.copy(alpha = 0.35f),
-            cursorColor = MujtamaPrimary
+            cursorColor = MujtamaPrimary,
+            focusedTextColor = Color.White,
+            unfocusedTextColor = Color.White
         ),
         modifier = modifier
             .fillMaxWidth()
