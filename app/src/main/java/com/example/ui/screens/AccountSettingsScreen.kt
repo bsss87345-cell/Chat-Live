@@ -40,6 +40,8 @@ fun AccountSettingsScreen(
     onCommentPost: (String) -> Unit,
     onSharePost: (Post) -> Unit,
     onNavigateToRecharge: () -> Unit,
+    onUpdateProfile: (String, String, String) -> Unit,
+    onUpdateBio: (String) -> Unit,
     onBack: () -> Unit
 ) {
     // null = showing the main vertical menu list; 0/1/2 = which full page is open
