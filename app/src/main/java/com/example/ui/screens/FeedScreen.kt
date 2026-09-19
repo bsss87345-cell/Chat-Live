@@ -1860,16 +1860,20 @@ IconButton(
 
         // Action Icons (Flash, Flip Camera)
         Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-            IconButton(
+         IconButton(
                 onClick = onToggleFlash,
                 modifier = Modifier.background(Color.Black.copy(alpha = 0.45f), CircleShape)
             ) {
                 Icon(
-                    imageVector = if (isFlashOn) Icons.Filled.FlashOn else Icons.Outlined.FlashOff,
+                    imageVector = when (flashMode) {
+                        FlashMode.OFF -> Icons.Outlined.FlashOff
+                        FlashMode.ON -> Icons.Filled.FlashOn
+                        FlashMode.AUTO -> Icons.Filled.FlashAuto
+                    },
                     contentDescription = "الفلاش",
-                    tint = if (isFlashOn) MujtamaGold else Color.White
+                    tint = if (flashMode == FlashMode.OFF) Color.White else MujtamaGold
                 )
-            }
+         }   
 
             IconButton(
                 onClick = onFlipCamera,
