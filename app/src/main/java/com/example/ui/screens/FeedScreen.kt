@@ -1383,7 +1383,8 @@ fun StoryCreationDialog(
                 // 1. Live Camera Preview
                 CameraPreviewView(
                     modifier = Modifier.fillMaxSize(),
-                    lensFacing = lensFacing
+                    lensFacing = lensFacing,
+                    torchEnabled = isFlashOn
                 )
 
                 // Top Controls: Close, Flash, Flip Camera, and Active Mode Badge
