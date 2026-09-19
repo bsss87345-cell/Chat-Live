@@ -1795,16 +1795,15 @@ fun CameraViewfinderOverlay(modifier: Modifier = Modifier) {
 }
 
 @Composable
-IconButton(
-                onClick = onToggleFlash,
-                modifier = Modifier.background(Color.Black.copy(alpha = 0.45f), CircleShape)
-            ) {
-                Icon(
-                    imageVector = if (isFlashOn) Icons.Filled.FlashOn else Icons.Outlined.FlashOff,
-                    contentDescription = "الفلاش",
-                    tint = if (isFlashOn) MujtamaGold else Color.White
-                )
-}
+fun StoryTopBar(
+    currentMode: StoryCreationMode,
+    isRecording: Boolean,
+    recordDuration: Int,
+    flashMode: FlashMode,
+    onToggleFlash: () -> Unit,
+    onFlipCamera: () -> Unit,
+    onClose: () -> Unit
+) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
