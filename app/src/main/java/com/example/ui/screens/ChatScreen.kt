@@ -778,7 +778,11 @@ fun ChatRoomView(
     onJoinRoom: () -> Unit,
     onStartRoomGame: (GameType) -> Unit,
     onPlayGameDirectly: (GameType?) -> Unit,
-    myAvatarUrl: String = ""
+    myAvatarUrl: String = "",
+    onRequestVoiceSeat: (Int) -> Unit = {},
+    onRespondVoiceSeatRequest: (String, Boolean) -> Unit = { _, _ -> },
+    onLeaveVoiceSeat: (Int) -> Unit = {},
+    onMuteVoiceSeat: (Int) -> Unit = {}
 ) {
     var inputText by remember { mutableStateOf("") }
     var showMembersSheet by remember { mutableStateOf(false) }
