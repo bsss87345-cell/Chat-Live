@@ -1740,6 +1740,8 @@ fun RoomVoiceStage(
     room: ChatRoom,
     isCurrentUserOwner: Boolean,
     onToggleOwnerMute: () -> Unit = {},
+    onLeaveVoiceSeat: (Int) -> Unit = {},
+    onMuteVoiceSeat: (Int) -> Unit = {},
     modifier: Modifier = Modifier
 ) {
     var activeSpeakerSeat by remember { mutableStateOf<Int?>(1) }
