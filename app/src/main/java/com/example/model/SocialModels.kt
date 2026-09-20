@@ -118,7 +118,8 @@ data class RoomMember(
     val name: String,
     val role: RoomMemberRole,
     val isOnline: Boolean = false,
-    val isMuted: Boolean = false
+    val isMuted: Boolean = false,
+    val avatarUrl: String = ""
 )
 
 data class ChatRoom(
