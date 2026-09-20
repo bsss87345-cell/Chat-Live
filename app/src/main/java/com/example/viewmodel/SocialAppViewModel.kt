@@ -732,6 +732,11 @@ fun requestVoiceSeat(roomId: String, seatNumber: Int) {
             _userMessage.value = "لا يمكنك طلب المايك وأنت مكتوم."
             return
         }
+        val alreadySeated = room.ownerVoiceSeat.occupantId == "me" || room.voiceSeats.any { it.occupantId == "me" }
+        if (alreadySeated) {
+            _userMessage.value = "أنت بالفعل على مايك، انزل منه أولاً."
+            return
+        }
         val requestKey = "${roomId}_me"
         val lastRequest = lastVoiceSeatRequestTime[requestKey]
         val now = System.currentTimeMillis()
