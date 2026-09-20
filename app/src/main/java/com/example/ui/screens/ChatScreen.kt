@@ -127,7 +127,12 @@ fun ChatScreen(
                 onJoinRoom = { onJoinRoom(activeRoom.id, "") },
                 onStartRoomGame = { gameType -> onStartInRoomGame(activeRoom.id, gameType) },
                 onPlayGameDirectly = onNavigateToGames,
-                myAvatarUrl = myAvatarUrl
+                myAvatarUrl = myAvatarUrl,
+                onRequestVoiceSeat = onRequestVoiceSeat,
+                onRespondVoiceSeatRequest = onRespondVoiceSeatRequest,
+                onLeaveVoiceSeat = onLeaveVoiceSeat,
+                onMuteVoiceSeat = onMuteVoiceSeat,
+                onToggleOwnerVoiceMute = onToggleOwnerVoiceMute
             )
             return
         }
