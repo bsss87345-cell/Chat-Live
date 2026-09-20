@@ -804,7 +804,8 @@ fun ChatRoomView(
     onTakeVoiceSeat: (Int) -> Unit = {},
     onTakeOwnerSeat: () -> Unit = {},
     onLeaveOwnerSeat: () -> Unit = {},
-    onRemoveOwnerSeatMember: () -> Unit = {}
+    onRemoveOwnerSeatMember: () -> Unit = {},
+    onInviteMemberToOwnerSeat: (String) -> Unit = {}
 ) {
     var inputText by remember { mutableStateOf("") }
     var showMembersSheet by remember { mutableStateOf(false) }
