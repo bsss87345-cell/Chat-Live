@@ -1159,7 +1159,8 @@ Box(modifier = Modifier.fillMaxSize()) {
             onLeaveVoiceSeat = onLeaveVoiceSeat,
             onMuteVoiceSeat = onMuteVoiceSeat,
             onTakeVoiceSeat = onTakeVoiceSeat,
-            onTakeOwnerSeat = onTakeOwnerSeat
+            onTakeOwnerSeat = onTakeOwnerSeat,
+            onLeaveOwnerSeat = onLeaveOwnerSeat
         )
 
         // 5. نقل الرسالة المثبتة (Pinned Message) لتظهر أسفل صف المايكات
