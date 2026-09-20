@@ -1933,10 +1933,11 @@ fun RoomVoiceStage(
                 isOccupied = isOwnerSeatOccupied,
                 isOwnerMuted = room.ownerVoiceSeat.isMuted,
                 isSpeaking = isOwnerSeatOccupied && !room.ownerVoiceSeat.isMuted,
+                occupantAvatarUrl = room.ownerVoiceSeat.occupantAvatarUrl,
                 onClick = {
                     if (isCurrentUserOwner) {
                         if (isOwnerSeatOccupied) {
-                            onToggleOwnerMute()
+                            showOwnerSeatOptions = true
                         } else {
                             confirmTakeOwnerSeat = true
                         }
