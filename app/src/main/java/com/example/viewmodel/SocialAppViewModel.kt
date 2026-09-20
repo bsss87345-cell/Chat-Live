@@ -810,6 +810,11 @@ fun respondToVoiceSeatRequest(roomId: String, requestId: String, accept: Boolean
             _userMessage.value = "هذي الصلاحية للمالك والمشرف فقط."
             return
         }
+        val alreadySeated = room.ownerVoiceSeat.occupantId == "me" || room.voiceSeats.any { it.occupantId == "me" }
+        if (alreadySeated) {
+            _userMessage.value = "انزل من مقعدك الحالي أولاً قبل الصعود على مقعد آخر."
+            return
+        }
         val seat = room.voiceSeats.find { it.seatNumber == seatNumber }
         if (seat?.occupantId != null) {
             _userMessage.value = "هذا المقعد مشغول بالفعل."
