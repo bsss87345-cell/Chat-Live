@@ -158,7 +158,10 @@ data class ChatRoom(
     val messages: List<ChatMessage> = emptyList(),
     val imageUrl: String? = null,
     val backgroundImageUrl: String? = null,
-    val blockedMembers: List<RoomMember> = emptyList()
+    val blockedMembers: List<RoomMember> = emptyList(),
+    val voiceSeats: List<VoiceSeat> = (1..8).map { VoiceSeat(seatNumber = it) },
+    val ownerVoiceSeat: VoiceSeat = VoiceSeat(seatNumber = 0),
+    val voiceSeatRequests: List<VoiceSeatRequest> = emptyList()
 )
 
 data class TeamMember(
