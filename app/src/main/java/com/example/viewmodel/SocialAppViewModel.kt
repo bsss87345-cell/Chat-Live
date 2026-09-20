@@ -874,8 +874,10 @@ fun respondToVoiceSeatRequest(roomId: String, requestId: String, accept: Boolean
 
     fun inviteMemberToOwnerSeat(roomId: String, memberId: String) {
         val room = _chatRooms.value.find { it.id == roomId } ?: return
-        if (!room.isOwner) {
-            _userMessage.value = "الدعوة لمالك الغرفة فقط."
+        val me = room.members.find { it.id == "me" }
+        val isPrivileged = room.isOwner || me?.role == RoomMemberRole.ADMIN
+        if (!isPrivileged) {
+            _userMessage.value = "الدعوة للمالك والمشرف فقط."
             return
         }
         if (memberId == "me") return
