@@ -1099,12 +1099,12 @@ Box(modifier = Modifier.fillMaxSize()) {
                                 roomContext,
                                 musicPermission
                             ) == android.content.pm.PackageManager.PERMISSION_GRANTED
-                            if (alreadyGranted) {
-                                android.widget.Toast.makeText(
-                                    roomContext,
-                                    "الصلاحية ممنوحة، اختيار الموسيقى في الخطوة التالية",
-                                    android.widget.Toast.LENGTH_SHORT
-                                ).show()
+                            if (isMusicPlaying) {
+                                roomMusicPlayer?.release()
+                                roomMusicPlayer = null
+                                isMusicPlaying = false
+                            } else if (alreadyGranted) {
+                                musicPickerLauncher.launch(arrayOf("audio/*"))
                             } else {
                                 musicPermissionLauncher.launch(musicPermission)
                             }
