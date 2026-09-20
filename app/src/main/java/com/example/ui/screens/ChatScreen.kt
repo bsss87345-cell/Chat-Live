@@ -1136,7 +1136,10 @@ Box(modifier = Modifier.fillMaxSize()) {
         // Voice Mics Section: مايك المالك في المنتصف وتحته 8 مايكات مرقمة (1-8)
         RoomVoiceStage(
             room = room,
-            isCurrentUserOwner = room.isOwner
+            isCurrentUserOwner = room.isOwner,
+            onToggleOwnerMute = onToggleOwnerMute,
+            onLeaveVoiceSeat = onLeaveVoiceSeat,
+            onMuteVoiceSeat = onMuteVoiceSeat
         )
 
         // 5. نقل الرسالة المثبتة (Pinned Message) لتظهر أسفل صف المايكات
