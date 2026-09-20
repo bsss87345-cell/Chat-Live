@@ -2081,6 +2081,7 @@ fun RoomVoiceStage(
 
 @Composable
 private fun OwnerVoiceSeat(
+    isOccupied: Boolean,
     isOwnerMuted: Boolean,
     isSpeaking: Boolean,
     onClick: () -> Unit
