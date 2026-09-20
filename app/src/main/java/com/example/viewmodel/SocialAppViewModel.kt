@@ -760,7 +760,37 @@ fun requestVoiceSeat(roomId: String, seatNumber: Int) {
         }
         _userMessage.value = "تم إرسال طلب المايك، بانتظار موافقة المالك."
 }
-    
+fun respondToVoiceSeatRequest(roomId: String, requestId: String, accept: Boolean) {
+        _chatRooms.update { list ->
+            list.map { room ->
+                if (room.id == roomId) {
+                    val request = room.voiceSeatRequests.find { it.id == requestId }
+                    if (request == null) {
+                        room
+                    } else if (accept) {
+                        room.copy(
+                            voiceSeats = room.voiceSeats.map { seat ->
+                                if (seat.seatNumber == request.seatNumber) {
+                                    seat.copy(
+                                        occupantId = request.requesterId,
+                                        occupantName = request.requesterName,
+                                        occupantAvatarUrl = request.requesterAvatarUrl
+                                    )
+                                } else seat
+                            },
+                            voiceSeatRequests = room.voiceSeatRequests.filter { it.id != requestId }
+                        )
+                    } else {
+                        room.copy(
+                            voiceSeatRequests = room.voiceSeatRequests.filter { it.id != requestId }
+                        )
+                    }
+                } else room
+            }
+        }
+        _userMessage.value = if (accept) "تم قبول الطلب وصعود العضو للمايك." else "تم رفض الطلب."
+    }
+
     fun changeRoomMemberRole(roomId: String, memberId: String, newRole: RoomMemberRole) {
         _chatRooms.update { list ->
             list.map {
