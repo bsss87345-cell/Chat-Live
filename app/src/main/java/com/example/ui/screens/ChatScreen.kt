@@ -1023,7 +1023,6 @@ Box(modifier = Modifier.fillMaxSize()) {
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .navigationBarsPadding()
     ) {
 // Room Top App Bar
         Surface(
