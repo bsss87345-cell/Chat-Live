@@ -1301,6 +1301,37 @@ Box(modifier = Modifier.fillMaxSize()) {
                     singleLine = true
                 )
 
+                // Voice mic request button (Badge = عدد الطلبات المعلّقة)
+                Box {
+                    IconButton(
+                        onClick = { showVoiceMicDialog = true },
+                        modifier = Modifier.testTag("room_voice_request_button")
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.Mic,
+                            contentDescription = "طلب مايك",
+                            tint = MujtamaTeal
+                        )
+                    }
+                    if (room.voiceSeatRequests.isNotEmpty()) {
+                        Box(
+                            modifier = Modifier
+                                .size(16.dp)
+                                .align(Alignment.TopEnd)
+                                .clip(CircleShape)
+                                .background(MaterialTheme.colorScheme.error),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Text(
+                                text = "${room.voiceSeatRequests.size}",
+                                color = Color.White,
+                                fontSize = 9.sp,
+                                fontWeight = FontWeight.Bold
+                            )
+                        }
+                    }
+                }
+
                 // Send Button
                 Button(
                     onClick = {
