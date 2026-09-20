@@ -544,7 +544,7 @@ fun joinChatRoom(roomId: String, passwordInput: String = ""): Boolean {
                     it.copy(
                         isJoined = true,
                         memberCount = it.memberCount + 1,
-                        members = it.members + RoomMember("me", "أنت", RoomMemberRole.MEMBER, isOnline = true),
+                        members = it.members + RoomMember("me", "أنت", RoomMemberRole.MEMBER, isOnline = true, avatarUrl = _userProfile.value.avatarUrl)
                         messages = it.messages + ChatMessage(
                             id = "rm_join_${System.currentTimeMillis()}",
                             senderName = "النظام",
