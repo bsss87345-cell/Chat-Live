@@ -1059,7 +1059,21 @@ Box(modifier = Modifier.fillMaxSize()) {
                 // Room music button (Owner/Admin only)
                 if (isOwnerOrAdmin) {
                     IconButton(
-                        onClick = { /* Placeholder: تفعيل الموسيقى - المرحلة التالية */ },
+                        onClick = {
+                            val alreadyGranted = androidx.core.content.ContextCompat.checkSelfPermission(
+                                roomContext,
+                                musicPermission
+                            ) == android.content.pm.PackageManager.PERMISSION_GRANTED
+                            if (alreadyGranted) {
+                                android.widget.Toast.makeText(
+                                    roomContext,
+                                    "الصلاحية ممنوحة، اختيار الموسيقى في الخطوة التالية",
+                                    android.widget.Toast.LENGTH_SHORT
+                                ).show()
+                            } else {
+                                musicPermissionLauncher.launch(musicPermission)
+                            }
+                        },
                         enabled = !isMuted,
                         modifier = Modifier.testTag("room_music_button")
                     ) {
