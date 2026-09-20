@@ -188,6 +188,7 @@ class SocialAppViewModel : ViewModel() {
 
     // Profile State
     private val _userProfile = MutableStateFlow(UserProfile())
+    private val lastVoiceSeatRequestTime = mutableMapOf<String, Long>()
     val userProfile: StateFlow<UserProfile> = _userProfile.asStateFlow()
 
     // Notification toast / snackbar message
