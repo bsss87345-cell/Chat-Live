@@ -1039,14 +1039,16 @@ Box(modifier = Modifier.fillMaxSize()) {
                     )
                 }
 
-                // Image attach button
-                IconButton(
-                    onClick = { onSendMessage("صورة مرفقة بالغرفة", ChatMessageType.IMAGE) },
-                    enabled = !isMuted
-                ) {
-                    Icon(Icons.Default.Image, contentDescription = "صورة", tint = MujtamaTeal)
+                // Room music button (Owner/Admin only)
+                if (isOwnerOrAdmin) {
+                    IconButton(
+                        onClick = { /* Placeholder: تفعيل الموسيقى - المرحلة التالية */ },
+                        enabled = !isMuted,
+                        modifier = Modifier.testTag("room_music_button")
+                    ) {
+                        Icon(Icons.Default.MusicNote, contentDescription = "الموسيقى", tint = MujtamaTeal)
+                    }
                 }
-
                 // Text Input
                 OutlinedTextField(
                     value = inputText,
