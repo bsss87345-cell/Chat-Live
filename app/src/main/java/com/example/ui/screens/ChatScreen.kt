@@ -2125,6 +2125,8 @@ private fun OwnerVoiceSeat(
     isOwnerMuted: Boolean,
     isSpeaking: Boolean,
     occupantAvatarUrl: String? = null,
+    occupantName: String? = null,
+    isOwnerSitting: Boolean = true,
     onClick: () -> Unit
 ) {
     val infiniteTransition = rememberInfiniteTransition(label = "owner_pulse")
