@@ -1988,21 +1988,7 @@ fun RoomMessageBubble(
                 }
             }
         }
-            if (message.isFromMe && myAvatarUrl.isNotEmpty()) {
-                val myRoomMsgAvatarBitmap = remember(myAvatarUrl) {
-                    BitmapFactory.decodeFile(myAvatarUrl)?.asImageBitmap()
-                }
-                if (myRoomMsgAvatarBitmap != null) {
-                    Image(
-                        bitmap = myRoomMsgAvatarBitmap,
-                        contentDescription = null,
-                        contentScale = ContentScale.Crop,
-                        modifier = Modifier
-                            .size(28.dp)
-                            .clip(CircleShape)
-                    )
-                }
-            }
+            
         }
     }
 }
