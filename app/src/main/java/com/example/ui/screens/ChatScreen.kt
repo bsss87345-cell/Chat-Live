@@ -2004,6 +2004,27 @@ fun RoomVoiceStage(
         }
     }
 
+    if (confirmTakeOwnerSeat) {
+        androidx.compose.material3.AlertDialog(
+            onDismissRequest = { confirmTakeOwnerSeat = false },
+            title = { androidx.compose.material3.Text("الصعود على مايك المالك") },
+            text = { androidx.compose.material3.Text("هل تريد الصعود على مايك المالك؟") },
+            confirmButton = {
+                androidx.compose.material3.TextButton(onClick = {
+                    onTakeOwnerSeat()
+                    confirmTakeOwnerSeat = false
+                }) {
+                    androidx.compose.material3.Text("صعود")
+                }
+            },
+            dismissButton = {
+                androidx.compose.material3.TextButton(onClick = { confirmTakeOwnerSeat = false }) {
+                    androidx.compose.material3.Text("إلغاء")
+                }
+            }
+        )
+    }
+
     val confirmSeatNum = seatToConfirmTake
     if (confirmSeatNum != null) {
         androidx.compose.material3.AlertDialog(
