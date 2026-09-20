@@ -2158,9 +2158,13 @@ private fun OwnerVoiceSeat(
             contentAlignment = Alignment.Center
         ) {
             Icon(
-                imageVector = if (isOwnerMuted) Icons.Default.MicOff else Icons.Default.Mic,
+                imageVector = Icons.Default.Mic,
                 contentDescription = "مايك المالك",
-                tint = if (isOwnerMuted) MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.5f) else MujtamaGold,
+                tint = when {
+                    !isOccupied -> MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.35f)
+                    isOwnerMuted -> MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.5f)
+                    else -> MujtamaGold
+                },
                 modifier = Modifier.size(28.dp)
             )
         }
