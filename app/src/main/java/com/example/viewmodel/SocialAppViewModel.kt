@@ -850,6 +850,11 @@ fun respondToVoiceSeatRequest(roomId: String, requestId: String, accept: Boolean
             _userMessage.value = "أنت بالفعل على مقعد المالك."
             return
         }
+        val alreadySeated = room.voiceSeats.any { it.occupantId == "me" }
+        if (alreadySeated) {
+            _userMessage.value = "انزل من مقعدك الحالي أولاً قبل الصعود على مقعد آخر."
+            return
+        }
         _chatRooms.update { list ->
             list.map {
                 if (it.id == roomId) {
@@ -865,6 +870,23 @@ fun respondToVoiceSeatRequest(roomId: String, requestId: String, accept: Boolean
             }
         }
         _userMessage.value = "تم الصعود على مايك المالك."
+    }
+
+    fun leaveOwnerVoiceSeat(roomId: String) {
+        _chatRooms.update { list ->
+            list.map { room ->
+                if (room.id == roomId) {
+                    room.copy(
+                        ownerVoiceSeat = room.ownerVoiceSeat.copy(
+                            occupantId = null,
+                            occupantName = null,
+                            occupantAvatarUrl = null,
+                            isMuted = false
+                        )
+                    )
+                } else room
+            }
+        }
     }
 fun leaveVoiceSeat(roomId: String, seatNumber: Int) {
         _chatRooms.update { list ->
