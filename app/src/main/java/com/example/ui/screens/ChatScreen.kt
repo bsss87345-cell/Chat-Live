@@ -1899,6 +1899,7 @@ fun RoomVoiceStage(
     onTakeVoiceSeat: (Int) -> Unit = {},
     onTakeOwnerSeat: () -> Unit = {},
     onLeaveOwnerSeat: () -> Unit = {},
+    onRemoveOwnerSeatMember: () -> Unit = {},
     modifier: Modifier = Modifier
 ) {
     var seatOptionsFor by remember { mutableStateOf<Int?>(null) }
