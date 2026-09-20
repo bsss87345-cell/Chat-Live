@@ -132,7 +132,7 @@ fun ChatScreen(
                 onRespondVoiceSeatRequest = onRespondVoiceSeatRequest,
                 onLeaveVoiceSeat = onLeaveVoiceSeat,
                 onMuteVoiceSeat = onMuteVoiceSeat,
-                onToggleOwnerVoiceMute = onToggleOwnerVoiceMute
+                onToggleOwnerMute = onToggleOwnerVoiceMute
             )
             return
         }
