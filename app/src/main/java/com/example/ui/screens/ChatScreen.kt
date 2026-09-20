@@ -1112,7 +1112,7 @@ Box(modifier = Modifier.fillMaxSize()) {
                         enabled = !isMuted,
                         modifier = Modifier.testTag("room_music_button")
                     ) {
-                        Icon(Icons.Default.MusicNote, contentDescription = "الموسيقى", tint = MujtamaTeal)
+                        Icon(Icons.Default.MusicNote, contentDescription = "الموسيقى", tint = if (isMusicPlaying) MujtamaGold else MujtamaTeal)
                     }
                 }
                 // Text Input
