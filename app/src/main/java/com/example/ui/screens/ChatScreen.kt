@@ -802,6 +802,23 @@ fun ChatRoomView(
     val isOwnerOrAdmin = room.isOwner || currentMember?.role == RoomMemberRole.ADMIN || currentMember?.role == RoomMemberRole.OWNER
     val isMuted = currentMember?.isMuted == true
 
+    val roomContext = androidx.compose.ui.platform.LocalContext.current
+    val musicPermission = if (android.os.Build.VERSION.SDK_INT >= 33) {
+        android.Manifest.permission.READ_MEDIA_AUDIO
+    } else {
+        android.Manifest.permission.READ_EXTERNAL_STORAGE
+    }
+    val musicPermissionLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.RequestPermission(),
+        onResult = { granted: Boolean ->
+            android.widget.Toast.makeText(
+                roomContext,
+                if (granted) "تم منح صلاحية ملفات الصوت" else "لم تُمنح صلاحية ملفات الصوت",
+                android.widget.Toast.LENGTH_SHORT
+            ).show()
+        }
+    )
+
     // Intercept system back button/gesture to leave room smoothly
     BackHandler(onBack = onBack)
 
