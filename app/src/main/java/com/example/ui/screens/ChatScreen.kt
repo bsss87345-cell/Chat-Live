@@ -2227,11 +2227,15 @@ private fun OwnerVoiceSeat(
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(3.dp)
         ) {
-            if (isOccupied) {
+            if (isOccupied && isOwnerSitting) {
                 Text("👑", fontSize = 11.sp)
             }
             Text(
-                text = if (isOccupied) "المالك" else "مقعد فارغ",
+                text = when {
+                    !isOccupied -> "مقعد فارغ"
+                    isOwnerSitting -> "المالك"
+                    else -> occupantName?.takeIf { it.isNotBlank() } ?: "عضو"
+                },
                 fontSize = 12.sp,
                 fontWeight = FontWeight.Bold,
                 color = if (isOccupied) MujtamaGold else MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.5f)
