@@ -1922,12 +1922,18 @@ fun RoomVoiceStage(
             verticalArrangement = Arrangement.spacedBy(10.dp)
         ) {
             // مايك المالك في منتصف الشاشة: بحجم أكبر (58dp) وتصميم زجاجي ذهبي مع هالة توهج
+            val isOwnerSeatOccupied = !room.ownerVoiceSeat.occupantId.isNullOrBlank()
             OwnerVoiceSeat(
+                isOccupied = isOwnerSeatOccupied,
                 isOwnerMuted = room.ownerVoiceSeat.isMuted,
-                isSpeaking = !room.ownerVoiceSeat.isMuted,
+                isSpeaking = isOwnerSeatOccupied && !room.ownerVoiceSeat.isMuted,
                 onClick = {
                     if (isCurrentUserOwner) {
-                        onToggleOwnerMute()
+                        if (isOwnerSeatOccupied) {
+                            onToggleOwnerMute()
+                        } else {
+                            confirmTakeOwnerSeat = true
+                        }
                     }
                 }
             )
