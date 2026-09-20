@@ -2032,6 +2032,35 @@ fun RoomVoiceStage(
         )
     }
 
+    if (showOwnerSeatOptions) {
+        androidx.compose.ui.window.Dialog(onDismissRequest = { showOwnerSeatOptions = false }) {
+            Surface(
+                shape = RoundedCornerShape(16.dp),
+                color = MaterialTheme.colorScheme.surface
+            ) {
+                Column(
+                    modifier = Modifier.padding(20.dp),
+                    verticalArrangement = Arrangement.spacedBy(12.dp)
+                ) {
+                    androidx.compose.material3.TextButton(onClick = {
+                        onLeaveOwnerSeat()
+                        showOwnerSeatOptions = false
+                    }) {
+                        androidx.compose.material3.Text("نزول من المايك")
+                    }
+                    androidx.compose.material3.TextButton(onClick = {
+                        onToggleOwnerMute()
+                        showOwnerSeatOptions = false
+                    }) {
+                        androidx.compose.material3.Text(
+                            if (room.ownerVoiceSeat.isMuted) "إلغاء الكتم" else "كتم نفسي"
+                        )
+                    }
+                }
+            }
+        }
+    }
+
     val confirmSeatNum = seatToConfirmTake
     if (confirmSeatNum != null) {
         androidx.compose.material3.AlertDialog(
