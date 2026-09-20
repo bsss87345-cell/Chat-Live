@@ -1891,7 +1891,7 @@ fun RoomMessageBubble(
                 Column(modifier = Modifier.padding(horizontal = 12.dp, vertical = 8.dp)) {
                     when (message.type) {
                         ChatMessageType.TEXT -> {
-                            Text(text = message.text, color = textColor, fontSize = 13.sp)
+                            Text(text = message.text, color = textColor, fontSize = 15.sp)
                         }
                         ChatMessageType.AUDIO -> {
                             Row(
