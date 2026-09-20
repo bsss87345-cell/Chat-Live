@@ -1868,10 +1868,10 @@ fun RoomMessageBubble(
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.spacedBy(6.dp)
             ) {
-                if (!message.isFromMe) {
+                if (message.senderName.isNotBlank()) {
                     Text(
                         text = message.senderName,
-                        fontSize = 11.sp,
+                        fontSize = 13.sp,
                         fontWeight = FontWeight.Bold,
                         color = MaterialTheme.colorScheme.primary,
                         modifier = Modifier.padding(bottom = 2.dp)
