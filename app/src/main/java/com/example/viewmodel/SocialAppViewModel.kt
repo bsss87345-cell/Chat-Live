@@ -872,6 +872,60 @@ fun respondToVoiceSeatRequest(roomId: String, requestId: String, accept: Boolean
         _userMessage.value = "تم الصعود على مايك المالك."
     }
 
+    fun inviteMemberToOwnerSeat(roomId: String, memberId: String) {
+        val room = _chatRooms.value.find { it.id == roomId } ?: return
+        if (!room.isOwner) {
+            _userMessage.value = "الدعوة لمالك الغرفة فقط."
+            return
+        }
+        if (memberId == "me") return
+        val member = room.members.find { it.id == memberId }
+        if (member == null) {
+            _userMessage.value = "العضو غير موجود بالغرفة."
+            return
+        }
+        val occupant = room.ownerVoiceSeat.occupantId
+        if (!occupant.isNullOrBlank() && occupant != "me") {
+            _userMessage.value = "المقعد مشغول بعضو، أنزله أولاً."
+            return
+        }
+        if (room.voiceSeats.any { it.occupantId == memberId }) {
+            _userMessage.value = "هذا العضو جالس بمقعد آخر."
+            return
+        }
+        _chatRooms.update { list ->
+            list.map {
+                if (it.id == roomId) {
+                    it.copy(
+                        ownerVoiceSeat = it.ownerVoiceSeat.copy(
+                            occupantId = member.id,
+                            occupantName = member.name,
+                            occupantAvatarUrl = member.avatarUrl,
+                            isMuted = false
+                        ),
+                        voiceSeatRequests = it.voiceSeatRequests.filter { r -> r.requesterId != memberId }
+                    )
+                } else it
+            }
+        }
+        _userMessage.value = "تمت دعوة ${member.name} للصعود على مايكك."
+    }
+
+    fun removeMemberFromOwnerSeat(roomId: String) {
+        val room = _chatRooms.value.find { it.id == roomId } ?: return
+        if (!room.isOwner) {
+            _userMessage.value = "الإنزال لمالك الغرفة فقط."
+            return
+        }
+        val occupant = room.ownerVoiceSeat.occupantId
+        if (occupant.isNullOrBlank() || occupant == "me") {
+            _userMessage.value = "لا يوجد عضو على مقعدك."
+            return
+        }
+        leaveOwnerVoiceSeat(roomId)
+        _userMessage.value = "تم إنزال العضو من مقعدك."
+    }
+
     fun leaveOwnerVoiceSeat(roomId: String) {
         _chatRooms.update { list ->
             list.map { room ->
