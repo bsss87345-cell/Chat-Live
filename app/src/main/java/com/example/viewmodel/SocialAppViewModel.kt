@@ -805,6 +805,21 @@ fun leaveVoiceSeat(roomId: String, seatNumber: Int) {
             }
         }
 }
+fun muteVoiceSeat(roomId: String, seatNumber: Int) {
+        _chatRooms.update { list ->
+            list.map { room ->
+                if (room.id == roomId) {
+                    room.copy(
+                        voiceSeats = room.voiceSeats.map { seat ->
+                            if (seat.seatNumber == seatNumber) {
+                                seat.copy(isMuted = !seat.isMuted)
+                            } else seat
+                        }
+                    )
+                } else room
+            }
+        }
+}
 
     fun changeRoomMemberRole(roomId: String, memberId: String, newRole: RoomMemberRole) {
         _chatRooms.update { list ->
