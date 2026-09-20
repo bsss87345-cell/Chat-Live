@@ -829,6 +829,33 @@ fun respondToVoiceSeatRequest(roomId: String, requestId: String, accept: Boolean
         }
         _userMessage.value = "تم الصعود على المايك."
     }
+
+    fun takeOwnerVoiceSeatDirectly(roomId: String) {
+        val room = _chatRooms.value.find { it.id == roomId } ?: return
+        if (!room.isOwner) {
+            _userMessage.value = "هذا المقعد لمالك الغرفة فقط."
+            return
+        }
+        if (!room.ownerVoiceSeat.occupantId.isNullOrBlank()) {
+            _userMessage.value = "أنت بالفعل على مقعد المالك."
+            return
+        }
+        _chatRooms.update { list ->
+            list.map {
+                if (it.id == roomId) {
+                    it.copy(
+                        ownerVoiceSeat = it.ownerVoiceSeat.copy(
+                            occupantId = "me",
+                            occupantName = it.members.find { m -> m.id == "me" }?.name ?: "المالك",
+                            occupantAvatarUrl = _userProfile.value.avatarUrl,
+                            isMuted = false
+                        )
+                    )
+                } else it
+            }
+        }
+        _userMessage.value = "تم الصعود على مايك المالك."
+    }
 fun leaveVoiceSeat(roomId: String, seatNumber: Int) {
         _chatRooms.update { list ->
             list.map { room ->
