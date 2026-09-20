@@ -2173,12 +2173,14 @@ private fun OwnerVoiceSeat(
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(3.dp)
         ) {
-            Text("👑", fontSize = 11.sp)
+            if (isOccupied) {
+                Text("👑", fontSize = 11.sp)
+            }
             Text(
-                text = "المالك",
+                text = if (isOccupied) "المالك" else "مقعد فارغ",
                 fontSize = 12.sp,
                 fontWeight = FontWeight.Bold,
-                color = MujtamaGold
+                color = if (isOccupied) MujtamaGold else MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.5f)
             )
         }
     }
