@@ -1790,7 +1790,7 @@ OutlinedButton(
                 }
             )
         } else {
-            val emptySeats = room.voiceSeats.filter { it.occupantId.isBlank() }.map { it.seatNumber }
+            val emptySeats = room.voiceSeats.filter { it.occupantId.isNullOrBlank() }.map { it.seatNumber }
             AlertDialog(
                 onDismissRequest = { showVoiceMicDialog = false },
                 title = { Text("طلب مايك") },
