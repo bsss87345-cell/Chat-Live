@@ -1799,14 +1799,15 @@ fun RoomVoiceStage(
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     (1..4).forEach { seatNum ->
+                        val seat = room.voiceSeats.firstOrNull { it.seatNumber == seatNum }
+                        val occupied = !seat?.occupantId.isNullOrBlank()
                         VoiceSeatItem(
                             seatNumber = seatNum,
-                            isOccupied = userSeat == seatNum || seatNum == 1 || seatNum == 3,
-                            isSpeaking = activeSpeakerSeat == seatNum,
-                            onClick = {
-                                userSeat = if (userSeat == seatNum) null else seatNum
-                                activeSpeakerSeat = if (activeSpeakerSeat == seatNum) null else seatNum
-                            }
+                            isOccupied = occupied,
+                            isSpeaking = occupied && seat?.isMuted == false,
+                            occupantName = seat?.occupantName,
+                            occupantAvatarUrl = seat?.occupantAvatarUrl,
+                            onClick = { }
                         )
                     }
                 }
@@ -1818,14 +1819,15 @@ fun RoomVoiceStage(
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     (5..8).forEach { seatNum ->
+                        val seat = room.voiceSeats.firstOrNull { it.seatNumber == seatNum }
+                        val occupied = !seat?.occupantId.isNullOrBlank()
                         VoiceSeatItem(
                             seatNumber = seatNum,
-                            isOccupied = userSeat == seatNum,
-                            isSpeaking = activeSpeakerSeat == seatNum,
-                            onClick = {
-                                userSeat = if (userSeat == seatNum) null else seatNum
-                                activeSpeakerSeat = if (activeSpeakerSeat == seatNum) null else seatNum
-                            }
+                            isOccupied = occupied,
+                            isSpeaking = occupied && seat?.isMuted == false,
+                            occupantName = seat?.occupantName,
+                            occupantAvatarUrl = seat?.occupantAvatarUrl,
+                            onClick = { }
                         )
                     }
                 }
