@@ -796,6 +796,39 @@ fun respondToVoiceSeatRequest(roomId: String, requestId: String, accept: Boolean
         }
         _userMessage.value = if (accept) "تم قبول الطلب وصعود العضو للمايك." else "تم رفض الطلب."
     }
+
+    fun takeVoiceSeatDirectly(roomId: String, seatNumber: Int) {
+        val room = _chatRooms.value.find { it.id == roomId } ?: return
+        val me = room.members.find { it.id == "me" }
+        val isPrivileged = room.isOwner || me?.role == RoomMemberRole.ADMIN
+        if (!isPrivileged) {
+            _userMessage.value = "هذي الصلاحية للمالك والمشرف فقط."
+            return
+        }
+        val seat = room.voiceSeats.find { it.seatNumber == seatNumber }
+        if (seat?.occupantId != null) {
+            _userMessage.value = "هذا المقعد مشغول بالفعل."
+            return
+        }
+        _chatRooms.update { list ->
+            list.map {
+                if (it.id == roomId) {
+                    it.copy(
+                        voiceSeats = it.voiceSeats.map { s ->
+                            if (s.seatNumber == seatNumber) {
+                                s.copy(
+                                    occupantId = "me",
+                                    occupantName = me?.name ?: "أنت",
+                                    occupantAvatarUrl = _userProfile.value.avatarUrl
+                                )
+                            } else s
+                        }
+                    )
+                } else it
+            }
+        }
+        _userMessage.value = "تم الصعود على المايك."
+    }
 fun leaveVoiceSeat(roomId: String, seatNumber: Int) {
         _chatRooms.update { list ->
             list.map { room ->
