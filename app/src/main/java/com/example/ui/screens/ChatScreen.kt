@@ -821,6 +821,9 @@ fun ChatRoomView(
 
     var roomMusicPlayer by remember { mutableStateOf<android.media.MediaPlayer?>(null) }
     var isMusicPlaying by remember { mutableStateOf(false) }
+    var showMusicPage by remember { mutableStateOf(false) }
+    var playingTrackIndex by remember { mutableStateOf(-1) }
+    val roomMusicTracks = remember { androidx.compose.runtime.mutableStateListOf<Pair<String, Uri>>() }
 
     androidx.compose.runtime.DisposableEffect(Unit) {
         onDispose {
