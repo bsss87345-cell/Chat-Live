@@ -1751,10 +1751,11 @@ OutlinedButton(
                 onDismissRequest = { showVoiceMicDialog = false },
                 title = { Text("طلبات المايك (${room.voiceSeatRequests.size})") },
                 text = {
-                    if (room.voiceSeatRequests.isEmpty()) {
-                        Text("لا توجد طلبات حالياً.", fontSize = 13.sp)
-                    } else {
+                    run {
                         LazyColumn(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                            if (room.voiceSeatRequests.isEmpty()) {
+                                item { Text("لا توجد طلبات حالياً.", fontSize = 13.sp) }
+                            }
                             items(room.voiceSeatRequests, key = { it.id }) { request ->
                                 Row(
                                     modifier = Modifier.fillMaxWidth(),
