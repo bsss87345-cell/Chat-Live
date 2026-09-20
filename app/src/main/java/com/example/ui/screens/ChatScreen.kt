@@ -846,7 +846,15 @@ fun ChatRoomView(
                     }
                 } catch (e: Exception) {
                 }
-                roomMusicTracks.add(Pair(trackName, uri))
+                if (roomMusicTracks.any { it.second == uri || (trackName != "مقطع صوتي" && it.first == trackName) }) {
+                    android.widget.Toast.makeText(
+                        roomContext,
+                        "الموسيقى موجودة",
+                        android.widget.Toast.LENGTH_SHORT
+                    ).show()
+                } else {
+                    roomMusicTracks.add(Pair(trackName, uri))
+                }
             }
         }
     )
