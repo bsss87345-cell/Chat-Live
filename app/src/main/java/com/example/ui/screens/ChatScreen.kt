@@ -1227,12 +1227,8 @@ Box(modifier = Modifier.fillMaxSize()) {
                                 roomContext,
                                 musicPermission
                             ) == android.content.pm.PackageManager.PERMISSION_GRANTED
-                            if (isMusicPlaying) {
-                                roomMusicPlayer?.release()
-                                roomMusicPlayer = null
-                                isMusicPlaying = false
-                            } else if (alreadyGranted) {
-                                musicPickerLauncher.launch(arrayOf("audio/*"))
+                            if (alreadyGranted) {
+                                showMusicPage = true
                             } else {
                                 musicPermissionLauncher.launch(musicPermission)
                             }
