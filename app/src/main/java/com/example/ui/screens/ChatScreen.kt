@@ -1894,11 +1894,13 @@ fun RoomVoiceStage(
     isPrivileged: Boolean = false,
     onTakeVoiceSeat: (Int) -> Unit = {},
     onTakeOwnerSeat: () -> Unit = {},
+    onLeaveOwnerSeat: () -> Unit = {},
     modifier: Modifier = Modifier
 ) {
     var seatOptionsFor by remember { mutableStateOf<Int?>(null) }
     var seatToConfirmTake by remember { mutableStateOf<Int?>(null) }
     var confirmTakeOwnerSeat by remember { mutableStateOf(false) }
+    var showOwnerSeatOptions by remember { mutableStateOf(false) }
 
     // حاوية المنصة الصوتية بنمط زجاجي شفاف ناعم وأنيق (Glassmorphism)
     Surface(
