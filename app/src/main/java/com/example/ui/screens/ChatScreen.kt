@@ -804,6 +804,7 @@ fun ChatRoomView(
     var showAdminsListDialog by remember { mutableStateOf(false) }
     var showBannedListDialog by remember { mutableStateOf(false) }
     var showBackgroundPickerDialog by remember { mutableStateOf(false) }
+    var showVoiceMicDialog by remember { mutableStateOf(false) }
     val photoPickerLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.PickVisualMedia(),
         onResult = { uri: Uri? ->
