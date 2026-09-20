@@ -2049,11 +2049,14 @@ fun RoomVoiceStage(
                     modifier = Modifier.padding(20.dp),
                     verticalArrangement = Arrangement.spacedBy(12.dp)
                 ) {
+                    val ownerIsSitting = room.ownerVoiceSeat.occupantId == "me"
                     androidx.compose.material3.TextButton(onClick = {
-                        onLeaveOwnerSeat()
+                        if (ownerIsSitting) onLeaveOwnerSeat() else onRemoveOwnerSeatMember()
                         showOwnerSeatOptions = false
                     }) {
-                        androidx.compose.material3.Text("نزول من المايك")
+                        androidx.compose.material3.Text(
+                            if (ownerIsSitting) "نزول من المايك" else "إنزال العضو"
+                        )
                     }
                     androidx.compose.material3.TextButton(onClick = {
                         onToggleOwnerMute()
