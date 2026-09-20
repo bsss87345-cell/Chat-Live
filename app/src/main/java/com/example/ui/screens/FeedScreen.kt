@@ -427,19 +427,12 @@ fun QuickCreatePostCard(
                 contentAlignment = Alignment.Center
             ) {
                 if (userProfile.avatarUrl.isNotBlank()) {
-                    val avatarBitmap = remember(userProfile.avatarUrl) {
-                        BitmapFactory.decodeFile(userProfile.avatarUrl)?.asImageBitmap()
-                    }
-                    if (avatarBitmap != null) {
-                        Image(
-                            bitmap = avatarBitmap,
-                            contentDescription = null,
-                            modifier = Modifier.fillMaxSize().clip(CircleShape),
-                            contentScale = ContentScale.Crop
-                        )
-                    } else {
-                        Text(userProfile.avatarEmoji, fontSize = 16.sp)
-                    }
+                    AsyncImage(
+                        model = userProfile.avatarUrl,
+                        contentDescription = null,
+                        modifier = Modifier.fillMaxSize().clip(CircleShape),
+                        contentScale = ContentScale.Crop
+                    )
                 } else {
                     Text(userProfile.avatarEmoji, fontSize = 16.sp)
                 }
