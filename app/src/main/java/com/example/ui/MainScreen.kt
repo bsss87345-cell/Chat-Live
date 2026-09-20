@@ -238,7 +238,12 @@ fun MainScreen(viewModel: SocialAppViewModel) {
                                     viewModel.startInRoomGame(roomId, gameType)
                                     viewModel.launchGame(gameType, GameMatchMode.WITH_FRIEND, "أعضاء الغرفة")
                                     viewModel.setTab(AppTab.GAMES)
-                                }
+                                },
+                                onRequestVoiceSeat = { seatNumber -> viewModel.requestVoiceSeat(activeRoomId ?: "", seatNumber) },
+                                onRespondVoiceSeatRequest = { requestId, accept -> viewModel.respondToVoiceSeatRequest(activeRoomId ?: "", requestId, accept) },
+                                onLeaveVoiceSeat = { seatNumber -> viewModel.leaveVoiceSeat(activeRoomId ?: "", seatNumber) },
+                                onMuteVoiceSeat = { seatNumber -> viewModel.muteVoiceSeat(activeRoomId ?: "", seatNumber) },
+                                onToggleOwnerVoiceMute = { viewModel.toggleOwnerVoiceMute(activeRoomId ?: "") }
                             )
                         }
 
