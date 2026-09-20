@@ -1887,9 +1887,12 @@ fun RoomVoiceStage(
     onToggleOwnerMute: () -> Unit = {},
     onLeaveVoiceSeat: (Int) -> Unit = {},
     onMuteVoiceSeat: (Int) -> Unit = {},
+    isPrivileged: Boolean = false,
+    onTakeVoiceSeat: (Int) -> Unit = {},
     modifier: Modifier = Modifier
 ) {
     var seatOptionsFor by remember { mutableStateOf<Int?>(null) }
+    var seatToConfirmTake by remember { mutableStateOf<Int?>(null) }
 
     // حاوية المنصة الصوتية بنمط زجاجي شفاف ناعم وأنيق (Glassmorphism)
     Surface(
