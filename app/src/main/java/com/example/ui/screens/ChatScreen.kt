@@ -1934,6 +1934,8 @@ private fun VoiceSeatItem(
     seatNumber: Int,
     isOccupied: Boolean,
     isSpeaking: Boolean,
+    occupantName: String? = null,
+    occupantAvatarUrl: String? = null,
     onClick: () -> Unit
 ) {
     val infiniteTransition = rememberInfiniteTransition(label = "seat_pulse_$seatNumber")
@@ -1968,7 +1970,6 @@ private fun VoiceSeatItem(
                 .size(44.dp)
                 .scale(if (isSpeaking) glowScale else 1f)
                 .clip(CircleShape)
-                // خلفية شفافة Glassmorphism مع تأثير ضبابي خفيف
                 .background(
                     when {
                         isSpeaking -> Brush.radialGradient(
@@ -1985,7 +1986,6 @@ private fun VoiceSeatItem(
                                 Color.Transparent
                             )
                         )
-                        // عند عدم وجود شخص: مظهر باهت عالي الشفافية (Muted / Empty State)
                         else -> Brush.radialGradient(
                             listOf(
                                 Color.White.copy(alpha = 0.05f),
@@ -1995,7 +1995,6 @@ private fun VoiceSeatItem(
                         )
                     }
                 )
-// حواف دائرية أوضح مع تأثير التوهج عند التحدث
                 .border(
                     width = if (isSpeaking) 3.dp else 2.dp,
                     brush = when {
@@ -2022,23 +2021,36 @@ private fun VoiceSeatItem(
                 ),
             contentAlignment = Alignment.Center
         ) {
-            Icon(
-                imageVector = if (isOccupied) Icons.Default.Mic else Icons.Default.MicNone,
-                contentDescription = "مايك $seatNumber",
-                tint = when {
-                    isSpeaking -> MujtamaTeal
-                    isOccupied -> MaterialTheme.colorScheme.primary
-                    else -> MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.35f)
-                },
-                modifier = Modifier.size(20.dp)
-            )
+            if (isOccupied && !occupantAvatarUrl.isNullOrBlank()) {
+                AsyncImage(
+                    model = occupantAvatarUrl,
+                    contentDescription = occupantName,
+                    contentScale = ContentScale.Crop,
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .clip(CircleShape)
+                )
+            } else {
+                Icon(
+                    imageVector = if (isOccupied) Icons.Default.Mic else Icons.Default.MicNone,
+                    contentDescription = "مايك $seatNumber",
+                    tint = when {
+                        isSpeaking -> MujtamaTeal
+                        isOccupied -> MaterialTheme.colorScheme.primary
+                        else -> MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.35f)
+                    },
+                    modifier = Modifier.size(20.dp)
+                )
+            }
         }
 
-        // ترقيم كل مايك من 1 إلى 8 يظهر بخط واضح وأنيق أسفل كل مايك
         Text(
-            text = "$seatNumber",
+            text = if (isOccupied && !occupantName.isNullOrBlank()) occupantName else "$seatNumber",
             fontSize = 11.sp,
             fontWeight = FontWeight.Bold,
+            maxLines = 1,
+            overflow = androidx.compose.ui.text.style.TextOverflow.Ellipsis,
+            modifier = Modifier.widthIn(max = 44.dp),
             color = when {
                 isSpeaking -> MujtamaTeal
                 isOccupied -> MaterialTheme.colorScheme.primary
