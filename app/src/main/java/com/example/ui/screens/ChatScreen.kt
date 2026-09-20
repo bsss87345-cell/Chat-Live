@@ -1938,6 +1938,8 @@ fun RoomVoiceStage(
                 isOwnerMuted = room.ownerVoiceSeat.isMuted,
                 isSpeaking = isOwnerSeatOccupied && !room.ownerVoiceSeat.isMuted,
                 occupantAvatarUrl = room.ownerVoiceSeat.occupantAvatarUrl,
+                occupantName = room.ownerVoiceSeat.occupantName,
+                isOwnerSitting = room.ownerVoiceSeat.occupantId == "me" && isCurrentUserOwner,
                 onClick = {
                     if (isCurrentUserOwner) {
                         if (isOwnerSeatOccupied) {
