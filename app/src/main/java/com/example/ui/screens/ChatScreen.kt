@@ -2063,7 +2063,9 @@ fun RoomVoiceStage(
                         showOwnerSeatOptions = false
                     }) {
                         androidx.compose.material3.Text(
-                            if (room.ownerVoiceSeat.isMuted) "إلغاء الكتم" else "كتم نفسي"
+                            if (room.ownerVoiceSeat.isMuted) "إلغاء الكتم"
+                            else if (room.ownerVoiceSeat.occupantId == "me") "كتم نفسي"
+                            else "كتم العضو"
                         )
                     }
                 }
