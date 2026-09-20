@@ -2194,16 +2194,27 @@ private fun OwnerVoiceSeat(
                 ),
             contentAlignment = Alignment.Center
         ) {
-            Icon(
-                imageVector = Icons.Default.Mic,
-                contentDescription = "مايك المالك",
-                tint = when {
-                    !isOccupied -> MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.35f)
-                    isOwnerMuted -> MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.5f)
-                    else -> MujtamaGold
-                },
-                modifier = Modifier.size(28.dp)
-            )
+            if (isOccupied && !occupantAvatarUrl.isNullOrBlank()) {
+                AsyncImage(
+                    model = occupantAvatarUrl,
+                    contentDescription = "مايك المالك",
+                    contentScale = ContentScale.Crop,
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .clip(CircleShape)
+                )
+            } else {
+                Icon(
+                    imageVector = Icons.Default.Mic,
+                    contentDescription = "مايك المالك",
+                    tint = when {
+                        !isOccupied -> MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.35f)
+                        isOwnerMuted -> MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.5f)
+                        else -> MujtamaGold
+                    },
+                    modifier = Modifier.size(28.dp)
+                )
+            }
         }
 
         Row(
