@@ -719,7 +719,48 @@ fun blockRoomMember(roomId: String, memberId: String) {
         }
         _userMessage.value = "تم تحديث حالة كتم العضو."
     }
-
+fun requestVoiceSeat(roomId: String, seatNumber: Int) {
+        val room = _chatRooms.value.find { it.id == roomId } ?: return
+        val me = room.members.find { it.id == "me" }
+        if (me?.isMuted == true) {
+            _userMessage.value = "لا يمكنك طلب المايك وأنت مكتوم."
+            return
+        }
+        val requestKey = "${roomId}_me"
+        val lastRequest = lastVoiceSeatRequestTime[requestKey]
+        val now = System.currentTimeMillis()
+        if (lastRequest != null && now - lastRequest < 10 * 60 * 1000) {
+            _userMessage.value = "يمكنك طلب المايك مرة كل 10 دقائق فقط."
+            return
+        }
+        val seat = room.voiceSeats.find { it.seatNumber == seatNumber }
+        if (seat?.occupantId != null) {
+            _userMessage.value = "هذا المقعد مشغول بالفعل."
+            return
+        }
+        if (room.voiceSeatRequests.any { it.requesterId == "me" }) {
+            _userMessage.value = "لديك طلب معلّق بالفعل بانتظار الرد."
+            return
+        }
+        lastVoiceSeatRequestTime[requestKey] = now
+        _chatRooms.update { list ->
+            list.map {
+                if (it.id == roomId) {
+                    it.copy(
+                        voiceSeatRequests = it.voiceSeatRequests + VoiceSeatRequest(
+                            id = "vsr_${System.currentTimeMillis()}",
+                            requesterId = "me",
+                            requesterName = me?.name ?: "أنت",
+                            requesterAvatarUrl = _userProfile.value.avatarUrl,
+                            seatNumber = seatNumber
+                        )
+                    )
+                } else it
+            }
+        }
+        _userMessage.value = "تم إرسال طلب المايك، بانتظار موافقة المالك."
+}
+    
     fun changeRoomMemberRole(roomId: String, memberId: String, newRole: RoomMemberRole) {
         _chatRooms.update { list ->
             list.map {
