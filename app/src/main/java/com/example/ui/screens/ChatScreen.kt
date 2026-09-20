@@ -1984,6 +1984,37 @@ fun RoomVoiceStage(
             }
         }
     }
+
+    val seatNum = seatOptionsFor
+    if (seatNum != null) {
+        val seat = room.voiceSeats.firstOrNull { it.seatNumber == seatNum }
+        androidx.compose.ui.window.Dialog(onDismissRequest = { seatOptionsFor = null }) {
+            Surface(
+                shape = RoundedCornerShape(16.dp),
+                color = MaterialTheme.colorScheme.surface
+            ) {
+                Column(
+                    modifier = Modifier.padding(20.dp),
+                    verticalArrangement = Arrangement.spacedBy(12.dp)
+                ) {
+                    androidx.compose.material3.TextButton(onClick = {
+                        onLeaveVoiceSeat(seatNum)
+                        seatOptionsFor = null
+                    }) {
+                        androidx.compose.material3.Text("نزول من المايك")
+                    }
+                    androidx.compose.material3.TextButton(onClick = {
+                        onMuteVoiceSeat(seatNum)
+                        seatOptionsFor = null
+                    }) {
+                        androidx.compose.material3.Text(
+                            if (seat?.isMuted == true) "إلغاء الكتم" else "كتم نفسي"
+                        )
+                    }
+                }
+            }
+        }
+    }
 }
 
 @Composable
