@@ -1772,12 +1772,11 @@ fun RoomVoiceStage(
         ) {
             // مايك المالك في منتصف الشاشة: بحجم أكبر (58dp) وتصميم زجاجي ذهبي مع هالة توهج
             OwnerVoiceSeat(
-                isOwnerMuted = isOwnerMuted,
-                isSpeaking = isOwnerSpeaking && !isOwnerMuted,
+                isOwnerMuted = room.ownerVoiceSeat.isMuted,
+                isSpeaking = !room.ownerVoiceSeat.isMuted,
                 onClick = {
                     if (isCurrentUserOwner) {
-                        isOwnerMuted = !isOwnerMuted
-                        isOwnerSpeaking = !isOwnerMuted
+                        onToggleOwnerMute()
                     }
                 }
             )
