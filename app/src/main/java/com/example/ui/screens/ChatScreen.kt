@@ -1150,9 +1150,11 @@ Box(modifier = Modifier.fillMaxSize()) {
         RoomVoiceStage(
             room = room,
             isCurrentUserOwner = room.isOwner,
+            isPrivileged = isOwnerOrAdmin,
             onToggleOwnerMute = onToggleOwnerMute,
             onLeaveVoiceSeat = onLeaveVoiceSeat,
-            onMuteVoiceSeat = onMuteVoiceSeat
+            onMuteVoiceSeat = onMuteVoiceSeat,
+            onTakeVoiceSeat = onTakeVoiceSeat
         )
 
         // 5. نقل الرسالة المثبتة (Pinned Message) لتظهر أسفل صف المايكات
