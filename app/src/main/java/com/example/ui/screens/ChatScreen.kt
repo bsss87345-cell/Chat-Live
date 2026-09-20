@@ -1739,6 +1739,7 @@ OutlinedButton(
 fun RoomVoiceStage(
     room: ChatRoom,
     isCurrentUserOwner: Boolean,
+    onToggleOwnerMute: () -> Unit = {},
     modifier: Modifier = Modifier
 ) {
     var isOwnerMuted by remember { mutableStateOf(false) }
