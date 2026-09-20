@@ -826,6 +826,15 @@ fun muteVoiceSeat(roomId: String, seatNumber: Int) {
             }
         }
 }
+fun toggleOwnerVoiceMute(roomId: String) {
+        _chatRooms.update { list ->
+            list.map { room ->
+                if (room.id == roomId) {
+                    room.copy(ownerVoiceSeat = room.ownerVoiceSeat.copy(isMuted = !room.ownerVoiceSeat.isMuted))
+                } else room
+            }
+        }
+    }
 
     fun changeRoomMemberRole(roomId: String, memberId: String, newRole: RoomMemberRole) {
         _chatRooms.update { list ->
