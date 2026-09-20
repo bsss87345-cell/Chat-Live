@@ -141,7 +141,8 @@ fun ChatScreen(
                 onTakeVoiceSeat = onTakeVoiceSeat,
                 onTakeOwnerSeat = onTakeOwnerSeat,
                 onLeaveOwnerSeat = onLeaveOwnerSeat,
-                onRemoveOwnerSeatMember = onRemoveOwnerSeatMember
+                onRemoveOwnerSeatMember = onRemoveOwnerSeatMember,
+                onInviteMemberToOwnerSeat = onInviteMemberToOwnerSeat
             )
             return
         }
