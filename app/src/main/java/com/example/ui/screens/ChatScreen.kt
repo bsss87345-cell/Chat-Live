@@ -980,6 +980,24 @@ fun ChatRoomView(
                                             overflow = androidx.compose.ui.text.style.TextOverflow.Ellipsis,
                                             modifier = Modifier.weight(1f)
                                         )
+                                        if (isOwnerOrAdmin) {
+                                            IconButton(
+                                                onClick = {
+                                                    if (playingTrackIndex == index) {
+                                                        stopMusic()
+                                                    } else if (playingTrackIndex > index) {
+                                                        playingTrackIndex = playingTrackIndex - 1
+                                                    }
+                                                    roomMusicTracks.removeAt(index)
+                                                }
+                                            ) {
+                                                Icon(
+                                                    imageVector = Icons.Default.DeleteOutline,
+                                                    contentDescription = "حذف الموسيقى",
+                                                    tint = MaterialTheme.colorScheme.error
+                                                )
+                                            }
+                                        }
                                     }
                                 }
                             }
