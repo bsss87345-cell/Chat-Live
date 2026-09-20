@@ -133,12 +133,12 @@ fun ChatScreen(
                 onRespondVoiceSeatRequest = onRespondVoiceSeatRequest,
                 onLeaveVoiceSeat = onLeaveVoiceSeat,
                 onMuteVoiceSeat = onMuteVoiceSeat,
-                onToggleOwnerMute = onToggleOwnerVoiceMute
+                onToggleOwnerMute = onToggleOwnerVoiceMute,
+                onTakeVoiceSeat = onTakeVoiceSeat
             )
             return
         }
     }
-
     // 3. Main Chat View with SubTabs ("المحادثات الخاصة" / "غرف الدردشة")
     Column(modifier = Modifier.fillMaxSize()) {
         // Sub-Tab Switcher
