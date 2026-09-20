@@ -988,7 +988,14 @@ Box(modifier = Modifier.fillMaxSize()) {
         }
 
         // Messages Stream
+        val roomListState = androidx.compose.foundation.lazy.rememberLazyListState()
+        androidx.compose.runtime.LaunchedEffect(room.messages.size) {
+            if (room.messages.isNotEmpty()) {
+                roomListState.animateScrollToItem(room.messages.lastIndex)
+            }
+        }
         LazyColumn(
+            state = roomListState,
             modifier = Modifier
                 .weight(1f)
                 .fillMaxWidth()
