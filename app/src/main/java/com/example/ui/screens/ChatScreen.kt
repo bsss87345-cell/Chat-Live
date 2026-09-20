@@ -86,6 +86,7 @@ fun ChatScreen(
     onLeaveVoiceSeat: (Int) -> Unit = {},
     onMuteVoiceSeat: (Int) -> Unit = {},
     onToggleOwnerVoiceMute: () -> Unit = {},
+    onTakeVoiceSeat: (Int) -> Unit = {},
     myAvatarUrl: String = ""
 ) {
     // 1. If an active direct conversation is open
