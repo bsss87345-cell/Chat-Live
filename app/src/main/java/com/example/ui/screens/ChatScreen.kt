@@ -1742,8 +1742,6 @@ fun RoomVoiceStage(
     onToggleOwnerMute: () -> Unit = {},
     modifier: Modifier = Modifier
 ) {
-    var isOwnerMuted by remember { mutableStateOf(false) }
-    var isOwnerSpeaking by remember { mutableStateOf(!isOwnerMuted) }
     var activeSpeakerSeat by remember { mutableStateOf<Int?>(1) }
     var userSeat by remember { mutableStateOf<Int?>(if (!isCurrentUserOwner) 2 else null) }
 
