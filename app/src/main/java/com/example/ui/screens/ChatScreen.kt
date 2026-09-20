@@ -1985,6 +1985,8 @@ fun RoomVoiceStage(
                             onClick = {
                                 if (seat?.occupantId == "me") {
                                     seatOptionsFor = seatNum
+                                } else if (!occupied && isPrivileged) {
+                                    seatToConfirmTake = seatNum
                                 }
                             }
                         )
@@ -1992,6 +1994,28 @@ fun RoomVoiceStage(
                 }
             }
         }
+    }
+
+    val confirmSeatNum = seatToConfirmTake
+    if (confirmSeatNum != null) {
+        androidx.compose.material3.AlertDialog(
+            onDismissRequest = { seatToConfirmTake = null },
+            title = { androidx.compose.material3.Text("الصعود على المايك") },
+            text = { androidx.compose.material3.Text("هل تريد الصعود على المقعد رقم $confirmSeatNum؟") },
+            confirmButton = {
+                androidx.compose.material3.TextButton(onClick = {
+                    onTakeVoiceSeat(confirmSeatNum)
+                    seatToConfirmTake = null
+                }) {
+                    androidx.compose.material3.Text("صعود")
+                }
+            },
+            dismissButton = {
+                androidx.compose.material3.TextButton(onClick = { seatToConfirmTake = null }) {
+                    androidx.compose.material3.Text("إلغاء")
+                }
+            }
+        )
     }
 
     val seatNum = seatOptionsFor
