@@ -1978,13 +1978,6 @@ fun RoomMessageBubble(
                         }
                     }
 
-                    Spacer(modifier = Modifier.height(4.dp))
-                    Text(
-                        text = message.timestamp,
-                        fontSize = 10.sp,
-                        color = textColor.copy(alpha = 0.6f),
-                        modifier = Modifier.align(Alignment.End)
-                    )
                 }
             }
         }
