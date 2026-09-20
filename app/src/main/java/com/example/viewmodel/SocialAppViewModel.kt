@@ -569,7 +569,13 @@ fun joinChatRoom(roomId: String, passwordInput: String = ""): Boolean {
                     it.copy(
                         isJoined = false,
                         memberCount = (it.memberCount - 1).coerceAtLeast(0),
-                        members = it.members.filter { m -> m.id != "me" }
+                        members = it.members.filter { m -> m.id != "me" },
+                        voiceSeats = it.voiceSeats.map { seat ->
+                            if (seat.occupantId == "me") {
+                                seat.copy(occupantId = null, occupantName = null, occupantAvatarUrl = null, isMuted = false)
+                            } else seat
+                        },
+                        voiceSeatRequests = it.voiceSeatRequests.filter { req -> req.requesterId != "me" }
                     )
                 } else it
             }
