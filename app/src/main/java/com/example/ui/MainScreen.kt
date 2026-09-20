@@ -247,7 +247,8 @@ fun MainScreen(viewModel: SocialAppViewModel) {
                                 onTakeVoiceSeat = { seatNumber -> viewModel.takeVoiceSeatDirectly(activeRoomId ?: "", seatNumber) },
                                 onTakeOwnerSeat = { viewModel.takeOwnerVoiceSeatDirectly(activeRoomId ?: "") },
                                 onLeaveOwnerSeat = { viewModel.leaveOwnerVoiceSeat(activeRoomId ?: "") },
-                                onRemoveOwnerSeatMember = { viewModel.removeMemberFromOwnerSeat(activeRoomId ?: "") }
+                                onRemoveOwnerSeatMember = { viewModel.removeMemberFromOwnerSeat(activeRoomId ?: "") },
+                                onInviteMemberToOwnerSeat = { memberId -> viewModel.inviteMemberToOwnerSeat(activeRoomId ?: "", memberId) }
                             )
                         }
 
