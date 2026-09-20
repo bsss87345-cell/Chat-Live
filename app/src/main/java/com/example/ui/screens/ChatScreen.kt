@@ -1973,7 +1973,11 @@ fun RoomVoiceStage(
                             isSpeaking = occupied && seat?.isMuted == false,
                             occupantName = seat?.occupantName,
                             occupantAvatarUrl = seat?.occupantAvatarUrl,
-                            onClick = { }
+                            onClick = {
+                                if (seat?.occupantId == "me") {
+                                    seatOptionsFor = seatNum
+                                }
+                            }
                         )
                     }
                 }
