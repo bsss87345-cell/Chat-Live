@@ -1728,6 +1728,101 @@ OutlinedButton(
             }
         )
     }
+    // Voice Mic Request Dialog: مالك/مشرف = قائمة طلبات، عضو = اختيار مقعد فارغ
+    if (showVoiceMicDialog) {
+        if (isOwnerOrAdmin) {
+            AlertDialog(
+                onDismissRequest = { showVoiceMicDialog = false },
+                title = { Text("طلبات المايك (${room.voiceSeatRequests.size})") },
+                text = {
+                    if (room.voiceSeatRequests.isEmpty()) {
+                        Text("لا توجد طلبات حالياً.", fontSize = 13.sp)
+                    } else {
+                        LazyColumn(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                            items(room.voiceSeatRequests, key = { it.id }) { request ->
+                                Row(
+                                    modifier = Modifier.fillMaxWidth(),
+                                    verticalAlignment = Alignment.CenterVertically,
+                                    horizontalArrangement = Arrangement.SpaceBetween
+                                ) {
+                                    Row(
+                                        verticalAlignment = Alignment.CenterVertically,
+                                        horizontalArrangement = Arrangement.spacedBy(8.dp)
+                                    ) {
+                                        Box(
+                                            modifier = Modifier
+                                                .size(32.dp)
+                                                .clip(CircleShape)
+                                                .background(MujtamaPrimary),
+                                            contentAlignment = Alignment.Center
+                                        ) {
+                                            if (request.requesterAvatarUrl.isNotBlank()) {
+                                                AsyncImage(
+                                                    model = request.requesterAvatarUrl,
+                                                    contentDescription = request.requesterName,
+                                                    contentScale = ContentScale.Crop,
+                                                    modifier = Modifier.fillMaxSize().clip(CircleShape)
+                                                )
+                                            } else {
+                                                Text(request.requesterName.take(1), color = Color.White, fontSize = 12.sp)
+                                            }
+                                        }
+                                        Text(request.requesterName, fontSize = 13.sp, fontWeight = FontWeight.Bold)
+                                    }
+                                    Row(horizontalArrangement = Arrangement.spacedBy(4.dp)) {
+                                        IconButton(onClick = { onRespondVoiceSeatRequest(request.id, true) }, modifier = Modifier.size(28.dp)) {
+                                            Icon(Icons.Default.Check, contentDescription = "قبول", tint = MujtamaOnlineGreen, modifier = Modifier.size(18.dp))
+                                        }
+                                        IconButton(onClick = { onRespondVoiceSeatRequest(request.id, false) }, modifier = Modifier.size(28.dp)) {
+                                            Icon(Icons.Default.Close, contentDescription = "رفض", tint = MaterialTheme.colorScheme.error, modifier = Modifier.size(18.dp))
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                confirmButton = {},
+                dismissButton = {
+                    TextButton(onClick = { showVoiceMicDialog = false }) {
+                        Text("إغلاق")
+                    }
+                }
+            )
+        } else {
+            val emptySeats = room.voiceSeats.filter { it.occupantId.isBlank() }.map { it.seatNumber }
+            AlertDialog(
+                onDismissRequest = { showVoiceMicDialog = false },
+                title = { Text("طلب مايك") },
+                text = {
+                    if (emptySeats.isEmpty()) {
+                        Text("لا توجد مقاعد فارغة حالياً.", fontSize = 13.sp)
+                    } else {
+                        Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                            emptySeats.forEach { seatNum ->
+                                OutlinedButton(
+                                    onClick = {
+                                        onRequestVoiceSeat(seatNum)
+                                        showVoiceMicDialog = false
+                                    },
+                                    modifier = Modifier.fillMaxWidth()
+                                ) {
+                                    Text("مقعد رقم $seatNum")
+                                }
+                            }
+                        }
+                    }
+                },
+                confirmButton = {},
+                dismissButton = {
+                    TextButton(onClick = { showVoiceMicDialog = false }) {
+                        Text("إلغاء")
+                    }
+                }
+            )
+        }
+    }
+
     // Pin Message Dialog
     if (showPinDialog) {
         var pinInput by remember { mutableStateOf("") }
