@@ -2458,19 +2458,14 @@ fun RoomMessageBubble(
             horizontalArrangement = Arrangement.spacedBy(6.dp)
         ) {
             if (message.isFromMe && myAvatarUrl.isNotEmpty()) {
-                val myRoomMsgAvatarBitmap = remember(myAvatarUrl) {
-                    BitmapFactory.decodeFile(myAvatarUrl)?.asImageBitmap()
-                }
-                if (myRoomMsgAvatarBitmap != null) {
-                    Image(
-                        bitmap = myRoomMsgAvatarBitmap,
-                        contentDescription = null,
-                        contentScale = ContentScale.Crop,
-                        modifier = Modifier
-                            .size(28.dp)
-                            .clip(CircleShape)
-                    )
-                }
+                AsyncImage(
+                    model = myAvatarUrl,
+                    contentDescription = null,
+                    contentScale = ContentScale.Crop,
+                    modifier = Modifier
+                        .size(28.dp)
+                        .clip(CircleShape)
+                )
             }
         Column(
             horizontalAlignment = Alignment.Start,
