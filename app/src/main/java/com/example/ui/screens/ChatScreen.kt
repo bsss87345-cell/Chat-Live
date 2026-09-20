@@ -1959,6 +1959,8 @@ fun RoomVoiceStage(
                             onClick = {
                                 if (seat?.occupantId == "me") {
                                     seatOptionsFor = seatNum
+                                } else if (!occupied && isPrivileged) {
+                                    seatToConfirmTake = seatNum
                                 }
                             }
                         )
