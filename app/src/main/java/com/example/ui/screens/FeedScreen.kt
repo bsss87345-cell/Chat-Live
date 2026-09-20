@@ -510,12 +510,21 @@ fun PostCard(
                         ),
                     contentAlignment = Alignment.Center
                 ) {
-                    Text(
-                        text = post.authorName.take(1),
-                        color = Color.White,
-                        fontWeight = FontWeight.Bold,
-                        fontSize = 18.sp
-                    )
+                    if (post.authorAvatarUrl.isNotBlank()) {
+                        AsyncImage(
+                            model = post.authorAvatarUrl,
+                            contentDescription = post.authorName,
+                            modifier = Modifier.fillMaxSize().clip(CircleShape),
+                            contentScale = ContentScale.Crop
+                        )
+                    } else {
+                        Text(
+                            text = post.authorName.take(1),
+                            color = Color.White,
+                            fontWeight = FontWeight.Bold,
+                            fontSize = 18.sp
+                        )
+                    }
                 }
 
                 // اسم المستخدم + زر المتابعة بجانبه مباشرة + تاريخ ووقت النشر فقط
