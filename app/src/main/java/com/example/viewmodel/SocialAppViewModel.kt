@@ -790,6 +790,21 @@ fun respondToVoiceSeatRequest(roomId: String, requestId: String, accept: Boolean
         }
         _userMessage.value = if (accept) "تم قبول الطلب وصعود العضو للمايك." else "تم رفض الطلب."
     }
+fun leaveVoiceSeat(roomId: String, seatNumber: Int) {
+        _chatRooms.update { list ->
+            list.map { room ->
+                if (room.id == roomId) {
+                    room.copy(
+                        voiceSeats = room.voiceSeats.map { seat ->
+                            if (seat.seatNumber == seatNumber) {
+                                seat.copy(occupantId = null, occupantName = null, occupantAvatarUrl = null, isMuted = false)
+                            } else seat
+                        }
+                    )
+                } else room
+            }
+        }
+}
 
     fun changeRoomMemberRole(roomId: String, memberId: String, newRole: RoomMemberRole) {
         _chatRooms.update { list ->
