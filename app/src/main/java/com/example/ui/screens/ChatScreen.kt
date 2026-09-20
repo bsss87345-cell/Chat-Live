@@ -81,6 +81,11 @@ fun ChatScreen(
     onUpdateBackground: (String, String) -> Unit,
     onBlockMember: (String, String) -> Unit,
     onUnblockMember: (String, String) -> Unit,
+    onRequestVoiceSeat: (Int) -> Unit = {},
+    onRespondVoiceSeatRequest: (String, Boolean) -> Unit = { _, _ -> },
+    onLeaveVoiceSeat: (Int) -> Unit = {},
+    onMuteVoiceSeat: (Int) -> Unit = {},
+    onToggleOwnerVoiceMute: () -> Unit = {},
     myAvatarUrl: String = ""
 ) {
     // 1. If an active direct conversation is open
