@@ -835,27 +835,152 @@ fun ChatRoomView(
     val musicPickerLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.OpenDocument(),
         onResult = { uri: Uri? ->
-            if (uri != null) {
+            if (uri != null && roomMusicTracks.size < 10) {
+                var trackName = "مقطع صوتي"
                 try {
-                    roomMusicPlayer?.release()
-                    val player = android.media.MediaPlayer()
-                    player.setDataSource(roomContext, uri)
-                    player.isLooping = true
-                    player.setOnPreparedListener { it.start() }
-                    player.prepareAsync()
-                    roomMusicPlayer = player
-                    isMusicPlaying = true
+                    roomContext.contentResolver.query(uri, null, null, null, null)?.use { cursor ->
+                        val nameIndex = cursor.getColumnIndex(android.provider.OpenableColumns.DISPLAY_NAME)
+                        if (nameIndex >= 0 && cursor.moveToFirst()) {
+                            trackName = cursor.getString(nameIndex) ?: trackName
+                        }
+                    }
                 } catch (e: Exception) {
-                    isMusicPlaying = false
-                    android.widget.Toast.makeText(
-                        roomContext,
-                        "تعذر تشغيل الملف",
-                        android.widget.Toast.LENGTH_SHORT
-                    ).show()
                 }
+                roomMusicTracks.add(Pair(trackName, uri))
             }
         }
     )
+
+    val stopMusic: () -> Unit = {
+        roomMusicPlayer?.release()
+        roomMusicPlayer = null
+        isMusicPlaying = false
+        playingTrackIndex = -1
+    }
+
+    val playTrack: (Int) -> Unit = { index ->
+        try {
+            roomMusicPlayer?.release()
+            val player = android.media.MediaPlayer()
+            player.setDataSource(roomContext, roomMusicTracks[index].second)
+            player.isLooping = true
+            player.setOnPreparedListener { it.start() }
+            player.prepareAsync()
+            roomMusicPlayer = player
+            isMusicPlaying = true
+            playingTrackIndex = index
+        } catch (e: Exception) {
+            roomMusicPlayer = null
+            isMusicPlaying = false
+            playingTrackIndex = -1
+            android.widget.Toast.makeText(
+                roomContext,
+                "تعذر تشغيل الملف",
+                android.widget.Toast.LENGTH_SHORT
+            ).show()
+        }
+    }
+
+    if (showMusicPage) {
+        androidx.compose.ui.window.Dialog(
+            onDismissRequest = { showMusicPage = false },
+            properties = androidx.compose.ui.window.DialogProperties(usePlatformDefaultWidth = false)
+        ) {
+            Surface(
+                modifier = Modifier.fillMaxSize(),
+                color = MaterialTheme.colorScheme.background
+            ) {
+                Column(modifier = Modifier.fillMaxSize().padding(top = 24.dp)) {
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = 8.dp, vertical = 6.dp),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        IconButton(onClick = { showMusicPage = false }) {
+                            Icon(Icons.Default.ArrowForward, contentDescription = "رجوع")
+                        }
+                        Text(
+                            text = "موسيقى الغرفة (${roomMusicTracks.size}/10)",
+                            fontWeight = FontWeight.Bold,
+                            fontSize = 16.sp,
+                            modifier = Modifier.weight(1f),
+                            textAlign = androidx.compose.ui.text.style.TextAlign.Center
+                        )
+                        if (isOwnerOrAdmin) {
+                            Button(
+                                onClick = {
+                                    if (roomMusicTracks.size >= 10) {
+                                        android.widget.Toast.makeText(
+                                            roomContext,
+                                            "الحد الأقصى 10 مقاطع",
+                                            android.widget.Toast.LENGTH_SHORT
+                                        ).show()
+                                    } else {
+                                        musicPickerLauncher.launch(arrayOf("audio/*"))
+                                    }
+                                },
+                                colors = ButtonDefaults.buttonColors(containerColor = MujtamaGold)
+                            ) {
+                                Icon(Icons.Default.Add, contentDescription = null, tint = Color.Black)
+                                Text(text = "إضافة", color = Color.Black, fontWeight = FontWeight.Bold)
+                            }
+                        }
+                    }
+
+                    if (roomMusicTracks.isEmpty()) {
+                        Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                            Text(
+                                text = "لا توجد موسيقى في الغرفة بعد",
+                                color = MaterialTheme.colorScheme.onSurfaceVariant
+                            )
+                        }
+                    } else {
+                        LazyColumn(
+                            modifier = Modifier.fillMaxSize(),
+                            contentPadding = PaddingValues(12.dp),
+                            verticalArrangement = Arrangement.spacedBy(8.dp)
+                        ) {
+                            items(roomMusicTracks.size) { index ->
+                                val isThisPlaying = playingTrackIndex == index
+                                Card(
+                                    shape = RoundedCornerShape(10.dp),
+                                    colors = CardDefaults.cardColors(
+                                        containerColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f)
+                                    )
+                                ) {
+                                    Row(
+                                        modifier = Modifier
+                                            .fillMaxWidth()
+                                            .padding(8.dp),
+                                        verticalAlignment = Alignment.CenterVertically,
+                                        horizontalArrangement = Arrangement.spacedBy(8.dp)
+                                    ) {
+                                        IconButton(
+                                            onClick = { if (isThisPlaying) stopMusic() else playTrack(index) }
+                                        ) {
+                                            Icon(
+                                                imageVector = if (isThisPlaying) Icons.Default.Stop else Icons.Default.PlayArrow,
+                                                contentDescription = if (isThisPlaying) "إيقاف" else "تشغيل",
+                                                tint = if (isThisPlaying) MujtamaGold else MujtamaTeal
+                                            )
+                                        }
+                                        Text(
+                                            text = roomMusicTracks[index].first,
+                                            fontSize = 14.sp,
+                                            maxLines = 1,
+                                            overflow = androidx.compose.ui.text.style.TextOverflow.Ellipsis,
+                                            modifier = Modifier.weight(1f)
+                                        )
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
 
     // Intercept system back button/gesture to leave room smoothly
     BackHandler(onBack = onBack)
