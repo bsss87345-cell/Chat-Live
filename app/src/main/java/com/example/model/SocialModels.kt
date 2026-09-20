@@ -122,6 +122,23 @@ data class RoomMember(
     val avatarUrl: String = ""
 )
 
+data class VoiceSeat(
+    val seatNumber: Int,
+    val occupantId: String? = null,
+    val occupantName: String? = null,
+    val occupantAvatarUrl: String? = null,
+    val isMuted: Boolean = false
+)
+
+data class VoiceSeatRequest(
+    val id: String,
+    val requesterId: String,
+    val requesterName: String,
+    val requesterAvatarUrl: String = "",
+    val seatNumber: Int,
+    val requestedAtMillis: Long = System.currentTimeMillis()
+)
+
 data class ChatRoom(
     val id: String,
     val name: String,
