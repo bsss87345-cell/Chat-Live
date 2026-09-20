@@ -1866,7 +1866,7 @@ fun RoomMessageBubble(
                 ),
                 color = bubbleColor
             ) {
-                Column(modifier = Modifier.padding(12.dp)) {
+                Column(modifier = Modifier.padding(horizontal = 12.dp, vertical = 8.dp)) {
                     when (message.type) {
                         ChatMessageType.TEXT -> {
                             Text(text = message.text, color = textColor, fontSize = 13.sp)
