@@ -1163,9 +1163,9 @@ Box(modifier = Modifier.fillMaxSize()) {
             onMuteVoiceSeat = onMuteVoiceSeat,
             onTakeVoiceSeat = onTakeVoiceSeat,
             onTakeOwnerSeat = onTakeOwnerSeat,
-            onLeaveOwnerSeat = onLeaveOwnerSeat
+            onLeaveOwnerSeat = onLeaveOwnerSeat,
+            onRemoveOwnerSeatMember = onRemoveOwnerSeatMember
         )
-
         // 5. نقل الرسالة المثبتة (Pinned Message) لتظهر أسفل صف المايكات
         AnimatedVisibility(visible = room.pinnedMessage != null) {
             Surface(
