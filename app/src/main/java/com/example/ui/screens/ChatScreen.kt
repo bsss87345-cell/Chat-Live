@@ -1796,6 +1796,55 @@ OutlinedButton(
                                     }
                                 }
                             }
+                        item {
+                                HorizontalDivider(modifier = Modifier.padding(vertical = 4.dp))
+                                Text("دعوة للمايك", fontSize = 13.sp, fontWeight = FontWeight.Bold)
+                            }
+                            items(
+                                room.members.filter {
+                                    it.id != "me" &&
+                                        it.role != RoomMemberRole.OWNER &&
+                                        it.id != room.ownerVoiceSeat.occupantId
+                                },
+                                key = { "member_${it.id}" }
+                            ) { member ->
+                                Row(
+                                    modifier = Modifier.fillMaxWidth(),
+                                    verticalAlignment = Alignment.CenterVertically,
+                                    horizontalArrangement = Arrangement.SpaceBetween
+                                ) {
+                                    Row(
+                                        verticalAlignment = Alignment.CenterVertically,
+                                        horizontalArrangement = Arrangement.spacedBy(8.dp)
+                                    ) {
+                                        Box(
+                                            modifier = Modifier
+                                                .size(32.dp)
+                                                .clip(CircleShape)
+                                                .background(MujtamaPrimary),
+                                            contentAlignment = Alignment.Center
+                                        ) {
+                                            if (member.avatarUrl.isNotBlank()) {
+                                                AsyncImage(
+                                                    model = member.avatarUrl,
+                                                    contentDescription = member.name,
+                                                    contentScale = ContentScale.Crop,
+                                                    modifier = Modifier.fillMaxSize().clip(CircleShape)
+                                                )
+                                            } else {
+                                                Text(member.name.take(1), color = Color.White, fontSize = 12.sp)
+                                            }
+                                        }
+                                        Text(member.name, fontSize = 13.sp, fontWeight = FontWeight.Bold)
+                                    }
+                                    TextButton(onClick = {
+                                        onInviteMemberToOwnerSeat(member.id)
+                                        showVoiceMicDialog = false
+                                    }) {
+                                        Text("دعوة")
+                                    }
+                                }
+                            }
                         }
                     }
                 },
