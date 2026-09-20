@@ -819,6 +819,41 @@ fun ChatRoomView(
         }
     )
 
+    var roomMusicPlayer by remember { mutableStateOf<android.media.MediaPlayer?>(null) }
+    var isMusicPlaying by remember { mutableStateOf(false) }
+
+    androidx.compose.runtime.DisposableEffect(Unit) {
+        onDispose {
+            roomMusicPlayer?.release()
+            roomMusicPlayer = null
+        }
+    }
+
+    val musicPickerLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.OpenDocument(),
+        onResult = { uri: Uri? ->
+            if (uri != null) {
+                try {
+                    roomMusicPlayer?.release()
+                    val player = android.media.MediaPlayer()
+                    player.setDataSource(roomContext, uri)
+                    player.isLooping = true
+                    player.setOnPreparedListener { it.start() }
+                    player.prepareAsync()
+                    roomMusicPlayer = player
+                    isMusicPlaying = true
+                } catch (e: Exception) {
+                    isMusicPlaying = false
+                    android.widget.Toast.makeText(
+                        roomContext,
+                        "تعذر تشغيل الملف",
+                        android.widget.Toast.LENGTH_SHORT
+                    ).show()
+                }
+            }
+        }
+    )
+
     // Intercept system back button/gesture to leave room smoothly
     BackHandler(onBack = onBack)
 
