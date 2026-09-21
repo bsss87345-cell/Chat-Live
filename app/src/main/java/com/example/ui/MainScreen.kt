@@ -294,7 +294,9 @@ fun MainScreen(viewModel: SocialAppViewModel) {
                         AppTab.PROFILE -> {
                             val userProfile by viewModel.userProfile.collectAsStateWithLifecycle()
                             val posts by viewModel.posts.collectAsStateWithLifecycle()
-                            ProfileScreen(
+                            val followersList by viewModel.followersList.collectAsStateWithLifecycle()
+            val followingList by viewModel.followingList.collectAsStateWithLifecycle()
+            ProfileScreen(
                                 userProfile = userProfile,
                                 posts = posts,
                                 balance = walletBalance,
