@@ -110,22 +110,24 @@ fun ProfileScreen(
                     verticalArrangement = Arrangement.spacedBy(12.dp)
                 ) {
                     // Menu icon (top-left corner in RTL) → opens the separate account-settings page
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.End
-                    ) {
-                        IconButton(
-                            onClick = { onOpenAccountSettings() },
-                            modifier = Modifier
-                                .size(32.dp)
-                                .testTag("profile_settings_menu_button")
+                    if (isOnOwnProfile) {
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.End
                         ) {
-                            Icon(
-                                imageVector = Icons.Default.Menu,
-                                contentDescription = "القائمة",
-                                tint = MaterialTheme.colorScheme.onSurface,
-                                modifier = Modifier.size(22.dp)
-                            )
+                            IconButton(
+                                onClick = { onOpenAccountSettings() },
+                                modifier = Modifier
+                                    .size(32.dp)
+                                    .testTag("profile_settings_menu_button")
+                            ) {
+                                Icon(
+                                    imageVector = Icons.Default.Menu,
+                                    contentDescription = "القائمة",
+                                    tint = MaterialTheme.colorScheme.onSurface,
+                                    modifier = Modifier.size(22.dp)
+                                )
+                            }
                         }
                     }
 
