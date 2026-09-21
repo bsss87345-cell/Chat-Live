@@ -1089,11 +1089,22 @@ fun StoryViewerDialog(
                                         .background(MujtamaTeal),
                                     contentAlignment = Alignment.Center
                                 ) {
-                                    Text(
-                                        text = story.authorName.take(1),
-                                        color = Color.White,
-                                        fontWeight = FontWeight.Bold
-                                    )
+                                    if (!story.authorAvatarUrl.isNullOrBlank()) {
+                                        AsyncImage(
+                                            model = story.authorAvatarUrl,
+                                            contentDescription = null,
+                                            modifier = Modifier
+                                                .fillMaxSize()
+                                                .clip(CircleShape),
+                                            contentScale = ContentScale.Crop
+                                        )
+                                    } else {
+                                        Text(
+                                            text = story.authorName.take(1),
+                                            color = Color.White,
+                                            fontWeight = FontWeight.Bold
+                                        )
+                                    }
                                 }
                                 Column {
                                     Text(
