@@ -202,34 +202,22 @@ fun ProfileScreen(
                         )
                     }
 
-                    // Bio Box (only shown if bio is non-empty; tap-to-edit works only on own profile)
+                    // Bio (plain text, no box — shown for own profile and others)
                     if (userProfile.bio.isNotBlank()) {
-                        Surface(
+                        Text(
+                            text = userProfile.bio,
+                            fontSize = 12.sp,
+                            color = MaterialTheme.colorScheme.onSurface,
+                            lineHeight = 17.sp,
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .clip(RoundedCornerShape(12.dp))
+                                .padding(horizontal = 12.dp, vertical = 8.dp)
                                 .then(
                                     if (isOnOwnProfile) Modifier.clickable { showEditBioDialog = true }
                                     else Modifier
-                                ),
-                            color = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.45f)
-                        ) {
-                            Row(
-                                modifier = Modifier.padding(horizontal = 12.dp, vertical = 8.dp),
-                                verticalAlignment = Alignment.CenterVertically,
-                                horizontalArrangement = Arrangement.SpaceBetween
-                            ) {
-                                Text(
-                                    text = userProfile.bio,
-                                    fontSize = 12.sp,
-                                    color = MaterialTheme.colorScheme.onSurface,
-                                    modifier = Modifier.weight(1f),
-                                    lineHeight = 17.sp
                                 )
-                            }
-                        }
+                        )
                     }
-
                     // Stats Grid Row (Posts, Followers, Following)
                     Row(
                         modifier = Modifier
