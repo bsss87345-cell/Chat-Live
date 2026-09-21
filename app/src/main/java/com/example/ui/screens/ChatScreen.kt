@@ -144,6 +144,7 @@ fun ChatScreen(
                 onStartRoomGame = { gameType -> onStartInRoomGame(activeRoom.id, gameType) },
                 onPlayGameDirectly = onNavigateToGames,
                 myAvatarUrl = myAvatarUrl,
+                myName = myName,
                 onRequestVoiceSeat = onRequestVoiceSeat,
                 onRespondVoiceSeatRequest = onRespondVoiceSeatRequest,
                 onLeaveVoiceSeat = onLeaveVoiceSeat,
