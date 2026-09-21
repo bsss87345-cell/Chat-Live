@@ -25,6 +25,13 @@ data class UserProfile(
     val privacyLevel: String = "عام للجميع"
 )
 
+data class FollowUser(
+    val id: String = "",
+    val name: String = "",
+    val handle: String = "",
+    val avatarUrl: String = ""
+)
+
 enum class StoryMediaType {
     PHOTO, VIDEO, TEXT
 }
