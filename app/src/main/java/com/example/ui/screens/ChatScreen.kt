@@ -42,6 +42,8 @@ import androidx.compose.foundation.Image
 import androidx.compose.ui.graphics.asImageBitmap
 import android.net.Uri
 import coil.compose.AsyncImage
+import androidx.compose.ui.res.painterResource
+import com.example.R
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
