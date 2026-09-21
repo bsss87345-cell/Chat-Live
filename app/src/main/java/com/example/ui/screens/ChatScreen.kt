@@ -1303,7 +1303,7 @@ Box(modifier = Modifier.fillMaxSize()) {
                             showGiftBoxDialog = false
                             val receiverLabel = receiver?.name ?: "الجميع"
                             val existingIndex = activeGiftEvents.indexOfFirst {
-                                it.senderName == "أنا" &&
+                                it.senderName == (myName.ifBlank { "أنا" }) &&
                                     it.receiverName == receiverLabel &&
                                     it.giftEmoji == gift.emoji
                             }
