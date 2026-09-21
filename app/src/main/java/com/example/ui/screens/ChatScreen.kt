@@ -1410,7 +1410,8 @@ Box(modifier = Modifier.fillMaxSize()) {
             activeGiftEvents.forEach { event ->
                 androidx.compose.runtime.key(event.id) {
                     var visible by remember { mutableStateOf(true) }
-                    androidx.compose.runtime.LaunchedEffect(event.id) {
+                    androidx.compose.runtime.LaunchedEffect(event.id, event.giftCount) {
+                        visible = true
                         kotlinx.coroutines.delay(2000)
                         visible = false
                         kotlinx.coroutines.delay(300)
