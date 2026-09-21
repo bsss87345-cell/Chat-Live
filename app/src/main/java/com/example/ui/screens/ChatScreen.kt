@@ -3305,3 +3305,79 @@ fun GamePickerDialog(
         }
     }
 }
+data class GiftItem(
+    val id: String,
+    val name: String,
+    val emoji: String,
+    val colorHex: Long
+)
+
+private val roomGiftCatalog = listOf(
+    GiftItem(id = "rose", name = "وردة", emoji = "🌹", colorHex = 0xFFE0245E),
+    GiftItem(id = "teddy_bear", name = "دبدوب", emoji = "🧸", colorHex = 0xFFB5651D),
+    GiftItem(id = "kafo", name = "كفو", emoji = "👏", colorHex = 0xFF1E88E5),
+    GiftItem(id = "coffee", name = "قهوة", emoji = "☕", colorHex = 0xFF6F4E37)
+)
+
+@Composable
+fun GiftBoxDialog(
+    onDismiss: () -> Unit,
+    onSendGift: (GiftItem) -> Unit
+) {
+    androidx.compose.ui.window.Dialog(onDismissRequest = onDismiss) {
+        androidx.compose.material3.Card(
+            modifier = Modifier
+                .fillMaxWidth()
+                .testTag("room_gift_box_dialog"),
+            shape = RoundedCornerShape(24.dp),
+            colors = androidx.compose.material3.CardDefaults.cardColors(
+                containerColor = MaterialTheme.colorScheme.surface
+            )
+        ) {
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(20.dp)
+            ) {
+                Text(
+                    text = "صندوق الهدايا",
+                    fontSize = 16.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = MujtamaGold,
+                    modifier = Modifier.padding(bottom = 16.dp)
+                )
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceEvenly
+                ) {
+                    roomGiftCatalog.forEach { gift ->
+                        Column(
+                            horizontalAlignment = Alignment.CenterHorizontally,
+                            modifier = Modifier
+                                .clip(RoundedCornerShape(16.dp))
+                                .clickable { onSendGift(gift) }
+                                .padding(8.dp)
+                        ) {
+                            Box(
+                                modifier = Modifier
+                                    .size(56.dp)
+                                    .clip(CircleShape)
+                                    .background(Color(gift.colorHex).copy(alpha = 0.18f)),
+                                contentAlignment = Alignment.Center
+                            ) {
+                                Text(text = gift.emoji, fontSize = 26.sp)
+                            }
+                            Spacer(modifier = Modifier.height(6.dp))
+                            Text(
+                                text = gift.name,
+                                fontSize = 12.sp,
+                                fontWeight = FontWeight.Medium,
+                                color = MaterialTheme.colorScheme.onSurface
+                            )
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
