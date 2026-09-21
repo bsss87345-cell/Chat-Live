@@ -3332,28 +3332,87 @@ fun GiftBoxDialog(
     members: List<RoomMember> = emptyList(),
     walletBalance: Int = 0
 ) {
+    var selectedMember by remember { mutableStateOf<RoomMember?>(null) }
+    var showMemberPicker by remember { mutableStateOf(false) }
     val sheetState = androidx.compose.material3.rememberModalBottomSheetState(skipPartiallyExpanded = true)
     androidx.compose.material3.ModalBottomSheet(
         onDismissRequest = onDismiss,
         sheetState = sheetState,
+        containerColor = Color.Transparent,
         modifier = Modifier.testTag("room_gift_box_dialog")
     ) {
         Column(
             modifier = Modifier
                 .fillMaxWidth()
+                .background(
+                    Brush.verticalGradient(
+                        colors = listOf(Color(0xFF2A0F4E), Color(0xFF120823))
+                    ),
+                    shape = RoundedCornerShape(topStart = 24.dp, topEnd = 24.dp)
+                )
                 .navigationBarsPadding()
                 .padding(20.dp)
         ) {
-            Text(
-                text = "صندوق الهدايا",
-                fontSize = 16.sp,
-                fontWeight = FontWeight.Bold,
-                color = MujtamaGold,
-                modifier = Modifier.padding(bottom = 16.dp)
-            )
             Row(
                 modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceEvenly
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text(
+                    text = "صندوق الهدايا",
+                    fontSize = 16.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = MujtamaGold
+                )
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    modifier = Modifier
+                        .clip(RoundedCornerShape(20.dp))
+                        .background(Color.White.copy(alpha = 0.08f))
+                        .padding(horizontal = 12.dp, vertical = 6.dp)
+                ) {
+                    Text(text = "💰", fontSize = 14.sp)
+                    Spacer(modifier = Modifier.width(4.dp))
+                    Text(
+                        text = "$walletBalance",
+                        fontSize = 13.sp,
+                        fontWeight = FontWeight.Bold,
+                        color = Color.White
+                    )
+                }
+            }
+            Spacer(modifier = Modifier.height(14.dp))
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text(
+                    text = if (selectedMember != null) "الهدية إلى: ${selectedMember!!.name}" else "أرسل هدايا لكل شخص في الغرفة",
+                    fontSize = 12.sp,
+                    color = Color.White.copy(alpha = 0.75f)
+                )
+                Box(
+                    modifier = Modifier
+                        .clip(RoundedCornerShape(14.dp))
+                        .background(MujtamaGold.copy(alpha = 0.15f))
+                        .clickable { showMemberPicker = true }
+                        .padding(horizontal = 10.dp, vertical = 5.dp)
+                ) {
+                    Text(
+                        text = "اختار",
+                        fontSize = 11.sp,
+                        fontWeight = FontWeight.Medium,
+                        color = MujtamaGold
+                    )
+                }
+            }
+            Spacer(modifier = Modifier.height(16.dp))
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .horizontalScroll(rememberScrollState()),
+                horizontalArrangement = Arrangement.spacedBy(18.dp)
             ) {
                 roomGiftCatalog.forEach { gift ->
                     Column(
@@ -3367,7 +3426,7 @@ fun GiftBoxDialog(
                             modifier = Modifier
                                 .size(56.dp)
                                 .clip(CircleShape)
-                                .background(Color(gift.colorHex).copy(alpha = 0.18f)),
+                                .background(Color(gift.colorHex).copy(alpha = 0.25f)),
                             contentAlignment = Alignment.Center
                         ) {
                             Text(text = gift.emoji, fontSize = 26.sp)
@@ -3377,11 +3436,56 @@ fun GiftBoxDialog(
                             text = gift.name,
                             fontSize = 12.sp,
                             fontWeight = FontWeight.Medium,
-                            color = MaterialTheme.colorScheme.onSurface
+                            color = Color.White
                         )
                     }
                 }
             }
         }
+    }
+
+    if (showMemberPicker) {
+        androidx.compose.material3.AlertDialog(
+            onDismissRequest = { showMemberPicker = false },
+            containerColor = Color(0xFF1E0F38),
+            title = {
+                Text(text = "اختر المستلم", color = MujtamaGold, fontWeight = FontWeight.Bold)
+            },
+            text = {
+                Column(modifier = Modifier.fillMaxWidth()) {
+                    Text(
+                        text = "الجميع",
+                        color = Color.White,
+                        fontSize = 14.sp,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .clickable {
+                                selectedMember = null
+                                showMemberPicker = false
+                            }
+                            .padding(vertical = 10.dp)
+                    )
+                    members.forEach { member ->
+                        Text(
+                            text = member.name,
+                            color = Color.White,
+                            fontSize = 14.sp,
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .clickable {
+                                    selectedMember = member
+                                    showMemberPicker = false
+                                }
+                                .padding(vertical = 10.dp)
+                        )
+                    }
+                }
+            },
+            confirmButton = {
+                androidx.compose.material3.TextButton(onClick = { showMemberPicker = false }) {
+                    Text(text = "إغلاق", color = MujtamaGold)
+                }
+            }
+        )
     }
 }
