@@ -1303,7 +1303,8 @@ Box(modifier = Modifier.fillMaxSize()) {
                                     senderName = "أنا",
                                     senderAvatarUrl = myAvatarUrl.ifBlank { null },
                                     receiverName = receiver?.name ?: "الجميع",
-                                    giftCount = 1
+                                    giftCount = 1,
+                                    giftEmoji = gift.emoji
                                 )
                             )
                         },
