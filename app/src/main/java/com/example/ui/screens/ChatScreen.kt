@@ -1425,7 +1425,8 @@ Box(modifier = Modifier.fillMaxSize()) {
                             senderName = event.senderName,
                             senderAvatarUrl = event.senderAvatarUrl,
                             receiverName = event.receiverName,
-                            giftCount = event.giftCount
+                            giftCount = event.giftCount,
+                            giftEmoji = event.giftEmoji
                         )
                     }
                 }
