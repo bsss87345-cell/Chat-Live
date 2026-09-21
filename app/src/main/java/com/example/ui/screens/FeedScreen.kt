@@ -149,7 +149,8 @@ fun FeedScreen(
                 StoriesBar(
                     stories = stories,
                     onStoryClick = onStoryClick,
-                    onAddStoryClick = handleAddStoryClick
+                    onAddStoryClick = handleAddStoryClick,
+                    myAvatarUrl = userProfile.avatarUrl
                 )
             }
 
