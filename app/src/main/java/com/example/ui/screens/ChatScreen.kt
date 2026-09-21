@@ -3637,6 +3637,13 @@ fun GiftSentBanner(
                     )
                 }
             }
+            if (giftEmoji.isNotEmpty()) {
+                Text(
+                    text = giftEmoji,
+                    fontSize = 30.sp,
+                    modifier = Modifier.padding(end = 6.dp)
+                )
+            }
             Text(
                 text = "x$giftCount",
                 fontSize = 20.sp,
