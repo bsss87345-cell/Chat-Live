@@ -3498,3 +3498,63 @@ fun GiftBoxDialog(
         )
     }
 }
+
+@Composable
+fun GiftSentBanner(
+    senderName: String,
+    senderAvatarUrl: String?,
+    receiverName: String,
+    giftCount: Int,
+    modifier: Modifier = Modifier
+) {
+    Box(
+        modifier = modifier
+            .fillMaxWidth()
+            .height(48.dp)
+            .clip(RoundedCornerShape(24.dp))
+            .background(
+                Brush.horizontalGradient(
+                    colors = listOf(Color(0xFF5B2EFF), Color(0xFFB93FE0))
+                )
+            )
+    ) {
+        Row(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(end = 14.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Box(
+                modifier = Modifier
+                    .size(48.dp)
+                    .clip(CircleShape)
+                    .background(Color.White.copy(alpha = 0.15f)),
+                contentAlignment = Alignment.Center
+            ) {
+                AsyncImage(
+                    model = senderAvatarUrl ?: R.drawable.default_avatar,
+                    contentDescription = senderName,
+                    modifier = Modifier
+                        .size(44.dp)
+                        .clip(CircleShape),
+                    contentScale = ContentScale.Crop
+                )
+            }
+            Spacer(modifier = Modifier.width(10.dp))
+            Text(
+                text = "أرسل $senderName >> $receiverName",
+                fontSize = 12.sp,
+                fontWeight = FontWeight.Medium,
+                color = Color.White,
+                maxLines = 1,
+                modifier = Modifier.weight(1f)
+            )
+            Text(
+                text = "x$giftCount",
+                fontSize = 18.sp,
+                fontWeight = FontWeight.ExtraBold,
+                color = MujtamaGold
+            )
+        }
+    }
+}
