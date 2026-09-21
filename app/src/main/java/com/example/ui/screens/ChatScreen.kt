@@ -1287,7 +1287,9 @@ Box(modifier = Modifier.fillMaxSize()) {
                 if (showGiftBoxDialog) {
                     GiftBoxDialog(
                         onDismiss = { showGiftBoxDialog = false },
-                        onSendGift = { showGiftBoxDialog = false }
+                        onSendGift = { showGiftBoxDialog = false },
+                        members = room.members,
+                        walletBalance = walletBalance
                     )
                 }
 
