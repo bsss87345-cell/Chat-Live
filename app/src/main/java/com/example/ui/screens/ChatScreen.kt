@@ -3328,6 +3328,12 @@ fun GiftBoxDialog(
         onDismissRequest = onDismiss,
         properties = androidx.compose.ui.window.DialogProperties(usePlatformDefaultWidth = false)
     ) {
+        val giftDialogWindowProvider = androidx.compose.ui.platform.LocalView.current.parent as? androidx.compose.ui.window.DialogWindowProvider
+        androidx.compose.runtime.SideEffect {
+            giftDialogWindowProvider?.window?.let { window ->
+                androidx.core.view.WindowCompat.setDecorFitsSystemWindows(window, false)
+            }
+        }
         Box(
             modifier = Modifier
                 .fillMaxSize()
