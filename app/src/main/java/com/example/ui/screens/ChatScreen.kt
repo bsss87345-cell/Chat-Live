@@ -3323,7 +3323,9 @@ private val roomGiftCatalog = listOf(
 @Composable
 fun GiftBoxDialog(
     onDismiss: () -> Unit,
-    onSendGift: (GiftItem) -> Unit
+    onSendGift: (GiftItem) -> Unit,
+    members: List<RoomMember> = emptyList(),
+    walletBalance: Int = 0
 ) {
     val sheetState = androidx.compose.material3.rememberModalBottomSheetState(skipPartiallyExpanded = true)
     androidx.compose.material3.ModalBottomSheet(
