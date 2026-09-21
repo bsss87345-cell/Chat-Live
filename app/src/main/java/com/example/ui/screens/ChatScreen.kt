@@ -3561,9 +3561,9 @@ fun GiftSentBanner(
 ) {
     Box(
         modifier = modifier
-            .fillMaxWidth()
-            .height(48.dp)
-            .clip(RoundedCornerShape(24.dp))
+            .width(250.dp)
+            .height(56.dp)
+            .clip(RoundedCornerShape(28.dp))
             .background(
                 Brush.horizontalGradient(
                     colors = listOf(Color(0xFF5B2EFF), Color(0xFFB93FE0))
@@ -3573,39 +3573,69 @@ fun GiftSentBanner(
         Row(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(end = 14.dp),
+                .padding(start = 14.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
             Box(
                 modifier = Modifier
-                    .size(48.dp)
+                    .size(56.dp)
+                    .padding(3.dp)
                     .clip(CircleShape)
-                    .background(Color.White.copy(alpha = 0.15f)),
+                    .background(MujtamaGold),
                 contentAlignment = Alignment.Center
             ) {
                 AsyncImage(
                     model = senderAvatarUrl ?: R.drawable.default_avatar,
                     contentDescription = senderName,
                     modifier = Modifier
-                        .size(44.dp)
+                        .size(48.dp)
                         .clip(CircleShape),
                     contentScale = ContentScale.Crop
                 )
             }
-            Spacer(modifier = Modifier.width(10.dp))
-            Text(
-                text = "أرسل $senderName >> $receiverName",
-                fontSize = 12.sp,
-                fontWeight = FontWeight.Medium,
-                color = Color.White,
-                maxLines = 1,
-                modifier = Modifier.weight(1f)
-            )
+            Spacer(modifier = Modifier.width(8.dp))
+            Column(
+                modifier = Modifier.weight(1f),
+                verticalArrangement = Arrangement.Center
+            ) {
+                Text(
+                    text = senderName,
+                    fontSize = 13.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = Color.White,
+                    maxLines = 1
+                )
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Row(horizontalArrangement = Arrangement.spacedBy((-8).dp)) {
+                        Icon(
+                            imageVector = Icons.Default.KeyboardArrowLeft,
+                            contentDescription = null,
+                            tint = MujtamaTeal,
+                            modifier = Modifier.size(16.dp)
+                        )
+                        Icon(
+                            imageVector = Icons.Default.KeyboardArrowLeft,
+                            contentDescription = null,
+                            tint = MujtamaTeal,
+                            modifier = Modifier.size(16.dp)
+                        )
+                    }
+                    Spacer(modifier = Modifier.width(4.dp))
+                    Text(
+                        text = receiverName,
+                        fontSize = 11.sp,
+                        fontWeight = FontWeight.Medium,
+                        color = Color.White.copy(alpha = 0.9f),
+                        maxLines = 1
+                    )
+                }
+            }
             Text(
                 text = "x$giftCount",
-                fontSize = 18.sp,
+                fontSize = 20.sp,
                 fontWeight = FontWeight.ExtraBold,
-                color = MujtamaGold
+                color = MujtamaGold,
+                modifier = Modifier.padding(end = 4.dp)
             )
         }
     }
