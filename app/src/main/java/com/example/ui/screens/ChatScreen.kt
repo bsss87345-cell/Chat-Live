@@ -120,7 +120,6 @@ fun ChatScreen(
                 room = activeRoom,
                 walletBalance = walletBalance,
                 onBack = onCloseRoom,
-                onBack = onCloseRoom,
                 onSendMessage = { text, type -> onSendRoomMessage(activeRoom.id, text, type) },
                 onPinMessage = { text -> onPinRoomMessage(activeRoom.id, text) },
                 onUnpinMessage = { onUnpinRoomMessage(activeRoom.id) },
