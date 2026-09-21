@@ -47,7 +47,9 @@ fun ProfileScreen(
     onUpdateBio: (String) -> Unit,
     onLogout: () -> Unit,
     onOpenAccountSettings: () -> Unit = {},
-    onUpdateAvatarImage: (String) -> Unit = {}
+    onUpdateAvatarImage: (String) -> Unit = {},
+    followersList: List<FollowUser> = emptyList(),
+    followingList: List<FollowUser> = emptyList()
 ) {
     var showEditBioDialog by remember { mutableStateOf(false) }
     var showFollowersDialog by remember { mutableStateOf(false) }
