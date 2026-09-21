@@ -93,7 +93,8 @@ fun ChatScreen(
     onLeaveOwnerSeat: () -> Unit = {},
     onRemoveOwnerSeatMember: () -> Unit = {},
     onInviteMemberToOwnerSeat: (String) -> Unit = {},
-    myAvatarUrl: String = ""
+    myAvatarUrl: String = "",
+    walletBalance: Int = 0
 ) {
     // 1. If an active direct conversation is open
     if (activeChatId != null) {
