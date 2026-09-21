@@ -316,6 +316,15 @@ fun ProfileScreen(
     }
 }
 
+private fun FollowUser.toUserProfile(): UserProfile {
+    return UserProfile(
+        id = id,
+        name = name,
+        handle = handle,
+        avatarUrl = avatarUrl
+    )
+}
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun FollowListFullScreen(
@@ -323,6 +332,7 @@ private fun FollowListFullScreen(
     users: List<FollowUser>,
     onDismiss: () -> Unit
 ) {
+    var selectedUser by remember { mutableStateOf<FollowUser?>(null) }
     Dialog(
         onDismissRequest = onDismiss,
         properties = DialogProperties(
