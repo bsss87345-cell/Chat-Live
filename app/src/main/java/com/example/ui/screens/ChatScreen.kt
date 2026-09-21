@@ -3319,78 +3319,59 @@ private val roomGiftCatalog = listOf(
     GiftItem(id = "coffee", name = "قهوة", emoji = "☕", colorHex = 0xFF6F4E37)
 )
 
+@OptIn(androidx.compose.material3.ExperimentalMaterial3Api::class)
 @Composable
 fun GiftBoxDialog(
     onDismiss: () -> Unit,
     onSendGift: (GiftItem) -> Unit
 ) {
-    androidx.compose.ui.window.Dialog(
+    val sheetState = androidx.compose.material3.rememberModalBottomSheetState(skipPartiallyExpanded = true)
+    androidx.compose.material3.ModalBottomSheet(
         onDismissRequest = onDismiss,
-        properties = androidx.compose.ui.window.DialogProperties(usePlatformDefaultWidth = false)
+        sheetState = sheetState,
+        modifier = Modifier.testTag("room_gift_box_dialog")
     ) {
-        val giftDialogWindowProvider = androidx.compose.ui.platform.LocalView.current.parent as? androidx.compose.ui.window.DialogWindowProvider
-        androidx.compose.runtime.SideEffect {
-            giftDialogWindowProvider?.window?.let { window ->
-                androidx.core.view.WindowCompat.setDecorFitsSystemWindows(window, false)
-            }
-        }
-        Box(
+        Column(
             modifier = Modifier
-                .fillMaxSize()
-                .clickable { onDismiss() },
-            contentAlignment = Alignment.BottomCenter
+                .fillMaxWidth()
+                .navigationBarsPadding()
+                .padding(20.dp)
         ) {
-            androidx.compose.material3.Surface(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .navigationBarsPadding()
-                    .testTag("room_gift_box_dialog"),
-                shape = RoundedCornerShape(topStart = 24.dp, topEnd = 24.dp),
-                color = MaterialTheme.colorScheme.surface
+            Text(
+                text = "صندوق الهدايا",
+                fontSize = 16.sp,
+                fontWeight = FontWeight.Bold,
+                color = MujtamaGold,
+                modifier = Modifier.padding(bottom = 16.dp)
+            )
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceEvenly
             ) {
-                Column(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .clickable(onClick = {})
-                        .padding(20.dp)
-                ) {
-                    Text(
-                        text = "صندوق الهدايا",
-                        fontSize = 16.sp,
-                        fontWeight = FontWeight.Bold,
-                        color = MujtamaGold,
-                        modifier = Modifier.padding(bottom = 16.dp)
-                    )
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.SpaceEvenly
+                roomGiftCatalog.forEach { gift ->
+                    Column(
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        modifier = Modifier
+                            .clip(RoundedCornerShape(16.dp))
+                            .clickable { onSendGift(gift) }
+                            .padding(8.dp)
                     ) {
-                        roomGiftCatalog.forEach { gift ->
-                            Column(
-                                horizontalAlignment = Alignment.CenterHorizontally,
-                                modifier = Modifier
-                                    .clip(RoundedCornerShape(16.dp))
-                                    .clickable { onSendGift(gift) }
-                                    .padding(8.dp)
-                            ) {
-                                Box(
-                                    modifier = Modifier
-                                        .size(56.dp)
-                                        .clip(CircleShape)
-                                        .background(Color(gift.colorHex).copy(alpha = 0.18f)),
-                                    contentAlignment = Alignment.Center
-                                ) {
-                                    Text(text = gift.emoji, fontSize = 26.sp)
-                                }
-                                Spacer(modifier = Modifier.height(6.dp))
-                                Text(
-                                    text = gift.name,
-                                    fontSize = 12.sp,
-                                    fontWeight = FontWeight.Medium,
-                                    color = MaterialTheme.colorScheme.onSurface
-                                )
-                            }
+                        Box(
+                            modifier = Modifier
+                                .size(56.dp)
+                                .clip(CircleShape)
+                                .background(Color(gift.colorHex).copy(alpha = 0.18f)),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Text(text = gift.emoji, fontSize = 26.sp)
                         }
+                        Spacer(modifier = Modifier.height(6.dp))
+                        Text(
+                            text = gift.name,
+                            fontSize = 12.sp,
+                            fontWeight = FontWeight.Medium,
+                            color = MaterialTheme.colorScheme.onSurface
+                        )
                     }
                 }
             }
