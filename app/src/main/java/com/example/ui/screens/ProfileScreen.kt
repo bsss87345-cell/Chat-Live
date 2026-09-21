@@ -331,19 +331,11 @@ private fun FollowListFullScreen(
             decorFitsSystemWindows = false
         )
     ) {
-        val dialogView = LocalView.current
-        SideEffect {
-            val window = (dialogView.parent as? DialogWindowProvider)?.window
-            if (window != null) {
-                WindowCompat.setDecorFitsSystemWindows(window, true)
-                ViewCompat.requestApplyInsets(dialogView)
-            }
-        }
         Surface(
-            modifier = Modifier.fillMaxSize(),
+            modifier = Modifier.fillMaxSize().navigationBarsPadding(),
             color = MaterialTheme.colorScheme.background
         ) {
-            Column(modifier = Modifier.fillMaxSize().navigationBarsPadding()) {
+            Column(modifier = Modifier.fillMaxSize()) {
                 TopAppBar(
                     title = { Text(title, fontWeight = FontWeight.Bold) },
                     navigationIcon = {
