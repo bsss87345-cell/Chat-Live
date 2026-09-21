@@ -300,7 +300,8 @@ fun FeedScreen(
 fun StoriesBar(
     stories: List<Story>,
     onStoryClick: (Story) -> Unit,
-    onAddStoryClick: () -> Unit
+    onAddStoryClick: () -> Unit,
+    myAvatarUrl: String = ""
 ) {
     Card(
         modifier = Modifier
