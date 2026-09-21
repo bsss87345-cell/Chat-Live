@@ -161,25 +161,27 @@ fun ProfileScreen(
                         }
 
                         // Edit avatar icon button
-                        Box(
-                            modifier = Modifier
-                                .size(28.dp)
-                                .clip(CircleShape)
-                                .background(MujtamaGold)
-                                .clickable {
-                                    avatarImageLauncher.launch(
-                                        PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly)
-                                    )
-                                }
-                                .padding(4.dp),
-                            contentAlignment = Alignment.Center
-                        ) {
-                            Icon(
-                                imageVector = Icons.Default.Edit,
-                                contentDescription = "تغيير صورة الملف الشخصي",
-                                tint = Color.Black,
-                                modifier = Modifier.size(16.dp)
-                            )
+                        if (isOnOwnProfile) {
+                            Box(
+                                modifier = Modifier
+                                    .size(28.dp)
+                                    .clip(CircleShape)
+                                    .background(MujtamaGold)
+                                    .clickable {
+                                        avatarImageLauncher.launch(
+                                            PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly)
+                                        )
+                                    }
+                                    .padding(4.dp),
+                                contentAlignment = Alignment.Center
+                            ) {
+                                Icon(
+                                    imageVector = Icons.Default.Edit,
+                                    contentDescription = "تغيير صورة الملف الشخصي",
+                                    tint = Color.Black,
+                                    modifier = Modifier.size(16.dp)
+                                )
+                            }
                         }
                     }
 
