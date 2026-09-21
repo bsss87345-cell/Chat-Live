@@ -3414,35 +3414,38 @@ fun GiftBoxDialog(
                 }
             }
             Spacer(modifier = Modifier.height(16.dp))
-            Row(
+            LazyVerticalGrid(
+                columns = GridCells.Fixed(4),
+                horizontalArrangement = Arrangement.spacedBy(4.dp),
+                verticalArrangement = Arrangement.spacedBy(4.dp),
                 modifier = Modifier
                     .fillMaxWidth()
-                    .horizontalScroll(rememberScrollState()),
-                horizontalArrangement = Arrangement.spacedBy(18.dp)
+                    .heightIn(max = 260.dp)
             ) {
-                roomGiftCatalog.forEach { gift ->
+                items(roomGiftCatalog) { gift ->
                     Column(
                         horizontalAlignment = Alignment.CenterHorizontally,
                         modifier = Modifier
-                            .clip(RoundedCornerShape(16.dp))
+                            .clip(RoundedCornerShape(14.dp))
                             .clickable { onSendGift(gift) }
-                            .padding(8.dp)
+                            .padding(6.dp)
                     ) {
                         Box(
                             modifier = Modifier
-                                .size(56.dp)
+                                .size(44.dp)
                                 .clip(CircleShape)
                                 .background(Color(gift.colorHex).copy(alpha = 0.25f)),
                             contentAlignment = Alignment.Center
                         ) {
-                            Text(text = gift.emoji, fontSize = 26.sp)
+                            Text(text = gift.emoji, fontSize = 20.sp)
                         }
-                        Spacer(modifier = Modifier.height(6.dp))
+                        Spacer(modifier = Modifier.height(4.dp))
                         Text(
                             text = gift.name,
-                            fontSize = 12.sp,
+                            fontSize = 10.sp,
                             fontWeight = FontWeight.Medium,
-                            color = Color.White
+                            color = Color.White,
+                            maxLines = 1
                         )
                     }
                 }
