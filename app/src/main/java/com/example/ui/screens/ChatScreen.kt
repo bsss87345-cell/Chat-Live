@@ -3499,6 +3499,14 @@ fun GiftBoxDialog(
     }
 }
 
+data class GiftSentEvent(
+    val id: String = java.util.UUID.randomUUID().toString(),
+    val senderName: String,
+    val senderAvatarUrl: String?,
+    val receiverName: String,
+    val giftCount: Int
+)
+
 @Composable
 fun GiftSentBanner(
     senderName: String,
