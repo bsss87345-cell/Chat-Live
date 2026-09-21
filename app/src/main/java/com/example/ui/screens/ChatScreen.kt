@@ -1298,15 +1298,27 @@ Box(modifier = Modifier.fillMaxSize()) {
                         onDismiss = { showGiftBoxDialog = false },
                         onSendGift = { gift, receiver ->
                             showGiftBoxDialog = false
-                            activeGiftEvents.add(
-                                GiftSentEvent(
-                                    senderName = "أنا",
-                                    senderAvatarUrl = myAvatarUrl.ifBlank { null },
-                                    receiverName = receiver?.name ?: "الجميع",
-                                    giftCount = 1,
-                                    giftEmoji = gift.emoji
+                            val receiverLabel = receiver?.name ?: "الجميع"
+                            val existingIndex = activeGiftEvents.indexOfFirst {
+                                it.senderName == "أنا" &&
+                                    it.receiverName == receiverLabel &&
+                                    it.giftEmoji == gift.emoji
+                            }
+                            if (existingIndex >= 0) {
+                                val existing = activeGiftEvents[existingIndex]
+                                activeGiftEvents[existingIndex] =
+                                    existing.copy(giftCount = existing.giftCount + 1)
+                            } else {
+                                activeGiftEvents.add(
+                                    GiftSentEvent(
+                                        senderName = "أنا",
+                                        senderAvatarUrl = myAvatarUrl.ifBlank { null },
+                                        receiverName = receiverLabel,
+                                        giftCount = 1,
+                                        giftEmoji = gift.emoji
+                                    )
                                 )
-                            )
+                            }
                         },
                         members = room.members,
                         walletBalance = walletBalance
