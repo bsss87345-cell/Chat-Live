@@ -189,6 +189,7 @@ fun MainScreen(viewModel: SocialAppViewModel) {
 
                             ChatScreen(
                                 myAvatarUrl = userProfile.avatarUrl,
+                                myName = userProfile.name,
                                 conversations = conversations,
                                 activeChatId = activeChatId,
                                 chatFilter = chatFilter,
