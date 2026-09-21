@@ -294,32 +294,115 @@ fun ProfileScreen(
         )
     }
 
-    // Followers List Dialog
+    // Followers List - Full Screen
     if (showFollowersDialog) {
-        AlertDialog(
-            onDismissRequest = { showFollowersDialog = false },
-            title = { Text("المتابعون") },
-            text = { Text("قائمة المتابعين ستظهر هنا قريباً.") },
-            confirmButton = {
-                TextButton(onClick = { showFollowersDialog = false }) {
-                    Text("إغلاق")
-                }
-            }
+        FollowListFullScreen(
+            title = "المتابعون",
+            users = followersList,
+            onDismiss = { showFollowersDialog = false }
         )
     }
 
-    // Following List Dialog
+    // Following List - Full Screen
     if (showFollowingDialog) {
-        AlertDialog(
-            onDismissRequest = { showFollowingDialog = false },
-            title = { Text("يتابع") },
-            text = { Text("قائمة الحسابات التي تتابعها ستظهر هنا قريباً.") },
-            confirmButton = {
-                TextButton(onClick = { showFollowingDialog = false }) {
-                    Text("إغلاق")
+        FollowListFullScreen(
+            title = "يتابع",
+            users = followingList,
+            onDismiss = { showFollowingDialog = false }
+        )
+    }
+}
+
+@Composable
+private fun FollowListFullScreen(
+    title: String,
+    users: List<FollowUser>,
+    onDismiss: () -> Unit
+) {
+    Dialog(
+        onDismissRequest = onDismiss,
+        properties = DialogProperties(usePlatformDefaultWidth = false)
+    ) {
+        Surface(
+            modifier = Modifier.fillMaxSize(),
+            color = MaterialTheme.colorScheme.background
+        ) {
+            Column(modifier = Modifier.fillMaxSize()) {
+                TopAppBar(
+                    title = { Text(title, fontWeight = FontWeight.Bold) },
+                    navigationIcon = {
+                        IconButton(onClick = onDismiss) {
+                            Icon(Icons.Default.ArrowBack, contentDescription = "رجوع")
+                        }
+                    }
+                )
+                if (users.isEmpty()) {
+                    Box(
+                        modifier = Modifier.fillMaxSize(),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Text(
+                            "لا يوجد أحد هنا بعد",
+                            color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.6f)
+                        )
+                    }
+                } else {
+                    LazyColumn(modifier = Modifier.fillMaxSize()) {
+                        items(users) { user ->
+                            Row(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .clickable { }
+                                    .padding(horizontal = 16.dp, vertical = 12.dp),
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                if (user.avatarUrl.isNotBlank()) {
+                                    AsyncImage(
+                                        model = user.avatarUrl,
+                                        contentDescription = user.name,
+                                        contentScale = ContentScale.Crop,
+                                        modifier = Modifier
+                                            .size(48.dp)
+                                            .clip(CircleShape)
+                                    )
+                                } else {
+                                    Box(
+                                        modifier = Modifier
+                                            .size(48.dp)
+                                            .clip(CircleShape)
+                                            .background(MaterialTheme.colorScheme.primary.copy(alpha = 0.15f)),
+                                        contentAlignment = Alignment.Center
+                                    ) {
+                                        Text(
+                                            user.name.take(1),
+                                            color = MaterialTheme.colorScheme.primary,
+                                            fontWeight = FontWeight.Bold
+                                        )
+                                    }
+                                }
+                                Spacer(modifier = Modifier.width(12.dp))
+                                Column {
+                                    Text(
+                                        user.name,
+                                        fontWeight = FontWeight.SemiBold,
+                                        fontSize = 15.sp
+                                    )
+                                    Text(
+                                        "ID: ${user.id}",
+                                        fontSize = 12.sp,
+                                        color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.5f)
+                                    )
+                                }
+                            }
+                            HorizontalDivider(
+                                color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.06f),
+                                thickness = 1.dp
+                            )
+                        }
+                    }
                 }
             }
-        )
+        }
     }
 }
 
