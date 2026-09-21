@@ -421,6 +421,22 @@ private fun FollowListFullScreen(
             }
         }
     }
+
+    if (selectedUser != null) {
+        Dialog(
+            onDismissRequest = { selectedUser = null },
+            properties = DialogProperties(usePlatformDefaultWidth = false)
+        ) {
+            ProfileScreen(
+                userProfile = selectedUser!!.toUserProfile(),
+                posts = emptyList(),
+                balance = 0,
+                onUpdateBio = {},
+                onLogout = {},
+                isOnOwnProfile = false
+            )
+        }
+    }
 }
 
 private fun saveAvatarToInternalStorage(context: Context, uri: Uri): String? {
