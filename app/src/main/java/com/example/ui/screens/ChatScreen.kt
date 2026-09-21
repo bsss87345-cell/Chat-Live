@@ -1269,15 +1269,22 @@ Box(modifier = Modifier.fillMaxSize()) {
                 horizontalArrangement = Arrangement.spacedBy(6.dp)
             ) {
                 // 6. استبدال أيقونة المايك بأيقونة صندوق الهدايا (Gift Box)
+                var showGiftBoxDialog by remember { mutableStateOf(false) }
                 IconButton(
-                    onClick = { /* Placeholder: وظيفة صندوق الهدايا بدون منطق خلفي */ },
+                    onClick = { showGiftBoxDialog = true },
                     enabled = !isMuted,
                     modifier = Modifier.testTag("room_gift_box_button")
                 ) {
-                    Icon(
-                        imageVector = Icons.Default.CardGiftcard,
+                    Image(
+                        painter = painterResource(id = R.drawable.gift_box_icon),
                         contentDescription = "صندوق الهدايا",
-                        tint = MujtamaGold
+                        modifier = Modifier.size(26.dp)
+                    )
+                }
+                if (showGiftBoxDialog) {
+                    GiftBoxDialog(
+                        onDismiss = { showGiftBoxDialog = false },
+                        onSendGift = { showGiftBoxDialog = false }
                     )
                 }
 
