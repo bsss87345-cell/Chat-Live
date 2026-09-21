@@ -202,35 +202,29 @@ fun ProfileScreen(
                         )
                     }
 
-                    // Bio Box with Edit Button
-                    Surface(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .clip(RoundedCornerShape(12.dp))
-                            .clickable { showEditBioDialog = true },
-                        color = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.45f)
-                    ) {
-                        Row(
-                            modifier = Modifier.padding(horizontal = 12.dp, vertical = 8.dp),
-                            verticalAlignment = Alignment.CenterVertically,
-                            horizontalArrangement = Arrangement.SpaceBetween
+                    // Bio Box (only shown if bio is non-empty; tap-to-edit works only on own profile)
+                    if (userProfile.bio.isNotBlank()) {
+                        Surface(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .clip(RoundedCornerShape(12.dp))
+                                .then(
+                                    if (isOnOwnProfile) Modifier.clickable { showEditBioDialog = true }
+                                    else Modifier
+                                ),
+                            color = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.45f)
                         ) {
-                            Text(
-                                text = userProfile.bio,
-                                fontSize = 12.sp,
-                                color = MaterialTheme.colorScheme.onSurface,
-                                modifier = Modifier.weight(1f),
-                                lineHeight = 17.sp
-                            )
-                            IconButton(
-                                onClick = { showEditBioDialog = true },
-                                modifier = Modifier.size(24.dp)
+                            Row(
+                                modifier = Modifier.padding(horizontal = 12.dp, vertical = 8.dp),
+                                verticalAlignment = Alignment.CenterVertically,
+                                horizontalArrangement = Arrangement.SpaceBetween
                             ) {
-                                Icon(
-                                    Icons.Default.Edit,
-                                    contentDescription = "تعديل النبذة",
-                                    tint = MaterialTheme.colorScheme.primary,
-                                    modifier = Modifier.size(15.dp)
+                                Text(
+                                    text = userProfile.bio,
+                                    fontSize = 12.sp,
+                                    color = MaterialTheme.colorScheme.onSurface,
+                                    modifier = Modifier.weight(1f),
+                                    lineHeight = 17.sp
                                 )
                             }
                         }
