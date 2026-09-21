@@ -346,7 +346,8 @@ class SocialAppViewModel : ViewModel() {
             isCurrentUser = true,
             gradientColors = gradientColors,
             mediaType = mediaType,
-            mediaUri = mediaUri
+            mediaUri = mediaUri,
+            authorAvatarUrl = _userProfile.value.avatarUrl
         )
         _stories.update { list ->
             listOf(newStory) + list.filter { !it.isCurrentUser }
