@@ -1314,7 +1314,7 @@ Box(modifier = Modifier.fillMaxSize()) {
                             } else {
                                 activeGiftEvents.add(
                                     GiftSentEvent(
-                                        senderName = "أنا",
+                                        senderName = myName.ifBlank { "أنا" },
                                         senderAvatarUrl = myAvatarUrl.ifBlank { null },
                                         receiverName = receiverLabel,
                                         giftCount = 1,
