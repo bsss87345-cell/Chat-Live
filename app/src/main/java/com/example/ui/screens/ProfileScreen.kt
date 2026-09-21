@@ -336,6 +336,7 @@ private fun FollowListFullScreen(
             val window = (dialogView.parent as? DialogWindowProvider)?.window
             if (window != null) {
                 WindowCompat.setDecorFitsSystemWindows(window, true)
+                ViewCompat.requestApplyInsets(dialogView)
             }
         }
         Surface(
