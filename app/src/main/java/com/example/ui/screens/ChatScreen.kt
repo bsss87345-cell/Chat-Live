@@ -1399,7 +1399,40 @@ Box(modifier = Modifier.fillMaxSize()) {
         }
     }
 
-    // Members Bottom Sheet / Dialog
+    Box(
+        modifier = Modifier
+            .align(Alignment.TopCenter)
+            .padding(top = 60.dp, start = 12.dp, end = 12.dp)
+            .fillMaxWidth()
+    ) {
+        Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
+            activeGiftEvents.forEach { event ->
+                androidx.compose.runtime.key(event.id) {
+                    var visible by remember { mutableStateOf(true) }
+                    androidx.compose.runtime.LaunchedEffect(event.id) {
+                        kotlinx.coroutines.delay(2000)
+                        visible = false
+                        kotlinx.coroutines.delay(300)
+                        activeGiftEvents.remove(event)
+                    }
+                    AnimatedVisibility(
+                        visible = visible,
+                        enter = androidx.compose.animation.slideInHorizontally(initialOffsetX = { it }) + androidx.compose.animation.fadeIn(),
+                        exit = androidx.compose.animation.slideOutHorizontally(targetOffsetX = { it }) + androidx.compose.animation.fadeOut()
+                    ) {
+                        GiftSentBanner(
+                            senderName = event.senderName,
+                            senderAvatarUrl = event.senderAvatarUrl,
+                            receiverName = event.receiverName,
+                            giftCount = event.giftCount
+                        )
+                    }
+                }
+            }
+        }
+    }
+
+// Members Bottom Sheet / Dialog
     if (showMembersSheet) {
         AlertDialog(
             onDismissRequest = { showMembersSheet = false },
