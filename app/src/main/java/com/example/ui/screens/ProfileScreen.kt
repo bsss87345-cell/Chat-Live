@@ -94,21 +94,14 @@ fun ProfileScreen(
         // 1. Profile Header (Avatar, Name, Bio, and Stats)
         // -------------------------------------------------------------
         item {
-            Card(
+           Column(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .testTag("profile_header_card"),
-                shape = RoundedCornerShape(22.dp),
-                colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
-                elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
-            ) {
-                Column(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(16.dp),
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                    verticalArrangement = Arrangement.spacedBy(12.dp)
-                ) {
+                    .testTag("profile_header_card")
+                    .padding(16.dp),
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.spacedBy(12.dp)
+            ) { 
                     // Menu icon (top-left corner in RTL) → opens the separate account-settings page
                     if (isOnOwnProfile) {
                         Row(
