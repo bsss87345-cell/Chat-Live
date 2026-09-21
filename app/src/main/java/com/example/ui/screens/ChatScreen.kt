@@ -809,6 +809,7 @@ fun ChatRoomView(
     onStartRoomGame: (GameType) -> Unit,
     onPlayGameDirectly: (GameType?) -> Unit,
     myAvatarUrl: String = "",
+    myName: String = "",
     onRequestVoiceSeat: (Int) -> Unit = {},
     onRespondVoiceSeatRequest: (String, Boolean) -> Unit = { _, _ -> },
     onLeaveVoiceSeat: (Int) -> Unit = {},
