@@ -3566,7 +3566,10 @@ fun GiftSentBanner(
             .clip(RoundedCornerShape(28.dp))
             .background(
                 Brush.horizontalGradient(
-                    colors = listOf(Color(0xFF5B2EFF), Color(0xFFB93FE0))
+                    colors = listOf(
+                        Color(0xFF5B2EFF).copy(alpha = 0.6f),
+                        Color(0xFFB93FE0).copy(alpha = 0.6f)
+                    )
                 )
             )
     ) {
