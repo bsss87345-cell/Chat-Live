@@ -38,7 +38,8 @@ data class Story(
     val isCurrentUser: Boolean = false,
     val gradientColors: List<Long> = listOf(0xFF673AB7, 0xFF00897B),
     val mediaType: StoryMediaType = StoryMediaType.TEXT,
-    val mediaUri: String? = null
+    val mediaUri: String? = null,
+    val authorAvatarUrl: String = ""
 )
 
 enum class PostMediaType {
