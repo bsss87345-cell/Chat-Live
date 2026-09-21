@@ -782,6 +782,7 @@ fun ChatRoomsListView(
 @Composable
 fun ChatRoomView(
     room: ChatRoom,
+    walletBalance: Int = 0,
     onBack: () -> Unit,
     onSendMessage: (String, ChatMessageType) -> Unit,
     onPinMessage: (String) -> Unit,
