@@ -118,6 +118,7 @@ fun ChatScreen(
         if (activeRoom != null) {
             ChatRoomView(
                 room = activeRoom,
+                walletBalance = walletBalance,
                 onBack = onCloseRoom,
                 onSendMessage = { text, type -> onSendRoomMessage(activeRoom.id, text, type) },
                 onPinMessage = { text -> onPinRoomMessage(activeRoom.id, text) },
