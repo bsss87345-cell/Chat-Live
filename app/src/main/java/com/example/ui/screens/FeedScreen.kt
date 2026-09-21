@@ -386,12 +386,21 @@ fun StoriesBar(
                             ),
                         contentAlignment = Alignment.Center
                     ) {
-                        Text(
-                            text = story.authorName.take(1),
-                            color = Color.White,
-                            fontWeight = FontWeight.Bold,
-                            fontSize = 20.sp
-                        )
+                        if (story.authorAvatarUrl.isNotBlank()) {
+                            AsyncImage(
+                                model = story.authorAvatarUrl,
+                                contentDescription = story.authorName,
+                                contentScale = ContentScale.Crop,
+                                modifier = Modifier.fillMaxSize().clip(CircleShape)
+                            )
+                        } else {
+                            Text(
+                                text = story.authorName.take(1),
+                                color = Color.White,
+                                fontWeight = FontWeight.Bold,
+                                fontSize = 20.sp
+                            )
+                        }
                     }
                     Spacer(modifier = Modifier.height(6.dp))
                     Text(
