@@ -163,6 +163,24 @@ class SocialAppViewModel : ViewModel() {
     private val _friendRequests = MutableStateFlow<List<FriendRequest>>(emptyList())
     val friendRequests: StateFlow<List<FriendRequest>> = _friendRequests.asStateFlow()
 
+    // --- Followers/Following State (بيانات وهمية مؤقتاً، لاحقاً من Firestore) ---
+    private val _followersList = MutableStateFlow<List<FollowUser>>(
+        listOf(
+            FollowUser(id = "u1", name = "سارة أحمد", handle = "@sara_a", avatarUrl = ""),
+            FollowUser(id = "u2", name = "محمد العلي", handle = "@m_ali", avatarUrl = ""),
+            FollowUser(id = "u3", name = "نورة سالم", handle = "@noura_s", avatarUrl = "")
+        )
+    )
+    val followersList: StateFlow<List<FollowUser>> = _followersList.asStateFlow()
+
+    private val _followingList = MutableStateFlow<List<FollowUser>>(
+        listOf(
+            FollowUser(id = "u4", name = "خالد فهد", handle = "@khalid_f", avatarUrl = ""),
+            FollowUser(id = "u5", name = "ريم عبدالله", handle = "@reem_a", avatarUrl = "")
+        )
+    )
+    val followingList: StateFlow<List<FollowUser>> = _followingList.asStateFlow()
+
     // --- Wallet State ---
     private val _walletBalance = MutableStateFlow(0)
     val walletBalance: StateFlow<Int> = _walletBalance.asStateFlow()
