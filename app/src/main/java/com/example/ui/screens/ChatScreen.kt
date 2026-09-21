@@ -3026,19 +3026,14 @@ fun ChatMessageBubble(
             horizontalArrangement = Arrangement.spacedBy(6.dp)
         ) {
             if (message.isFromMe && myAvatarUrl.isNotEmpty()) {
-                val myMsgAvatarBitmap = remember(myAvatarUrl) {
-                    BitmapFactory.decodeFile(myAvatarUrl)?.asImageBitmap()
-                }
-                if (myMsgAvatarBitmap != null) {
-                    Image(
-                        bitmap = myMsgAvatarBitmap,
-                        contentDescription = null,
-                        contentScale = ContentScale.Crop,
-                        modifier = Modifier
-                            .size(28.dp)
-                            .clip(CircleShape)
-                    )
-                }
+                AsyncImage(
+                    model = myAvatarUrl,
+                    contentDescription = null,
+                    contentScale = ContentScale.Crop,
+                    modifier = Modifier
+                        .size(28.dp)
+                        .clip(CircleShape)
+                )
             }
         Column(
             horizontalAlignment = if (message.isFromMe) Alignment.End else Alignment.Start,
