@@ -1296,7 +1296,17 @@ Box(modifier = Modifier.fillMaxSize()) {
                 if (showGiftBoxDialog) {
                     GiftBoxDialog(
                         onDismiss = { showGiftBoxDialog = false },
-                        onSendGift = { showGiftBoxDialog = false },
+                        onSendGift = { gift, receiver ->
+                            showGiftBoxDialog = false
+                            activeGiftEvents.add(
+                                GiftSentEvent(
+                                    senderName = "أنا",
+                                    senderAvatarUrl = myAvatarUrl.ifBlank { null },
+                                    receiverName = receiver?.name ?: "الجميع",
+                                    giftCount = 1
+                                )
+                            )
+                        },
                         members = room.members,
                         walletBalance = walletBalance
                     )
