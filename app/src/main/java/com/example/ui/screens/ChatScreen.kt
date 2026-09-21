@@ -3560,6 +3560,7 @@ fun GiftSentBanner(
     senderAvatarUrl: String?,
     receiverName: String,
     giftCount: Int,
+    giftEmoji: String = "",
     modifier: Modifier = Modifier
 ) {
     Box(
