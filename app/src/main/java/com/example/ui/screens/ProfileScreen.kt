@@ -40,6 +40,7 @@ import androidx.compose.ui.window.DialogProperties
 import androidx.compose.ui.window.DialogWindowProvider
 import androidx.compose.ui.platform.LocalView
 import androidx.core.view.WindowCompat
+import androidx.core.view.ViewCompat
 import com.example.model.*
 import com.example.ui.theme.*
 
