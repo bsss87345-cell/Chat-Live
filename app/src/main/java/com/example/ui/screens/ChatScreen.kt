@@ -3548,7 +3548,8 @@ data class GiftSentEvent(
     val senderName: String,
     val senderAvatarUrl: String?,
     val receiverName: String,
-    val giftCount: Int
+    val giftCount: Int,
+    val giftEmoji: String = ""
 )
 
 @Composable
