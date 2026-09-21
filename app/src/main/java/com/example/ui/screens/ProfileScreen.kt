@@ -313,6 +313,7 @@ fun ProfileScreen(
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun FollowListFullScreen(
     title: String,
