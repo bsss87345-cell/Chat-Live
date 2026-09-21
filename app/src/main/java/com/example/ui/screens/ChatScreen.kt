@@ -830,6 +830,7 @@ fun ChatRoomView(
     var showBannedListDialog by remember { mutableStateOf(false) }
     var showBackgroundPickerDialog by remember { mutableStateOf(false) }
     var showVoiceMicDialog by remember { mutableStateOf(false) }
+    val activeGiftEvents = remember { androidx.compose.runtime.mutableStateListOf<GiftSentEvent>() }
     val photoPickerLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.PickVisualMedia(),
         onResult = { uri: Uri? ->
