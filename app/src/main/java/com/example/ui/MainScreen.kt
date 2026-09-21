@@ -303,7 +303,9 @@ fun MainScreen(viewModel: SocialAppViewModel) {
                                 onUpdateBio = { viewModel.updateUserBio(it) },
                                 onLogout = { viewModel.logoutUser() },
                                 onOpenAccountSettings = { viewModel.openAccountSettings() },
-                                onUpdateAvatarImage = { viewModel.updateUserAvatarUrl(it) }
+                                onUpdateAvatarImage = { viewModel.updateUserAvatarUrl(it) },
+                                followersList = followersList,
+                                followingList = followingList
                                 )
                         }
                     }
