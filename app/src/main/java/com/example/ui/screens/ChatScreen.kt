@@ -3456,7 +3456,6 @@ fun GiftBoxDialog(
                     )
                 }
             }
-            }
             Spacer(modifier = Modifier.height(10.dp))
             LazyVerticalGrid(
                 columns = GridCells.Fixed(4),
