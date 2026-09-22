@@ -3456,29 +3456,11 @@ fun GiftBoxDialog(
                     )
                 }
             }
-            Spacer(modifier = Modifier.height(12.dp))
-            LazyVerticalGrid(
-                columns = GridCells.Fixed(4),
-                horizontalArrangement = Arrangement.spacedBy(10.dp),
-                verticalArrangement = Arrangement.spacedBy(10.dp),
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .heightIn(max = 220.dp)
-            ) {
-                items(roomGiftCatalog) { gift ->
-                    Column(
-                        horizontalAlignment = Alignment.CenterHorizontally,
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .clip(RoundedCornerShape(16.dp))
-                            .background(
-                                Brush.verticalGradient(
-                                    listOf(Color(gift.colorHex).copy(alpha = 0.22f), Color.White.copy(alpha = 0.04f))
-                                )
-                            )
-                            .clickable { repeat(selectedQuantity) { onSendGift(gift, selectedMember) } }
-                            .padding(vertical = 10.dp, horizontal = 4.dp)
-                    ) {
+            .clickable {
+                            roomGiftCatalog.firstOrNull()?.let { gift ->
+                                repeat(selectedQuantity) { onSendGift(gift, selectedMember) }
+                            }
+            }
                         Text(text = gift.emoji, fontSize = 26.sp)
                         Spacer(modifier = Modifier.height(6.dp))
                         Text(
