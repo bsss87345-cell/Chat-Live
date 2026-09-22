@@ -57,7 +57,9 @@ fun AccountSettingsScreen(
     var showLanguageDialog by remember { mutableStateOf(false) }
     var currentLanguage by remember { mutableStateOf("العربية") }
     var showReportProblemDialog by remember { mutableStateOf(false) }
-    var isSettingsExpanded by remember { mutableStateOf(true) }
+    var isPrivacyExpanded by remember { mutableStateOf(false) }
+    var isSupportExpanded by remember { mutableStateOf(false) }
+    var isGeneralExpanded by remember { mutableStateOf(false) }
     var showBlockedListDialog by remember { mutableStateOf(false) }
     var showPolicyDialog by remember { mutableStateOf(false) }
     var blockedUsersList by remember {
