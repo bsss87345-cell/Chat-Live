@@ -845,6 +845,14 @@ fun ChatRoomView(
             }
         }
     )
+    val roomImagePickerLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.PickVisualMedia(),
+        onResult = { uri: Uri? ->
+            if (uri != null) {
+                onUpdateRoomImage(uri.toString())
+            }
+        }
+    )
     
     val currentMember = room.members.find { it.id == "me" }
     val isOwnerOrAdmin = room.isOwner || currentMember?.role == RoomMemberRole.ADMIN || currentMember?.role == RoomMemberRole.OWNER
