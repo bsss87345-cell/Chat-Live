@@ -3512,7 +3512,7 @@ fun GiftBoxDialog(
                         horizontalAlignment = Alignment.CenterHorizontally,
                         modifier = Modifier
                             .clip(RoundedCornerShape(14.dp))
-                            .clickable { onSendGift(gift, selectedMember) }
+                            .clickable { repeat(selectedQuantity) { onSendGift(gift, selectedMember) } }
                             .padding(6.dp)
                     ) {
                         Box(
