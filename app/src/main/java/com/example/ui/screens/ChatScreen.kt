@@ -2404,7 +2404,7 @@ private fun VoiceSeatItem(
         initialValue = 0.35f,
         targetValue = 0.9f,
         animationSpec = infiniteRepeatable(
-            animation = tween(800, easing = FastOutSlowInEasing),
+            animation = tween(550, easing = FastOutSlowInEasing),
             repeatMode = RepeatMode.Reverse
         ),
         label = "seat_glow_$seatNumber"
