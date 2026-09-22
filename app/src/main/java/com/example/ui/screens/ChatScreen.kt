@@ -3477,7 +3477,28 @@ fun GiftBoxDialog(
                     )
                 }
             }
-            Spacer(modifier = Modifier.height(16.dp))
+            Spacer(modifier = Modifier.height(10.dp))
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.End,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Box(
+                    modifier = Modifier
+                        .clip(RoundedCornerShape(14.dp))
+                        .background(Color.White.copy(alpha = 0.08f))
+                        .clickable { showQuantityPicker = true }
+                        .padding(horizontal = 12.dp, vertical = 6.dp)
+                ) {
+                    Text(
+                        text = "الكمية: $selectedQuantity",
+                        fontSize = 11.sp,
+                        fontWeight = FontWeight.Medium,
+                        color = Color.White
+                    )
+                }
+            }
+            Spacer(modifier = Modifier.height(10.dp))
             LazyVerticalGrid(
                 columns = GridCells.Fixed(4),
                 horizontalArrangement = Arrangement.spacedBy(4.dp),
@@ -3511,6 +3532,18 @@ fun GiftBoxDialog(
                             color = Color.White,
                             maxLines = 1
                         )
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.spacedBy(2.dp)
+                        ) {
+                            Text(text = "🪙", fontSize = 9.sp)
+                            Text(
+                                text = "${gift.price}",
+                                fontSize = 9.sp,
+                                fontWeight = FontWeight.Bold,
+                                color = MujtamaGold
+                            )
+                        }
                     }
                 }
             }
