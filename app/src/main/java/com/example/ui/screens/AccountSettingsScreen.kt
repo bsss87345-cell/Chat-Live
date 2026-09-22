@@ -552,46 +552,300 @@ fun AccountSettingsScreen(
 
                                 HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f))
 
-                                AccountSettingsActionRow(
-                                    icon = Icons.Default.SupportAgent,
-                                    title = "تواصل مباشر مع الدعم",
-                                    subtitle = "محادثة فورية مع فريق الدعم الفني وخدمة العملاء",
-                                    onClick = { showSupportChatDialog = true }
-                                )
-
-                                HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f))
-
-                                AccountSettingsActionRow(
-                                    icon = Icons.Default.Translate,
-                                    title = "تغيير اللغة",
-                                    subtitle = "اللغة الحالية: $currentLanguage",
-                                    onClick = { showLanguageDialog = true }
-                                )
-
-                                HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f))
-
-                                AccountSettingsActionRow(
-                                    icon = Icons.Default.ReportProblem,
-                                    title = "إبلاغ عن مشكلة",
-                                    subtitle = "إرسال تقرير فني عن أي خلل أو عطل في التطبيق",
-                                    onClick = { showReportProblemDialog = true }
-                                )
+                                Row(
+                                    modifier = Modifier.fillMaxWidth(),
+                                    verticalAlignment = Alignment.CenterVertically,
+                                    horizontalArrangement = Arrangement.SpaceBetween
+                                ) {
+                                    Row(
+                                        verticalAlignment = Alignment.CenterVertically,
+                                        horizontalArrangement = Arrangement.spacedBy(10.dp),
+                                        modifier = Modifier.weight(1f)
+                                    ) {
+                                        Icon(
+                                            imageVector = if (userProfile.isNotificationsEnabled) Icons.Default.NotificationsActive else Icons.Default.NotificationsOff,
+                                            contentDescription = null,
+                                            tint = if (userProfile.isNotificationsEnabled) MujtamaPrimary else MaterialTheme.colorScheme.onSurfaceVariant,
+                                            modifier = Modifier.size(22.dp)
+                                        )
+                                        Column {
+                                            Text(
+                                                text = "الإشعارات",
+                                                fontWeight = FontWeight.Bold,
+                                                fontSize = 13.sp
+                                            )
+                                            Text(
+                                                text = if (userProfile.isNotificationsEnabled) "التنبيهات مفعلة لجميع الأنشطة" else "التنبيهات معطلة",
+                                                fontSize = 11.sp,
+                                                color = MaterialTheme.colorScheme.onSurfaceVariant
+                                            )
+                                        }
+                                    }
+                                    Switch(
+                                        checked = userProfile.isNotificationsEnabled,
+                                        onCheckedChange = { onToggleNotifications() },
+                                        modifier = Modifier.testTag("notifications_toggle")
+                                    )
+                                }
 
                                 HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f))
 
                                 Surface(
                                     shape = RoundedCornerShape(14.dp),
-                                    color = if (isSettingsExpanded) MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.25f)
+                                    color = if (isPrivacyExpanded) MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.25f)
                                             else MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.4f),
                                     border = androidx.compose.foundation.BorderStroke(
                                         1.dp,
-                                        if (isSettingsExpanded) MaterialTheme.colorScheme.primary.copy(alpha = 0.5f)
+                                        if (isPrivacyExpanded) MaterialTheme.colorScheme.primary.copy(alpha = 0.5f)
                                         else MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f)
                                     ),
                                     modifier = Modifier
                                         .fillMaxWidth()
                                         .clip(RoundedCornerShape(14.dp))
-                                        .clickable { isSettingsExpanded = !isSettingsExpanded }
+                                        .clickable { isPrivacyExpanded = !isPrivacyExpanded }
+                                        .testTag("privacy_dropdown_button")
+                                ) {
+                                    Row(
+                                        modifier = Modifier
+                                            .fillMaxWidth()
+                                            .padding(horizontal = 14.dp, vertical = 12.dp),
+                                        verticalAlignment = Alignment.CenterVertically,
+                                        horizontalArrangement = Arrangement.SpaceBetween
+                                    ) {
+                                        Row(
+                                            verticalAlignment = Alignment.CenterVertically,
+                                            horizontalArrangement = Arrangement.spacedBy(10.dp)
+                                        ) {
+                                            Box(
+                                                modifier = Modifier
+                                                    .size(36.dp)
+                                                    .clip(CircleShape)
+                                                    .background(MaterialTheme.colorScheme.error.copy(alpha = 0.15f)),
+                                                contentAlignment = Alignment.Center
+                                            ) {
+                                                Icon(
+                                                    imageVector = Icons.Default.Block,
+                                                    contentDescription = null,
+                                                    tint = MaterialTheme.colorScheme.error,
+                                                    modifier = Modifier.size(20.dp)
+                                                )
+                                            }
+                                            Column {
+                                                Text(
+                                                    text = "الخصوصية والحظر",
+                                                    fontWeight = FontWeight.Bold,
+                                                    fontSize = 14.sp
+                                                )
+                                                Text(
+                                                    text = if (isPrivacyExpanded) "اضغط للطي" else "قائمة المحظورين وإعدادات الخصوصية",
+                                                    fontSize = 11.sp,
+                                                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                                                )
+                                            }
+                                        }
+
+                                        Icon(
+                                            imageVector = if (isPrivacyExpanded) Icons.Default.ExpandLess else Icons.Default.ExpandMore,
+                                            contentDescription = if (isPrivacyExpanded) "طي القائمة" else "فتح القائمة",
+                                            tint = MaterialTheme.colorScheme.primary
+                                        )
+                                    }
+                                }
+
+                                AnimatedVisibility(visible = isPrivacyExpanded) {
+                                    Card(
+                                        shape = RoundedCornerShape(14.dp),
+                                        colors = CardDefaults.cardColors(
+                                            containerColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.35f)
+                                        ),
+                                        border = androidx.compose.foundation.BorderStroke(
+                                            1.dp,
+                                            MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.4f)
+                                        ),
+                                        modifier = Modifier.fillMaxWidth()
+                                    ) {
+                                        Column(
+                                            modifier = Modifier
+                                                .fillMaxWidth()
+                                                .padding(12.dp),
+                                            verticalArrangement = Arrangement.spacedBy(10.dp)
+                                        ) {
+                                            Row(
+                                                modifier = Modifier
+                                                    .fillMaxWidth()
+                                                    .clip(RoundedCornerShape(8.dp))
+                                                    .clickable { showBlockedListDialog = true }
+                                                    .padding(vertical = 4.dp),
+                                                horizontalArrangement = Arrangement.SpaceBetween,
+                                                verticalAlignment = Alignment.CenterVertically
+                                            ) {
+                                                Row(
+                                                    verticalAlignment = Alignment.CenterVertically,
+                                                    horizontalArrangement = Arrangement.spacedBy(10.dp)
+                                                ) {
+                                                    Icon(
+                                                        imageVector = Icons.Default.Block,
+                                                        contentDescription = null,
+                                                        tint = MaterialTheme.colorScheme.error,
+                                                        modifier = Modifier.size(22.dp)
+                                                    )
+                                                    Column {
+                                                        Text(
+                                                            text = "قائمة الحظر",
+                                                            fontWeight = FontWeight.Bold,
+                                                            fontSize = 13.sp
+                                                        )
+                                                        Text(
+                                                            text = "${blockedUsersList.size} مستخدمين محظورين",
+                                                            fontSize = 11.sp,
+                                                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                                                        )
+                                                    }
+                                                }
+
+                                                Row(
+                                                    verticalAlignment = Alignment.CenterVertically,
+                                                    horizontalArrangement = Arrangement.spacedBy(4.dp)
+                                                ) {
+                                                    Surface(
+                                                        shape = RoundedCornerShape(10.dp),
+                                                        color = MaterialTheme.colorScheme.error.copy(alpha = 0.1f)
+                                                    ) {
+                                                        Text(
+                                                            text = "${blockedUsersList.size}",
+                                                            color = MaterialTheme.colorScheme.error,
+                                                            fontSize = 11.sp,
+                                                            fontWeight = FontWeight.Bold,
+                                                            modifier = Modifier.padding(horizontal = 6.dp, vertical = 2.dp)
+                                                        )
+                                                    }
+                                                    Icon(
+                                                        imageVector = Icons.Default.ChevronLeft,
+                                                        contentDescription = null,
+                                                        tint = MaterialTheme.colorScheme.onSurfaceVariant
+                                                    )
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+
+                                HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f))
+
+                                Surface(
+                                    shape = RoundedCornerShape(14.dp),
+                                    color = if (isSupportExpanded) MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.25f)
+                                            else MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.4f),
+                                    border = androidx.compose.foundation.BorderStroke(
+                                        1.dp,
+                                        if (isSupportExpanded) MaterialTheme.colorScheme.primary.copy(alpha = 0.5f)
+                                        else MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f)
+                                    ),
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .clip(RoundedCornerShape(14.dp))
+                                        .clickable { isSupportExpanded = !isSupportExpanded }
+                                        .testTag("support_dropdown_button")
+                                ) {
+                                    Row(
+                                        modifier = Modifier
+                                            .fillMaxWidth()
+                                            .padding(horizontal = 14.dp, vertical = 12.dp),
+                                        verticalAlignment = Alignment.CenterVertically,
+                                        horizontalArrangement = Arrangement.SpaceBetween
+                                    ) {
+                                        Row(
+                                            verticalAlignment = Alignment.CenterVertically,
+                                            horizontalArrangement = Arrangement.spacedBy(10.dp)
+                                        ) {
+                                            Box(
+                                                modifier = Modifier
+                                                    .size(36.dp)
+                                                    .clip(CircleShape)
+                                                    .background(MujtamaTeal.copy(alpha = 0.15f)),
+                                                contentAlignment = Alignment.Center
+                                            ) {
+                                                Icon(
+                                                    imageVector = Icons.Default.SupportAgent,
+                                                    contentDescription = null,
+                                                    tint = MujtamaTeal,
+                                                    modifier = Modifier.size(20.dp)
+                                                )
+                                            }
+                                            Column {
+                                                Text(
+                                                    text = "الدعم والمساعدة",
+                                                    fontWeight = FontWeight.Bold,
+                                                    fontSize = 14.sp
+                                                )
+                                                Text(
+                                                    text = if (isSupportExpanded) "اضغط للطي" else "تواصل مباشر أو إبلاغ عن مشكلة",
+                                                    fontSize = 11.sp,
+                                                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                                                )
+                                            }
+                                        }
+
+                                        Icon(
+                                            imageVector = if (isSupportExpanded) Icons.Default.ExpandLess else Icons.Default.ExpandMore,
+                                            contentDescription = if (isSupportExpanded) "طي القائمة" else "فتح القائمة",
+                                            tint = MaterialTheme.colorScheme.primary
+                                        )
+                                    }
+                                }
+
+                                AnimatedVisibility(visible = isSupportExpanded) {
+                                    Card(
+                                        shape = RoundedCornerShape(14.dp),
+                                        colors = CardDefaults.cardColors(
+                                            containerColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.35f)
+                                        ),
+                                        border = androidx.compose.foundation.BorderStroke(
+                                            1.dp,
+                                            MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.4f)
+                                        ),
+                                        modifier = Modifier.fillMaxWidth()
+                                    ) {
+                                        Column(
+                                            modifier = Modifier
+                                                .fillMaxWidth()
+                                                .padding(12.dp),
+                                            verticalArrangement = Arrangement.spacedBy(10.dp)
+                                        ) {
+                                            AccountSettingsActionRow(
+                                                icon = Icons.Default.SupportAgent,
+                                                title = "تواصل مباشر مع الدعم",
+                                                subtitle = "محادثة فورية مع فريق الدعم الفني وخدمة العملاء",
+                                                onClick = { showSupportChatDialog = true }
+                                            )
+
+                                            HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.3f))
+
+                                            AccountSettingsActionRow(
+                                                icon = Icons.Default.ReportProblem,
+                                                title = "إبلاغ عن مشكلة",
+                                                subtitle = "إرسال تقرير فني عن أي خلل أو عطل في التطبيق",
+                                                onClick = { showReportProblemDialog = true }
+                                            )
+                                        }
+                                    }
+                                }
+
+                                HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f))
+
+                                Surface(
+                                    shape = RoundedCornerShape(14.dp),
+                                    color = if (isGeneralExpanded) MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.25f)
+                                            else MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.4f),
+                                    border = androidx.compose.foundation.BorderStroke(
+                                        1.dp,
+                                        if (isGeneralExpanded) MaterialTheme.colorScheme.primary.copy(alpha = 0.5f)
+                                        else MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f)
+                                    ),
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .clip(RoundedCornerShape(14.dp))
+                                        .clickable { isGeneralExpanded = !isGeneralExpanded }
                                         .testTag("settings_dropdown_button")
                                 ) {
                                     Row(
@@ -616,6 +870,32 @@ fun AccountSettingsScreen(
                                                     imageVector = Icons.Default.Settings,
                                                     contentDescription = null,
                                                     tint = MaterialTheme.colorScheme.primary,
+                                                    modifier = Modifier.size(20.dp)
+                                                )
+                                            }
+                                            Column {
+                                                Text(
+                                                    text = "عام",
+                                                    fontWeight = FontWeight.Bold,
+                                                    fontSize = 14.sp
+                                                )
+                                                Text(
+                                                    text = if (isGeneralExpanded) "اضغط للطي" else "اللغة، السياسة، ورقم النسخة",
+                                                    fontSize = 11.sp,
+                                                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                                                )
+                                            }
+                                        }
+
+                                        Icon(
+                                            imageVector = if (isGeneralExpanded) Icons.Default.ExpandLess else Icons.Default.ExpandMore,
+                                            contentDescription = if (isGeneralExpanded) "طي القائمة" else "فتح القائمة",
+                                            tint = MaterialTheme.colorScheme.primary
+                                        )
+                                    }
+                                }
+
+                                AnimatedVisibility(visible = isGeneralExpanded) {
                                                     modifier = Modifier.size(20.dp)
                                                 )
                                             }
