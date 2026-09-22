@@ -845,6 +845,7 @@ fun ChatRoomView(
     
     val currentMember = room.members.find { it.id == "me" }
     val isOwnerOrAdmin = room.isOwner || currentMember?.role == RoomMemberRole.ADMIN || currentMember?.role == RoomMemberRole.OWNER
+    val isOwner = room.isOwner
     val isMuted = currentMember?.isMuted == true
 
     val roomContext = androidx.compose.ui.platform.LocalContext.current
