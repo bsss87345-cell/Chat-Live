@@ -3456,11 +3456,30 @@ fun GiftBoxDialog(
                     )
                 }
             }
-            .clickable {
-                            roomGiftCatalog.firstOrNull()?.let { gift ->
-                                repeat(selectedQuantity) { onSendGift(gift, selectedMember) }
-                            }
             }
+            Spacer(modifier = Modifier.height(10.dp))
+            LazyVerticalGrid(
+                columns = GridCells.Fixed(4),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(340.dp),
+                verticalArrangement = Arrangement.spacedBy(10.dp),
+                horizontalArrangement = Arrangement.spacedBy(10.dp)
+            ) {
+                items(roomGiftCatalog) { gift ->
+                    Column(
+                        modifier = Modifier
+                            .clip(RoundedCornerShape(14.dp))
+                            .background(Color.White.copy(alpha = 0.06f))
+                            .then(
+                                if (selectedGift?.id == gift.id)
+                                    Modifier.border(2.dp, MujtamaGold, RoundedCornerShape(14.dp))
+                                else Modifier
+                            )
+                            .clickable { selectedGift = gift }
+                            .padding(vertical = 10.dp),
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
                         Text(text = gift.emoji, fontSize = 26.sp)
                         Spacer(modifier = Modifier.height(6.dp))
                         Text(
