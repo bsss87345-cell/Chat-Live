@@ -44,6 +44,8 @@ import androidx.core.view.WindowCompat
 import androidx.core.view.ViewCompat
 import com.example.model.*
 import com.example.ui.theme.*
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.tween
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
