@@ -3594,6 +3594,39 @@ fun GiftBoxDialog(
             }
         )
     }
+
+    if (showQuantityPicker) {
+        androidx.compose.material3.AlertDialog(
+            onDismissRequest = { showQuantityPicker = false },
+            containerColor = Color(0xFF1E0F38),
+            title = {
+                Text(text = "اختر الكمية", color = MujtamaGold, fontWeight = FontWeight.Bold)
+            },
+            text = {
+                Column(modifier = Modifier.fillMaxWidth()) {
+                    listOf(1, 7, 17, 77, 777).forEach { qty ->
+                        Text(
+                            text = "$qty",
+                            color = Color.White,
+                            fontSize = 14.sp,
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .clickable {
+                                    selectedQuantity = qty
+                                    showQuantityPicker = false
+                                }
+                                .padding(vertical = 10.dp)
+                        )
+                    }
+                }
+            },
+            confirmButton = {
+                androidx.compose.material3.TextButton(onClick = { showQuantityPicker = false }) {
+                    Text(text = "إغلاق", color = MujtamaGold)
+                }
+            }
+        )
+    }
 }
 
 data class GiftSentEvent(
