@@ -3509,7 +3509,7 @@ fun GiftBoxDialog(
                             )
                         )
                         .clickable {
-                            roomGiftCatalog.firstOrNull()?.let { gift ->
+                            selectedGift?.let { gift ->
                                 repeat(selectedQuantity) { onSendGift(gift, selectedMember) }
                             }
                         }
