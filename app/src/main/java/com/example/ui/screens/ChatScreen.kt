@@ -3421,7 +3421,7 @@ fun GiftBoxDialog(
                     shape = RoundedCornerShape(topStart = 24.dp, topEnd = 24.dp)
                 )
                 .navigationBarsPadding()
-                .padding(20.dp)
+                .padding(horizontal = 16.dp, vertical = 16.dp)
         ) {
             Row(
                 modifier = Modifier.fillMaxWidth(),
@@ -3429,205 +3429,158 @@ fun GiftBoxDialog(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(
-                    text = "صندوق الهدايا",
-                    fontSize = 16.sp,
+                    text = "🎁  صندوق الهدايا",
+                    fontSize = 17.sp,
                     fontWeight = FontWeight.Bold,
-                    color = MujtamaGold
+                    color = Color.White
                 )
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
                     modifier = Modifier
                         .clip(RoundedCornerShape(20.dp))
-                        .background(Color.White.copy(alpha = 0.08f))
+                        .background(
+                            Brush.horizontalGradient(
+                                listOf(MujtamaGold.copy(alpha = 0.25f), MujtamaGold.copy(alpha = 0.10f))
+                            )
+                        )
                         .padding(horizontal = 12.dp, vertical = 6.dp)
                 ) {
-                    Text(text = "💰", fontSize = 14.sp)
+                    Text(text = "🪙", fontSize = 13.sp)
                     Spacer(modifier = Modifier.width(4.dp))
                     Text(
                         text = "$walletBalance",
                         fontSize = 13.sp,
                         fontWeight = FontWeight.Bold,
-                        color = Color.White
+                        color = MujtamaGold
                     )
+                }
+            }
+            Spacer(modifier = Modifier.height(12.dp))
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .clip(RoundedCornerShape(14.dp))
+                    .background(Color.White.copy(alpha = 0.06f))
+                    .clickable { showMemberPicker = true }
+                    .padding(horizontal = 14.dp, vertical = 10.dp),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text(
+                    text = if (selectedMember != null) "🎯 إلى: ${selectedMember!!.name}" else "🎯 إلى: الجميع بالغرفة",
+                    fontSize = 12.sp,
+                    fontWeight = FontWeight.Medium,
+                    color = Color.White.copy(alpha = 0.85f)
+                )
+                Icon(
+                    imageVector = Icons.Default.KeyboardArrowLeft,
+                    contentDescription = null,
+                    tint = MujtamaTeal,
+                    modifier = Modifier.size(18.dp)
+                )
+            }
+            Spacer(modifier = Modifier.height(12.dp))
+            LazyVerticalGrid(
+                columns = GridCells.Fixed(4),
+                horizontalArrangement = Arrangement.spacedBy(10.dp),
+                verticalArrangement = Arrangement.spacedBy(10.dp),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .heightIn(max = 220.dp)
+            ) {
+                items(roomGiftCatalog) { gift ->
+                    Column(
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .clip(RoundedCornerShape(16.dp))
+                            .background(
+                                Brush.verticalGradient(
+                                    listOf(Color(gift.colorHex).copy(alpha = 0.22f), Color.White.copy(alpha = 0.04f))
+                                )
+                            )
+                            .clickable { repeat(selectedQuantity) { onSendGift(gift, selectedMember) } }
+                            .padding(vertical = 10.dp, horizontal = 4.dp)
+                    ) {
+                        Text(text = gift.emoji, fontSize = 26.sp)
+                        Spacer(modifier = Modifier.height(6.dp))
+                        Text(
+                            text = gift.name,
+                            fontSize = 11.sp,
+                            fontWeight = FontWeight.SemiBold,
+                            color = Color.White,
+                            maxLines = 1
+                        )
+                        Spacer(modifier = Modifier.height(3.dp))
+                        Box(
+                            modifier = Modifier
+                                .clip(RoundedCornerShape(10.dp))
+                                .background(Color.Black.copy(alpha = 0.25f))
+                                .padding(horizontal = 8.dp, vertical = 2.dp)
+                        ) {
+                            Row(
+                                verticalAlignment = Alignment.CenterVertically,
+                                horizontalArrangement = Arrangement.spacedBy(2.dp)
+                            ) {
+                                Text(text = "🪙", fontSize = 9.sp)
+                                Text(
+                                    text = "${gift.price}",
+                                    fontSize = 10.sp,
+                                    fontWeight = FontWeight.Bold,
+                                    color = MujtamaGold
+                                )
+                            }
+                        }
+                    }
                 }
             }
             Spacer(modifier = Modifier.height(14.dp))
             Row(
                 modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Text(
-                    text = if (selectedMember != null) "الهدية إلى: ${selectedMember!!.name}" else "أرسل هدايا لكل شخص في الغرفة",
-                    fontSize = 12.sp,
-                    color = Color.White.copy(alpha = 0.75f)
-                )
-                Box(
-                    modifier = Modifier
-                        .clip(RoundedCornerShape(14.dp))
-                        .background(MujtamaGold.copy(alpha = 0.15f))
-                        .clickable { showMemberPicker = true }
-                        .padding(horizontal = 10.dp, vertical = 5.dp)
-                ) {
-                    Text(
-                        text = "اختار",
-                        fontSize = 11.sp,
-                        fontWeight = FontWeight.Medium,
-                        color = MujtamaGold
-                    )
-                }
-            }
-            Spacer(modifier = Modifier.height(10.dp))
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.End,
-                verticalAlignment = Alignment.CenterVertically
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(10.dp)
             ) {
                 Box(
                     modifier = Modifier
                         .clip(RoundedCornerShape(14.dp))
                         .background(Color.White.copy(alpha = 0.08f))
                         .clickable { showQuantityPicker = true }
-                        .padding(horizontal = 12.dp, vertical = 6.dp)
+                        .padding(horizontal = 16.dp, vertical = 12.dp)
                 ) {
                     Text(
-                        text = "الكمية: $selectedQuantity",
-                        fontSize = 11.sp,
-                        fontWeight = FontWeight.Medium,
+                        text = "الكمية  $selectedQuantity",
+                        fontSize = 13.sp,
+                        fontWeight = FontWeight.Bold,
                         color = Color.White
                     )
                 }
-            }
-            Spacer(modifier = Modifier.height(10.dp))
-            LazyVerticalGrid(
-                columns = GridCells.Fixed(4),
-                horizontalArrangement = Arrangement.spacedBy(4.dp),
-                verticalArrangement = Arrangement.spacedBy(4.dp),
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .heightIn(max = 260.dp)
-            ) {
-                items(roomGiftCatalog) { gift ->
-                    Column(
-                        horizontalAlignment = Alignment.CenterHorizontally,
-                        modifier = Modifier
-                            .clip(RoundedCornerShape(14.dp))
-                            .clickable { repeat(selectedQuantity) { onSendGift(gift, selectedMember) } }
-                            .padding(6.dp)
-                    ) {
-                        Box(
-                            modifier = Modifier
-                                .size(44.dp)
-                                .clip(CircleShape)
-                                .background(Color(gift.colorHex).copy(alpha = 0.25f)),
-                            contentAlignment = Alignment.Center
-                        ) {
-                            Text(text = gift.emoji, fontSize = 20.sp)
-                        }
-                        Spacer(modifier = Modifier.height(4.dp))
-                        Text(
-                            text = gift.name,
-                            fontSize = 10.sp,
-                            fontWeight = FontWeight.Medium,
-                            color = Color.White,
-                            maxLines = 1
-                        )
-                        Row(
-                            verticalAlignment = Alignment.CenterVertically,
-                            horizontalArrangement = Arrangement.spacedBy(2.dp)
-                        ) {
-                            Text(text = "🪙", fontSize = 9.sp)
-                            Text(
-                                text = "${gift.price}",
-                                fontSize = 9.sp,
-                                fontWeight = FontWeight.Bold,
-                                color = MujtamaGold
+                Box(
+                    modifier = Modifier
+                        .weight(1f)
+                        .clip(RoundedCornerShape(14.dp))
+                        .background(
+                            Brush.horizontalGradient(
+                                listOf(MujtamaTeal, MujtamaGold)
                             )
+                        )
+                        .clickable {
+                            roomGiftCatalog.firstOrNull()?.let { gift ->
+                                repeat(selectedQuantity) { onSendGift(gift, selectedMember) }
+                            }
                         }
-                    }
+                        .padding(vertical = 12.dp),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Text(
+                        text = "إرسال",
+                        fontSize = 14.sp,
+                        fontWeight = FontWeight.Bold,
+                        color = Color(0xFF120823)
+                    )
                 }
             }
         }
     }
-
-    if (showMemberPicker) {
-        androidx.compose.material3.AlertDialog(
-            onDismissRequest = { showMemberPicker = false },
-            containerColor = Color(0xFF1E0F38),
-            title = {
-                Text(text = "اختر المستلم", color = MujtamaGold, fontWeight = FontWeight.Bold)
-            },
-            text = {
-                Column(modifier = Modifier.fillMaxWidth()) {
-                    Text(
-                        text = "الجميع",
-                        color = Color.White,
-                        fontSize = 14.sp,
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .clickable {
-                                selectedMember = null
-                                showMemberPicker = false
-                            }
-                            .padding(vertical = 10.dp)
-                    )
-                    members.forEach { member ->
-                        Text(
-                            text = member.name,
-                            color = Color.White,
-                            fontSize = 14.sp,
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .clickable {
-                                    selectedMember = member
-                                    showMemberPicker = false
-                                }
-                                .padding(vertical = 10.dp)
-                        )
-                    }
-                }
-            },
-            confirmButton = {
-                androidx.compose.material3.TextButton(onClick = { showMemberPicker = false }) {
-                    Text(text = "إغلاق", color = MujtamaGold)
-                }
-            }
-        )
-    }
-
-    if (showQuantityPicker) {
-        androidx.compose.material3.AlertDialog(
-            onDismissRequest = { showQuantityPicker = false },
-            containerColor = Color(0xFF1E0F38),
-            title = {
-                Text(text = "اختر الكمية", color = MujtamaGold, fontWeight = FontWeight.Bold)
-            },
-            text = {
-                Column(modifier = Modifier.fillMaxWidth()) {
-                    listOf(1, 7, 17, 77, 777).forEach { qty ->
-                        Text(
-                            text = "$qty",
-                            color = Color.White,
-                            fontSize = 14.sp,
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .clickable {
-                                    selectedQuantity = qty
-                                    showQuantityPicker = false
-                                }
-                                .padding(vertical = 10.dp)
-                        )
-                    }
-                }
-            },
-            confirmButton = {
-                androidx.compose.material3.TextButton(onClick = { showQuantityPicker = false }) {
-                    Text(text = "إغلاق", color = MujtamaGold)
-                }
-            }
-        )
-    }
-}
 
 data class GiftSentEvent(
     val id: String = java.util.UUID.randomUUID().toString(),
