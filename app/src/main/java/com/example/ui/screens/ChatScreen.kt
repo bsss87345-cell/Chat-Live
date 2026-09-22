@@ -2065,7 +2065,7 @@ fun RoomVoiceStage(
             .fillMaxWidth()
             .padding(horizontal = 12.dp, vertical = 6.dp),
         shape = RoundedCornerShape(20.dp),
-        color = MaterialTheme.colorScheme.surface.copy(alpha = 0.50f),
+        color = Color.Transparent,
         border = androidx.compose.foundation.BorderStroke(
             width = 1.dp,
             brush = Brush.verticalGradient(
