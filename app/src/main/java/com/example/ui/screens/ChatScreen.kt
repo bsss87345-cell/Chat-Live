@@ -1218,7 +1218,7 @@ Box(modifier = Modifier.fillMaxSize()) {
                         )
                     }
 
-                    if (isOwnerOrAdmin) {
+                    if (isOwner) {
                         IconButton(
                             onClick = onUnpinMessage,
                             modifier = Modifier.size(24.dp)
