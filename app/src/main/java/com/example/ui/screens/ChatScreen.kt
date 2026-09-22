@@ -87,6 +87,7 @@ fun ChatScreen(
     onStartInRoomGame: (String, GameType) -> Unit,
     onToggleLock: (String) -> Unit,
     onUpdateBackground: (String, String) -> Unit,
+    onUpdateRoomImage: (String, String) -> Unit = { _, _ -> },
     onBlockMember: (String, String) -> Unit,
     onUnblockMember: (String, String) -> Unit,
     onRequestVoiceSeat: (Int) -> Unit = {},
