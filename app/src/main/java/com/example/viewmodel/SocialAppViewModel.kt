@@ -616,7 +616,15 @@ fun updateRoomBackground(roomId: String, imageUrl: String) {
                 if (it.id == roomId) it.copy(backgroundImageUrl = imageUrl.ifBlank { null }) else it
             }
         }
-}
+    }
+
+    fun updateRoomImage(roomId: String, imageUrl: String) {
+        _chatRooms.update { list ->
+            list.map {
+                if (it.id == roomId) it.copy(imageUrl = imageUrl.ifBlank { null }) else it
+            }
+        }
+    }
 fun blockRoomMember(roomId: String, memberId: String) {
         _chatRooms.update { list ->
             list.map { room ->
