@@ -412,16 +412,30 @@ private fun FollowListFullScreen(
     if (selectedUser != null) {
         Dialog(
             onDismissRequest = { selectedUser = null },
-            properties = DialogProperties(usePlatformDefaultWidth = false)
-        ) {
-            ProfileScreen(
-                userProfile = selectedUser!!.toUserProfile(),
-                posts = emptyList(),
-                balance = 0,
-                onUpdateBio = {},
-                onLogout = {},
-                isOnOwnProfile = false
+            properties = DialogProperties(
+                usePlatformDefaultWidth = false,
+                decorFitsSystemWindows = false
             )
+        ) {
+            val innerView = LocalView.current
+            SideEffect {
+                (innerView.parent as? DialogWindowProvider)?.window?.setBackgroundDrawable(
+                    ColorDrawable(android.graphics.Color.WHITE)
+                )
+            }
+            Surface(
+                modifier = Modifier.fillMaxSize(),
+                color = Color.White
+            ) {
+                ProfileScreen(
+                    userProfile = selectedUser!!.toUserProfile(),
+                    posts = emptyList(),
+                    balance = 0,
+                    onUpdateBio = {},
+                    onLogout = {},
+                    isOnOwnProfile = false
+                )
+            }
         }
     }
 }
