@@ -139,6 +139,7 @@ fun ChatScreen(
                 onLeaveRoom = { onLeaveRoom(activeRoom.id) },
                 onToggleLock = { onToggleLock(activeRoom.id) },
                 onUpdateBackground = { uri -> onUpdateBackground(activeRoom.id, uri) },
+                onUpdateRoomImage = { uri -> onUpdateRoomImage(activeRoom.id, uri) },
                 onBlockMember = { memId -> onBlockMember(activeRoom.id, memId) },
                 onUnblockMember = { memId -> onUnblockMember(activeRoom.id, memId) },
                 onJoinRoom = { onJoinRoom(activeRoom.id, "") },
