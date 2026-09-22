@@ -3514,22 +3514,8 @@ fun GiftBoxDialog(
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(10.dp)
+                horizontalArrangement = Arrangement.spacedBy(8.dp)
             ) {
-                Box(
-                    modifier = Modifier
-                        .clip(RoundedCornerShape(14.dp))
-                        .background(Color.White.copy(alpha = 0.08f))
-                        .clickable { showQuantityPicker = true }
-                        .padding(horizontal = 16.dp, vertical = 12.dp)
-                ) {
-                    Text(
-                        text = "الكمية  $selectedQuantity",
-                        fontSize = 13.sp,
-                        fontWeight = FontWeight.Bold,
-                        color = Color.White
-                    )
-                }
                 Box(
                     modifier = Modifier
                         .weight(1f)
@@ -3552,6 +3538,35 @@ fun GiftBoxDialog(
                         fontSize = 14.sp,
                         fontWeight = FontWeight.Bold,
                         color = Color(0xFF120823)
+                    )
+                }
+                Box(
+                    modifier = Modifier
+                        .clip(RoundedCornerShape(14.dp))
+                        .background(Color.White.copy(alpha = 0.08f))
+                        .clickable { showQuantityPicker = true }
+                        .padding(horizontal = 14.dp, vertical = 12.dp)
+                ) {
+                    Text(
+                        text = "$selectedQuantity",
+                        fontSize = 13.sp,
+                        fontWeight = FontWeight.Bold,
+                        color = Color.White
+                    )
+                }
+                Box(
+                    modifier = Modifier
+                        .clip(RoundedCornerShape(14.dp))
+                        .background(Color.White.copy(alpha = 0.08f))
+                        .clickable { showMemberPicker = true }
+                        .padding(horizontal = 14.dp, vertical = 12.dp)
+                ) {
+                    Text(
+                        text = if (selectedMember != null) selectedMember!!.name else "الجميع",
+                        fontSize = 12.sp,
+                        fontWeight = FontWeight.Bold,
+                        color = MujtamaTeal,
+                        maxLines = 1
                     )
                 }
             }
