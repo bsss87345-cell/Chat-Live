@@ -2413,7 +2413,7 @@ private fun VoiceSeatItem(
         initialValue = 1.0f,
         targetValue = 1.07f,
         animationSpec = infiniteRepeatable(
-            animation = tween(800, easing = FastOutSlowInEasing),
+            animation = tween(550, easing = FastOutSlowInEasing),
             repeatMode = RepeatMode.Reverse
         ),
         label = "seat_scale_$seatNumber"
