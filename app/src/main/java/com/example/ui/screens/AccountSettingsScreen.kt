@@ -127,7 +127,7 @@ fun AccountSettingsScreen(
                 ) {
                     val menuItems = listOf(
                         Triple("إعدادات الحساب", Icons.Default.Settings, 2),
-                        Triple("منشوراتي", Icons.Default.Article, 1),
+                        Triple("النشاط", Icons.Default.Article, 1),
                         Triple("النقاط والرصيد", Icons.Default.Stars, 0)
                     )
 
