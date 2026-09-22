@@ -1697,6 +1697,34 @@ Box(modifier = Modifier.fillMaxSize()) {
                         Text("تغيير خلفية الدردشة")
                     }
 
+                    if (isOwner) {
+                        OutlinedButton(
+                            onClick = {
+                                showSettingsDialog = false
+                                showPinDialog = true
+                            },
+                            modifier = Modifier.fillMaxWidth()
+                        ) {
+                            Icon(Icons.Default.PushPin, contentDescription = null, modifier = Modifier.size(16.dp))
+                            Spacer(modifier = Modifier.width(6.dp))
+                            Text(if (room.pinnedMessage != null) "تعديل الرسالة المثبتة" else "تثبيت رسالة")
+                        }
+
+                        if (room.pinnedMessage != null) {
+                            OutlinedButton(
+                                onClick = {
+                                    showSettingsDialog = false
+                                    onUnpinMessage()
+                                },
+                                modifier = Modifier.fillMaxWidth()
+                            ) {
+                                Icon(Icons.Default.Close, contentDescription = null, modifier = Modifier.size(16.dp))
+                                Spacer(modifier = Modifier.width(6.dp))
+                                Text("إلغاء تثبيت الرسالة")
+                            }
+                        }
+                    }
+
 OutlinedButton(
                         onClick = { onToggleLock() },
                         modifier = Modifier.fillMaxWidth()
