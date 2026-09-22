@@ -391,7 +391,7 @@ fun AccountSettingsScreen(
                             )
 
                             Row(horizontalArrangement = Arrangement.spacedBy(4.dp)) {
-                                listOf("الكل", "كسب (+)", "إنفاق (-)").forEach { filter ->
+                                listOf("إنفاق (-)").forEach { filter ->
                                     FilterChip(
                                         selected = walletFilter == filter,
                                         onClick = { onFilterChange(filter) },
