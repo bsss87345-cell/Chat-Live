@@ -321,9 +321,15 @@ private fun FollowListFullScreen(
             decorFitsSystemWindows = false
         )
     ) {
+        val view = LocalView.current
+        SideEffect {
+            (view.parent as? DialogWindowProvider)?.window?.setBackgroundDrawable(
+                ColorDrawable(android.graphics.Color.WHITE)
+            )
+        }
         Surface(
             modifier = Modifier.fillMaxSize().navigationBarsPadding(),
-            color = MaterialTheme.colorScheme.background
+            color = Color.White
         ) {
             Column(modifier = Modifier.fillMaxSize()) {
                 TopAppBar(
