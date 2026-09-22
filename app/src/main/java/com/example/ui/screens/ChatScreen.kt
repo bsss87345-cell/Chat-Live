@@ -3404,6 +3404,7 @@ fun GiftBoxDialog(
     var showMemberPicker by remember { mutableStateOf(false) }
     var selectedQuantity by remember { mutableStateOf(1) }
     var showQuantityPicker by remember { mutableStateOf(false) }
+    var selectedGift by remember { mutableStateOf<GiftItem?>(roomGiftCatalog.firstOrNull()) }
     val sheetState = androidx.compose.material3.rememberModalBottomSheetState(skipPartiallyExpanded = true)
     androidx.compose.material3.ModalBottomSheet(
         onDismissRequest = onDismiss,
