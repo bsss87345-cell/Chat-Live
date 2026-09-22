@@ -141,7 +141,17 @@ fun FeedScreen(
         }
     }
 
-    Box(modifier = Modifier.fillMaxSize()) {
+    var startAnimation by remember { mutableStateOf(false) }
+    val feedAlpha by animateFloatAsState(
+        targetValue = if (startAnimation) 1f else 0f,
+        animationSpec = tween(durationMillis = 600),
+        label = "feedFadeIn"
+    )
+    LaunchedEffect(Unit) {
+        startAnimation = true
+    }
+
+    Box(modifier = Modifier.fillMaxSize().alpha(feedAlpha)) {
         LazyColumn(
             modifier = Modifier.fillMaxSize(),
             contentPadding = PaddingValues(bottom = 80.dp),
