@@ -5,9 +5,13 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.ui.MainScreen
+import com.example.ui.SplashScreen
 import com.example.ui.theme.MyApplicationTheme
 import com.example.viewmodel.SocialAppViewModel
 
@@ -18,8 +22,13 @@ class MainActivity : ComponentActivity() {
         setContent {
             val viewModel: SocialAppViewModel = viewModel()
             val isDarkMode by viewModel.isDarkMode.collectAsStateWithLifecycle()
+            var showSplash by remember { mutableStateOf(true) }
             MyApplicationTheme(darkTheme = isDarkMode) {
-                MainScreen(viewModel = viewModel)
+                if (showSplash) {
+                    SplashScreen(onFinished = { showSplash = false })
+                } else {
+                    MainScreen(viewModel = viewModel)
+                }
             }
         }
     }
