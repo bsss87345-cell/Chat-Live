@@ -514,73 +514,7 @@ fun AccountSettingsScreen(
                         }
                     }
                 }
-                                                } else {
-                                                    Text(userProfile.avatarEmoji, fontSize = 18.sp)
-                                                }
-                                            }
-                                            Column {
-                                                Text(text = userProfile.name, fontWeight = FontWeight.Bold, fontSize = 13.sp)
-                                                Text(text = post.timeAgo, fontSize = 10.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
-                                            }
-                                        }
-
-                                        if (post.tag != null) {
-                                            Surface(
-                                                shape = RoundedCornerShape(6.dp),
-                                                color = MujtamaPrimary.copy(alpha = 0.15f)
-                                            ) {
-                                                Text(
-                                                    text = post.tag,
-                                                    fontSize = 10.sp,
-                                                    color = MujtamaPrimary,
-                                                    fontWeight = FontWeight.Bold,
-                                                    modifier = Modifier.padding(horizontal = 6.dp, vertical = 2.dp)
-                                                )
-                                            }
-                                        }
-                                    }
-
-                                    Text(
-                                        text = post.content,
-                                        fontSize = 13.sp,
-                                        lineHeight = 18.sp
-                                    )
-
-                                    HorizontalDivider(modifier = Modifier.padding(vertical = 4.dp))
-
-                                    Row(
-                                        modifier = Modifier.fillMaxWidth(),
-                                        horizontalArrangement = Arrangement.SpaceAround,
-                                        verticalAlignment = Alignment.CenterVertically
-                                    ) {
-                                        TextButton(onClick = { onLikePost(post.id) }) {
-                                            Icon(
-                                                imageVector = if (post.isLiked) Icons.Default.Favorite else Icons.Default.FavoriteBorder,
-                                                contentDescription = "إعجاب",
-                                                tint = if (post.isLiked) Color.Red else MaterialTheme.colorScheme.onSurfaceVariant,
-                                                modifier = Modifier.size(16.dp)
-                                            )
-                                            Spacer(modifier = Modifier.width(4.dp))
-                                            Text("${post.likesCount}", fontSize = 11.sp)
-                                        }
-
-                                        TextButton(onClick = { onCommentPost(post.id) }) {
-                                            Icon(Icons.Default.ChatBubbleOutline, contentDescription = "تعليق", modifier = Modifier.size(16.dp))
-                                            Spacer(modifier = Modifier.width(4.dp))
-                                            Text("${post.commentsCount}", fontSize = 11.sp)
-                                        }
-
-                                        TextButton(onClick = { onSharePost(post) }) {
-                                            Icon(Icons.Default.Share, contentDescription = "مشاركة", modifier = Modifier.size(16.dp))
-                                            Spacer(modifier = Modifier.width(4.dp))
-                                            Text("مشاركة", fontSize = 11.sp)
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
+     
 
                 // -------------------------------------------------------------
                 // Page: إعدادات الحساب
