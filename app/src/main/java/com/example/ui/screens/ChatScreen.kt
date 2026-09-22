@@ -1072,8 +1072,8 @@ Box(modifier = Modifier.fillMaxSize()) {
     ) {
 // Room Top App Bar
         Surface(
-            tonalElevation = 4.dp,
-            color = MaterialTheme.colorScheme.surface
+            tonalElevation = 0.dp,
+            color = Color.Transparent
         ) {
             Row(
                 modifier = Modifier
