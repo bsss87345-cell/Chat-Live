@@ -128,10 +128,34 @@ fun ProfileScreen(
                     }
 
                     // Avatar with Edit Badge
+                    var avatarGlowStarted by remember { mutableStateOf(false) }
+                    val avatarGlowAlpha by animateFloatAsState(
+                        targetValue = if (avatarGlowStarted) 0f else 1f,
+                        animationSpec = tween(durationMillis = 1200),
+                        label = "avatarGlow"
+                    )
+                    LaunchedEffect(Unit) {
+                        avatarGlowStarted = true
+                    }
                     Box(
                         modifier = Modifier.size(86.dp),
                         contentAlignment = Alignment.BottomEnd
                     ) {
+                        Box(
+                            modifier = Modifier
+                                .size(100.dp)
+                                .align(Alignment.Center)
+                                .clip(CircleShape)
+                                .background(
+                                    Brush.radialGradient(
+                                        listOf(
+                                            MujtamaGold.copy(alpha = 0.6f * avatarGlowAlpha),
+                                            MujtamaTeal.copy(alpha = 0.3f * avatarGlowAlpha),
+                                            Color.Transparent
+                                        )
+                                    )
+                                )
+                        )
                         Box(
                             modifier = Modifier
                                 .fillMaxSize()
