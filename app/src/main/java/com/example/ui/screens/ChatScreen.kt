@@ -2449,22 +2449,22 @@ private fun VoiceSeatItem(
                     when {
                         isSpeaking -> Brush.radialGradient(
                             listOf(
-                                MujtamaTeal.copy(alpha = 0.32f),
-                                Color.White.copy(alpha = 0.12f),
+                                MujtamaTeal.copy(alpha = 0.55f),
+                                Color.White.copy(alpha = 0.25f),
                                 Color.Transparent
                             )
                         )
                         isOccupied -> Brush.radialGradient(
                             listOf(
-                                MaterialTheme.colorScheme.primary.copy(alpha = 0.20f),
-                                Color.White.copy(alpha = 0.08f),
+                                MaterialTheme.colorScheme.primary.copy(alpha = 0.40f),
+                                Color.White.copy(alpha = 0.18f),
                                 Color.Transparent
                             )
                         )
                         else -> Brush.radialGradient(
                             listOf(
-                                Color.White.copy(alpha = 0.05f),
-                                MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.12f),
+                                Color.White.copy(alpha = 0.12f),
+                                MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.25f),
                                 Color.Transparent
                             )
                         )
@@ -2476,19 +2476,19 @@ private fun VoiceSeatItem(
                         isSpeaking -> Brush.linearGradient(
                             listOf(
                                 MujtamaTeal.copy(alpha = glowAlpha),
-                                Color.White.copy(alpha = 0.9f)
+                                Color.White.copy(alpha = 1f)
                             )
                         )
                         isOccupied -> Brush.linearGradient(
                             listOf(
-                                MaterialTheme.colorScheme.primary.copy(alpha = 0.85f),
-                                Color.White.copy(alpha = 0.5f)
+                                MaterialTheme.colorScheme.primary.copy(alpha = 1f),
+                                Color.White.copy(alpha = 0.75f)
                             )
                         )
                         else -> Brush.linearGradient(
                             listOf(
-                                MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.45f),
-                                MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.25f)
+                                MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.70f),
+                                MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.50f)
                             )
                         )
                     },
