@@ -512,7 +512,6 @@ class SocialAppViewModel : ViewModel() {
             maxMembers = maxMembers.coerceIn(10, 1000),
             isJoined = true,
             isOwner = true,
-            pinnedMessage = "📌 أهلاً بكم في غرفة $name الجديدة! نتمنى لكم قضاء أمتع الأوقات والالتزام بالاحترام المتبادل.",
             members = listOf(
                 RoomMember("me", "أنت (المالك)", RoomMemberRole.OWNER, isOnline = true, avatarUrl = _userProfile.value.avatarUrl)
             ),
