@@ -1259,8 +1259,8 @@ Box(modifier = Modifier.fillMaxSize()) {
 
         // Input Bar
         Surface(
-            tonalElevation = 6.dp,
-            color = MaterialTheme.colorScheme.surface
+            tonalElevation = 0.dp,
+            color = Color.Transparent
         ) {
             Row(
                 modifier = Modifier
