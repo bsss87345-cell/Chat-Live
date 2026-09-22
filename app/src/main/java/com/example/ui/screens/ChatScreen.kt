@@ -1693,6 +1693,20 @@ Box(modifier = Modifier.fillMaxSize()) {
                         Text("تغيير خلفية الدردشة")
                     }
 
+                    OutlinedButton(
+                        onClick = {
+                            showSettingsDialog = false
+                            roomImagePickerLauncher.launch(
+                                PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly)
+                            )
+                        },
+                        modifier = Modifier.fillMaxWidth()
+                    ) {
+                        Icon(Icons.Default.Image, contentDescription = null, modifier = Modifier.size(16.dp))
+                        Spacer(modifier = Modifier.width(6.dp))
+                        Text("تغيير صورة الغرفة")
+                    }
+
                     if (isOwner) {
                         OutlinedButton(
                             onClick = {
