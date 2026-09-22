@@ -865,6 +865,7 @@ fun AccountSettingsScreen(
                     }
                 }
 
+                
     // Direct Support Chat Dialog (تواصل مباشر مع الدعم)
     if (showSupportChatDialog) {
         var supportMessages by remember {
