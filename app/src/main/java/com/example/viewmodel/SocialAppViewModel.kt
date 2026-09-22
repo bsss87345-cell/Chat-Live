@@ -1228,6 +1228,25 @@ fun toggleOwnerVoiceMute(roomId: String) {
         _userMessage.value = "تم شراء '${item.title}' بنجاح وتطبيقه على حسابك!"
     }
 
+    fun spendOnGift(giftName: String, giftPrice: Int, quantity: Int): Boolean {
+        val totalCost = giftPrice * quantity
+        if (_walletBalance.value < totalCost) {
+            _userMessage.value = "رصيد نقاطك غير كافٍ لإرسال هذه الهدية!"
+            return false
+        }
+        _walletBalance.update { it - totalCost }
+        val newGiftTx = WalletTransaction(
+            id = "tx_${System.currentTimeMillis()}",
+            title = "إرسال هدية: $giftName",
+            type = TransactionType.SPEND,
+            points = totalCost,
+            date = "اليوم",
+            note = "هدية داخل الغرفة (الكمية: $quantity)"
+        )
+        _transactions.update { listOf(newGiftTx) + it }
+        return true
+    }
+
     // --- Profile Actions ---
     fun updateUserBio(newBio: String) {
         _userProfile.update { it.copy(bio = newBio.trim()) }
