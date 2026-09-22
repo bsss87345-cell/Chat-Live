@@ -1244,10 +1244,25 @@ fun toggleOwnerVoiceMute(roomId: String) {
             note = "هدية داخل الغرفة (الكمية: $quantity)"
         )
         _transactions.update { listOf(newGiftTx) + it }
-        return true
-    }
+            return true
+        }
 
-    // --- Profile Actions ---
+        // TODO: تجريبي فقط - يُحذف قبل أي إطلاق فعلي للتطبيق
+        fun addTestBalance() {
+            _walletBalance.update { it + 1000 }
+            val newTx = WalletTransaction(
+                id = "tx_${System.currentTimeMillis()}",
+                title = "رصيد تجريبي ⭐",
+                type = TransactionType.EARN,
+                points = 1000,
+                date = "اليوم",
+                note = "رصيد وهمي للتجربة فقط - TODO: يُحذف لاحقاً"
+            )
+            _transactions.update { listOf(newTx) + it }
+            _userMessage.value = "تمت إضافة 1000 نجمة تجريبية ⭐"
+        }
+
+        // --- Profile Actions ---
     fun updateUserBio(newBio: String) {
         _userProfile.update { it.copy(bio = newBio.trim()) }
         _userMessage.value = "تم تحديث النبذة التعريفية بنجاح!"
