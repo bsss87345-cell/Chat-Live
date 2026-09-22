@@ -464,83 +464,56 @@ fun AccountSettingsScreen(
                 // -------------------------------------------------------------
                 if (openPage == 1) {
                     item {
-                        Row(
-                            modifier = Modifier.fillMaxWidth(),
-                            horizontalArrangement = Arrangement.SpaceBetween,
-                            verticalAlignment = Alignment.CenterVertically
-                        ) {
-                            Text(
-                                text = "منشوراتي ونشاطي الأخير (${userPosts.size}) 📝",
-                                style = MaterialTheme.typography.titleSmall.copy(fontWeight = FontWeight.Bold)
-                            )
-                        }
+                        Text(
+                            text = "النشاط 📋",
+                            style = MaterialTheme.typography.titleSmall.copy(fontWeight = FontWeight.Bold)
+                        )
                     }
 
-                    if (userPosts.isEmpty()) {
-                        item {
-                            Card(
-                                modifier = Modifier.fillMaxWidth(),
-                                shape = RoundedCornerShape(14.dp)
+                    val activityCategories = listOf(
+                        Triple(Icons.Default.Favorite, "الإعجابات", "لا يوجد نشاط بعد"),
+                        Triple(Icons.Default.ChatBubbleOutline, "التعليقات", "لا يوجد نشاط بعد"),
+                        Triple(Icons.Default.Share, "المشاركات", "لا يوجد نشاط بعد"),
+                        Triple(Icons.Default.DeleteOutline, "المحتوى المحذوف", "لا يوجد نشاط بعد"),
+                        Triple(Icons.Default.MeetingRoom, "الغرف المنضم إليها", "لا يوجد نشاط بعد")
+                    )
+
+                    items(activityCategories) { (icon, title, subtitle) ->
+                        Card(
+                            modifier = Modifier.fillMaxWidth(),
+                            shape = RoundedCornerShape(14.dp),
+                            colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
+                            elevation = CardDefaults.cardElevation(defaultElevation = 1.dp)
+                        ) {
+                            Row(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(horizontal = 14.dp, vertical = 12.dp),
+                                verticalAlignment = Alignment.CenterVertically,
+                                horizontalArrangement = Arrangement.spacedBy(10.dp)
                             ) {
-                                Column(
+                                Box(
                                     modifier = Modifier
-                                        .fillMaxWidth()
-                                        .padding(24.dp),
-                                    horizontalAlignment = Alignment.CenterHorizontally,
-                                    verticalArrangement = Arrangement.spacedBy(8.dp)
+                                        .size(36.dp)
+                                        .clip(CircleShape)
+                                        .background(MujtamaPrimary.copy(alpha = 0.15f)),
+                                    contentAlignment = Alignment.Center
                                 ) {
-                                    Icon(Icons.Default.PostAdd, contentDescription = null, tint = MujtamaPrimary, modifier = Modifier.size(40.dp))
-                                    Text("لم تقم بنشر أي مشاركة بعد!", fontWeight = FontWeight.Bold)
-                                    Text("شارك أفكارك وتحدياتك مع أصدقائك الآن.", fontSize = 12.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                                    Icon(
+                                        imageVector = icon,
+                                        contentDescription = null,
+                                        tint = MujtamaPrimary,
+                                        modifier = Modifier.size(18.dp)
+                                    )
+                                }
+                                Column(modifier = Modifier.weight(1f)) {
+                                    Text(text = title, fontWeight = FontWeight.Bold, fontSize = 13.sp)
+                                    Text(text = subtitle, fontSize = 11.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
                                 }
                             }
                         }
-                    } else {
-                        items(userPosts, key = { it.id }) { post ->
-                            Card(
-                                modifier = Modifier.fillMaxWidth(),
-                                shape = RoundedCornerShape(16.dp),
-                                colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
-                                elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
-                            ) {
-                                Column(
-                                    modifier = Modifier
-                                        .fillMaxWidth()
-                                        .padding(14.dp),
-                                    verticalArrangement = Arrangement.spacedBy(8.dp)
-                                ) {
-                                    Row(
-                                        modifier = Modifier.fillMaxWidth(),
-                                        horizontalArrangement = Arrangement.SpaceBetween,
-                                        verticalAlignment = Alignment.CenterVertically
-                                    ) {
-                                        Row(
-                                            verticalAlignment = Alignment.CenterVertically,
-                                            horizontalArrangement = Arrangement.spacedBy(8.dp)
-                                        ) {
-                                            Box(
-                                                modifier = Modifier
-                                                    .size(36.dp)
-                                                    .clip(CircleShape)
-                                                    .background(MujtamaPrimary),
-                                                contentAlignment = Alignment.Center
-                                            ) {
-                                                if (userProfile.avatarUrl.isNotBlank()) {
-                                                    val avatarBitmap = remember(userProfile.avatarUrl) {
-                                                        BitmapFactory.decodeFile(userProfile.avatarUrl)?.asImageBitmap()
-                                                    }
-                                                    if (avatarBitmap != null) {
-                                                        Image(
-                                                            bitmap = avatarBitmap,
-                                                            contentDescription = null,
-                                                            modifier = Modifier
-                                                                .fillMaxSize()
-                                                                .clip(CircleShape),
-                                                            contentScale = ContentScale.Crop
-                                                        )
-                                                    } else {
-                                                        Text(userProfile.avatarEmoji, fontSize = 18.sp)
-                                                    }
+                    }
+                }
                                                 } else {
                                                     Text(userProfile.avatarEmoji, fontSize = 18.sp)
                                                 }
