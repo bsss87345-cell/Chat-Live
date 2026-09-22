@@ -1197,36 +1197,21 @@ Box(modifier = Modifier.fillMaxSize()) {
                 color = MujtamaGold.copy(alpha = 0.15f),
                 tonalElevation = 2.dp
             ) {
-                Row(
+              Row(
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(horizontal = 12.dp, vertical = 8.dp),
                     verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.SpaceBetween
+                    horizontalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
-                    Row(
-                        modifier = Modifier.weight(1f),
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.spacedBy(8.dp)
-                    ) {
-                        Icon(Icons.Default.PushPin, contentDescription = null, tint = MujtamaGold, modifier = Modifier.size(16.dp))
-                        Text(
-                            text = room.pinnedMessage ?: "",
-                            fontSize = 11.sp,
-                            fontWeight = FontWeight.SemiBold,
-                            color = MaterialTheme.colorScheme.onSurface
-                        )
-                    }
-
-                    if (isOwner) {
-                        IconButton(
-                            onClick = onUnpinMessage,
-                            modifier = Modifier.size(24.dp)
-                        ) {
-                            Icon(Icons.Default.Close, contentDescription = "إلغاء التثبيت", tint = MaterialTheme.colorScheme.onSurfaceVariant, modifier = Modifier.size(14.dp))
-                        }
-                    }
-                }
+                    Icon(Icons.Default.PushPin, contentDescription = null, tint = MujtamaGold, modifier = Modifier.size(16.dp))
+                    Text(
+                        text = room.pinnedMessage ?: "",
+                        fontSize = 11.sp,
+                        fontWeight = FontWeight.SemiBold,
+                        color = MaterialTheme.colorScheme.onSurface
+                    )
+              }  
             }
         }
 
