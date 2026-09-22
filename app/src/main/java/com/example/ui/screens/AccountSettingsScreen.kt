@@ -896,32 +896,6 @@ fun AccountSettingsScreen(
                                 }
 
                                 AnimatedVisibility(visible = isGeneralExpanded) {
-                                                    modifier = Modifier.size(20.dp)
-                                                )
-                                            }
-                                            Column {
-                                                Text(
-                                                    text = "الإعدادات",
-                                                    fontWeight = FontWeight.Bold,
-                                                    fontSize = 14.sp
-                                                )
-                                                Text(
-                                                    text = if (isSettingsExpanded) "اضغط للطي" else "الإشعارات، قائمة الحظر، والسياسات",
-                                                    fontSize = 11.sp,
-                                                    color = MaterialTheme.colorScheme.onSurfaceVariant
-                                                )
-                                            }
-                                        }
-
-                                        Icon(
-                                            imageVector = if (isSettingsExpanded) Icons.Default.ExpandLess else Icons.Default.ExpandMore,
-                                            contentDescription = if (isSettingsExpanded) "طي القائمة" else "فتح القائمة",
-                                            tint = MaterialTheme.colorScheme.primary
-                                        )
-                                    }
-                                }
-
-                                AnimatedVisibility(visible = isSettingsExpanded) {
                                     Card(
                                         shape = RoundedCornerShape(14.dp),
                                         colors = CardDefaults.cardColors(
@@ -940,38 +914,168 @@ fun AccountSettingsScreen(
                                             verticalArrangement = Arrangement.spacedBy(10.dp)
                                         ) {
                                             Row(
-                                                modifier = Modifier.fillMaxWidth(),
+                                                modifier = Modifier
+                                                    .fillMaxWidth()
+                                                    .clip(RoundedCornerShape(8.dp))
+                                                    .clickable { showLanguageDialog = true }
+                                                    .padding(vertical = 4.dp),
                                                 horizontalArrangement = Arrangement.SpaceBetween,
                                                 verticalAlignment = Alignment.CenterVertically
                                             ) {
                                                 Row(
                                                     verticalAlignment = Alignment.CenterVertically,
-                                                    horizontalArrangement = Arrangement.spacedBy(10.dp),
-                                                    modifier = Modifier.weight(1f)
+                                                    horizontalArrangement = Arrangement.spacedBy(10.dp)
                                                 ) {
                                                     Icon(
-                                                        imageVector = if (userProfile.isNotificationsEnabled) Icons.Default.NotificationsActive else Icons.Default.NotificationsOff,
+                                                        imageVector = Icons.Default.Translate,
                                                         contentDescription = null,
-                                                        tint = if (userProfile.isNotificationsEnabled) MujtamaPrimary else MaterialTheme.colorScheme.onSurfaceVariant,
+                                                        tint = MujtamaPrimary,
                                                         modifier = Modifier.size(22.dp)
                                                     )
                                                     Column {
                                                         Text(
-                                                            text = "تمكين الإشعارات",
+                                                            text = "تغيير اللغة",
                                                             fontWeight = FontWeight.Bold,
                                                             fontSize = 13.sp
                                                         )
                                                         Text(
-                                                            text = if (userProfile.isNotificationsEnabled) "التنبيهات مفعلة لجميع الأنشطة" else "التنبيهات معطلة",
+                                                            text = "اللغة الحالية: $currentLanguage",
                                                             fontSize = 11.sp,
                                                             color = MaterialTheme.colorScheme.onSurfaceVariant
                                                         )
                                                     }
-color 
+                                                }
+
+                                                Icon(
+                                                    imageVector = Icons.Default.ChevronLeft,
+                                                    contentDescription = null,
+                                                    tint = MaterialTheme.colorScheme.onSurfaceVariant
                                                 )
+                                            }
+
+                                            HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.3f))
+
+                                            Row(
+                                                modifier = Modifier
+                                                    .fillMaxWidth()
+                                                    .clip(RoundedCornerShape(8.dp))
+                                                    .clickable { showPolicyDialog = true }
+                                                    .padding(vertical = 4.dp),
+                                                horizontalArrangement = Arrangement.SpaceBetween,
+                                                verticalAlignment = Alignment.CenterVertically
+                                            ) {
+                                                Row(
+                                                    verticalAlignment = Alignment.CenterVertically,
+                                                    horizontalArrangement = Arrangement.spacedBy(10.dp)
+                                                ) {
+                                                    Icon(
+                                                        imageVector = Icons.Default.Policy,
+                                                        contentDescription = null,
+                                                        tint = MujtamaTeal,
+                                                        modifier = Modifier.size(22.dp)
+                                                    )
+                                                    Column {
+                                                        Text(
+                                                            text = "سياسة البرنامج",
+                                                            fontWeight = FontWeight.Bold,
+                                                            fontSize = 13.sp
+                                                        )
+                                                        Text(
+                                                            text = "شروط الاستخدام والخصوصية",
+                                                            fontSize = 11.sp,
+                                                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                                                        )
+                                                    }
+                                                }
+
+                                                Icon(
+                                                    imageVector = Icons.Default.ChevronLeft,
+                                                    contentDescription = null,
+                                                    tint = MaterialTheme.colorScheme.onSurfaceVariant
+                                                )
+                                            }
+
+                                            HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.3f))
+
+                                            Row(
+                                                modifier = Modifier
+                                                    .fillMaxWidth()
+                                                    .padding(vertical = 4.dp),
+                                                horizontalArrangement = Arrangement.SpaceBetween,
+                                                verticalAlignment = Alignment.CenterVertically
+                                            ) {
+                                                Row(
+                                                    verticalAlignment = Alignment.CenterVertically,
+                                                    horizontalArrangement = Arrangement.spacedBy(10.dp)
+                                                ) {
+                                                    Icon(
+                                                        imageVector = Icons.Default.Info,
+                                                        contentDescription = null,
+                                                        tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                                                        modifier = Modifier.size(22.dp)
+                                                    )
+                                                    Column {
+                                                        Text(
+                                                            text = "النسخة الحالية",
+                                                            fontWeight = FontWeight.Bold,
+                                                            fontSize = 13.sp
+                                                        )
+                                                        Text(
+                                                            text = "الإصدار 1.2.0 (Build 104)",
+                                                            fontSize = 11.sp,
+                                                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                                                        )
+                                                    }
+                                                }
+
+                                                Surface(
+                                                    shape = RoundedCornerShape(8.dp),
+                                                    color = MujtamaOnlineGreen.copy(alpha = 0.15f)
+                                                ) {
+                                                    Text(
+                                                        text = "أحدث إصدار ✓",
+                                                        color = MujtamaOnlineGreen,
+                                                        fontSize = 10.sp,
+                                                        fontWeight = FontWeight.Bold,
+                                                        modifier = Modifier.padding(horizontal = 6.dp, vertical = 3.dp)
+                                                    )
+                                                }
                                             }
                                         }
                                     }
+                                }
+
+                                HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f))
+
+                                Button(
+                                    onClick = { showLogoutDialog = true },
+                                    colors = ButtonDefaults.buttonColors(
+                                        containerColor = MaterialTheme.colorScheme.errorContainer,
+                                        contentColor = MaterialTheme.colorScheme.onErrorContainer
+                                    ),
+                                    border = androidx.compose.foundation.BorderStroke(
+                                        1.dp,
+                                        MaterialTheme.colorScheme.error.copy(alpha = 0.4f)
+                                    ),
+                                    shape = RoundedCornerShape(12.dp),
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .padding(top = 4.dp)
+                                        .testTag("logout_button")
+                                ) {
+                                    Icon(
+                                        imageVector = Icons.Default.Logout,
+                                        contentDescription = null,
+                                        tint = MaterialTheme.colorScheme.error,
+                                        modifier = Modifier.size(18.dp)
+                                    )
+                                    Spacer(modifier = Modifier.width(8.dp))
+                                    Text(
+                                        text = "تسجيل الخروج",
+                                        fontWeight = FontWeight.Bold,
+                                        fontSize = 13.sp,
+                                        color = MaterialTheme.colorScheme.error
+                                    )
                                 }
                             }
                         }
