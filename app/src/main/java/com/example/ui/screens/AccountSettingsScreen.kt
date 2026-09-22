@@ -171,7 +171,7 @@ fun AccountSettingsScreen(
             val pageTitle = when (openPage) {
                 3 -> "تعديل الملف الشخصي"
                 2 -> "إعدادات الحساب"
-                1 -> "منشوراتي"
+                1 -> "النشاط"
                 else -> "النقاط والرصيد"
             }
 
