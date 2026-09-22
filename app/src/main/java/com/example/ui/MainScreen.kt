@@ -137,7 +137,8 @@ fun MainScreen(viewModel: SocialAppViewModel) {
                         onLikePost = { viewModel.toggleLike(it) },
                         onCommentPost = { viewModel.openComments(it) },
                         onSharePost = { viewModel.sharePost(it) },
-                        onNavigateToRecharge = {},
+                        // TODO: تجريبي فقط - يُحذف قبل أي إطلاق فعلي (زر شحن حقيقي لاحقاً)
+                        onNavigateToRecharge = { viewModel.addTestBalance() },
                         onUpdateProfile = { name, bio, emoji -> viewModel.updateUserProfile(name, bio, emoji) },
                         onUpdateBio = { viewModel.updateUserBio(it) },
                         onBack = { viewModel.closeAccountSettings() }
