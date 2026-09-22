@@ -828,6 +828,44 @@ fun AccountSettingsScreen(
                 }
 
                 // -------------------------------------------------------------
+                // Page: الدعم والمساعدة
+                // -------------------------------------------------------------
+                if (openPage == 7) {
+                    item {
+                        Card(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .testTag("support_card"),
+                            shape = RoundedCornerShape(18.dp),
+                            colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface)
+                        ) {
+                            Column(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(14.dp),
+                                verticalArrangement = Arrangement.spacedBy(10.dp)
+                            ) {
+                                AccountSettingsActionRow(
+                                    icon = Icons.Default.SupportAgent,
+                                    title = "تواصل مباشر مع الدعم",
+                                    subtitle = "محادثة فورية مع فريق الدعم الفني وخدمة العملاء",
+                                    onClick = { showSupportChatDialog = true }
+                                )
+
+                                HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.3f))
+
+                                AccountSettingsActionRow(
+                                    icon = Icons.Default.ReportProblem,
+                                    title = "إبلاغ عن مشكلة",
+                                    subtitle = "إرسال تقرير فني عن أي خلل أو عطل في التطبيق",
+                                    onClick = { showReportProblemDialog = true }
+                                )
+                            }
+                        }
+                    }
+                }
+
+                // -------------------------------------------------------------
                 // Page: إعدادات الحساب
                 // -------------------------------------------------------------
                 if (openPage == 2) {
