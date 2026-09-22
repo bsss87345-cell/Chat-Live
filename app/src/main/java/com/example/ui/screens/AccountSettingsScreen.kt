@@ -128,17 +128,25 @@ fun AccountSettingsScreen(
                     verticalArrangement = Arrangement.spacedBy(4.dp)
                 ) {
                     val menuItems = listOf(
-                        Triple("إعدادات الحساب", Icons.Default.Settings, 2),
+                        Triple("الملف الشخصي", Icons.Default.Person, 3),
                         Triple("النشاط", Icons.Default.Article, 1),
-                        Triple("النقاط والرصيد", Icons.Default.Stars, 0)
+                        Triple("النقاط والرصيد", Icons.Default.Stars, 0),
+                        Triple("الإشعارات", Icons.Default.Notifications, 4),
+                        Triple("الخصوصية والحظر", Icons.Default.Block, 5),
+                        Triple("عام", Icons.Default.Settings, 6),
+                        Triple("الدعم والمساعدة", Icons.Default.SupportAgent, 7),
+                        Triple("تسجيل الخروج", Icons.Default.Logout, -1)
                     )
 
                     menuItems.forEach { (label, icon, index) ->
+                        val isLogout = index == -1
                         Row(
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .clip(RoundedCornerShape(14.dp))
-                                .clickable { openPage = index }
+                                .clickable {
+                                    if (isLogout) showLogoutDialog = true else openPage = index
+                                }
                                 .padding(horizontal = 14.dp, vertical = 12.dp)
                                 .testTag("account_settings_menu_item_$index"),
                             verticalAlignment = Alignment.CenterVertically,
@@ -147,21 +155,23 @@ fun AccountSettingsScreen(
                             Icon(
                                 imageVector = icon,
                                 contentDescription = null,
-                                tint = MaterialTheme.colorScheme.onSurface,
+                                tint = if (isLogout) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.onSurface,
                                 modifier = Modifier.size(18.dp)
                             )
                             Text(
                                 text = label,
                                 fontSize = 13.sp,
-                                fontWeight = FontWeight.Normal,
-                                color = MaterialTheme.colorScheme.onSurface,
+                                fontWeight = if (isLogout) FontWeight.Bold else FontWeight.Normal,
+                                color = if (isLogout) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.onSurface,
                                 modifier = Modifier.weight(1f)
                             )
-                            Icon(
-                                imageVector = Icons.Default.ChevronLeft,
-                                contentDescription = null,
-                                tint = MaterialTheme.colorScheme.onSurfaceVariant
-                            )
+                            if (!isLogout) {
+                                Icon(
+                                    imageVector = Icons.Default.ChevronLeft,
+                                    contentDescription = null,
+                                    tint = MaterialTheme.colorScheme.onSurfaceVariant
+                                )
+                            }
                         }
                     }
                 }
