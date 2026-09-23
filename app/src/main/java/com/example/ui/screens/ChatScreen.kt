@@ -1399,6 +1399,19 @@ Box(modifier = Modifier.fillMaxSize()) {
                     )
                 }
 
+                // Lucky wheel button (أيقونة فقط، بدون وظيفة بعد)
+                IconButton(
+                    onClick = { },
+                    enabled = !isMuted,
+                    modifier = Modifier.testTag("room_lucky_wheel_button")
+                ) {
+                    Image(
+                        painter = painterResource(id = R.drawable.lucky_wheel_icon),
+                        contentDescription = "عجلة الحظ",
+                        modifier = Modifier.size(26.dp)
+                    )
+                }
+
                 // Room music button (Owner/Admin only)
                 if (isOwnerOrAdmin) {
                     IconButton(
