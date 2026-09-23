@@ -1731,12 +1731,18 @@ if ((room.isWheelSpinning || room.wheelWinnerId != null) && !wheelHidden) {
                 fontSize = 16.sp,
                 fontWeight = FontWeight.Bold,
                 modifier = Modifier
-                    .align(Alignment.TopEnd)
-                    .padding(top = 60.dp, end = 20.dp)
-            )
-
-            IconButton(
-                onClick = { wheelHidden = true },
+                    if (showLoseMsg) {
+                Text(
+                    text = "لقد خسرت، حظ أوفر في المرة القادمة",
+                    color = Color.White,
+                    fontSize = 20.sp,
+                    fontWeight = FontWeight.Bold,
+                    textAlign = TextAlign.Center,
+                    modifier = Modifier
+                        .align(Alignment.Center)
+                        .padding(horizontal = 32.dp)
+                )
+                    }
                 modifier = Modifier
                     .align(Alignment.TopStart)
                     .padding(top = 60.dp, start = 20.dp)
