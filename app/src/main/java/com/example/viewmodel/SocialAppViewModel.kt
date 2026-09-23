@@ -930,7 +930,69 @@ fun respondToVoiceSeatRequest(roomId: String, requestId: String, accept: Boolean
             return
         }
         _chatRooms.update { list ->
-            list.map { if (it.id == roomId) it.copy(isWheelSpinning = true) else it }
+            list.map {
+                if (it.id == roomId) it.copy(
+                    isWheelSpinning = true,
+                    wheelEliminatedIds = emptyList(),
+                    wheelWinnerId = null,
+                    wheelWinnerName = "",
+                    wheelWinnerAvatarUrl = ""
+                ) else it
+            }
+        }
+        viewModelScope.launch {
+            while (true) {
+                delay(7000)
+                val currentRoom = _chatRooms.value.find { it.id == roomId } ?: break
+                if (!currentRoom.isWheelSpinning) break
+                val remaining = currentRoom.wheelParticipants.filter { p ->
+                    !currentRoom.wheelEliminatedIds.contains(p.id)
+                }
+                if (remaining.size <= 1) {
+                    val winner = remaining.firstOrNull()
+                    if (winner != null) {
+                        val totalPrize = currentRoom.wheelPrizePool
+                        val winnerShare = (totalPrize * 75) / 100
+                        if (winner.id == "me") {
+                            _walletBalance.update { it + winnerShare }
+                            val newTx = WalletTransaction(
+                                id = "tx_${System.currentTimeMillis()}",
+                                title = "الفوز بعجلة الحظ 🎉",
+                                type = TransactionType.EARN,
+                                points = winnerShare,
+                                date = "اليوم",
+                                note = "جائزة عجلة الحظ داخل الغرفة"
+                            )
+                            _transactions.update { listOf(newTx) + it }
+                        }
+                        _chatRooms.update { list ->
+                            list.map {
+                                if (it.id == roomId) it.copy(
+                                    isWheelSpinning = false,
+                                    wheelWinnerId = winner.id,
+                                    wheelWinnerName = winner.name,
+                                    wheelWinnerAvatarUrl = winner.avatarUrl
+                                ) else it
+                            }
+                        }
+                        _userMessage.value = "${winner.name} فاز بعجلة الحظ! 🎉"
+                    } else {
+                        _chatRooms.update { list ->
+                            list.map { if (it.id == roomId) it.copy(isWheelSpinning = false) else it }
+                        }
+                    }
+                    break
+                } else {
+                    val eliminated = remaining.random()
+                    _chatRooms.update { list ->
+                        list.map {
+                            if (it.id == roomId) it.copy(
+                                wheelEliminatedIds = it.wheelEliminatedIds + eliminated.id
+                            ) else it
+                        }
+                    }
+                }
+            }
         }
     }
 
