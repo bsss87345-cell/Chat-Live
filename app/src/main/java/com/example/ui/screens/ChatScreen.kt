@@ -1697,7 +1697,7 @@ if ((room.isWheelSpinning || room.wheelWinnerId != null) && !wheelHidden) {
                 wheelRotation.snapTo(0f)
                 wheelRotation.animateTo(
                     targetValue = 720f + (180..540).random().toFloat(),
-                    animationSpec = tween(durationMillis = 7000, easing = FastOutSlowInEasing)
+                    animationSpec = tween(durationMillis = 15000, easing = CubicBezierEasing(0.05f, 0.9f, 0.1f, 1f))
                 )
             }
         }
