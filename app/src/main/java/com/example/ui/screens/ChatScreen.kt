@@ -1825,9 +1825,8 @@ val offsetY = slotY.dp
                                 modifier = Modifier
                                     .align(Alignment.Center)
                                     .absoluteOffset(x = offsetX, y = offsetY)
-                                    .size(62.dp)
-                                    .clip(CircleShape)
-                                    .border(3.dp, wheelColors[i], CircleShape)
+                                    .size(60.dp)
+.clip(CircleShape)
                                     .background(MujtamaPrimary.copy(alpha = if (participant != null) 1f else 0.2f))
                                     .alpha(if (isEliminated) 0.25f else 1f),
                                 contentAlignment = Alignment.Center
