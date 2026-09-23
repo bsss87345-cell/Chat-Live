@@ -1745,6 +1745,7 @@ if ((room.isWheelSpinning || room.wheelWinnerId != null) && !wheelHidden) {
                     textAlign = TextAlign.Center,
                     modifier = Modifier
                         .align(Alignment.Center)
+                        .zIndex(1f)
                         .padding(horizontal = 32.dp)
                 )
             }
