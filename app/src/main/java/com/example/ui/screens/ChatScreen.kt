@@ -1112,7 +1112,7 @@ Box(modifier = Modifier.fillMaxSize()) {
                     onClick = onBack,
                     modifier = Modifier.size(30.dp)
                 ) {
-                    Icon(Icons.Default.ArrowForward, contentDescription = "رجوع")
+                    Icon(Icons.Default.ArrowForward, contentDescription = "رجوع", tint = Color.White)
                 }
 
 // Room Image (or first letter of room name if none was set)
