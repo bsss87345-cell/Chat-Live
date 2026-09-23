@@ -2146,7 +2146,7 @@ fun RoomVoiceStage(
             // فاصل زجاجي شفاف خفيف
             HorizontalDivider(
                 modifier = Modifier.padding(horizontal = 28.dp),
-                color = Color.White.copy(alpha = 0.12f)
+                color = Color.Transparent
             )
 
             // مايكات الأعضاء: 8 مايكات صوتية في شبكة منتظمة متساوية (4 × 2)
