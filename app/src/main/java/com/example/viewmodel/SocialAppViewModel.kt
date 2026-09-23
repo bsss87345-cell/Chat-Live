@@ -982,10 +982,10 @@ fun respondToVoiceSeatRequest(roomId: String, requestId: String, accept: Boolean
                     }
                     break
                 } else {
-                    val sectorAngle = 360f / remaining.size
-                    val eliminatedIndex = remaining.indices.random()
-                    val eliminated = remaining[eliminatedIndex]
-                    val stopAngle = (360f - (eliminatedIndex * sectorAngle)) % 360f
+                    val sectorAngle = 90f
+val eliminated = remaining.random()
+val eliminatedIndex = currentRoom.wheelParticipants.indexOfFirst { it.id == eliminated.id }
+val stopAngle = (360f - (eliminatedIndex * sectorAngle)) % 360f
                     val fullSpins = (4..6).random()
                     val currentAngle = cumulativeRotation % 360f
                     val deltaToStop = (stopAngle - currentAngle + 360f) % 360f
