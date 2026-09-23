@@ -1694,9 +1694,10 @@ if ((room.isWheelSpinning || room.wheelWinnerId != null) && !wheelHidden) {
         val wheelRotation = remember { Animatable(0f) }
         LaunchedEffect(room.wheelEliminatedIds.size, room.isWheelSpinning) {
             if (room.isWheelSpinning) {
+                wheelRotation.snapTo(0f)
                 wheelRotation.animateTo(
-                    targetValue = wheelRotation.value + 720f + (180..540).random(),
-                    animationSpec = tween(durationMillis = 7000, easing = LinearOutSlowInEasing)
+                    targetValue = 720f + (180..540).random().toFloat(),
+                    animationSpec = tween(durationMillis = 7000, easing = FastOutSlowInEasing)
                 )
             }
         }
