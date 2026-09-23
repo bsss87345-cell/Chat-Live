@@ -1176,7 +1176,7 @@ Box(modifier = Modifier.fillMaxSize()) {
                     IconButton(
                         onClick = { showSettingsDialog = true },
                         modifier = Modifier
-                            .size(30.dp)
+                            .size(33.dp)
                             .testTag("room_settings_button")
                     ) {
                         Icon(Icons.Default.MoreVert, contentDescription = "خيارات الغرفة")
