@@ -192,7 +192,8 @@ data class ChatRoom(
     val wheelEliminatedIds: List<String> = emptyList(),
     val wheelWinnerId: String? = null,
     val wheelWinnerName: String = "",
-    val wheelWinnerAvatarUrl: String = ""
+    val wheelWinnerAvatarUrl: String = "",
+    val wheelTargetRotation: Float = 0f
 )
 
 data class TeamMember(
