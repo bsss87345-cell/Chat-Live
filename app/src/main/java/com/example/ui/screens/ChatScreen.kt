@@ -1477,9 +1477,6 @@ Box(modifier = Modifier.fillMaxSize()) {
             }
         }
     }
-            }
-        }
-    }
 
     Box(
         modifier = Modifier
