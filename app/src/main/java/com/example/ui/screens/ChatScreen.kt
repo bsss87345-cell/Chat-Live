@@ -1508,12 +1508,20 @@ Box(modifier = Modifier.fillMaxSize()) {
                             }
                         },
                         confirmButton = {
-                            if (room.wheelParticipants.size >= 4) {
-                                TextButton(onClick = {
-                                    showWheelApprovalDialog = false
-                                    onStartWheelSpin()
-                                }) {
-                                    Text("ابدأ الدوران")
+                            Row {
+                                if (room.wheelParticipants.size >= 4) {
+                                    TextButton(onClick = {
+                                        showWheelApprovalDialog = false
+                                        onStartWheelSpin()
+                                    }) {
+                                        Text("ابدأ الدوران")
+                                    }
+                                }
+                                TextButton(onClick = { onAddTestWheelRequests() }) {
+                                    Text("طلبات تجريبية", fontSize = 11.sp)
+                                }
+                                TextButton(onClick = { onAddTestWheelParticipants() }) {
+                                    Text("مشاركين تجريبيين", fontSize = 11.sp)
                                 }
                             }
                         },
