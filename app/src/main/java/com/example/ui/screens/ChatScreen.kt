@@ -1812,7 +1812,7 @@ if ((room.isWheelSpinning || room.wheelWinnerId != null) && !wheelHidden) {
     contentScale = ContentScale.Crop,
     modifier = Modifier
         .fillMaxSize()
-        .offset(x = 1.dp, y = 8.dp)
+        .absoluteOffset(x = 1.dp, y = 8.dp)
 )
                         for (i in 0 until room.wheelParticipants.size) {
                             val slotOffsets = listOf(0f to -76f, 81f to -5f, -1f to 75f, -81f to -5f)
