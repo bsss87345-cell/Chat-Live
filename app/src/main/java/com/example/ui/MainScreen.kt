@@ -252,6 +252,10 @@ fun MainScreen(viewModel: SocialAppViewModel) {
                                 onLeaveOwnerSeat = { viewModel.leaveOwnerVoiceSeat(activeRoomId ?: "") },
                                 onRemoveOwnerSeatMember = { viewModel.removeMemberFromOwnerSeat(activeRoomId ?: "") },
                                 onInviteMemberToOwnerSeat = { memberId -> viewModel.inviteMemberToOwnerSeat(activeRoomId ?: "", memberId) },
+                                onRequestJoinWheel = { viewModel.requestJoinWheel(activeRoomId ?: "") },
+                                onRespondWheelRequest = { requestId, accept -> viewModel.respondToWheelRequest(activeRoomId ?: "", requestId, accept) },
+                                onStartWheelSpin = { viewModel.startWheelSpin(activeRoomId ?: "") },
+                                onResetWheel = { viewModel.resetWheel(activeRoomId ?: "") },
                                 walletBalance = walletBalance
                             )
                         }
