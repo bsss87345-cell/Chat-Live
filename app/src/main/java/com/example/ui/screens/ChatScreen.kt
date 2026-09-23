@@ -1685,23 +1685,30 @@ Box(modifier = Modifier.fillMaxSize()) {
         }
     }
 
-if (room.isWheelSpinning && !wheelHidden) {
+if ((room.isWheelSpinning || room.wheelWinnerId != null) && !wheelHidden) {
         val wheelColors = listOf(
-            Color(0xFF29ABE2), Color(0xFFFFD700), Color(0xFF2ECC71), Color(0xFF9B59B6),
-            Color(0xFF3498DB), Color(0xFFE91E8C), Color(0xFFF39C12), Color(0xFFFF4D6D)
+            Color(0xFFFFD700), Color(0xFF2ECC71), Color(0xFF9B59B6), Color(0xFF3498DB),
+            Color(0xFFE91E8C), Color(0xFFF39C12), Color(0xFF29ABE2), Color(0xFFFF6B9D)
         )
-        val wheelInfiniteTransition = rememberInfiniteTransition(label = "wheelRotation")
-        val wheelRotationAngle by wheelInfiniteTransition.animateFloat(
-            initialValue = 0f,
-            targetValue = 360f,
-            animationSpec = infiniteRepeatable(
-                animation = tween(durationMillis = 6000, easing = LinearEasing),
-                repeatMode = RepeatMode.Restart
-            ),
-            label = "wheelRotationAngle"
-        )
+        val wheelRotation = remember { Animatable(0f) }
+        LaunchedEffect(room.wheelEliminatedIds.size, room.isWheelSpinning) {
+            if (room.isWheelSpinning) {
+                wheelRotation.animateTo(
+                    targetValue = wheelRotation.value + 720f + (180..540).random(),
+                    animationSpec = tween(durationMillis = 7000, easing = LinearOutSlowInEasing)
+                )
+            }
+        }
+        LaunchedEffect(room.wheelWinnerId) {
+            if (room.wheelWinnerId != null) {
+                delay(2000)
+                onResetWheel()
+            }
+        }
         Box(
-            modifier = Modifier.fillMaxSize(),
+            modifier = Modifier
+                .fillMaxSize()
+                .background(Color(0xFF05040C)),
             contentAlignment = Alignment.Center
         ) {
             Text(
@@ -1727,78 +1734,143 @@ if (room.isWheelSpinning && !wheelHidden) {
                 )
             }
 
-            Box(
-                modifier = Modifier.size(300.dp),
-                contentAlignment = Alignment.Center
-            ) {
+            if (room.wheelWinnerId != null) {
                 Box(
                     modifier = Modifier
-                        .fillMaxSize()
-                        .rotate(wheelRotationAngle)
+                        .size(300.dp)
+                        .clip(CircleShape)
+                        .border(6.dp, MujtamaGold, CircleShape)
+                        .background(Color(0xFF120B22)),
+                    contentAlignment = Alignment.Center
                 ) {
-                    for (i in 0 until 8) {
-                        val angleRad = (Math.PI / 4 * i - Math.PI / 2)
-                        val radiusValue = 120f
-                        val offsetX = (radiusValue * kotlin.math.cos(angleRad)).toFloat().dp
-                        val offsetY = (radiusValue * kotlin.math.sin(angleRad)).toFloat().dp
-                        val participant = room.wheelParticipants.getOrNull(i)
+                    Column(horizontalAlignment = Alignment.CenterHorizontally) {
                         Box(
                             modifier = Modifier
-                                .align(Alignment.Center)
-                                .offset(x = offsetX, y = offsetY)
-                                .size(64.dp)
+                                .size(140.dp)
                                 .clip(CircleShape)
-                                .border(3.dp, wheelColors[i], CircleShape)
-                                .background(MujtamaPrimary.copy(alpha = if (participant != null) 1f else 0.25f)),
+                                .border(4.dp, MujtamaGold, CircleShape)
+                                .background(MujtamaPrimary),
                             contentAlignment = Alignment.Center
                         ) {
-                            if (participant != null) {
-                                if (participant.avatarUrl.isNotBlank()) {
-                                    AsyncImage(
-                                        model = participant.avatarUrl,
-                                        contentDescription = participant.name,
-                                        contentScale = ContentScale.Crop,
-                                        modifier = Modifier.fillMaxSize().clip(CircleShape)
-                                    )
-                                } else {
-                                    Text(participant.name.take(1), color = Color.White, fontWeight = FontWeight.Bold)
-                                }
+                            if (room.wheelWinnerAvatarUrl.isNotBlank()) {
+                                AsyncImage(
+                                    model = room.wheelWinnerAvatarUrl,
+                                    contentDescription = room.wheelWinnerName,
+                                    contentScale = ContentScale.Crop,
+                                    modifier = Modifier.fillMaxSize().clip(CircleShape)
+                                )
                             } else {
-                                Icon(
-                                    imageVector = Icons.Default.Person,
-                                    contentDescription = null,
-                                    tint = Color.White.copy(alpha = 0.3f)
+                                Text(room.wheelWinnerName.take(1), color = Color.White, fontSize = 40.sp, fontWeight = FontWeight.Bold)
+                            }
+                        }
+                        Spacer(modifier = Modifier.height(12.dp))
+                        Text("🎉 ${room.wheelWinnerName} 🎉", color = MujtamaGold, fontSize = 18.sp, fontWeight = FontWeight.Bold)
+                    }
+                }
+            } else {
+                Box(
+                    modifier = Modifier.size(300.dp),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Box(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .rotate(wheelRotation.value % 360f)
+                    ) {
+                        Canvas(modifier = Modifier.fillMaxSize()) {
+                            val strokeWidthOuter = 14.dp.toPx()
+                            val ringRadius = size.minDimension / 2 - strokeWidthOuter / 2
+                            drawCircle(
+                                color = Color(0xFF14101F),
+                                radius = size.minDimension / 2 - strokeWidthOuter
+                            )
+                            drawCircle(
+                                color = MujtamaGold,
+                                radius = ringRadius,
+                                style = androidx.compose.ui.graphics.drawscope.Stroke(width = strokeWidthOuter)
+                            )
+                            for (i in 0 until 16) {
+                                val dotAngle = Math.toRadians((i * 22.5))
+                                val dotX = center.x + (ringRadius * kotlin.math.cos(dotAngle)).toFloat()
+                                val dotY = center.y + (ringRadius * kotlin.math.sin(dotAngle)).toFloat()
+                                drawCircle(
+                                    color = Color(0xFFFFE066),
+                                    radius = 4.dp.toPx(),
+                                    center = androidx.compose.ui.geometry.Offset(dotX, dotY)
                                 )
                             }
                         }
+                        for (i in 0 until 8) {
+                            val angleRad = (Math.PI / 4 * i - Math.PI / 2)
+                            val radiusValue = 105f
+                            val offsetX = (radiusValue * kotlin.math.cos(angleRad)).toFloat().dp
+                            val offsetY = (radiusValue * kotlin.math.sin(angleRad)).toFloat().dp
+                            val participant = room.wheelParticipants.getOrNull(i)
+                            val isEliminated = participant != null && room.wheelEliminatedIds.contains(participant.id)
+                            Box(
+                                modifier = Modifier
+                                    .align(Alignment.Center)
+                                    .offset(x = offsetX, y = offsetY)
+                                    .size(62.dp)
+                                    .clip(CircleShape)
+                                    .border(3.dp, wheelColors[i], CircleShape)
+                                    .background(MujtamaPrimary.copy(alpha = if (participant != null) 1f else 0.2f))
+                                    .alpha(if (isEliminated) 0.25f else 1f),
+                                contentAlignment = Alignment.Center
+                            ) {
+                                if (participant != null) {
+                                    if (participant.avatarUrl.isNotBlank()) {
+                                        AsyncImage(
+                                            model = participant.avatarUrl,
+                                            contentDescription = participant.name,
+                                            contentScale = ContentScale.Crop,
+                                            modifier = Modifier.fillMaxSize().clip(CircleShape)
+                                        )
+                                    } else {
+                                        Text(participant.name.take(1), color = Color.White, fontWeight = FontWeight.Bold)
+                                    }
+                                } else {
+                                    Icon(
+                                        imageVector = Icons.Default.Person,
+                                        contentDescription = null,
+                                        tint = Color.White.copy(alpha = 0.3f)
+                                    )
+                                }
+                            }
+                        }
+                    }
+
+                    Box(
+                        modifier = Modifier
+                            .size(76.dp)
+                            .clip(CircleShape)
+                            .background(Color(0xFF0A0818))
+                            .border(4.dp, MujtamaGold, CircleShape),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.Groups,
+                            contentDescription = null,
+                            tint = MujtamaGold,
+                            modifier = Modifier.size(34.dp)
+                        )
+                    }
+
+                    Canvas(
+                        modifier = Modifier
+                            .align(Alignment.TopCenter)
+                            .offset(y = (-10).dp)
+                            .size(30.dp)
+                    ) {
+                        val path = androidx.compose.ui.graphics.Path().apply {
+                            moveTo(size.width / 2, size.height)
+                            lineTo(0f, 0f)
+                            lineTo(size.width, 0f)
+                            close()
+                        }
+                        drawPath(path, color = Color(0xFFFFD700))
                     }
                 }
-
-                Box(
-                    modifier = Modifier
-                        .size(70.dp)
-                        .clip(CircleShape)
-                        .background(Color(0xFF0A0818))
-                        .border(3.dp, MujtamaGold, CircleShape),
-                    contentAlignment = Alignment.Center
-                ) {
-                    Icon(
-                        imageVector = Icons.Default.Groups,
-                        contentDescription = null,
-                        tint = MujtamaGold,
-                        modifier = Modifier.size(32.dp)
-                    )
-                }
-
-                Icon(
-                    imageVector = Icons.Default.ArrowDropDown,
-                    contentDescription = null,
-                    tint = MujtamaGold,
-                    modifier = Modifier
-                        .align(Alignment.TopCenter)
-                        .offset(y = (-8).dp)
-                        .size(36.dp)
-                )
             }
         }
     }
