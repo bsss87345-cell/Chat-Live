@@ -1308,7 +1308,7 @@ Box(modifier = Modifier.fillMaxSize()) {
                     .fillMaxWidth()
                     .padding(horizontal = 8.dp, vertical = 6.dp),
                 verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(6.dp)
+                horizontalArrangement = if (isInputExpanded) Arrangement.spacedBy(6.dp) else Arrangement.SpaceEvenly
             ) {
                 if (isInputExpanded) {
                     OutlinedTextField(
