@@ -942,7 +942,7 @@ fun respondToVoiceSeatRequest(roomId: String, requestId: String, accept: Boolean
         }
         viewModelScope.launch {
             while (true) {
-                delay(7000)
+                delay(15000)
                 val currentRoom = _chatRooms.value.find { it.id == roomId } ?: break
                 if (!currentRoom.isWheelSpinning) break
                 val remaining = currentRoom.wheelParticipants.filter { p ->
