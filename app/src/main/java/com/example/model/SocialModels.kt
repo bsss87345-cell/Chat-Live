@@ -187,7 +187,12 @@ data class ChatRoom(
     val voiceSeatRequests: List<VoiceSeatRequest> = emptyList(),
     val wheelJoinRequests: List<WheelJoinRequest> = emptyList(),
     val wheelParticipants: List<WheelParticipant> = emptyList(),
-    val isWheelSpinning: Boolean = false
+    val isWheelSpinning: Boolean = false,
+    val wheelPrizePool: Int = 0,
+    val wheelEliminatedIds: List<String> = emptyList(),
+    val wheelWinnerId: String? = null,
+    val wheelWinnerName: String = "",
+    val wheelWinnerAvatarUrl: String = ""
 )
 
 data class TeamMember(
