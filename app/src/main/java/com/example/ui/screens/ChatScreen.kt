@@ -1194,7 +1194,7 @@ Box(modifier = Modifier.fillMaxSize()) {
                             .size(33.dp)
                             .testTag("room_settings_button")
                     ) {
-                        Icon(Icons.Default.MoreVert, contentDescription = "خيارات الغرفة")
+                        Icon(Icons.Default.MoreVert, contentDescription = "خيارات الغرفة", tint = Color.White)
                     }
                 }
             }
