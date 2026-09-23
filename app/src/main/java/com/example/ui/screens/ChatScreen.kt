@@ -1692,12 +1692,11 @@ if ((room.isWheelSpinning || room.wheelWinnerId != null) && !wheelHidden) {
             Color(0xFFE91E8C), Color(0xFFF39C12), Color(0xFF29ABE2), Color(0xFFFF6B9D)
         )
         val wheelRotation = remember { Animatable(0f) }
-        LaunchedEffect(room.wheelEliminatedIds.size, room.isWheelSpinning) {
-            if (room.isWheelSpinning) {
-                wheelRotation.snapTo(0f)
+        LaunchedEffect(room.wheelTargetRotation) {
+            if (room.isWheelSpinning && room.wheelTargetRotation > 0f) {
                 wheelRotation.animateTo(
-                    targetValue = 720f + (180..540).random().toFloat(),
-                    animationSpec = tween(durationMillis = 15000, easing = CubicBezierEasing(0.05f, 0.9f, 0.1f, 1f))
+                    targetValue = room.wheelTargetRotation,
+                    animationSpec = tween(durationMillis = 4500, easing = CubicBezierEasing(0.12f, 0.75f, 0.1f, 1f))
                 )
             }
         }
