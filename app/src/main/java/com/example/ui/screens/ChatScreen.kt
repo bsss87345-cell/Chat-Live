@@ -860,6 +860,7 @@ fun ChatRoomView(
     var showVoiceMicDialog by remember { mutableStateOf(false) }
     var showWheelJoinDialog by remember { mutableStateOf(false) }
     var showWheelApprovalDialog by remember { mutableStateOf(false) }
+    var wheelHidden by remember { mutableStateOf(false) }
     var isInputExpanded by remember { mutableStateOf(false) }
     var isRoomAudioMuted by remember { mutableStateOf(false) }
     val inputFocusRequester = remember { FocusRequester() }
