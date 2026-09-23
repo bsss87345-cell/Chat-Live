@@ -1824,7 +1824,7 @@ val offsetY = slotY.dp
                             Box(
                                 modifier = Modifier
                                     .align(Alignment.Center)
-                                    .offset(x = offsetX, y = offsetY)
+                                    .absoluteOffset(x = offsetX, y = offsetY)
                                     .size(62.dp)
                                     .clip(CircleShape)
                                     .border(3.dp, wheelColors[i], CircleShape)
