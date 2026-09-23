@@ -868,7 +868,7 @@ fun respondToVoiceSeatRequest(roomId: String, requestId: String, accept: Boolean
     fun respondToWheelRequest(roomId: String, requestId: String, accept: Boolean) {
         val room = _chatRooms.value.find { it.id == roomId } ?: return
         val request = room.wheelJoinRequests.find { it.id == requestId } ?: return
-        if (accept && room.wheelParticipants.size >= 8) {
+        if (accept && room.wheelParticipants.size >= 4) {
             _userMessage.value = "اكتمل عدد المشاركين بعجلة الحظ."
             _chatRooms.update { list ->
                 list.map {
