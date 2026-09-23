@@ -965,6 +965,26 @@ fun respondToVoiceSeatRequest(roomId: String, requestId: String, accept: Boolean
         }
         _userMessage.value = "تمت إضافة 8 مشاركين تجريبيين لعجلة الحظ ⭐"
     }
+
+    // TODO: تجريبي فقط - يُحذف قبل أي إطلاق فعلي للتطبيق
+    fun addTestWheelRequests(roomId: String) {
+        val testNames = listOf("محمد", "هند", "طارق", "وعد")
+        val testRequests = testNames.mapIndexed { index, name ->
+            WheelJoinRequest(
+                id = "test_wjr_${index}_${System.currentTimeMillis()}",
+                requesterId = "test_req_$index",
+                requesterName = name,
+                requesterAvatarUrl = ""
+            )
+        }
+        _chatRooms.update { list ->
+            list.map {
+                if (it.id == roomId) it.copy(wheelJoinRequests = it.wheelJoinRequests + testRequests)
+                else it
+            }
+        }
+        _userMessage.value = "تمت إضافة 4 طلبات تجريبية لعجلة الحظ ⭐"
+    }
     fun takeVoiceSeatDirectly(roomId: String, seatNumber: Int) {
         val room = _chatRooms.value.find { it.id == roomId } ?: return
         val me = room.members.find { it.id == "me" }
