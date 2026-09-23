@@ -1347,7 +1347,11 @@ Box(modifier = Modifier.fillMaxSize()) {
                             .testTag("room_message_input"),
                         shape = RoundedCornerShape(22.dp),
                         enabled = !isMuted,
-                        singleLine = true
+                        singleLine = true,
+                        colors = OutlinedTextFieldDefaults.colors(
+                            focusedTextColor = Color.White,
+                            unfocusedTextColor = Color.White
+                        )
                     )
                 } else {
                 // 6. استبدال أيقونة المايك بأيقونة صندوق الهدايا (Gift Box)
