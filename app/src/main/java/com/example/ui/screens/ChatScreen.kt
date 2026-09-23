@@ -2109,8 +2109,8 @@ fun RoomVoiceStage(
             width = 1.dp,
             brush = Brush.verticalGradient(
                 listOf(
-                    Color.White.copy(alpha = 0.12f),
-                    Color.White.copy(alpha = 0.03f)
+                    Color.Transparent,
+                    Color.Transparent
                 )
             )
         ),
