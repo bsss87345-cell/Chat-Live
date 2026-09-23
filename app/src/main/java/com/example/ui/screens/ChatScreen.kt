@@ -1812,6 +1812,7 @@ if ((room.isWheelSpinning || room.wheelWinnerId != null) && !wheelHidden) {
     contentScale = ContentScale.Crop,
     modifier = Modifier
         .fillMaxSize()
+        .offset(x = 1.dp, y = 8.dp)
 )
                         for (i in 0 until room.wheelParticipants.size) {
                             val angleRad = (2 * Math.PI / room.wheelParticipants.size) * i - Math.PI / 2
