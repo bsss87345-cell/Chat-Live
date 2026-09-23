@@ -827,7 +827,11 @@ fun ChatRoomView(
     onTakeOwnerSeat: () -> Unit = {},
     onLeaveOwnerSeat: () -> Unit = {},
     onRemoveOwnerSeatMember: () -> Unit = {},
-    onInviteMemberToOwnerSeat: (String) -> Unit = {}
+    onInviteMemberToOwnerSeat: (String) -> Unit = {},
+    onRequestJoinWheel: () -> Unit = {},
+    onRespondWheelRequest: (String, Boolean) -> Unit = { _, _ -> },
+    onStartWheelSpin: () -> Unit = {},
+    onResetWheel: () -> Unit = {}
 ) {
     var inputText by remember { mutableStateOf("") }
     var showMembersSheet by remember { mutableStateOf(false) }
