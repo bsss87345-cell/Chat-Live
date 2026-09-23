@@ -1105,6 +1105,10 @@ fun ChatRoomView(
         }
     }
 
+    LaunchedEffect(room.isWheelSpinning) {
+        if (room.isWheelSpinning) wheelHidden = false
+    }
+
 Box(modifier = Modifier.fillMaxSize()) {
     if (!room.backgroundImageUrl.isNullOrBlank()) {
         AsyncImage(
