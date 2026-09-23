@@ -1405,19 +1405,114 @@ Box(modifier = Modifier.fillMaxSize()) {
                 }
 
                 // Lucky wheel button
-                IconButton(
-                    onClick = {
-                        if (!isOwner) {
-                            showWheelJoinDialog = true
+                Box {
+                    IconButton(
+                        onClick = {
+                            if (isOwner) {
+                                showWheelApprovalDialog = true
+                            } else {
+                                showWheelJoinDialog = true
+                            }
+                        },
+                        enabled = !isMuted,
+                        modifier = Modifier.testTag("room_lucky_wheel_button")
+                    ) {
+                        Image(
+                            painter = painterResource(id = R.drawable.lucky_wheel_icon),
+                            contentDescription = "عجلة الحظ",
+                            modifier = Modifier.size(26.dp)
+                        )
+                    }
+                    if (isOwner && room.wheelJoinRequests.isNotEmpty()) {
+                        Box(
+                            modifier = Modifier
+                                .size(16.dp)
+                                .align(Alignment.TopEnd)
+                                .clip(CircleShape)
+                                .background(MaterialTheme.colorScheme.error),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Text(
+                                text = "${room.wheelJoinRequests.size}",
+                                color = Color.White,
+                                fontSize = 9.sp,
+                                fontWeight = FontWeight.Bold
+                            )
                         }
-                    },
-                    enabled = !isMuted,
-                    modifier = Modifier.testTag("room_lucky_wheel_button")
-                ) {
-                    Image(
-                        painter = painterResource(id = R.drawable.lucky_wheel_icon),
-                        contentDescription = "عجلة الحظ",
-                        modifier = Modifier.size(26.dp)
+                    }
+                }
+                if (showWheelApprovalDialog) {
+                    AlertDialog(
+                        onDismissRequest = { showWheelApprovalDialog = false },
+                        title = {
+                            Row(
+                                modifier = Modifier.fillMaxWidth(),
+                                horizontalArrangement = Arrangement.SpaceBetween,
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                Text("طلبات عجلة الحظ")
+                                Text(
+                                    text = "${room.wheelParticipants.size}/8",
+                                    fontSize = 12.sp,
+                                    color = MujtamaGold,
+                                    fontWeight = FontWeight.Bold
+                                )
+                            }
+                        },
+                        text = {
+                            if (room.wheelJoinRequests.isEmpty()) {
+                                Text("لا توجد طلبات حالياً.", fontSize = 12.sp)
+                            } else {
+                                LazyColumn(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                                    items(room.wheelJoinRequests) { req ->
+                                        Row(
+                                            modifier = Modifier.fillMaxWidth(),
+                                            verticalAlignment = Alignment.CenterVertically,
+                                            horizontalArrangement = Arrangement.SpaceBetween
+                                        ) {
+                                            Row(
+                                                verticalAlignment = Alignment.CenterVertically,
+                                                horizontalArrangement = Arrangement.spacedBy(8.dp)
+                                            ) {
+                                                Box(
+                                                    modifier = Modifier
+                                                        .size(36.dp)
+                                                        .clip(CircleShape)
+                                                        .background(MujtamaPrimary),
+                                                    contentAlignment = Alignment.Center
+                                                ) {
+                                                    Text(req.requesterName.take(1), color = Color.White, fontWeight = FontWeight.Bold)
+                                                }
+                                                Text(req.requesterName, fontSize = 13.sp, fontWeight = FontWeight.Medium)
+                                            }
+                                            Row(horizontalArrangement = Arrangement.spacedBy(4.dp)) {
+                                                IconButton(onClick = { onRespondWheelRequest(req.id, false) }, modifier = Modifier.size(28.dp)) {
+                                                    Icon(Icons.Default.Close, contentDescription = "رفض", tint = MaterialTheme.colorScheme.error, modifier = Modifier.size(18.dp))
+                                                }
+                                                IconButton(onClick = { onRespondWheelRequest(req.id, true) }, modifier = Modifier.size(28.dp)) {
+                                                    Icon(Icons.Default.Check, contentDescription = "قبول", tint = MujtamaOnlineGreen, modifier = Modifier.size(18.dp))
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        },
+                        confirmButton = {
+                            if (room.wheelParticipants.size >= 4) {
+                                TextButton(onClick = {
+                                    showWheelApprovalDialog = false
+                                    onStartWheelSpin()
+                                }) {
+                                    Text("ابدأ الدوران")
+                                }
+                            }
+                        },
+                        dismissButton = {
+                            TextButton(onClick = { showWheelApprovalDialog = false }) {
+                                Text("إغلاق")
+                            }
+                        }
                     )
                 }
                 if (showWheelJoinDialog) {
