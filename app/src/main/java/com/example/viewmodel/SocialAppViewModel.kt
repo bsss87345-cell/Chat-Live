@@ -829,6 +829,124 @@ fun respondToVoiceSeatRequest(roomId: String, requestId: String, accept: Boolean
         _userMessage.value = if (accept) "تم قبول الطلب وصعود العضو للمايك." else "تم رفض الطلب."
     }
 
+    fun requestJoinWheel(roomId: String) {
+        val room = _chatRooms.value.find { it.id == roomId } ?: return
+        val me = room.members.find { it.id == "me" }
+        if (_walletBalance.value < 100) {
+            _userMessage.value = "رصيد نقاطك غير كافٍ للانضمام إلى عجلة الحظ!"
+            return
+        }
+        if (room.wheelParticipants.any { it.id == "me" }) {
+            _userMessage.value = "أنت مشارك بالفعل بعجلة الحظ."
+            return
+        }
+        if (room.wheelJoinRequests.any { it.requesterId == "me" }) {
+            _userMessage.value = "لديك طلب معلّق بالفعل بانتظار موافقة المالك."
+            return
+        }
+        if (room.wheelParticipants.size >= 8) {
+            _userMessage.value = "اكتمل عدد المشاركين بعجلة الحظ."
+            return
+        }
+        _chatRooms.update { list ->
+            list.map {
+                if (it.id == roomId) {
+                    it.copy(
+                        wheelJoinRequests = it.wheelJoinRequests + WheelJoinRequest(
+                            id = "wjr_${System.currentTimeMillis()}",
+                            requesterId = "me",
+                            requesterName = me?.name ?: "أنت",
+                            requesterAvatarUrl = _userProfile.value.avatarUrl
+                        )
+                    )
+                } else it
+            }
+        }
+        _userMessage.value = "تم إرسال طلب الانضمام، بانتظار موافقة المالك."
+    }
+
+    fun respondToWheelRequest(roomId: String, requestId: String, accept: Boolean) {
+        val room = _chatRooms.value.find { it.id == roomId } ?: return
+        val request = room.wheelJoinRequests.find { it.id == requestId } ?: return
+        if (accept && room.wheelParticipants.size >= 8) {
+            _userMessage.value = "اكتمل عدد المشاركين بعجلة الحظ."
+            _chatRooms.update { list ->
+                list.map {
+                    if (it.id == roomId) it.copy(wheelJoinRequests = it.wheelJoinRequests.filter { r -> r.id != requestId })
+                    else it
+                }
+            }
+            return
+        }
+        if (accept) {
+            if (request.requesterId == "me" && _walletBalance.value < 100) {
+                _userMessage.value = "رصيد النقاط غير كافٍ لإتمام الانضمام."
+                _chatRooms.update { list ->
+                    list.map {
+                        if (it.id == roomId) it.copy(wheelJoinRequests = it.wheelJoinRequests.filter { r -> r.id != requestId })
+                        else it
+                    }
+                }
+                return
+            }
+            if (request.requesterId == "me") {
+                _walletBalance.update { it - 100 }
+                val newTx = WalletTransaction(
+                    id = "tx_${System.currentTimeMillis()}",
+                    title = "الانضمام لعجلة الحظ",
+                    type = TransactionType.SPEND,
+                    points = 100,
+                    date = "اليوم",
+                    note = "دخول عجلة الحظ داخل الغرفة"
+                )
+                _transactions.update { listOf(newTx) + it }
+            }
+        }
+        _chatRooms.update { list ->
+            list.map { r ->
+                if (r.id == roomId) {
+                    if (accept) {
+                        r.copy(
+                            wheelParticipants = r.wheelParticipants + WheelParticipant(
+                                id = request.requesterId,
+                                name = request.requesterName,
+                                avatarUrl = request.requesterAvatarUrl
+                            ),
+                            wheelJoinRequests = r.wheelJoinRequests.filter { it.id != requestId }
+                        )
+                    } else {
+                        r.copy(wheelJoinRequests = r.wheelJoinRequests.filter { it.id != requestId })
+                    }
+                } else r
+            }
+        }
+        _userMessage.value = if (accept) "تم قبول الانضمام لعجلة الحظ." else "تم رفض طلب الانضمام."
+    }
+
+    fun startWheelSpin(roomId: String) {
+        val room = _chatRooms.value.find { it.id == roomId } ?: return
+        if (room.wheelParticipants.size < 4) {
+            _userMessage.value = "يلزم 4 مشاركين على الأقل لتدوير العجلة."
+            return
+        }
+        _chatRooms.update { list ->
+            list.map { if (it.id == roomId) it.copy(isWheelSpinning = true) else it }
+        }
+    }
+
+    fun resetWheel(roomId: String) {
+        _chatRooms.update { list ->
+            list.map {
+                if (it.id == roomId) it.copy(
+                    wheelParticipants = emptyList(),
+                    wheelJoinRequests = emptyList(),
+                    isWheelSpinning = false
+                )
+                else it
+            }
+        }
+    }
+
     fun takeVoiceSeatDirectly(roomId: String, seatNumber: Int) {
         val room = _chatRooms.value.find { it.id == roomId } ?: return
         val me = room.members.find { it.id == "me" }
