@@ -1801,8 +1801,8 @@ if ((room.isWheelSpinning || room.wheelWinnerId != null) && !wheelHidden) {
                                 )
                             }
                         }
-                        for (i in 0 until 4) {
-                            val angleRad = (Math.PI / 2 * i - Math.PI / 2)
+                        for (i in 0 until room.wheelParticipants.size) {
+                            val angleRad = (2 * Math.PI / room.wheelParticipants.size) * i - Math.PI / 2
                             val radiusValue = 105f
                             val offsetX = (radiusValue * kotlin.math.cos(angleRad)).toFloat().dp
                             val offsetY = (radiusValue * kotlin.math.sin(angleRad)).toFloat().dp
