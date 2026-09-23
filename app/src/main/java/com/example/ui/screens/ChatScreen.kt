@@ -1481,6 +1481,7 @@ Box(modifier = Modifier.fillMaxSize()) {
                                     color = MujtamaGold,
                                     fontWeight = FontWeight.Bold
                                 )
+                            }
                         },
                         text = {
                             if (room.wheelJoinRequests.isEmpty()) {
