@@ -1310,6 +1310,46 @@ Box(modifier = Modifier.fillMaxSize()) {
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.spacedBy(6.dp)
             ) {
+                if (isInputExpanded) {
+                    OutlinedTextField(
+                        value = inputText,
+                        onValueChange = { inputText = it },
+                        placeholder = {
+                            Text(
+                                text = if (isMuted) "أنت مكتوم في الغرفة..." else "قل مرحباً...",
+                                fontSize = 12.sp
+                            )
+                        },
+                        leadingIcon = {
+                            IconButton(onClick = {
+                                isInputExpanded = false
+                                keyboardController?.hide()
+                            }) {
+                                Icon(Icons.Default.Chat, contentDescription = "إغلاق الكتابة")
+                            }
+                        },
+                        trailingIcon = {
+                            IconButton(
+                                onClick = {
+                                    if (inputText.isNotBlank()) {
+                                        onSendMessage(inputText, ChatMessageType.TEXT)
+                                        inputText = ""
+                                    }
+                                },
+                                enabled = !isMuted && inputText.isNotBlank()
+                            ) {
+                                Icon(Icons.Default.Send, contentDescription = "إرسال")
+                            }
+                        },
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .focusRequester(inputFocusRequester)
+                            .testTag("room_message_input"),
+                        shape = RoundedCornerShape(22.dp),
+                        enabled = !isMuted,
+                        singleLine = true
+                    )
+                } else {
                 // 6. استبدال أيقونة المايك بأيقونة صندوق الهدايا (Gift Box)
                 var showGiftBoxDialog by remember { mutableStateOf(false) }
                 IconButton(
@@ -1375,23 +1415,15 @@ Box(modifier = Modifier.fillMaxSize()) {
                         Icon(Icons.Default.MusicNote, contentDescription = "الموسيقى", tint = if (isMusicPlaying) MujtamaGold else MujtamaTeal)
                     }
                 }
-                // Text Input
-                OutlinedTextField(
-                    value = inputText,
-                    onValueChange = { inputText = it },
-                    placeholder = {
-                        Text(
-                            text = if (isMuted) "أنت مكتوم في الغرفة..." else "شارك برأيك في الغرفة...",
-                            fontSize = 12.sp
-                        )
-                    },
-                    modifier = Modifier
-                        .weight(1f)
-                        .testTag("room_message_input"),
-                    shape = RoundedCornerShape(22.dp),
+
+                // Open chat input
+                IconButton(
+                    onClick = { isInputExpanded = true },
                     enabled = !isMuted,
-                    singleLine = true
-                )
+                    modifier = Modifier.testTag("room_open_input_button")
+                ) {
+                    Icon(Icons.Default.Chat, contentDescription = "كتابة رسالة", tint = Color.White)
+                }
 
                 // Voice mic request button (Badge = عدد الطلبات المعلّقة)
                 Box {
@@ -1424,6 +1456,27 @@ Box(modifier = Modifier.fillMaxSize()) {
                     }
                 }
 
+                // Audio mute toggle (المايكات + الموسيقى)
+                IconButton(
+                    onClick = {
+                        isRoomAudioMuted = !isRoomAudioMuted
+                        roomMusicPlayer?.setVolume(
+                            if (isRoomAudioMuted) 0f else 1f,
+                            if (isRoomAudioMuted) 0f else 1f
+                        )
+                    },
+                    modifier = Modifier.testTag("room_audio_mute_button")
+                ) {
+                    Icon(
+                        imageVector = if (isRoomAudioMuted) Icons.Default.VolumeOff else Icons.Default.VolumeUp,
+                        contentDescription = if (isRoomAudioMuted) "الصوت مكتوم" else "الصوت مفعل",
+                        tint = if (isRoomAudioMuted) MaterialTheme.colorScheme.error else Color.White
+                    )
+                }
+                }
+            }
+        }
+    }
                 // Send Button
                 Button(
                     onClick = {
