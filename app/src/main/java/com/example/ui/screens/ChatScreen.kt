@@ -1477,20 +1477,6 @@ Box(modifier = Modifier.fillMaxSize()) {
             }
         }
     }
-                // Send Button
-                Button(
-                    onClick = {
-                        if (inputText.isNotBlank()) {
-                            onSendMessage(inputText, ChatMessageType.TEXT)
-                            inputText = ""
-                        }
-                    },
-                    enabled = !isMuted && inputText.isNotBlank(),
-                    shape = CircleShape,
-                    modifier = Modifier.testTag("room_send_button")
-                ) {
-                    Icon(Icons.Default.Send, contentDescription = "إرسال")
-                }
             }
         }
     }
