@@ -1248,9 +1248,9 @@ Box(modifier = Modifier.fillMaxSize()) {
                     Icon(Icons.Default.PushPin, contentDescription = null, tint = MujtamaGold, modifier = Modifier.size(16.dp))
                     Text(
                         text = room.pinnedMessage ?: "",
-                        fontSize = 11.sp,
+                        fontSize = 13.sp,
                         fontWeight = FontWeight.SemiBold,
-                        color = MaterialTheme.colorScheme.onSurface
+                        color = Color.White
                     )
               }  
             }
