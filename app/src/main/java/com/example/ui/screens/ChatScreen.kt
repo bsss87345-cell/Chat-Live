@@ -1683,6 +1683,124 @@ Box(modifier = Modifier.fillMaxSize()) {
         }
     }
 
+if (room.isWheelSpinning && !wheelHidden) {
+        val wheelColors = listOf(
+            Color(0xFF29ABE2), Color(0xFFFFD700), Color(0xFF2ECC71), Color(0xFF9B59B6),
+            Color(0xFF3498DB), Color(0xFFE91E8C), Color(0xFFF39C12), Color(0xFFFF4D6D)
+        )
+        val wheelInfiniteTransition = rememberInfiniteTransition(label = "wheelRotation")
+        val wheelRotationAngle by wheelInfiniteTransition.animateFloat(
+            initialValue = 0f,
+            targetValue = 360f,
+            animationSpec = infiniteRepeatable(
+                animation = tween(durationMillis = 6000, easing = LinearEasing),
+                repeatMode = RepeatMode.Restart
+            ),
+            label = "wheelRotationAngle"
+        )
+        Box(
+            modifier = Modifier.fillMaxSize(),
+            contentAlignment = Alignment.Center
+        ) {
+            Text(
+                text = "${room.wheelParticipants.size}/8",
+                color = MujtamaGold,
+                fontSize = 16.sp,
+                fontWeight = FontWeight.Bold,
+                modifier = Modifier
+                    .align(Alignment.TopEnd)
+                    .padding(top = 60.dp, end = 20.dp)
+            )
+
+            IconButton(
+                onClick = { wheelHidden = true },
+                modifier = Modifier
+                    .align(Alignment.TopStart)
+                    .padding(top = 60.dp, start = 20.dp)
+            ) {
+                Icon(
+                    imageVector = Icons.Default.Close,
+                    contentDescription = "إخفاء العجلة",
+                    tint = Color.White.copy(alpha = 0.15f)
+                )
+            }
+
+            Box(
+                modifier = Modifier.size(300.dp),
+                contentAlignment = Alignment.Center
+            ) {
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .rotate(wheelRotationAngle)
+                ) {
+                    for (i in 0 until 8) {
+                        val angleRad = (Math.PI / 4 * i - Math.PI / 2)
+                        val radiusValue = 120f
+                        val offsetX = (radiusValue * kotlin.math.cos(angleRad)).toFloat().dp
+                        val offsetY = (radiusValue * kotlin.math.sin(angleRad)).toFloat().dp
+                        val participant = room.wheelParticipants.getOrNull(i)
+                        Box(
+                            modifier = Modifier
+                                .align(Alignment.Center)
+                                .offset(x = offsetX, y = offsetY)
+                                .size(64.dp)
+                                .clip(CircleShape)
+                                .border(3.dp, wheelColors[i], CircleShape)
+                                .background(MujtamaPrimary.copy(alpha = if (participant != null) 1f else 0.25f)),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            if (participant != null) {
+                                if (participant.avatarUrl.isNotBlank()) {
+                                    AsyncImage(
+                                        model = participant.avatarUrl,
+                                        contentDescription = participant.name,
+                                        contentScale = ContentScale.Crop,
+                                        modifier = Modifier.fillMaxSize().clip(CircleShape)
+                                    )
+                                } else {
+                                    Text(participant.name.take(1), color = Color.White, fontWeight = FontWeight.Bold)
+                                }
+                            } else {
+                                Icon(
+                                    imageVector = Icons.Default.Person,
+                                    contentDescription = null,
+                                    tint = Color.White.copy(alpha = 0.3f)
+                                )
+                            }
+                        }
+                    }
+                }
+
+                Box(
+                    modifier = Modifier
+                        .size(70.dp)
+                        .clip(CircleShape)
+                        .background(Color(0xFF0A0818))
+                        .border(3.dp, MujtamaGold, CircleShape),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.Groups,
+                        contentDescription = null,
+                        tint = MujtamaGold,
+                        modifier = Modifier.size(32.dp)
+                    )
+                }
+
+                Icon(
+                    imageVector = Icons.Default.ArrowDropDown,
+                    contentDescription = null,
+                    tint = MujtamaGold,
+                    modifier = Modifier
+                        .align(Alignment.TopCenter)
+                        .offset(y = (-8).dp)
+                        .size(36.dp)
+                )
+            }
+        }
+    }
+
 // Members Bottom Sheet / Dialog
     if (showMembersSheet) {
         AlertDialog(
