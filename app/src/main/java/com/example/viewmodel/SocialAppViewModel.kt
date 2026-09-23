@@ -936,18 +936,17 @@ fun respondToVoiceSeatRequest(roomId: String, requestId: String, accept: Boolean
                     wheelEliminatedIds = emptyList(),
                     wheelWinnerId = null,
                     wheelWinnerName = "",
-                    wheelWinnerAvatarUrl = ""
+                    wheelWinnerAvatarUrl = "",
+                    wheelTargetRotation = 0f
                 ) else it
             }
         }
         viewModelScope.launch {
+            var cumulativeRotation = 0f
             while (true) {
-                delay(15000)
                 val currentRoom = _chatRooms.value.find { it.id == roomId } ?: break
                 if (!currentRoom.isWheelSpinning) break
-                val remaining = currentRoom.wheelParticipants.filter { p ->
-                    !currentRoom.wheelEliminatedIds.contains(p.id)
-                }
+                val remaining = currentRoom.wheelParticipants
                 if (remaining.size <= 1) {
                     val winner = remaining.firstOrNull()
                     if (winner != null) {
@@ -983,10 +982,23 @@ fun respondToVoiceSeatRequest(roomId: String, requestId: String, accept: Boolean
                     }
                     break
                 } else {
-                    val eliminated = remaining.random()
+                    val sectorAngle = 360f / remaining.size
+                    val eliminatedIndex = remaining.indices.random()
+                    val eliminated = remaining[eliminatedIndex]
+                    val stopAngle = (360f - (eliminatedIndex * sectorAngle)) % 360f
+                    val fullSpins = (4..6).random()
+                    cumulativeRotation += (fullSpins * 360f) + stopAngle
+                    _chatRooms.update { list ->
+                        list.map {
+                            if (it.id == roomId) it.copy(wheelTargetRotation = cumulativeRotation)
+                            else it
+                        }
+                    }
+                    delay(4500)
                     _chatRooms.update { list ->
                         list.map {
                             if (it.id == roomId) it.copy(
+                                wheelParticipants = it.wheelParticipants.filterNot { p -> p.id == eliminated.id },
                                 wheelEliminatedIds = it.wheelEliminatedIds + eliminated.id
                             ) else it
                         }
@@ -995,7 +1007,6 @@ fun respondToVoiceSeatRequest(roomId: String, requestId: String, accept: Boolean
             }
         }
     }
-
     fun resetWheel(roomId: String) {
         _chatRooms.update { list ->
             list.map {
