@@ -1806,29 +1806,14 @@ if ((room.isWheelSpinning || room.wheelWinnerId != null) && !wheelHidden) {
                             .fillMaxSize()
                             .rotate(wheelRotation.value % 360f)
                     ) {
-                        Canvas(modifier = Modifier.fillMaxSize()) {
-                            val strokeWidthOuter = 14.dp.toPx()
-                            val ringRadius = size.minDimension / 2 - strokeWidthOuter / 2
-                            drawCircle(
-                                color = Color(0xFF14101F),
-                                radius = size.minDimension / 2 - strokeWidthOuter
-                            )
-                            drawCircle(
-                                color = MujtamaGold,
-                                radius = ringRadius,
-                                style = androidx.compose.ui.graphics.drawscope.Stroke(width = strokeWidthOuter)
-                            )
-                            for (i in 0 until 16) {
-                                val dotAngle = Math.toRadians((i * 22.5))
-                                val dotX = center.x + (ringRadius * kotlin.math.cos(dotAngle)).toFloat()
-                                val dotY = center.y + (ringRadius * kotlin.math.sin(dotAngle)).toFloat()
-                                drawCircle(
-                                    color = Color(0xFFFFE066),
-                                    radius = 4.dp.toPx(),
-                                    center = androidx.compose.ui.geometry.Offset(dotX, dotY)
-                                )
-                            }
-                        }
+                        Image(
+    painter = painterResource(id = R.drawable.wheel_frame),
+    contentDescription = null,
+    contentScale = ContentScale.Crop,
+    modifier = Modifier
+        .fillMaxSize()
+        .clip(CircleShape)
+)
                         for (i in 0 until room.wheelParticipants.size) {
                             val angleRad = (2 * Math.PI / room.wheelParticipants.size) * i - Math.PI / 2
                             val radiusValue = 105f
