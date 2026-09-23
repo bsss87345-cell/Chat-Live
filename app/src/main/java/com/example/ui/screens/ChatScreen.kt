@@ -163,7 +163,11 @@ fun ChatScreen(
                 onTakeOwnerSeat = onTakeOwnerSeat,
                 onLeaveOwnerSeat = onLeaveOwnerSeat,
                 onRemoveOwnerSeatMember = onRemoveOwnerSeatMember,
-                onInviteMemberToOwnerSeat = onInviteMemberToOwnerSeat
+                onInviteMemberToOwnerSeat = onInviteMemberToOwnerSeat,
+                onRequestJoinWheel = onRequestJoinWheel,
+                onRespondWheelRequest = onRespondWheelRequest,
+                onStartWheelSpin = onStartWheelSpin,
+                onResetWheel = onResetWheel
             )
             return
         }
