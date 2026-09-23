@@ -844,7 +844,7 @@ fun respondToVoiceSeatRequest(roomId: String, requestId: String, accept: Boolean
             _userMessage.value = "لديك طلب معلّق بالفعل بانتظار موافقة المالك."
             return
         }
-        if (room.wheelParticipants.size >= 8) {
+        if (room.wheelParticipants.size >= 4) {
             _userMessage.value = "اكتمل عدد المشاركين بعجلة الحظ."
             return
         }
