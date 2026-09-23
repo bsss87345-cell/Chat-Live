@@ -839,6 +839,10 @@ fun ChatRoomView(
     var showBannedListDialog by remember { mutableStateOf(false) }
     var showBackgroundPickerDialog by remember { mutableStateOf(false) }
     var showVoiceMicDialog by remember { mutableStateOf(false) }
+    var isInputExpanded by remember { mutableStateOf(false) }
+    var isRoomAudioMuted by remember { mutableStateOf(false) }
+    val inputFocusRequester = remember { FocusRequester() }
+    val keyboardController = LocalSoftwareKeyboardController.current
     val activeGiftEvents = remember { androidx.compose.runtime.mutableStateListOf<GiftSentEvent>() }
     val photoPickerLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.PickVisualMedia(),
