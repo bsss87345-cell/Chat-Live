@@ -1724,7 +1724,12 @@ if ((room.isWheelSpinning || room.wheelWinnerId != null) && !wheelHidden) {
         Box(
             modifier = Modifier
                 .fillMaxSize()
-                .background(Color(0xFF05040C)),
+                .background(
+                    androidx.compose.ui.graphics.Brush.radialGradient(
+                        colors = listOf(Color(0xFF1A1330), Color(0xFF05040C)),
+                        radius = 900f
+                    )
+                ),
             contentAlignment = Alignment.Center
         ) {
             Text(
