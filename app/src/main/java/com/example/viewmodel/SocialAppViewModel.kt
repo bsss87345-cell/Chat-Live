@@ -946,7 +946,7 @@ fun respondToVoiceSeatRequest(roomId: String, requestId: String, accept: Boolean
             while (true) {
                 val currentRoom = _chatRooms.value.find { it.id == roomId } ?: break
                 if (!currentRoom.isWheelSpinning) break
-                val remaining = currentRoom.wheelParticipants
+                val remaining = currentRoom.wheelParticipants.filterNot { it.id in currentRoom.wheelEliminatedIds }
                 if (remaining.size <= 1) {
                     val winner = remaining.firstOrNull()
                     if (winner != null) {
