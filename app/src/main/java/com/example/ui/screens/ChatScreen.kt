@@ -1154,7 +1154,7 @@ Box(modifier = Modifier.fillMaxSize()) {
                     }
                     Text(
                         text = "ID: $displayId",
-                        fontSize = 11.sp,
+                        fontSize = 12.sp,
                         fontWeight = FontWeight.Bold,
                         color = MaterialTheme.colorScheme.primary,
                         modifier = Modifier.testTag("room_topbar_id")
