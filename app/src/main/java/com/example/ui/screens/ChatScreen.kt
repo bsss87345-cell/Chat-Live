@@ -1816,10 +1816,9 @@ if ((room.isWheelSpinning || room.wheelWinnerId != null) && !wheelHidden) {
 )
                         for (i in 0 until room.wheelParticipants.size) {
                             val slotOffsets = listOf(0f to -76f, 81f to -5f, -1f to 75f, -81f to -5f)
-                            val slotOffsets = listOf(0f to -76f, 81f to -5f, -1f to 75f, -81f to -5f)
-                            val (slotX, slotY) = slotOffsets.getOrElse(i) { 0f to 0f }
-                            val offsetX = slotX.dp
-                            val offsetY = slotY.dp
+val (slotX, slotY) = slotOffsets.getOrElse(i) { 0f to 0f }
+val offsetX = slotX.dp
+val offsetY = slotY.dp
                             val participant = room.wheelParticipants.getOrNull(i)
                             val isEliminated = participant != null && room.wheelEliminatedIds.contains(participant.id)
                             Box(
