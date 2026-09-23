@@ -936,6 +936,7 @@ fun ChatRoomView(
             val player = android.media.MediaPlayer()
             player.setDataSource(roomContext, roomMusicTracks[index].second)
             player.isLooping = true
+            player.setVolume(if (isRoomAudioMuted) 0f else 1f, if (isRoomAudioMuted) 0f else 1f)
             player.setOnPreparedListener { it.start() }
             player.prepareAsync()
             roomMusicPlayer = player
