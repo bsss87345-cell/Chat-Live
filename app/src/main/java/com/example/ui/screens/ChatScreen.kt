@@ -1156,7 +1156,8 @@ Box(modifier = Modifier.fillMaxSize()) {
                         Text(
                             text = room.name,
                             fontWeight = FontWeight.Bold,
-                            fontSize = 14.sp,
+                            fontSize = 13.sp,
+                            color = Color.White,
                             maxLines = 1
                         )
                     }
