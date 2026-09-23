@@ -912,7 +912,8 @@ fun respondToVoiceSeatRequest(roomId: String, requestId: String, accept: Boolean
                                 name = request.requesterName,
                                 avatarUrl = request.requesterAvatarUrl
                             ),
-                            wheelJoinRequests = r.wheelJoinRequests.filter { it.id != requestId }
+                            wheelJoinRequests = r.wheelJoinRequests.filter { it.id != requestId },
+                            wheelPrizePool = r.wheelPrizePool + 100
                         )
                     } else {
                         r.copy(wheelJoinRequests = r.wheelJoinRequests.filter { it.id != requestId })
@@ -922,7 +923,6 @@ fun respondToVoiceSeatRequest(roomId: String, requestId: String, accept: Boolean
         }
         _userMessage.value = if (accept) "تم قبول الانضمام لعجلة الحظ." else "تم رفض طلب الانضمام."
     }
-
     fun startWheelSpin(roomId: String) {
         val room = _chatRooms.value.find { it.id == roomId } ?: return
         if (room.wheelParticipants.size < 4) {
