@@ -184,7 +184,10 @@ data class ChatRoom(
     val blockedMembers: List<RoomMember> = emptyList(),
     val voiceSeats: List<VoiceSeat> = (1..8).map { VoiceSeat(seatNumber = it) },
     val ownerVoiceSeat: VoiceSeat = VoiceSeat(seatNumber = 0),
-    val voiceSeatRequests: List<VoiceSeatRequest> = emptyList()
+    val voiceSeatRequests: List<VoiceSeatRequest> = emptyList(),
+    val wheelJoinRequests: List<WheelJoinRequest> = emptyList(),
+    val wheelParticipants: List<WheelParticipant> = emptyList(),
+    val isWheelSpinning: Boolean = false
 )
 
 data class TeamMember(
