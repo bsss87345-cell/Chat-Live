@@ -1815,10 +1815,11 @@ if ((room.isWheelSpinning || room.wheelWinnerId != null) && !wheelHidden) {
         .offset(x = 1.dp, y = 8.dp)
 )
                         for (i in 0 until room.wheelParticipants.size) {
-                            val angleRad = (2 * Math.PI / room.wheelParticipants.size) * i - Math.PI / 2
-                            val radiusValue = 77f
-                            val offsetX = (radiusValue * kotlin.math.cos(angleRad)).toFloat().dp
-                            val offsetY = (radiusValue * kotlin.math.sin(angleRad)).toFloat().dp
+                            val slotOffsets = listOf(0f to -76f, 81f to -5f, -1f to 75f, -81f to -5f)
+                            val slotOffsets = listOf(0f to -76f, 81f to -5f, -1f to 75f, -81f to -5f)
+                            val (slotX, slotY) = slotOffsets.getOrElse(i) { 0f to 0f }
+                            val offsetX = slotX.dp
+                            val offsetY = slotY.dp
                             val participant = room.wheelParticipants.getOrNull(i)
                             val isEliminated = participant != null && room.wheelEliminatedIds.contains(participant.id)
                             Box(
