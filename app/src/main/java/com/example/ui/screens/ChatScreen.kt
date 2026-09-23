@@ -1713,7 +1713,7 @@ if ((room.isWheelSpinning || room.wheelWinnerId != null) && !wheelHidden) {
             contentAlignment = Alignment.Center
         ) {
             Text(
-                text = "${room.wheelParticipants.size}/8",
+                text = "${room.wheelParticipants.size}/4",
                 color = MujtamaGold,
                 fontSize = 16.sp,
                 fontWeight = FontWeight.Bold,
