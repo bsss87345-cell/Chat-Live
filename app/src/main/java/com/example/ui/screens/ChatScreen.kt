@@ -1700,8 +1700,15 @@ if ((room.isWheelSpinning || room.wheelWinnerId != null) && !wheelHidden) {
                 )
             }
         }
+        val haptic = LocalHapticFeedback.current
+        LaunchedEffect(room.wheelEliminatedIds.size) {
+            if (room.wheelEliminatedIds.isNotEmpty()) {
+                haptic.performHapticFeedback(HapticFeedbackType.TextHandleMove)
+            }
+        }
         LaunchedEffect(room.wheelWinnerId) {
             if (room.wheelWinnerId != null) {
+                haptic.performHapticFeedback(HapticFeedbackType.LongPress)
                 delay(2000)
                 onResetWheel()
             }
