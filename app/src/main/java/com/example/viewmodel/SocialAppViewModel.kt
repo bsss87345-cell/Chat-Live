@@ -1027,8 +1027,8 @@ fun respondToVoiceSeatRequest(roomId: String, requestId: String, accept: Boolean
         val testNames = listOf("سارة", "خالد", "نورة", "فهد")
         val testParticipants = testNames.mapIndexed { index, name ->
             WheelParticipant(
-                id = "test_wheel_$index",
-                name = name,
+                id = if (index == 0) "me" else "test_wheel_$index",
+                name = if (index == 0) "أنا" else name,
                 avatarUrl = ""
             )
         }
