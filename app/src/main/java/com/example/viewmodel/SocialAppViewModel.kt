@@ -1011,7 +1011,7 @@ fun respondToVoiceSeatRequest(roomId: String, requestId: String, accept: Boolean
 
     // TODO: تجريبي فقط - يُحذف قبل أي إطلاق فعلي للتطبيق
     fun addTestWheelParticipants(roomId: String) {
-        val testNames = listOf("سارة", "خالد", "نورة", "فهد", "ريم", "عبدالله", "لمى", "ياسر")
+        val testNames = listOf("سارة", "خالد", "نورة", "فهد")
         val testParticipants = testNames.mapIndexed { index, name ->
             WheelParticipant(
                 id = "test_wheel_$index",
@@ -1025,7 +1025,7 @@ fun respondToVoiceSeatRequest(roomId: String, requestId: String, accept: Boolean
                 else it
             }
         }
-        _userMessage.value = "تمت إضافة 8 مشاركين تجريبيين لعجلة الحظ ⭐"
+        _userMessage.value = "تمت إضافة 4 مشاركين تجريبيين لعجلة الحظ ⭐"
     }
 
     // TODO: تجريبي فقط - يُحذف قبل أي إطلاق فعلي للتطبيق
