@@ -1104,7 +1104,7 @@ Box(modifier = Modifier.fillMaxSize()) {
 // Room Image (or first letter of room name if none was set)
                 Box(
                     modifier = Modifier
-                        .size(28.dp)
+                        .size(38.dp)
                         .clip(CircleShape)
                         .background(if (room.imageUrl.isNullOrBlank()) MujtamaPrimary else Color.Transparent),
                     contentAlignment = Alignment.Center
