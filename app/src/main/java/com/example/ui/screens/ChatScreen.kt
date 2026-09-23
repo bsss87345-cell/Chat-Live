@@ -1404,9 +1404,13 @@ Box(modifier = Modifier.fillMaxSize()) {
                     )
                 }
 
-                // Lucky wheel button (أيقونة فقط، بدون وظيفة بعد)
+                // Lucky wheel button
                 IconButton(
-                    onClick = { },
+                    onClick = {
+                        if (!isOwner) {
+                            showWheelJoinDialog = true
+                        }
+                    },
                     enabled = !isMuted,
                     modifier = Modifier.testTag("room_lucky_wheel_button")
                 ) {
@@ -1414,6 +1418,26 @@ Box(modifier = Modifier.fillMaxSize()) {
                         painter = painterResource(id = R.drawable.lucky_wheel_icon),
                         contentDescription = "عجلة الحظ",
                         modifier = Modifier.size(26.dp)
+                    )
+                }
+                if (showWheelJoinDialog) {
+                    AlertDialog(
+                        onDismissRequest = { showWheelJoinDialog = false },
+                        title = { Text("عجلة الحظ") },
+                        text = { Text("هل ترغب الانضمام إلى عجلة الحظ مقابل 100 نقطة؟") },
+                        confirmButton = {
+                            TextButton(onClick = {
+                                showWheelJoinDialog = false
+                                onRequestJoinWheel()
+                            }) {
+                                Text("موافق")
+                            }
+                        },
+                        dismissButton = {
+                            TextButton(onClick = { showWheelJoinDialog = false }) {
+                                Text("إلغاء")
+                            }
+                        }
                     )
                 }
 
