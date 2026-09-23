@@ -1075,6 +1075,13 @@ fun ChatRoomView(
     // Intercept system back button/gesture to leave room smoothly
     BackHandler(onBack = onBack)
 
+    LaunchedEffect(isInputExpanded) {
+        if (isInputExpanded) {
+            inputFocusRequester.requestFocus()
+            keyboardController?.show()
+        }
+    }
+
 Box(modifier = Modifier.fillMaxSize()) {
     if (!room.backgroundImageUrl.isNullOrBlank()) {
         AsyncImage(
