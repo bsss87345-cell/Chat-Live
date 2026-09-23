@@ -987,7 +987,9 @@ fun respondToVoiceSeatRequest(roomId: String, requestId: String, accept: Boolean
                     val eliminated = remaining[eliminatedIndex]
                     val stopAngle = (360f - (eliminatedIndex * sectorAngle)) % 360f
                     val fullSpins = (4..6).random()
-                    cumulativeRotation += (fullSpins * 360f) + stopAngle
+                    val currentAngle = cumulativeRotation % 360f
+                    val deltaToStop = (stopAngle - currentAngle + 360f) % 360f
+                    cumulativeRotation += (fullSpins * 360f) + deltaToStop
                     _chatRooms.update { list ->
                         list.map {
                             if (it.id == roomId) it.copy(wheelTargetRotation = cumulativeRotation)
