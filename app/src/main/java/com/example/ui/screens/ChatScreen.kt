@@ -1476,12 +1476,11 @@ Box(modifier = Modifier.fillMaxSize()) {
                             ) {
                                 Text("طلبات عجلة الحظ")
                                 Text(
-                                    text = "${room.wheelParticipants.size}/8",
+                                    text = "${room.wheelParticipants.size}/4",
                                     fontSize = 12.sp,
                                     color = MujtamaGold,
                                     fontWeight = FontWeight.Bold
                                 )
-                            }
                         },
                         text = {
                             if (room.wheelJoinRequests.isEmpty()) {
