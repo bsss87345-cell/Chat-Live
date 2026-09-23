@@ -1000,7 +1000,6 @@ val stopAngle = (360f - (eliminatedIndex * sectorAngle)) % 360f
                     _chatRooms.update { list ->
                         list.map {
                             if (it.id == roomId) it.copy(
-                                wheelParticipants = it.wheelParticipants.filterNot { p -> p.id == eliminated.id },
                                 wheelEliminatedIds = it.wheelEliminatedIds + eliminated.id
                             ) else it
                         }
