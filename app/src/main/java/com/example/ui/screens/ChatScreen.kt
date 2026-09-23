@@ -1711,6 +1711,14 @@ if ((room.isWheelSpinning || room.wheelWinnerId != null) && !wheelHidden) {
                 onResetWheel()
             }
         }
+        var showLoseMsg by remember { mutableStateOf(false) }
+        LaunchedEffect(room.wheelEliminatedIds.size) {
+            if (room.wheelEliminatedIds.lastOrNull() == "me") {
+                showLoseMsg = true
+                delay(2000)
+                showLoseMsg = false
+            }
+        }
         Box(
             modifier = Modifier
                 .fillMaxSize()
