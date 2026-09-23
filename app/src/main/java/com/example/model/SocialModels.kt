@@ -148,6 +148,20 @@ data class VoiceSeatRequest(
     val requestedAtMillis: Long = System.currentTimeMillis()
 )
 
+data class WheelJoinRequest(
+    val id: String,
+    val requesterId: String,
+    val requesterName: String,
+    val requesterAvatarUrl: String = "",
+    val requestedAtMillis: Long = System.currentTimeMillis()
+)
+
+data class WheelParticipant(
+    val id: String,
+    val name: String,
+    val avatarUrl: String = ""
+)
+
 data class ChatRoom(
     val id: String,
     val name: String,
