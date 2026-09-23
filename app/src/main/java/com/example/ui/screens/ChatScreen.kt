@@ -1165,7 +1165,7 @@ Box(modifier = Modifier.fillMaxSize()) {
                 IconButton(
                     onClick = { showMembersSheet = true },
                     modifier = Modifier
-                        .size(30.dp)
+                        .size(33.dp)
                         .testTag("room_members_button")
                 ) {
                     Icon(Icons.Default.Group, contentDescription = "الأعضاء", tint = MaterialTheme.colorScheme.primary)
