@@ -3351,13 +3351,61 @@ LazyColumn(
                     )
                     DropdownMenuItem(
                         text = { Text("حذف المحادثة") },
-                        onClick = { showOptionsMenu = false },
+                        onClick = {
+                            showOptionsMenu = false
+                            showDeleteConfirm = true
+                        },
                         leadingIcon = { Icon(Icons.Default.Delete, contentDescription = null) }
                     )
                     DropdownMenuItem(
-                        text = { Text("حظر المستخدم") },
-                        onClick = { showOptionsMenu = false },
+                        text = { Text("حظر") },
+                        onClick = {
+                            showOptionsMenu = false
+                            showBlockConfirm = true
+                        },
                         leadingIcon = { Icon(Icons.Default.Block, contentDescription = null) }
+                    )
+                }
+
+                if (showDeleteConfirm) {
+                    AlertDialog(
+                        onDismissRequest = { showDeleteConfirm = false },
+                        title = { Text("هل تريد حذف هذه الدردشة؟", fontWeight = FontWeight.Bold) },
+                        text = { Text("لا يمكن التراجع عن هذا الإجراء.") },
+                        confirmButton = {
+                            TextButton(onClick = {
+                                showDeleteConfirm = false
+                                onDeleteConversation(conv.id)
+                            }) {
+                                Text("حذف", color = Color.Red)
+                            }
+                        },
+                        dismissButton = {
+                            TextButton(onClick = { showDeleteConfirm = false }) {
+                                Text("إلغاء")
+                            }
+                        }
+                    )
+                }
+
+                if (showBlockConfirm) {
+                    AlertDialog(
+                        onDismissRequest = { showBlockConfirm = false },
+                        title = { Text("هل تريد حظر ${conv.name}؟", fontWeight = FontWeight.Bold) },
+                        text = { Text("لن يتمكن من إرسال رسائل إليك أو رؤية منشوراتك أو العثور على ملفك الشخصي.") },
+                        confirmButton = {
+                            TextButton(onClick = {
+                                showBlockConfirm = false
+                                onBlockUser(conv.id)
+                            }) {
+                                Text("حظر", color = Color.Red)
+                            }
+                        },
+                        dismissButton = {
+                            TextButton(onClick = { showBlockConfirm = false }) {
+                                Text("إلغاء")
+                            }
+                        }
                     )
                 }
             }
