@@ -3833,13 +3833,17 @@ fun ChatMessageBubble(
                         }
                     }
 
-                    Spacer(modifier = Modifier.height(2.dp))
-                    Text(
-                        text = message.timestamp,
-                        fontSize = 10.sp,
-                        color = textColor.copy(alpha = 0.6f),
-                        modifier = Modifier.align(Alignment.End)
-                    )
+                    if (message.isFromMe) {
+                        Spacer(modifier = Modifier.height(2.dp))
+                        Icon(
+                            imageVector = Icons.Default.Done,
+                            contentDescription = "تم الإرسال",
+                            tint = textColor.copy(alpha = 0.6f),
+                            modifier = Modifier
+                                .align(Alignment.End)
+                                .size(14.dp)
+                        )
+                    }
                 }
             }
         }
