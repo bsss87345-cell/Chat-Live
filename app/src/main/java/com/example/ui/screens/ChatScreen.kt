@@ -3871,7 +3871,12 @@ fun ChatMessageBubble(
                         Icon(
                             imageVector = Icons.Default.Done,
                             contentDescription = "تم الإرسال",
-                            tint = textColor.copy(alpha = 0.6f),
+                            tint = if (message.type == ChatMessageType.IMAGE)
+                                MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)
+                            else textColor.copy(alpha = 0.6f),
+                            modifier = Modifier
+                                .align(Alignment.End)
+                                .size(14.dp)
                             modifier = Modifier
                                 .align(Alignment.End)
                                 .size(14.dp)
