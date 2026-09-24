@@ -29,7 +29,7 @@ git init
 git add .
 
 # 3. حفظ التغييرات
-git commit -m "Initial commit - Mujtamauna Native Android App"
+git commit -m "Initial commit - Chat Live Native Android App"
 
 # 4. تسمية الفرع الأساسي main
 git branch -M main
