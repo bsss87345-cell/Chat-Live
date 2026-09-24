@@ -3843,7 +3843,7 @@ fun ChatMessageBubble(
                         }
                     }
 
-                    Spacer(modifier = Modifier.height(4.dp))
+                    Spacer(modifier = Modifier.height(2.dp))
                     Text(
                         text = message.timestamp,
                         fontSize = 10.sp,
