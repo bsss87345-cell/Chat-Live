@@ -18,8 +18,9 @@ import com.example.viewmodel.SocialAppViewModel
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
-        installSplashScreen()
+        val splashScreen = installSplashScreen()
         super.onCreate(savedInstanceState)
+        splashScreen.setOnExitAnimationListener { provider -> provider.remove() }
         enableEdgeToEdge()
         setContent {
             val viewModel: SocialAppViewModel = viewModel()
