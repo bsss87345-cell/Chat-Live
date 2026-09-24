@@ -1548,6 +1548,7 @@ fun toggleOwnerVoiceMute(roomId: String) {
         _userProfile.update {
             it.copy(isNotificationsEnabled = !it.isNotificationsEnabled)
         }
+        syncUserProfile()
         val isEnabled = _userProfile.value.isNotificationsEnabled
         _userMessage.value = if (isEnabled) "تم تفعيل إشعارات الحساب" else "تم إيقاف إشعارات الحساب"
     }
