@@ -3812,9 +3812,10 @@ fun ChatMessageBubble(
                             AsyncImage(
                                 model = message.imageUri,
                                 contentDescription = "صورة",
-                                contentScale = ContentScale.FillWidth,
+                                contentScale = ContentScale.Crop,
                                 modifier = Modifier
-                                    .width(220.dp)
+                                    .width(160.dp)
+                                    .heightIn(max = 220.dp)
                                     .clip(RoundedCornerShape(16.dp))
                             )
                         }
