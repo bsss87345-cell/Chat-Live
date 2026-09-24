@@ -1601,4 +1601,10 @@ fun toggleOwnerVoiceMute(roomId: String) {
         _userProfile.update { it.copy(followingCount = (it.followingCount - 1).coerceAtLeast(0)) }
         _userMessage.value = "تم إلغاء المتابعة"
     }
+
+    // TODO: عند ربط Firestore، تُستبدل بكتابة (set/update) بيانات _userProfile.value الحالية
+    // بمستند المستخدم بمجموعة "users". تُستدعى بنهاية أي دالة تعدّل بيانات البروفايل.
+    private fun syncUserProfile() {
+        // placeholder — لا يوجد Firestore مربوط حالياً
+    }
 }
