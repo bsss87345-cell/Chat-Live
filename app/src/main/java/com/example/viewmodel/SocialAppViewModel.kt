@@ -1021,44 +1021,7 @@ val stopAngle = (360f - (eliminatedIndex * sectorAngle)) % 360f
         }
     }
 
-    // TODO: تجريبي فقط - يُحذف قبل أي إطلاق فعلي للتطبيق
-    fun addTestWheelParticipants(roomId: String) {
-        val testNames = listOf("سارة", "خالد", "نورة", "فهد")
-        val testParticipants = testNames.mapIndexed { index, name ->
-            WheelParticipant(
-                id = if (index == 0) "me" else "test_wheel_$index",
-                name = if (index == 0) "أنا" else name,
-                avatarUrl = ""
-            )
-        }
-        _chatRooms.update { list ->
-            list.map {
-                if (it.id == roomId) it.copy(wheelParticipants = testParticipants)
-                else it
-            }
-        }
-        _userMessage.value = "تمت إضافة 4 مشاركين تجريبيين لعجلة الحظ ⭐"
-    }
-
-    // TODO: تجريبي فقط - يُحذف قبل أي إطلاق فعلي للتطبيق
-    fun addTestWheelRequests(roomId: String) {
-        val testNames = listOf("محمد", "هند", "طارق", "وعد")
-        val testRequests = testNames.mapIndexed { index, name ->
-            WheelJoinRequest(
-                id = "test_wjr_${index}_${System.currentTimeMillis()}",
-                requesterId = "test_req_$index",
-                requesterName = name,
-                requesterAvatarUrl = ""
-            )
-        }
-        _chatRooms.update { list ->
-            list.map {
-                if (it.id == roomId) it.copy(wheelJoinRequests = it.wheelJoinRequests + testRequests)
-                else it
-            }
-        }
-        _userMessage.value = "تمت إضافة 4 طلبات تجريبية لعجلة الحظ ⭐"
-    }
+    
     fun takeVoiceSeatDirectly(roomId: String, seatNumber: Int) {
         val room = _chatRooms.value.find { it.id == roomId } ?: return
         val me = room.members.find { it.id == "me" }
