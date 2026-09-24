@@ -81,6 +81,7 @@ fun ChatScreen(
     onTogglePin: (String) -> Unit,
     onDeleteConversation: (String) -> Unit,
     onBlockUser: (String) -> Unit,
+    onSendImage: (String, String) -> Unit = { _, _ -> },
     onUnblockUser: (String) -> Unit = {},
     onCloseChat: () -> Unit,
     onSendMessage: (String, String, ChatMessageType) -> Unit,
