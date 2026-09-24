@@ -4,4 +4,10 @@
     <style name="Theme.MyApplication" parent="android:Theme.DeviceDefault.NoActionBar">
     <item name="android:windowBackground">#0A0818</item>
 </style>
+
+    <style name="Theme.App.Starting" parent="Theme.SplashScreen">
+        <item name="windowSplashScreenBackground">#0A0818</item>
+        <item name="windowSplashScreenAnimatedIcon">@drawable/ic_launcher_fg</item>
+        <item name="postSplashScreenTheme">@style/Theme.MyApplication</item>
+    </style>
 </resources>
