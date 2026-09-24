@@ -735,6 +735,20 @@ fun blockRoomMember(roomId: String, memberId: String) {
         _userMessage.value = "تم حذف الرسالة من الغرفة."
     }
 
+    fun deleteConversation(conversationId: String) {
+        _conversations.update { list ->
+            list.filter { it.id != conversationId }
+        }
+        _userMessage.value = "تم حذف المحادثة."
+    }
+
+    fun blockConversationUser(conversationId: String) {
+        _conversations.update { list ->
+            list.filter { it.id != conversationId }
+        }
+        _userMessage.value = "تم الحظر."
+    }
+
     fun kickRoomMember(roomId: String, memberId: String) {
         _chatRooms.update { list ->
             list.map {
