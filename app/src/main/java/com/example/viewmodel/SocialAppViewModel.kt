@@ -417,7 +417,7 @@ class SocialAppViewModel : ViewModel() {
         _activeChatId.value = null
     }
 
-    fun sendMessage(conversationId: String, text: String, type: ChatMessageType = ChatMessageType.TEXT) {
+    fun sendMessage(conversationId: String, text: String, type: ChatMessageType = ChatMessageType.TEXT, imageUri: String = "") {
         if (text.isBlank() && type == ChatMessageType.TEXT) return
         val msg = ChatMessage(
             id = "m_${System.currentTimeMillis()}",
