@@ -1534,6 +1534,7 @@ fun toggleOwnerVoiceMute(roomId: String) {
                 avatarEmoji = emoji
             )
         }
+        syncUserProfile()
         _userMessage.value = "تم حفظ معلومات الملف الشخصي بنجاح!"
     }
 
