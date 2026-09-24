@@ -3733,7 +3733,7 @@ fun ChatMessageBubble(
     myAvatarUrl: String = "",
     onImageClick: (String) -> Unit = {}
 ) {
-    val bubbleColor = if (message.isFromMe)
+    val bubbleColor = if (message.isFromMe) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.surfaceVariant
     val textColor = if (message.isFromMe) Color.White else MaterialTheme.colorScheme.onSurface
 
     Box(
