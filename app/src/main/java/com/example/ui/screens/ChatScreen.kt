@@ -3555,7 +3555,56 @@ Column(
             }
         }
 
-        // Chat Input Bar
+        // Chat Input Bar (or Blocked Notice)
+        if (conversation.isBlocked) {
+            Surface(
+                tonalElevation = 6.dp,
+                color = MaterialTheme.colorScheme.surface
+            ) {
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(16.dp)
+                ) {
+                    Text(
+                        text = "هل تريد إلغاء حظر هذا الشخص؟",
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 16.sp,
+                        color = MaterialTheme.colorScheme.onSurface
+                    )
+                    Spacer(modifier = Modifier.height(6.dp))
+                    Text(
+                        text = "سيتمكن من إرسال رسائل إليك، وعرض منشوراتك ومتابعتك. لن يتم إعلامه بأنك قمت بإلغاء حظره.",
+                        fontSize = 13.sp,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+                    Spacer(modifier = Modifier.height(12.dp))
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.spacedBy(8.dp)
+                    ) {
+                        OutlinedButton(
+                            onClick = onDeleteConversation,
+                            colors = ButtonDefaults.outlinedButtonColors(
+                                contentColor = MaterialTheme.colorScheme.error
+                            ),
+                            modifier = Modifier.weight(1f)
+                        ) {
+                            Text("حذف المحادثة")
+                        }
+                        Button(
+                            onClick = onUnblockUser,
+                            colors = ButtonDefaults.buttonColors(
+                                containerColor = MaterialTheme.colorScheme.error
+                            ),
+                            modifier = Modifier.weight(1f)
+                        ) {
+                            Text("إلغاء الحظر")
+                        }
+                    }
+                }
+            }
+        } else {
         Surface(
             tonalElevation = 6.dp,
             color = MaterialTheme.colorScheme.surface
@@ -3620,7 +3669,7 @@ Column(
                 }
             }
         }
-
+        }
         // In-Chat Game Picker Dialog
         if (showGamePicker) {
             GamePickerDialog(
