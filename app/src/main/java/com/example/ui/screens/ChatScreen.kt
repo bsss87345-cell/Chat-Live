@@ -3192,7 +3192,7 @@ fun ChatListView(
         }
         val matchesSearch = if (searchQuery.isBlank()) true else conv.name.contains(searchQuery, ignoreCase = true)
         matchesFilter && matchesSearch
-    }
+    }.sortedByDescending { it.isPinned }
 
 LazyColumn(
         modifier = Modifier.fillMaxSize(),
