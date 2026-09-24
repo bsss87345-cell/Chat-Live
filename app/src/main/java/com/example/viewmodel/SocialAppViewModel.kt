@@ -1577,4 +1577,28 @@ fun toggleOwnerVoiceMute(roomId: String) {
         _isLoggedIn.value = false
         _userMessage.value = "تم تسجيل الخروج بنجاح. مرحباً بك في أي وقت!"
     }
+
+    // --- Follow System (نظام مشابه لإنستغرام/تيك توك) ---
+    // TODO: عند ربط Firestore، تُستبدل بإضافة مستند جديد لمجموعة "follows"
+    fun followUser(targetUserId: String) {
+        val myId = _userProfile.value.id
+        if (myId == targetUserId || myId.isBlank()) return
+        val alreadyFollowing = _follows.value.any { it.followerId == myId && it.followingId == targetUserId }
+        if (alreadyFollowing) return
+
+        _follows.update { it + com.example.model.Follow(followerId = myId, followingId = targetUserId) }
+        _userProfile.update { it.copy(followingCount = it.followingCount + 1) }
+        _userMessage.value = "تمت المتابعة بنجاح"
+    }
+
+    // TODO: عند ربط Firestore، تُستبدل بحذف المستند المطابق من مجموعة "follows"
+    fun unfollowUser(targetUserId: String) {
+        val myId = _userProfile.value.id
+        val wasFollowing = _follows.value.any { it.followerId == myId && it.followingId == targetUserId }
+        if (!wasFollowing) return
+
+        _follows.update { list -> list.filterNot { it.followerId == myId && it.followingId == targetUserId } }
+        _userProfile.update { it.copy(followingCount = (it.followingCount - 1).coerceAtLeast(0)) }
+        _userMessage.value = "تم إلغاء المتابعة"
+    }
 }
