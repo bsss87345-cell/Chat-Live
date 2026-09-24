@@ -3877,9 +3877,6 @@ fun ChatMessageBubble(
                             modifier = Modifier
                                 .align(Alignment.End)
                                 .size(14.dp)
-                            modifier = Modifier
-                                .align(Alignment.End)
-                                .size(14.dp)
                         )
                     }
                 }
