@@ -3431,6 +3431,15 @@ fun ChatConversationView(
     onSendImage: (String) -> Unit = {}
 ) {
     var inputText by remember { mutableStateOf("") }
+    var pendingImageUri by remember { mutableStateOf<String?>(null) }
+    val chatPhotoPickerLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.PickVisualMedia(),
+        onResult = { uri: Uri? ->
+            if (uri != null) {
+                pendingImageUri = uri.toString()
+            }
+        }
+    )
 Column(
         modifier = Modifier
             .fillMaxSize()
