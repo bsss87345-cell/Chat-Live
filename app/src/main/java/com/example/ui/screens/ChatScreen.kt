@@ -3427,11 +3427,10 @@ fun ChatConversationView(
     onPlayGameDirectly: (GameType?) -> Unit,
     myAvatarUrl: String = "",
     onDeleteConversation: () -> Unit = {},
-    onUnblockUser: () -> Unit = {}
+    onUnblockUser: () -> Unit = {},
+    onSendImage: (String) -> Unit = {}
 ) {
     var inputText by remember { mutableStateOf("") }
-    var showGamePicker by remember { mutableStateOf(false) }
-
 Column(
         modifier = Modifier
             .fillMaxSize()
