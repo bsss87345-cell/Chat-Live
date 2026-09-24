@@ -349,6 +349,16 @@ class SocialAppViewModel : ViewModel() {
         _userMessage.value = if (isNowFollowing) "تمت متابعة المستخدم بنجاح" else "تم إلغاء المتابعة"
     }
 
+    fun togglePinConversation(conversationId: String) {
+        _conversations.update { list ->
+            list.map { conv ->
+                if (conv.id == conversationId) {
+                    conv.copy(isPinned = !conv.isPinned)
+                } else conv
+            }
+        }
+    }
+
     // --- Story Actions ---
     fun openStory(story: Story) {
         _activeStory.value = story
