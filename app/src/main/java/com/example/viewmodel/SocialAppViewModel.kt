@@ -37,7 +37,19 @@ class SocialAppViewModel : ViewModel() {
     val activeCommentPostId: StateFlow<String?> = _activeCommentPostId.asStateFlow()
 
     // --- Chat State ---
-    private val _conversations = MutableStateFlow<List<ChatConversation>>(emptyList())
+    private val _conversations = MutableStateFlow<List<ChatConversation>>(
+        listOf(
+            ChatConversation(
+                id = "test_conv_1",
+                name = "محادثة تجريبية",
+                isGroup = false,
+                lastMessage = "هذه رسالة تجريبية لاختبار الضغط المطوّل",
+                time = "الآن",
+                unreadCount = 1,
+                isOnline = true
+            )
+        )
+    )
     val conversations: StateFlow<List<ChatConversation>> = _conversations.asStateFlow()
 
     private val _activeChatId = MutableStateFlow<String?>(null)
