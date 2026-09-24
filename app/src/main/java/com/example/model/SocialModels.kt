@@ -107,7 +107,8 @@ data class ChatConversation(
     val isOnline: Boolean = false,
     val memberCount: Int = 1,
     val messages: List<ChatMessage> = emptyList(),
-    val avatarUrl: String = ""
+    val avatarUrl: String = "",
+    val isPinned: Boolean = false
 )
 
 enum class RoomAccessType(val labelAr: String) {
