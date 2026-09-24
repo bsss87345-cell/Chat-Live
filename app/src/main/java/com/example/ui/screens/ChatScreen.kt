@@ -247,7 +247,9 @@ fun ChatScreen(
                 onFilterChange = onFilterChange,
                 onTogglePushNotifications = onTogglePushNotifications,
                 onOpenChat = onOpenChat,
-                onTogglePin = onTogglePin
+                onTogglePin = onTogglePin,
+                onDeleteConversation = onDeleteConversation,
+                onBlockUser = onBlockUser
             )
         } else {
             ExploreRoomsGridView(
