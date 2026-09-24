@@ -3435,6 +3435,7 @@ fun ChatConversationView(
     var inputText by remember { mutableStateOf("") }
     var showGamePicker by remember { mutableStateOf(false) }
     var pendingImageUri by remember { mutableStateOf<String?>(null) }
+    var fullScreenImageUri by remember { mutableStateOf<String?>(null) }
     val chatPhotoPickerLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.PickVisualMedia(),
         onResult = { uri: Uri? ->
