@@ -278,3 +278,11 @@ data class AppNotification(
     val timeMillis: Long = System.currentTimeMillis(),
     val isRead: Boolean = false
 )
+
+// علاقة متابعة وحدة (نظام مشابه لإنستغرام/تيك توك) — جاهزة للربط بـ Firestore لاحقاً
+data class Follow(
+    val id: String = "",
+    val followerId: String = "",
+    val followingId: String = "",
+    val timestamp: Long = System.currentTimeMillis()
+)
