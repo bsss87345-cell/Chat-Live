@@ -20,7 +20,17 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         val splashScreen = installSplashScreen()
         super.onCreate(savedInstanceState)
-        splashScreen.setOnExitAnimationListener { provider -> provider.remove() }
+        splashScreen.setOnExitAnimationListener { provider ->
+            val fadeOut = android.animation.ObjectAnimator.ofFloat(
+                provider.view,
+                android.view.View.ALPHA,
+                1f,
+                0f
+            )
+            fadeOut.duration = 400L
+            fadeOut.doOnEnd { provider.remove() }
+            fadeOut.start()
+        }
         enableEdgeToEdge()
         setContent {
             val viewModel: SocialAppViewModel = viewModel()
