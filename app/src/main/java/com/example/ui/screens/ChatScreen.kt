@@ -3818,6 +3818,7 @@ fun ChatMessageBubble(
                                     .width(160.dp)
                                     .heightIn(max = 220.dp)
                                     .clip(RoundedCornerShape(16.dp))
+                                    .clickable { onImageClick(message.imageUri) }
                             )
                         }
                         ChatMessageType.GAME_INVITE -> {
