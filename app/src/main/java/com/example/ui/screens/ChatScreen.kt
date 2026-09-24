@@ -78,6 +78,7 @@ fun ChatScreen(
     onFilterChange: (String) -> Unit,
     onTogglePushNotifications: () -> Unit,
     onOpenChat: (String) -> Unit,
+    onTogglePin: (String) -> Unit,
     onCloseChat: () -> Unit,
     onSendMessage: (String, String, ChatMessageType) -> Unit,
     onStartGameInChat: (String, GameType) -> Unit,
