@@ -255,7 +255,8 @@ fun MainScreen(viewModel: SocialAppViewModel) {
                                 onRequestJoinWheel = { viewModel.requestJoinWheel(activeRoomId ?: "") },
                                 onRespondWheelRequest = { requestId, accept -> viewModel.respondToWheelRequest(activeRoomId ?: "", requestId, accept) },
                                 onStartWheelSpin = { viewModel.startWheelSpin(activeRoomId ?: "") },
-                                
+                                onResetWheel = { viewModel.resetWheel(activeRoomId ?: "") },
+                                walletBalance = walletBalance
                             )
                         }
 
