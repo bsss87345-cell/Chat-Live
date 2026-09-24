@@ -221,6 +221,20 @@ class SocialAppViewModel : ViewModel() {
     private val lastVoiceSeatRequestTime = mutableMapOf<String, Long>()
     val userProfile: StateFlow<UserProfile> = _userProfile.asStateFlow()
 
+    // Follow System (نظام مشابه لإنستغرام/تيك توك) — بالذاكرة مؤقتاً، جاهز للربط بـ Firestore لاحقاً
+    private val _follows = MutableStateFlow<List<com.example.model.Follow>>(emptyList())
+    val follows: StateFlow<List<com.example.model.Follow>> = _follows.asStateFlow()
+
+    // TODO: عند ربط Firestore، تُستبدل بقراءة استعلام من مجموعة "follows" حيث followingId == userId
+    fun loadFollowers(userId: String): List<com.example.model.Follow> {
+        return _follows.value.filter { it.followingId == userId }
+    }
+
+    // TODO: عند ربط Firestore، تُستبدل بقراءة استعلام من مجموعة "follows" حيث followerId == userId
+    fun loadFollowing(userId: String): List<com.example.model.Follow> {
+        return _follows.value.filter { it.followerId == userId }
+    }
+
     // Notification toast / snackbar message
     private val _userMessage = MutableStateFlow<String?>(null)
     val userMessage: StateFlow<String?> = _userMessage.asStateFlow()
