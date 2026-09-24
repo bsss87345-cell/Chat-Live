@@ -3713,6 +3713,40 @@ Column(
             }
         }
         }
+        // Full Screen Image Viewer
+        if (fullScreenImageUri != null) {
+            Dialog(
+                onDismissRequest = { fullScreenImageUri = null },
+                properties = DialogProperties(usePlatformDefaultWidth = false)
+            ) {
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .background(Color.Black)
+                ) {
+                    AsyncImage(
+                        model = fullScreenImageUri,
+                        contentDescription = "صورة كاملة",
+                        contentScale = ContentScale.Fit,
+                        modifier = Modifier.fillMaxSize()
+                    )
+                    IconButton(
+                        onClick = { fullScreenImageUri = null },
+                        modifier = Modifier
+                            .align(Alignment.TopStart)
+                            .statusBarsPadding()
+                            .padding(8.dp)
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.ArrowForward,
+                            contentDescription = "رجوع",
+                            tint = Color.White
+                        )
+                    }
+                }
+            }
+        }
+
         // In-Chat Game Picker Dialog
         if (showGamePicker) {
             GamePickerDialog(
