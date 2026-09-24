@@ -175,9 +175,7 @@ fun ChatScreen(
                 onRequestJoinWheel = onRequestJoinWheel,
                 onRespondWheelRequest = onRespondWheelRequest,
                 onStartWheelSpin = onStartWheelSpin,
-                onResetWheel = onResetWheel,
-                onAddTestWheelParticipants = onAddTestWheelParticipants,
-                onAddTestWheelRequests = onAddTestWheelRequests
+                onResetWheel = onResetWheel
             )
             return
         }
