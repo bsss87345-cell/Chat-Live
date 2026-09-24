@@ -3764,9 +3764,12 @@ fun ChatMessageBubble(
                     bottomStart = if (message.isFromMe) 16.dp else 4.dp,
                     bottomEnd = if (message.isFromMe) 4.dp else 16.dp
                 ),
-                color = bubbleColor
+                color = if (message.type == ChatMessageType.IMAGE) Color.Transparent else bubbleColor
             ) {
-                Column(modifier = Modifier.padding(horizontal = 12.dp, vertical = 8.dp)) {
+                Column(
+                    modifier = if (message.type == ChatMessageType.IMAGE) Modifier
+                    else Modifier.padding(horizontal = 12.dp, vertical = 8.dp)
+                ) {
                     when (message.type) {
                         ChatMessageType.TEXT -> {
                             Text(text = message.text, color = textColor, fontSize = 14.sp)
