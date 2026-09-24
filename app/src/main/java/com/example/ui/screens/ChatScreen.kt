@@ -3021,16 +3021,6 @@ fun RoomMessageBubble(
             verticalAlignment = Alignment.Bottom,
             horizontalArrangement = Arrangement.spacedBy(6.dp)
         ) {
-            if (message.isFromMe && myAvatarUrl.isNotEmpty()) {
-                AsyncImage(
-                    model = myAvatarUrl,
-                    contentDescription = null,
-                    contentScale = ContentScale.Crop,
-                    modifier = Modifier
-                        .size(28.dp)
-                        .clip(CircleShape)
-                )
-            }
         Column(
             horizontalAlignment = Alignment.Start,
             modifier = Modifier.widthIn(max = 290.dp)
