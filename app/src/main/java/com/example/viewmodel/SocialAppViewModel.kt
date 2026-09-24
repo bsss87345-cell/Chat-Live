@@ -744,9 +744,20 @@ fun blockRoomMember(roomId: String, memberId: String) {
 
     fun blockConversationUser(conversationId: String) {
         _conversations.update { list ->
-            list.filter { it.id != conversationId }
+            list.map { conv ->
+                if (conv.id == conversationId) conv.copy(isBlocked = true) else conv
+            }
         }
         _userMessage.value = "تم الحظر."
+    }
+
+    fun unblockConversationUser(conversationId: String) {
+        _conversations.update { list ->
+            list.map { conv ->
+                if (conv.id == conversationId) conv.copy(isBlocked = false) else conv
+            }
+        }
+        _userMessage.value = "تم إلغاء الحظر."
     }
 
     fun kickRoomMember(roomId: String, memberId: String) {
