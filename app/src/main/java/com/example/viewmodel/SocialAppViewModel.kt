@@ -428,7 +428,8 @@ class SocialAppViewModel : ViewModel() {
             type = type,
             audioDurationSec = if (type == ChatMessageType.AUDIO) 12 else 0,
             gameTitle = if (type == ChatMessageType.GAME_INVITE) "تحدي الألعاب الكلاسيكية" else null,
-            gameReward = if (type == ChatMessageType.GAME_INVITE) 100 else 0
+            gameReward = if (type == ChatMessageType.GAME_INVITE) 100 else 0,
+            imageUri = imageUri
         )
         _conversations.update { list ->
             list.map { conv ->
