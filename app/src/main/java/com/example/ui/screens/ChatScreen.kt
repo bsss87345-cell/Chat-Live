@@ -3704,6 +3704,7 @@ Column(
                     Icon(imageVector = Icons.Default.Send, contentDescription = "إرسال")
                 }
             }
+            }
         }
         }
         // In-Chat Game Picker Dialog
