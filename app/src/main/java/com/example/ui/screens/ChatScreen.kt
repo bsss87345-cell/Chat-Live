@@ -3178,7 +3178,8 @@ fun ChatListView(
     pushNotificationsEnabled: Boolean,
     onFilterChange: (String) -> Unit,
     onTogglePushNotifications: () -> Unit,
-    onOpenChat: (String) -> Unit
+    onOpenChat: (String) -> Unit,
+    onTogglePin: (String) -> Unit
 ) {
     var searchQuery by remember { mutableStateOf("") }
 
