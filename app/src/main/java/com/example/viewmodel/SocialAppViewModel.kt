@@ -206,13 +206,8 @@ class SocialAppViewModel : ViewModel() {
     private val _transactions = MutableStateFlow<List<WalletTransaction>>(emptyList())
     val transactions: StateFlow<List<WalletTransaction>> = _transactions.asStateFlow()
 
-    private val _storeItems = MutableStateFlow(
-        listOf(
-            StoreItem("item_1", "إطار البروفايل الذهبي", "إطار ملكي مميز يظهر حول صورتك في التعليقات والدردشة", 500, "إطارات", isOwned = false),
-            StoreItem("item_2", "وسام عبقري الألغاز", "شارة تظهر بجانب اسمك تثبت تفوقك في تحديات الذكاء", 750, "أوسمة", isOwned = false),
-            StoreItem("item_3", "ثيم الدردشة الليلي الفاخر", "ألوان وخلفيات مخصصة لمحادثاتك الخاصة ومحادثات الفريق", 400, "ثيمات", isOwned = false),
-            StoreItem("item_4", "درع دعم الفريق المشترك", "يرفع مضاعف نقاط الفريق بنسبة 10% لمدة 24 ساعة", 900, "تعزيزات", isOwned = false)
-        )
+    private val _storeItems = MutableStateFlow<List<StoreItem>>(
+        emptyList()
     )
     val storeItems: StateFlow<List<StoreItem>> = _storeItems.asStateFlow()
 
