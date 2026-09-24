@@ -3557,7 +3557,8 @@ Column(
                 ChatMessageBubble(
                     message = message,
                     onPlayGame = { onPlayGameDirectly(findGameTypeFromTitle(message.gameTitle)) },
-                    myAvatarUrl = myAvatarUrl
+                    myAvatarUrl = myAvatarUrl,
+                    onImageClick = { fullScreenImageUri = it }
                 )
             }
         }
