@@ -1558,6 +1558,7 @@ fun toggleOwnerVoiceMute(roomId: String) {
             val nextPrivacy = if (it.privacyLevel == "عام للجميع") "للأصدقاء فقط" else "عام للجميع"
             it.copy(privacyLevel = nextPrivacy)
         }
+        syncUserProfile()
         _userMessage.value = "تم تحديث خصوصية الحساب إلى (${_userProfile.value.privacyLevel})"
     }
 
