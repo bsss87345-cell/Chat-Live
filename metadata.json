@@ -1,5 +1,5 @@
 {
-  "name": "مجتمعنا",
+  "name": "Chat-Live",
   "description": "تطبيق اجتماعي عربي متكامل بتصميم RTL يضم الخلاصة والقصص، الدردشة وغرف الدردشة مع ألعاب تفاعلية (لودو، جاكارو، دومينو، السلم، الشطرنج)، الملف الشخصي المتكامل، ونظام الفرق.",
   "requestFramePermissions": [],
   "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
