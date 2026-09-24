@@ -134,7 +134,12 @@ fun ChatScreen(
                 onSendMessage = { text, type -> onSendMessage(activeConv.id, text, type) },
                 onStartGame = { gameType -> onStartGameInChat(activeConv.id, gameType) },
                 onPlayGameDirectly = onNavigateToGames,
-                myAvatarUrl = myAvatarUrl
+                myAvatarUrl = myAvatarUrl,
+                onDeleteConversation = {
+                    onDeleteConversation(activeConv.id)
+                    onCloseChat()
+                },
+                onUnblockUser = { onUnblockUser(activeConv.id) }
             )
             return
         }
