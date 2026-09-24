@@ -847,9 +847,7 @@ fun ChatRoomView(
     onRequestJoinWheel: () -> Unit = {},
     onRespondWheelRequest: (String, Boolean) -> Unit = { _, _ -> },
     onStartWheelSpin: () -> Unit = {},
-    onResetWheel: () -> Unit = {},
-    onAddTestWheelParticipants: () -> Unit = {},
-    onAddTestWheelRequests: () -> Unit = {}
+    onResetWheel: () -> Unit = {}
 ) {
     var inputText by remember { mutableStateOf("") }
     var showMembersSheet by remember { mutableStateOf(false) }
