@@ -3809,29 +3809,14 @@ fun ChatMessageBubble(
                             }
                         }
                         ChatMessageType.IMAGE -> {
-                            Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                                Box(
-                                    modifier = Modifier
-                                        .fillMaxWidth()
-                                        .height(130.dp)
-                                        .clip(RoundedCornerShape(10.dp))
-                                        .background(Color.Black.copy(alpha = 0.2f)),
-                                    contentAlignment = Alignment.Center
-                                ) {
-                                    Icon(
-                                        imageVector = Icons.Filled.Image,
-                                        contentDescription = "صورة",
-                                        tint = Color.White,
-                                        modifier = Modifier.size(36.dp)
-                                    )
-                                }
-                                Spacer(modifier = Modifier.height(4.dp))
-                                Text(
-                                    text = "صورة مرفقة عبر المحادثة",
-                                    color = textColor,
-                                    fontSize = 12.sp
-                                )
-                            }
+                            AsyncImage(
+                                model = message.imageUri,
+                                contentDescription = "صورة",
+                                contentScale = ContentScale.FillWidth,
+                                modifier = Modifier
+                                    .width(220.dp)
+                                    .clip(RoundedCornerShape(16.dp))
+                            )
                         }
                         ChatMessageType.GAME_INVITE -> {
                             Card(
