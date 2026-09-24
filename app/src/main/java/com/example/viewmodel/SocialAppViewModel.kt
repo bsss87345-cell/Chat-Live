@@ -1522,6 +1522,7 @@ fun toggleOwnerVoiceMute(roomId: String) {
         // --- Profile Actions ---
     fun updateUserBio(newBio: String) {
         _userProfile.update { it.copy(bio = newBio.trim()) }
+        syncUserProfile()
         _userMessage.value = "تم تحديث النبذة التعريفية بنجاح!"
     }
 
