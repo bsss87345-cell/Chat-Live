@@ -3635,7 +3635,9 @@ Column(
                 // Image attach button
                 IconButton(
                     onClick = {
-                        onSendMessage("صورة مرفقة", ChatMessageType.IMAGE)
+                        chatPhotoPickerLauncher.launch(
+                            PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly)
+                        )
                     }
                 ) {
                     Icon(
