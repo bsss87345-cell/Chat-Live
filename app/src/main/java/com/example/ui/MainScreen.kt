@@ -204,6 +204,8 @@ fun MainScreen(viewModel: SocialAppViewModel) {
                                 onTogglePushNotifications = { viewModel.togglePushNotifications() },
                                 onOpenChat = { viewModel.openConversation(it) },
                                 onTogglePin = { viewModel.togglePinConversation(it) },
+                                onDeleteConversation = { viewModel.deleteConversation(it) },
+                                onBlockUser = { viewModel.blockConversationUser(it) },
                                 onCloseChat = { viewModel.closeConversation() },
                                 onSendMessage = { convId, text, type -> viewModel.sendMessage(convId, text, type) },
                                 onStartGameInChat = { convId, gameType ->
