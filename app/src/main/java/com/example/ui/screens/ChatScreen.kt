@@ -4223,33 +4223,23 @@ fun GiftSentBanner(
                     modifier = Modifier.padding(end = 6.dp)
                 )
             }
-            val giftCountScale = remember { androidx.compose.animation.core.Animatable(1f) }
-            androidx.compose.runtime.LaunchedEffect(giftCount) {
-                giftCountScale.snapTo(1.5f)
-                giftCountScale.animateTo(1f, animationSpec = androidx.compose.animation.core.tween(250))
-            }
             val giftCountScale = remember { Animatable(1f) }
-            LaunchedEffect(giftCount) {
-                giftCountScale.snapTo(1.5f)
-                giftCountScale.animateTo(1f, animationSpec = tween(250))
-            }
-            Text(
-                text = "x$giftCount",
-                fontSize = 20.sp,
-                fontWeight = FontWeight.ExtraBold,
-                color = MujtamaGold,
-                modifier = Modifier
-                    .padding(end = 4.dp)
-                    .graphicsLayer(
-                        scaleX = giftCountScale.value,
-                        scaleY = giftCountScale.value
-                    )
-            )
-                    .graphicsLayer(
-                        scaleX = giftCountScale.value,
-                        scaleY = giftCountScale.value
-                    )
-            )
+                        LaunchedEffect(giftCount) {
+                            giftCountScale.snapTo(1.5f)
+                            giftCountScale.animateTo(1f, animationSpec = tween(250))
+                        }
+                        Text(
+                            text = "x$giftCount",
+                            fontSize = 20.sp,
+                            fontWeight = FontWeight.ExtraBold,
+                            color = MujtamaGold,
+                            modifier = Modifier
+                                .padding(end = 4.dp)
+                                .graphicsLayer(
+                                    scaleX = giftCountScale.value,
+                                    scaleY = giftCountScale.value
+                                )
+                        )
         }
     }
 }
