@@ -1540,6 +1540,7 @@ fun toggleOwnerVoiceMute(roomId: String) {
 
     fun updateUserAvatarUrl(url: String) {
         _userProfile.update { it.copy(avatarUrl = url) }
+        syncUserProfile()
         _userMessage.value = "تم تحديث صورة الملف الشخصي بنجاح!"
     }
 
