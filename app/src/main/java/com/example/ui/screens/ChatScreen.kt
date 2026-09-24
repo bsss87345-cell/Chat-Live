@@ -3221,6 +3221,8 @@ LazyColumn(
         // Conversation List Items
         items(filteredConversations, key = { it.id }) { conv ->
             var showOptionsMenu by remember { mutableStateOf(false) }
+            var showDeleteConfirm by remember { mutableStateOf(false) }
+            var showBlockConfirm by remember { mutableStateOf(false) }
 
             Box {
                 Card(
