@@ -246,7 +246,8 @@ fun ChatScreen(
                 pushNotificationsEnabled = pushNotificationsEnabled,
                 onFilterChange = onFilterChange,
                 onTogglePushNotifications = onTogglePushNotifications,
-                onOpenChat = onOpenChat
+                onOpenChat = onOpenChat,
+                onTogglePin = onTogglePin
             )
         } else {
             ExploreRoomsGridView(
