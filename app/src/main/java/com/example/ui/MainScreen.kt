@@ -210,7 +210,7 @@ fun MainScreen(viewModel: SocialAppViewModel) {
                                 onDeleteConversation = { viewModel.deleteConversation(it) },
                                 onBlockUser = { viewModel.blockConversationUser(it) },
                                 onUnblockUser = { viewModel.unblockConversationUser(it) },
-onSendImage = { convId, uri -> viewModel.sendMessage(convId, "", ChatMessageType.IMAGE, uri) }
+onSendImage = { convId, uri -> viewModel.sendMessage(convId, "", ChatMessageType.IMAGE, uri) },
                                 onCloseChat = { viewModel.closeConversation() },
                                 onSendMessage = { convId, text, type -> viewModel.sendMessage(convId, text, type) },
                                 onStartGameInChat = { convId, gameType ->
