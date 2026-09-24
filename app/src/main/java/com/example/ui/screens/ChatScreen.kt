@@ -3326,7 +3326,10 @@ LazyColumn(
                 ) {
                     DropdownMenuItem(
                         text = { Text("تثبيت المحادثة") },
-                        onClick = { showOptionsMenu = false },
+                        onClick = {
+                            onTogglePin(conv.id)
+                            showOptionsMenu = false
+                        },
                         leadingIcon = { Icon(Icons.Default.PushPin, contentDescription = null) }
                     )
                     DropdownMenuItem(
