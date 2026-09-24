@@ -94,7 +94,8 @@ data class ChatMessage(
     val audioDurationSec: Int = 0,
     val isAudioPlaying: Boolean = false,
     val gameTitle: String? = null,
-    val gameReward: Int = 0
+    val gameReward: Int = 0,
+    val imageUri: String = ""
 )
 
 data class ChatConversation(
