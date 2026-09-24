@@ -3445,7 +3445,6 @@ fun ChatConversationView(
 Column(
         modifier = Modifier
             .fillMaxSize()
-            .navigationBarsPadding()
     ) {
         // Chat Header
         Surface(
