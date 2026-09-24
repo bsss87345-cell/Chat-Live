@@ -3181,7 +3181,9 @@ fun ChatListView(
     onFilterChange: (String) -> Unit,
     onTogglePushNotifications: () -> Unit,
     onOpenChat: (String) -> Unit,
-    onTogglePin: (String) -> Unit
+    onTogglePin: (String) -> Unit,
+    onDeleteConversation: (String) -> Unit,
+    onBlockUser: (String) -> Unit
 ) {
     var searchQuery by remember { mutableStateOf("") }
 
