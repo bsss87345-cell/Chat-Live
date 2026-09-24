@@ -203,6 +203,7 @@ fun MainScreen(viewModel: SocialAppViewModel) {
                                 onFilterChange = { viewModel.setChatFilter(it) },
                                 onTogglePushNotifications = { viewModel.togglePushNotifications() },
                                 onOpenChat = { viewModel.openConversation(it) },
+                                onTogglePin = { viewModel.togglePinConversation(it) },
                                 onCloseChat = { viewModel.closeConversation() },
                                 onSendMessage = { convId, text, type -> viewModel.sendMessage(convId, text, type) },
                                 onStartGameInChat = { convId, gameType ->
