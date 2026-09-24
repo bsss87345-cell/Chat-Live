@@ -139,7 +139,8 @@ fun ChatScreen(
                     onDeleteConversation(activeConv.id)
                     onCloseChat()
                 },
-                onUnblockUser = { onUnblockUser(activeConv.id) }
+                onUnblockUser = { onUnblockUser(activeConv.id) },
+                onSendImage = { uri -> onSendImage(activeConv.id, uri) }
             )
             return
         }
