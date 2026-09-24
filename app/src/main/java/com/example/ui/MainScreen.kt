@@ -1,5 +1,6 @@
 package com.example.ui
 
+import com.example.model.ChatMessageType
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.Crossfade
 import androidx.compose.animation.core.tween
