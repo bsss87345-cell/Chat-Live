@@ -1530,12 +1530,7 @@ Box(modifier = Modifier.fillMaxSize()) {
                                         Text("ابدأ الدوران")
                                     }
                                 }
-                                TextButton(onClick = { onAddTestWheelRequests() }) {
-                                    Text("طلبات تجريبية", fontSize = 11.sp)
-                                }
-                                TextButton(onClick = { onAddTestWheelParticipants() }) {
-                                    Text("مشاركين تجريبيين", fontSize = 11.sp)
-                                }
+                                
                             }
                         },
                         dismissButton = {
