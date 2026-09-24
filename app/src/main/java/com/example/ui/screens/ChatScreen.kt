@@ -3612,6 +3612,37 @@ Column(
             tonalElevation = 6.dp,
             color = MaterialTheme.colorScheme.surface
         ) {
+            Column {
+            if (pendingImageUri != null) {
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 12.dp, vertical = 8.dp),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(12.dp)
+                ) {
+                    AsyncImage(
+                        model = pendingImageUri,
+                        contentDescription = "معاينة الصورة",
+                        contentScale = ContentScale.Crop,
+                        modifier = Modifier
+                            .size(72.dp)
+                            .clip(RoundedCornerShape(10.dp))
+                    )
+                    Spacer(modifier = Modifier.weight(1f))
+                    OutlinedButton(onClick = { pendingImageUri = null }) {
+                        Text("إلغاء")
+                    }
+                    Button(
+                        onClick = {
+                            pendingImageUri?.let { onSendImage(it) }
+                            pendingImageUri = null
+                        }
+                    ) {
+                        Text("إرسال")
+                    }
+                }
+            }
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
