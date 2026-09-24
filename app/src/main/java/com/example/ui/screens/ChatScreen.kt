@@ -115,8 +115,6 @@ fun ChatScreen(
     onRespondWheelRequest: (String, Boolean) -> Unit = { _, _ -> },
     onStartWheelSpin: () -> Unit = {},
     onResetWheel: () -> Unit = {},
-    onAddTestWheelParticipants: () -> Unit = {},
-    onAddTestWheelRequests: () -> Unit = {},
     myAvatarUrl: String = "",
     myName: String = "",
     walletBalance: Int = 0
