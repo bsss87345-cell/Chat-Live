@@ -3730,9 +3730,10 @@ Column(
 fun ChatMessageBubble(
     message: ChatMessage,
     onPlayGame: () -> Unit,
-    myAvatarUrl: String = ""
+    myAvatarUrl: String = "",
+    onImageClick: (String) -> Unit = {}
 ) {
-    val bubbleColor = if (message.isFromMe) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.surfaceVariant
+    val bubbleColor = if (message.isFromMe)
     val textColor = if (message.isFromMe) Color.White else MaterialTheme.colorScheme.onSurface
 
     Box(
