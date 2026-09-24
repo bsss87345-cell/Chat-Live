@@ -1233,7 +1233,7 @@ fun AccountSettingsScreen(
                             fontSize = 14.sp
                         )
                         Text(
-                            text = "رقم التذكرة: #84920\nشكراً لمساعدتنا في تحسين تجربة مجتمعنا. سيقوم الفريق الفني بمراجعة البلاغ وحل المشكلة في أقرب وقت.",
+                            text = "رقم التذكرة: #84920\nشكراً لمساعدتك في تحسين تجربتنا. سيقوم الفريق الفني بمراجعة البلاغ وحل المشكلة في أقرب وقت.",
                             fontSize = 11.sp,
                             textAlign = TextAlign.Center,
                             color = MaterialTheme.colorScheme.onSurfaceVariant
