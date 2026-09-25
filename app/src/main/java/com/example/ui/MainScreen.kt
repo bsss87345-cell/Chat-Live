@@ -144,6 +144,7 @@ fun MainScreen(viewModel: SocialAppViewModel) {
                         onNavigateToRecharge = { viewModel.addTestBalance() },
                         onUpdateProfile = { name, bio, emoji -> viewModel.updateUserProfile(name, bio, emoji) },
                         onUpdateBio = { viewModel.updateUserBio(it) },
+                        onTogglePrivacy = { viewModel.toggleProfilePrivacy() },
                         onBack = { viewModel.closeAccountSettings() }
                     )
                 } else {
