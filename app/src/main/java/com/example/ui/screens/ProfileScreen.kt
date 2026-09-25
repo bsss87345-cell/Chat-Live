@@ -161,16 +161,7 @@ fun ProfileScreen(
                         }
                     }
 
-                    // User Name
-                    Text(
-                        text = userProfile.name,
-                        fontWeight = FontWeight.Black,
-                        fontSize = 19.sp,
-                        textAlign = TextAlign.End,
-                        modifier = Modifier.fillMaxWidth()
-                    )
-
-                    // Avatar + Stats side-by-side
+                    // Avatar (with name above it) + Stats side-by-side
                     var avatarGlowStarted by remember { mutableStateOf(false) }
                     val avatarGlowAlpha by animateFloatAsState(
                         targetValue = if (avatarGlowStarted) 0f else 1f,
@@ -182,8 +173,16 @@ fun ProfileScreen(
                     }
                     Row(
                         modifier = Modifier.fillMaxWidth(),
-                        verticalAlignment = Alignment.CenterVertically
+                        verticalAlignment = Alignment.Bottom
                     ) {
+                        Column(horizontalAlignment = Alignment.Start) {
+                            Text(
+                                text = userProfile.name,
+                                fontWeight = FontWeight.Black,
+                                fontSize = 19.sp,
+                                textAlign = TextAlign.Start,
+                                modifier = Modifier.padding(bottom = 6.dp)
+                            )
                         Box(
                             modifier = Modifier.size(86.dp),
                             contentAlignment = Alignment.BottomEnd
