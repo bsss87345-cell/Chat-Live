@@ -100,6 +100,7 @@ fun ProfileScreen(
     }.take(6)
     val totalPostsCount = userPosts.size
 
+    Box(modifier = Modifier.fillMaxSize()) {
     LazyColumn(
         modifier = Modifier
             .fillMaxSize()
