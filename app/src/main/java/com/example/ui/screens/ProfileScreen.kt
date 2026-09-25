@@ -89,6 +89,9 @@ fun ProfileScreen(
     var showFollowersDialog by remember { mutableStateOf(false) }
     var showFollowingDialog by remember { mutableStateOf(false) }
     var settingsExpanded by remember { mutableStateOf(false) }
+    var editingPost by remember { mutableStateOf<Post?>(null) }
+    var deletingPost by remember { mutableStateOf<Post?>(null) }
+    var reportingPost by remember { mutableStateOf<Post?>(null) }
     var selectedProfileTab by remember { mutableStateOf(0) }
     val context = LocalContext.current
     val avatarImageLauncher = rememberLauncherForActivityResult(
