@@ -409,7 +409,7 @@ fun ProfileScreen(
                 items(userPosts) { post ->
                     PostCard(
                         post = post,
-                        onLikeClick = { },
+                        onLikeClick = { viewModel.toggleLike(post.id) },
                         onCommentClick = { },
                         onShareClick = { }
                     )
