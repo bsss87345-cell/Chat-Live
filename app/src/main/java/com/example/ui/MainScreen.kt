@@ -320,6 +320,7 @@ onSendImage = { convId, uri -> viewModel.sendMessage(convId, "", ChatMessageType
                                 onOpenAccountSettings = { viewModel.openAccountSettings() },
                                 onUpdateAvatarImage = { viewModel.updateUserAvatarUrl(it) },
                                 onLikeClick = { viewModel.toggleLike(it) },
+                                onShareClick = { viewModel.sharePost(it) },
                                 followersList = followersList,
                                 followingList = followingList
                                 )
