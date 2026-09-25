@@ -1555,7 +1555,7 @@ fun toggleOwnerVoiceMute(roomId: String) {
 
     fun toggleProfilePrivacy() {
         _userProfile.update {
-            val nextPrivacy = if (it.privacyLevel == "عام للجميع") "للأصدقاء فقط" else "عام للجميع"
+            val nextPrivacy = if (it.privacyLevel == "عام للجميع") "خاص" else "عام للجميع"
             it.copy(privacyLevel = nextPrivacy)
         }
         syncUserProfile()
