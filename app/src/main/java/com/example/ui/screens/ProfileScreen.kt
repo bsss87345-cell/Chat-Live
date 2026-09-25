@@ -339,40 +339,40 @@ fun ProfileScreen(
                                 )
                         )
                     }
-                    // Content type tabs (Posts / Video / Reposts)
+                    // Content type tabs (Posts / Video / Reuse) - outline icons, selected = full black
                     Row(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .padding(top = 4.dp),
-                        horizontalArrangement = Arrangement.SpaceEvenly,
+                            .padding(top = 4.dp, start = 24.dp, end = 24.dp),
+                        horizontalArrangement = Arrangement.SpaceBetween,
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         Icon(
-                            imageVector = Icons.Default.List,
+                            imageVector = Icons.Outlined.GridView,
                             contentDescription = "المنشورات",
-                            tint = Color.Black,
+                            tint = Color.Black.copy(alpha = if (selectedProfileTab == 0) 1f else 0.4f),
                             modifier = Modifier
                                 .size(32.dp)
                                 .testTag("profile_tab_posts")
-                                .clickable { }
+                                .clickable { selectedProfileTab = 0 }
                         )
                         Icon(
-                            imageVector = Icons.Default.Videocam,
+                            imageVector = Icons.Outlined.PlayCircleOutline,
                             contentDescription = "فيديو",
-                            tint = Color.Black,
+                            tint = Color.Black.copy(alpha = if (selectedProfileTab == 1) 1f else 0.4f),
                             modifier = Modifier
                                 .size(32.dp)
                                 .testTag("profile_tab_video")
-                                .clickable { }
+                                .clickable { selectedProfileTab = 1 }
                         )
                         Icon(
-                            imageVector = Icons.Default.Repeat,
+                            imageVector = Icons.Outlined.Repeat,
                             contentDescription = "إعادة استخدام",
-                            tint = Color.Black,
+                            tint = Color.Black.copy(alpha = if (selectedProfileTab == 2) 1f else 0.4f),
                             modifier = Modifier
                                 .size(32.dp)
                                 .testTag("profile_tab_reuse")
-                                .clickable { }
+                                .clickable { selectedProfileTab = 2 }
                         )
                     }
                 }
