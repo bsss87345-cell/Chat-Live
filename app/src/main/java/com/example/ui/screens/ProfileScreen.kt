@@ -341,7 +341,8 @@ fun ProfileScreen(
                                 )
                         )
                     }
-                    // Content type tabs (Posts / Video / Reuse) - outline icons, selected = full black
+                    val isDarkTheme = isSystemInDarkTheme()
+                    // Content type tabs (Posts / Video / Reuse) - selected = black (light) / white+shadow (dark)
                     Row(
                         modifier = Modifier
                             .fillMaxWidth()
@@ -352,27 +353,45 @@ fun ProfileScreen(
                         Icon(
                             imageVector = Icons.Outlined.GridView,
                             contentDescription = "المنشورات",
-                            tint = Color.Black.copy(alpha = if (selectedProfileTab == 0) 1f else 0.4f),
+                            tint = if (isDarkTheme) Color.White.copy(alpha = if (selectedProfileTab == 0) 1f else 0.4f)
+                                   else Color.Black.copy(alpha = if (selectedProfileTab == 0) 1f else 0.4f),
                             modifier = Modifier
                                 .size(32.dp)
+                                .then(
+                                    if (isDarkTheme && selectedProfileTab == 0)
+                                        Modifier.shadow(elevation = 6.dp, shape = CircleShape, clip = false)
+                                    else Modifier
+                                )
                                 .testTag("profile_tab_posts")
                                 .clickable { selectedProfileTab = 0 }
                         )
                         Icon(
                             imageVector = Icons.Outlined.PlayCircleOutline,
                             contentDescription = "فيديو",
-                            tint = Color.Black.copy(alpha = if (selectedProfileTab == 1) 1f else 0.4f),
+                            tint = if (isDarkTheme) Color.White.copy(alpha = if (selectedProfileTab == 1) 1f else 0.4f)
+                                   else Color.Black.copy(alpha = if (selectedProfileTab == 1) 1f else 0.4f),
                             modifier = Modifier
                                 .size(32.dp)
+                                .then(
+                                    if (isDarkTheme && selectedProfileTab == 1)
+                                        Modifier.shadow(elevation = 6.dp, shape = CircleShape, clip = false)
+                                    else Modifier
+                                )
                                 .testTag("profile_tab_video")
                                 .clickable { selectedProfileTab = 1 }
                         )
                         Icon(
                             imageVector = Icons.Outlined.Repeat,
                             contentDescription = "إعادة استخدام",
-                            tint = Color.Black.copy(alpha = if (selectedProfileTab == 2) 1f else 0.4f),
+                            tint = if (isDarkTheme) Color.White.copy(alpha = if (selectedProfileTab == 2) 1f else 0.4f)
+                                   else Color.Black.copy(alpha = if (selectedProfileTab == 2) 1f else 0.4f),
                             modifier = Modifier
                                 .size(32.dp)
+                                .then(
+                                    if (isDarkTheme && selectedProfileTab == 2)
+                                        Modifier.shadow(elevation = 6.dp, shape = CircleShape, clip = false)
+                                    else Modifier
+                                )
                                 .testTag("profile_tab_reuse")
                                 .clickable { selectedProfileTab = 2 }
                         )
