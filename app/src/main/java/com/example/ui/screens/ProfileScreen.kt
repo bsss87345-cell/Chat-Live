@@ -169,7 +169,8 @@ fun ProfileScreen(
                         textAlign = TextAlign.Center,
                         modifier = Modifier
                             .fillMaxWidth()
-                            .padding(horizontal = 40.dp)
+                            .padding(horizontal = 40.dp, vertical = 0.dp)
+                            .padding(top = 36.dp)
                     )
 
                     // Avatar + Stats side-by-side
