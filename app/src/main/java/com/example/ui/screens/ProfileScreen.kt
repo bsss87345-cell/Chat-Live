@@ -401,16 +401,14 @@ fun ProfileScreen(
 
                     when (selectedProfileTab) {
                         0 -> {
-                            Column(modifier = Modifier.padding(horizontal = (-40).dp)) {
-                                userPosts.forEach { post ->
-                                    PostCard(
-                                        post = post,
-                                        onLikeClick = { },
-                                        onCommentClick = { },
-                                        onShareClick = { }
-                                    )
-                                    Spacer(modifier = Modifier.height(8.dp))
-                                }
+                            userPosts.forEach { post ->
+                                PostCard(
+                                    post = post,
+                                    onLikeClick = { },
+                                    onCommentClick = { },
+                                    onShareClick = { }
+                                )
+                                Spacer(modifier = Modifier.height(8.dp))
                             }
                         }
                         1 -> {
