@@ -287,6 +287,34 @@ fun ProfileScreen(
                             onClick = { showFollowingDialog = true }
                         )
                     }
+
+                    // Content type tabs (Posts / Reposts)
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(top = 4.dp),
+                        horizontalArrangement = Arrangement.spacedBy(28.dp),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.List,
+                            contentDescription = "المنشورات",
+                            tint = MaterialTheme.colorScheme.onSurface,
+                            modifier = Modifier
+                                .size(24.dp)
+                                .testTag("profile_tab_posts")
+                                .clickable { }
+                        )
+                        Icon(
+                            imageVector = Icons.Default.Repeat,
+                            contentDescription = "إعادة استخدام",
+                            tint = MujtamaTeal,
+                            modifier = Modifier
+                                .size(24.dp)
+                                .testTag("profile_tab_reuse")
+                                .clickable { }
+                        )
+                    }
                 }
         }
     }
