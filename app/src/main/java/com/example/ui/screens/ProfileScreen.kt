@@ -48,6 +48,7 @@ import androidx.compose.ui.window.DialogWindowProvider
 import android.graphics.drawable.ColorDrawable
 import androidx.compose.ui.platform.LocalView
 import androidx.core.view.WindowCompat
+import android.view.WindowManager
 import androidx.core.view.ViewCompat
 import com.example.model.*
 import com.example.ui.theme.*
