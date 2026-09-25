@@ -156,7 +156,7 @@ fun ProfileScreen(
                                     imageVector = Icons.Default.Menu,
                                     contentDescription = "القائمة",
                                     tint = MaterialTheme.colorScheme.onSurface,
-                                    modifier = Modifier.size(22.dp)
+                                    modifier = Modifier.size(26.dp)
                                 )
                             }
                         }
