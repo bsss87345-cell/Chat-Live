@@ -291,7 +291,7 @@ fun ProfileScreen(
                                 .align(Alignment.TopCenter)
                                 .fillMaxWidth()
                                 .padding(horizontal = 40.dp)
-                                .offset(y = 36.dp)
+                                .offset(y = (-4).dp)
                         )
                     }
 
