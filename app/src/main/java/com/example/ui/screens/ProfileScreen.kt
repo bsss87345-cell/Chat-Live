@@ -159,6 +159,19 @@ fun ProfileScreen(
                                     modifier = Modifier.size(26.dp)
                                 )
                             }
+                            IconButton(
+                                onClick = { },
+                                modifier = Modifier
+                                    .size(32.dp)
+                                    .testTag("profile_swap_icon_button")
+                            ) {
+                                Icon(
+                                    imageVector = Icons.Default.SwapHoriz,
+                                    contentDescription = "تحويل",
+                                    tint = MaterialTheme.colorScheme.onSurface,
+                                    modifier = Modifier.size(24.dp)
+                                )
+                            }
                         }
                     }
 
