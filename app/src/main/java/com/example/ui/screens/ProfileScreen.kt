@@ -386,7 +386,7 @@ fun ProfileScreen(
                 window?.setBackgroundDrawable(
                     ColorDrawable(android.graphics.Color.TRANSPARENT)
                 )
-                window?.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE)
+                window?.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_NOTHING)
             }
             LaunchedEffect(Unit) {
                 focusRequester.requestFocus()
