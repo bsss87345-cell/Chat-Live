@@ -216,7 +216,7 @@ fun ProfileScreen(
                             fontSize = 19.sp
                         )
                         Text(
-                            text = "ID: ${userProfile.id} • ${userProfile.joinDate}",
+                            text = "ID: ${userProfile.id}",
                             fontSize = 11.sp,
                             color = MaterialTheme.colorScheme.onSurfaceVariant
                         )
