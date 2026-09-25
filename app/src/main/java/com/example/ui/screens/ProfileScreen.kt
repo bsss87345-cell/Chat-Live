@@ -164,11 +164,11 @@ fun ProfileScreen(
                                     onClick = { },
                                     modifier = Modifier
                                         .size(36.dp)
-                                        .testTag("profile_swap_icon_button")
+                                        .testTag("profile_views_icon_button")
                                 ) {
                                     Icon(
-                                        imageVector = Icons.Default.SwapHoriz,
-                                        contentDescription = "تحويل",
+                                        imageVector = Icons.Default.RemoveRedEye,
+                                        contentDescription = "من شاهد الملف الشخصي",
                                         tint = MaterialTheme.colorScheme.onSurface,
                                         modifier = Modifier.size(28.dp)
                                     )
@@ -190,11 +190,11 @@ fun ProfileScreen(
                                     onClick = { },
                                     modifier = Modifier
                                         .size(36.dp)
-                                        .testTag("profile_views_icon_button")
+                                        .testTag("profile_swap_icon_button")
                                 ) {
                                     Icon(
-                                        imageVector = Icons.Default.RemoveRedEye,
-                                        contentDescription = "من شاهد الملف الشخصي",
+                                        imageVector = Icons.Default.SwapHoriz,
+                                        contentDescription = "تحويل",
                                         tint = MaterialTheme.colorScheme.onSurface,
                                         modifier = Modifier.size(28.dp)
                                     )
