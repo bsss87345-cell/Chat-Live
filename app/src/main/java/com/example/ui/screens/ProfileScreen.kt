@@ -72,6 +72,7 @@ fun ProfileScreen(
     onLogout: () -> Unit,
     onOpenAccountSettings: () -> Unit = {},
     onUpdateAvatarImage: (String) -> Unit = {},
+    onLikeClick: (String) -> Unit = {},
     followersList: List<FollowUser> = emptyList(),
     followingList: List<FollowUser> = emptyList(),
     isOnOwnProfile: Boolean = true
