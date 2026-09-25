@@ -143,7 +143,7 @@ fun ProfileScreen(
                                     imageVector = Icons.Default.RemoveRedEye,
                                     contentDescription = "من شاهد الملف الشخصي",
                                     tint = MaterialTheme.colorScheme.onSurface,
-                                    modifier = Modifier.size(20.dp)
+                                    modifier = Modifier.size(24.dp)
                                 )
                             }
                             IconButton(
