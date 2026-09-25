@@ -74,6 +74,10 @@ fun ProfileScreen(
     onUpdateAvatarImage: (String) -> Unit = {},
     onLikeClick: (String) -> Unit = {},
     onShareClick: (Post) -> Unit = {},
+    activeCommentPostId: String? = null,
+    onCommentClick: (String) -> Unit = {},
+    onCloseComments: () -> Unit = {},
+    onAddComment: (String, String) -> Unit = { _, _ -> },
     followersList: List<FollowUser> = emptyList(),
     followingList: List<FollowUser> = emptyList(),
     isOnOwnProfile: Boolean = true
