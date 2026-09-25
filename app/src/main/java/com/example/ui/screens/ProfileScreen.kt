@@ -413,7 +413,7 @@ fun ProfileScreen(
                         post = post,
                         onLikeClick = { onLikeClick(post.id) },
                         onCommentClick = { },
-                        onShareClick = { }
+                        onShareClick = { onShareClick(post) }
                     )
                     Spacer(modifier = Modifier.height(8.dp))
                 }
