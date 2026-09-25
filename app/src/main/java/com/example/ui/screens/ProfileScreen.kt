@@ -277,17 +277,15 @@ fun ProfileScreen(
                         modifier = Modifier
                             .fillMaxWidth()
                             .padding(top = 4.dp),
-                        horizontalArrangement = Arrangement.SpaceEvenly,
+                        horizontalArrangement = Arrangement.spacedBy(32.dp, Alignment.CenterHorizontally),
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         ProfileStatItem(title = "المنشورات", count = "$totalPostsCount")
-                        VerticalDivider(modifier = Modifier.height(28.dp))
                         ProfileStatItem(
                             title = "المتابعون",
                             count = "${userProfile.followersCount}",
                             onClick = { showFollowersDialog = true }
                         )
-                        VerticalDivider(modifier = Modifier.height(28.dp))
                         ProfileStatItem(
                             title = "يتابع",
                             count = "${userProfile.followingCount}",
