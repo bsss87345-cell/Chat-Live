@@ -545,6 +545,20 @@ fun ProfileScreen(
             onDismiss = { showFollowingDialog = false }
         )
     }
+
+    // Comments Bottom Sheet
+    if (activeCommentPostId != null) {
+        val currentPost = posts.find { it.id == activeCommentPostId }
+        if (currentPost != null) {
+            CommentsBottomSheet(
+                post = currentPost,
+                onDismiss = onCloseComments,
+                onAddComment = { commentText ->
+                    onAddComment(currentPost.id, commentText)
+                }
+            )
+        }
+    }
 }
 
 private fun FollowUser.toUserProfile(): UserProfile {
