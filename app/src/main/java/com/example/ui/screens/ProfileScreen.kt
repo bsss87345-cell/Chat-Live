@@ -63,9 +63,8 @@ fun ProfileScreen(
     followingList: List<FollowUser> = emptyList(),
     isOnOwnProfile: Boolean = true
 ) {
-    var showEditBioDialog by remember { mutableStateOf(false) }
-    var showFollowersDialog by remember { mutableStateOf(false) }
     var showFollowingDialog by remember { mutableStateOf(false) }
+    var settingsExpanded by remember { mutableStateOf(false) }
 
     val context = LocalContext.current
     val avatarImageLauncher = rememberLauncherForActivityResult(
