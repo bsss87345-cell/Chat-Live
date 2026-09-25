@@ -313,12 +313,12 @@ fun ProfileScreen(
                         )
                     }
 
-                    // Bio (plain text, no box — shown for own profile and others)
-                    if (userProfile.bio.isNotBlank()) {
+                    // Bio (plain text, no box — shown for own profile and others; placeholder for empty own bio)
+                    if (userProfile.bio.isNotBlank() || isOnOwnProfile) {
                         Text(
-                            text = userProfile.bio,
+                            text = if (userProfile.bio.isNotBlank()) userProfile.bio else "أضف نبذة تعريفية",
                             fontSize = 12.sp,
-                            color = MaterialTheme.colorScheme.onSurface,
+                            color = if (userProfile.bio.isNotBlank()) MaterialTheme.colorScheme.onSurface else MaterialTheme.colorScheme.onSurfaceVariant,
                             lineHeight = 17.sp,
                             modifier = Modifier
                                 .fillMaxWidth()
