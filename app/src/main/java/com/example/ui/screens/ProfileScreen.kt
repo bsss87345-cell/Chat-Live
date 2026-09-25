@@ -382,9 +382,11 @@ fun ProfileScreen(
         ) {
             val view = LocalView.current
             SideEffect {
-                (view.parent as? DialogWindowProvider)?.window?.setBackgroundDrawable(
+                val window = (view.parent as? DialogWindowProvider)?.window
+                window?.setBackgroundDrawable(
                     ColorDrawable(android.graphics.Color.TRANSPARENT)
                 )
+                window?.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE)
             }
             LaunchedEffect(Unit) {
                 focusRequester.requestFocus()
