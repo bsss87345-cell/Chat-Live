@@ -397,36 +397,43 @@ fun ProfileScreen(
                         )
                     }
 
-                    Spacer(modifier = Modifier.height(12.dp))
-
-                    when (selectedProfileTab) {
-                        0 -> {
-                            userPosts.forEach { post ->
-                                PostCard(
-                                    post = post,
-                                    onLikeClick = { },
-                                    onCommentClick = { },
-                                    onShareClick = { }
-                                )
-                                Spacer(modifier = Modifier.height(8.dp))
-                            }
-                        }
-                        1 -> {
-                            // TODO: تبويب الفيديو - يُنفذ لاحقاً بطلب صريح من المستخدم
-                        }
-                        2 -> {
-                            Text(
-                                text = "لا يوجد إعادة استخدام بعد",
-                                fontSize = 13.sp,
-                                color = MaterialTheme.colorScheme.onSurfaceVariant,
-                                textAlign = TextAlign.Center,
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .padding(vertical = 24.dp)
-                            )
-                        }
                     }
-           }
+        }
+
+        item {
+            Spacer(modifier = Modifier.height(12.dp))
+        }
+
+        when (selectedProfileTab) {
+            0 -> {
+                items(userPosts) { post ->
+                    PostCard(
+                        post = post,
+                        onLikeClick = { },
+                        onCommentClick = { },
+                        onShareClick = { }
+                    )
+                    Spacer(modifier = Modifier.height(8.dp))
+                }
+            }
+            1 -> {
+                item {
+                    // TODO: تبويب الفيديو - يُنفذ لاحقاً بطلب صريح من المستخدم
+                }
+            }
+            2 -> {
+                item {
+                    Text(
+                        text = "لا يوجد إعادة استخدام بعد",
+                        fontSize = 13.sp,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        textAlign = TextAlign.Center,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(vertical = 24.dp)
+                    )
+                }
+            }
         }
     }
 
