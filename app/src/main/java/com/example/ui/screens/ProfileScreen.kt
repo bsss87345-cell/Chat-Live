@@ -367,42 +367,81 @@ fun ProfileScreen(
     // DIALOGS
     // -------------------------------------------------------------
 
-    // Edit Bio Dialog
+    // Edit Bio Bar - shown above the keyboard, replaces the old dialog
     if (showEditBioDialog) {
         var bioText by remember { mutableStateOf(userProfile.bio) }
-        AlertDialog(
+        val focusRequester = remember { FocusRequester() }
+        val keyboardController = LocalSoftwareKeyboardController.current
+        Dialog(
             onDismissRequest = { showEditBioDialog = false },
-            title = { Text("تعديل النبذة التعريفية ✏️") },
-            text = {
-                Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                    Text("اكتب نبذة مميزة تعبر عن اهتماماتك:", fontSize = 12.sp)
-                    OutlinedTextField(
-                        value = bioText,
-                        onValueChange = { bioText = it },
-                        modifier = Modifier.fillMaxWidth(),
-                        maxLines = 4
-                    )
-                }
-            },
-            confirmButton = {
-                Button(
-                    onClick = {
-                        onUpdateBio(bioText)
-                        showEditBioDialog = false
-                    },
-                    enabled = bioText.isNotBlank()
+            properties = DialogProperties(
+                usePlatformDefaultWidth = false,
+                decorFitsSystemWindows = false
+            )
+        ) {
+            val view = LocalView.current
+            SideEffect {
+                (view.parent as? DialogWindowProvider)?.window?.setBackgroundDrawable(
+                    ColorDrawable(android.graphics.Color.TRANSPARENT)
+                )
+            }
+            LaunchedEffect(Unit) {
+                focusRequester.requestFocus()
+                keyboardController?.show()
+            }
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .background(Color.Black.copy(alpha = 0.4f))
+                    .clickable(
+                        indication = null,
+                        interactionSource = remember { MutableInteractionSource() }
+                    ) { showEditBioDialog = false }
+            ) {
+                Column(
+                    modifier = Modifier
+                        .align(Alignment.BottomCenter)
+                        .fillMaxWidth()
+                        .imePadding()
+                        .background(MaterialTheme.colorScheme.surface)
+                        .clickable(
+                            indication = null,
+                            interactionSource = remember { MutableInteractionSource() }
+                        ) { }
+                        .padding(horizontal = 12.dp, vertical = 8.dp)
                 ) {
-                    Text("حفظ")
-                }
-            },
-            dismissButton = {
-                TextButton(onClick = { showEditBioDialog = false }) {
-                    Text("إلغاء")
+                    Text(
+                        text = "${bioText.length}/500",
+                        fontSize = 11.sp,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        modifier = Modifier.fillMaxWidth(),
+                        textAlign = TextAlign.End
+                    )
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        modifier = Modifier.fillMaxWidth()
+                    ) {
+                        OutlinedTextField(
+                            value = bioText,
+                            onValueChange = { if (it.length <= 500) bioText = it },
+                            modifier = Modifier
+                                .weight(1f)
+                                .focusRequester(focusRequester),
+                            placeholder = { Text("اكتب نبذة مميزة تعبر عن اهتماماتك", fontSize = 12.sp) }
+                        )
+                        TextButton(
+                            onClick = {
+                                onUpdateBio(bioText)
+                                showEditBioDialog = false
+                            }
+                        ) {
+                            Text("تم", fontWeight = FontWeight.Bold)
+                        }
+                    }
                 }
             }
-        )
+        }
     }
-
     // Followers List - Full Screen
     if (showFollowersDialog) {
         FollowListFullScreen(
