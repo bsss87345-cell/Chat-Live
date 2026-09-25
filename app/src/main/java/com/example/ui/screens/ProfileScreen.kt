@@ -109,8 +109,35 @@ fun ProfileScreen(
                     if (isOnOwnProfile) {
                         Row(
                             modifier = Modifier.fillMaxWidth(),
-                            horizontalArrangement = Arrangement.End
+                            horizontalArrangement = Arrangement.End,
+                            verticalAlignment = Alignment.CenterVertically
                         ) {
+                            IconButton(
+                                onClick = { },
+                                modifier = Modifier
+                                    .size(32.dp)
+                                    .testTag("profile_add_friend_button")
+                            ) {
+                                Icon(
+                                    imageVector = Icons.Default.PersonAdd,
+                                    contentDescription = "إضافة صديق",
+                                    tint = MaterialTheme.colorScheme.onSurface,
+                                    modifier = Modifier.size(20.dp)
+                                )
+                            }
+                            IconButton(
+                                onClick = { },
+                                modifier = Modifier
+                                    .size(32.dp)
+                                    .testTag("profile_extra_icon_button")
+                            ) {
+                                Icon(
+                                    imageVector = Icons.Default.ChatBubbleOutline,
+                                    contentDescription = "أيقونة إضافية",
+                                    tint = MaterialTheme.colorScheme.onSurface,
+                                    modifier = Modifier.size(20.dp)
+                                )
+                            }
                             IconButton(
                                 onClick = { onOpenAccountSettings() },
                                 modifier = Modifier
