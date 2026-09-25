@@ -130,7 +130,7 @@ fun ProfileScreen(
                                     imageVector = Icons.Default.PersonAdd,
                                     contentDescription = "إضافة صديق",
                                     tint = MaterialTheme.colorScheme.onSurface,
-                                    modifier = Modifier.size(20.dp)
+                                    modifier = Modifier.size(24.dp)
                                 )
                             }
                             IconButton(
