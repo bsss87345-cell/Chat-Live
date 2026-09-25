@@ -176,13 +176,6 @@ fun ProfileScreen(
                         verticalAlignment = Alignment.Bottom
                     ) {
                         Column(horizontalAlignment = Alignment.Start) {
-                            Text(
-                                text = userProfile.name,
-                                fontWeight = FontWeight.Black,
-                                fontSize = 19.sp,
-                                textAlign = TextAlign.Start,
-                                modifier = Modifier.padding(bottom = 6.dp)
-                            )
                         Box(
                             modifier = Modifier.size(86.dp),
                             contentAlignment = Alignment.BottomEnd
