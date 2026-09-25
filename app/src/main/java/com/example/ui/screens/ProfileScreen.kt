@@ -78,6 +78,9 @@ fun ProfileScreen(
     onCommentClick: (String) -> Unit = {},
     onCloseComments: () -> Unit = {},
     onAddComment: (String, String) -> Unit = { _, _ -> },
+    onEditPost: (String, String) -> Unit = { _, _ -> },
+    onDeletePost: (String) -> Unit = {},
+    onReportPost: (String) -> Unit = {},
     followersList: List<FollowUser> = emptyList(),
     followingList: List<FollowUser> = emptyList(),
     isOnOwnProfile: Boolean = true
