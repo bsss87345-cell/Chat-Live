@@ -416,7 +416,7 @@ fun ProfileScreen(
                     PostCard(
                         post = post,
                         onLikeClick = { onLikeClick(post.id) },
-                        onCommentClick = { },
+                        onCommentClick = { onCommentClick(post.id) },
                         onShareClick = { onShareClick(post) }
                     )
                     Spacer(modifier = Modifier.height(8.dp))
