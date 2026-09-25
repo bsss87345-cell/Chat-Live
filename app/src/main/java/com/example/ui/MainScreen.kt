@@ -319,6 +319,7 @@ onSendImage = { convId, uri -> viewModel.sendMessage(convId, "", ChatMessageType
                                 onLogout = { viewModel.logoutUser() },
                                 onOpenAccountSettings = { viewModel.openAccountSettings() },
                                 onUpdateAvatarImage = { viewModel.updateUserAvatarUrl(it) },
+                                onLikeClick = { viewModel.toggleLike(it) },
                                 followersList = followersList,
                                 followingList = followingList
                                 )
