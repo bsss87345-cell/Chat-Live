@@ -339,29 +339,38 @@ fun ProfileScreen(
                                 )
                         )
                     }
-                    // Content type tabs (Posts / Reposts)
+                    // Content type tabs (Posts / Video / Reposts)
                     Row(
                         modifier = Modifier
                             .fillMaxWidth()
                             .padding(top = 4.dp),
-                        horizontalArrangement = Arrangement.spacedBy(28.dp, Alignment.CenterHorizontally),
+                        horizontalArrangement = Arrangement.SpaceEvenly,
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         Icon(
                             imageVector = Icons.Default.List,
                             contentDescription = "المنشورات",
-                            tint = MaterialTheme.colorScheme.onSurface,
+                            tint = Color.Black,
                             modifier = Modifier
-                                .size(24.dp)
+                                .size(32.dp)
                                 .testTag("profile_tab_posts")
+                                .clickable { }
+                        )
+                        Icon(
+                            imageVector = Icons.Default.Videocam,
+                            contentDescription = "فيديو",
+                            tint = Color.Black,
+                            modifier = Modifier
+                                .size(32.dp)
+                                .testTag("profile_tab_video")
                                 .clickable { }
                         )
                         Icon(
                             imageVector = Icons.Default.Repeat,
                             contentDescription = "إعادة استخدام",
-                            tint = MujtamaTeal,
+                            tint = Color.Black,
                             modifier = Modifier
-                                .size(24.dp)
+                                .size(32.dp)
                                 .testTag("profile_tab_reuse")
                                 .clickable { }
                         )
