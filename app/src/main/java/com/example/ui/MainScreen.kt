@@ -326,6 +326,9 @@ onSendImage = { convId, uri -> viewModel.sendMessage(convId, "", ChatMessageType
                                 onCommentClick = { viewModel.openComments(it) },
                                 onCloseComments = { viewModel.closeComments() },
                                 onAddComment = { postId, text -> viewModel.addComment(postId, text) },
+                                onEditPost = { postId, newText -> viewModel.editPost(postId, newText) },
+                                onDeletePost = { viewModel.deletePost(it) },
+                                onReportPost = { viewModel.reportPost(it) },
                                 followersList = followersList,
                                 followingList = followingList
                                 )
