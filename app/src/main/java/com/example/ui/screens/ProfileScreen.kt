@@ -129,11 +129,11 @@ fun ProfileScreen(
                                 onClick = { },
                                 modifier = Modifier
                                     .size(32.dp)
-                                    .testTag("profile_extra_icon_button")
+                                    .testTag("profile_views_icon_button")
                             ) {
                                 Icon(
-                                    imageVector = Icons.Default.ChatBubbleOutline,
-                                    contentDescription = "أيقونة إضافية",
+                                    imageVector = Icons.Default.RemoveRedEye,
+                                    contentDescription = "من شاهد الملف الشخصي",
                                     tint = MaterialTheme.colorScheme.onSurface,
                                     modifier = Modifier.size(20.dp)
                                 )
