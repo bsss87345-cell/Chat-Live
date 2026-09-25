@@ -321,6 +321,10 @@ onSendImage = { convId, uri -> viewModel.sendMessage(convId, "", ChatMessageType
                                 onUpdateAvatarImage = { viewModel.updateUserAvatarUrl(it) },
                                 onLikeClick = { viewModel.toggleLike(it) },
                                 onShareClick = { viewModel.sharePost(it) },
+                                activeCommentPostId = activeCommentPostId,
+                                onCommentClick = { viewModel.openComments(it) },
+                                onCloseComments = { viewModel.closeComments() },
+                                onAddComment = { postId, text -> viewModel.addComment(postId, text) },
                                 followersList = followersList,
                                 followingList = followingList
                                 )
