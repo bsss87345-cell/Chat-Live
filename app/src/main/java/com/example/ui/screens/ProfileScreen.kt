@@ -375,7 +375,75 @@ fun ProfileScreen(
                                 .clickable { selectedProfileTab = 2 }
                         )
                     }
-                }
+
+                    Spacer(modifier = Modifier.height(12.dp))
+
+                    when (selectedProfileTab) {
+                        0 -> {
+                            userPosts.chunked(3).forEach { rowPosts ->
+                                Row(
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .padding(bottom = 8.dp),
+                                    horizontalArrangement = Arrangement.spacedBy(8.dp)
+                                ) {
+                                    rowPosts.forEach { post ->
+                                        Box(
+                                            modifier = Modifier
+                                                .weight(1f)
+                                                .aspectRatio(1f)
+                                                .clip(RoundedCornerShape(8.dp))
+                                                .background(MaterialTheme.colorScheme.surfaceVariant)
+                                                .padding(8.dp)
+                                        ) {
+                                            Column(
+                                                modifier = Modifier.fillMaxSize(),
+                                                horizontalAlignment = Alignment.CenterHorizontally,
+                                                verticalArrangement = Arrangement.Center
+                                            ) {
+                                                Icon(
+                                                    imageVector = when (post.mediaType) {
+                                                        PostMediaType.IMAGE -> Icons.Outlined.Image
+                                                        PostMediaType.SHORT_VIDEO -> Icons.Outlined.PlayCircleOutline
+                                                        PostMediaType.NONE -> Icons.Outlined.Article
+                                                    },
+                                                    contentDescription = null,
+                                                    tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                                                    modifier = Modifier.size(28.dp)
+                                                )
+                                                Spacer(modifier = Modifier.height(4.dp))
+                                                Text(
+                                                    text = post.content,
+                                                    fontSize = 10.sp,
+                                                    maxLines = 2,
+                                                    textAlign = TextAlign.Center,
+                                                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                                                )
+                                            }
+                                        }
+                                    }
+                                    repeat(3 - rowPosts.size) {
+                                        Spacer(modifier = Modifier.weight(1f))
+                                    }
+                                }
+                            }
+                        }
+                        1 -> {
+                            // TODO: تبويب الفيديو - يُنفذ لاحقاً بطلب صريح من المستخدم
+                        }
+                        2 -> {
+                            Text(
+                                text = "لا يوجد إعادة استخدام بعد",
+                                fontSize = 13.sp,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                textAlign = TextAlign.Center,
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(vertical = 24.dp)
+                            )
+                        }
+                    }
+           }
         }
     }
 
