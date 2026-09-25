@@ -154,7 +154,7 @@ fun ProfileScreen(
                         }
                     }
 
-                    // Avatar with Edit Badge
+                    // Avatar (with edit badge + speech bubble) placed side-by-side with Name/ID
                     var avatarGlowStarted by remember { mutableStateOf(false) }
                     val avatarGlowAlpha by animateFloatAsState(
                         targetValue = if (avatarGlowStarted) 0f else 1f,
@@ -164,89 +164,112 @@ fun ProfileScreen(
                     LaunchedEffect(Unit) {
                         avatarGlowStarted = true
                     }
-                    Box(
-                        modifier = Modifier.size(86.dp),
-                        contentAlignment = Alignment.BottomEnd
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.spacedBy(12.dp),
+                        verticalAlignment = Alignment.CenterVertically
                     ) {
                         Box(
-                            modifier = Modifier
-                                .size(100.dp)
-                                .align(Alignment.Center)
-                                .clip(CircleShape)
-                                .background(
-                                    Brush.radialGradient(
-                                        listOf(
-                                            MujtamaGold.copy(alpha = 0.6f * avatarGlowAlpha),
-                                            MujtamaTeal.copy(alpha = 0.3f * avatarGlowAlpha),
-                                            Color.Transparent
-                                        )
-                                    )
-                                )
-                        )
-                        Box(
-                            modifier = Modifier
-                                .fillMaxSize()
-                                .clip(CircleShape)
-                                .background(
-                                    Brush.linearGradient(
-                                        listOf(MujtamaPrimary, MujtamaTeal, MujtamaGold)
-                                    )
-                                )
-                                .border(3.dp, MaterialTheme.colorScheme.surface, CircleShape),
-                            contentAlignment = Alignment.Center
+                            modifier = Modifier.size(86.dp),
+                            contentAlignment = Alignment.BottomEnd
                         ) {
-                            if (userProfile.avatarUrl.isNotBlank()) {
-                                AsyncImage(
-                                    model = userProfile.avatarUrl,
-                                    contentDescription = "صورة الملف الشخصي",
-                                    contentScale = ContentScale.Crop,
-                                    modifier = Modifier.fillMaxSize()
-                                )
-                            } else {
-                                Text(text = userProfile.avatarEmoji, fontSize = 42.sp)
-                            }
-                        }
-
-                        // Edit avatar icon button
-                        if (isOnOwnProfile) {
                             Box(
                                 modifier = Modifier
-                                    .size(28.dp)
+                                    .size(100.dp)
+                                    .align(Alignment.Center)
                                     .clip(CircleShape)
-                                    .background(MujtamaGold)
-                                    .clickable {
-                                        avatarImageLauncher.launch(
-                                            PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly)
+                                    .background(
+                                        Brush.radialGradient(
+                                            listOf(
+                                                MujtamaGold.copy(alpha = 0.6f * avatarGlowAlpha),
+                                                MujtamaTeal.copy(alpha = 0.3f * avatarGlowAlpha),
+                                                Color.Transparent
+                                            )
                                         )
-                                    }
-                                    .padding(4.dp),
+                                    )
+                            )
+                            Box(
+                                modifier = Modifier
+                                    .fillMaxSize()
+                                    .clip(CircleShape)
+                                    .background(
+                                        Brush.linearGradient(
+                                            listOf(MujtamaPrimary, MujtamaTeal, MujtamaGold)
+                                        )
+                                    )
+                                    .border(3.dp, MaterialTheme.colorScheme.surface, CircleShape),
                                 contentAlignment = Alignment.Center
                             ) {
-                                Icon(
-                                    imageVector = Icons.Default.Edit,
-                                    contentDescription = "تغيير صورة الملف الشخصي",
-                                    tint = Color.Black,
-                                    modifier = Modifier.size(16.dp)
+                                if (userProfile.avatarUrl.isNotBlank()) {
+                                    AsyncImage(
+                                        model = userProfile.avatarUrl,
+                                        contentDescription = "صورة الملف الشخصي",
+                                        contentScale = ContentScale.Crop,
+                                        modifier = Modifier.fillMaxSize()
+                                    )
+                                } else {
+                                    Text(text = userProfile.avatarEmoji, fontSize = 42.sp)
+                                }
+                            }
+
+                            // Edit avatar icon button
+                            if (isOnOwnProfile) {
+                                Box(
+                                    modifier = Modifier
+                                        .size(28.dp)
+                                        .clip(CircleShape)
+                                        .background(MujtamaGold)
+                                        .clickable {
+                                            avatarImageLauncher.launch(
+                                                PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly)
+                                            )
+                                        }
+                                        .padding(4.dp),
+                                    contentAlignment = Alignment.Center
+                                ) {
+                                    Icon(
+                                        imageVector = Icons.Default.Edit,
+                                        contentDescription = "تغيير صورة الملف الشخصي",
+                                        tint = Color.Black,
+                                        modifier = Modifier.size(16.dp)
+                                    )
+                                }
+                            }
+
+                            // Speech bubble ("what's on your mind?")
+                            Box(
+                                modifier = Modifier
+                                    .align(Alignment.TopEnd)
+                                    .offset(y = (-14).dp)
+                                    .clip(RoundedCornerShape(14.dp))
+                                    .background(MaterialTheme.colorScheme.surfaceVariant)
+                                    .padding(horizontal = 10.dp, vertical = 6.dp)
+                                    .testTag("profile_speech_bubble")
+                            ) {
+                                Text(
+                                    text = "ماذا يدور في ذهنك؟",
+                                    fontSize = 10.sp,
+                                    color = MaterialTheme.colorScheme.onSurfaceVariant
                                 )
                             }
                         }
-                    }
 
-                    // User Name & Handle
-                    Column(
-                        horizontalAlignment = Alignment.CenterHorizontally,
-                        verticalArrangement = Arrangement.spacedBy(2.dp)
-                    ) {
-                        Text(
-                            text = userProfile.name,
-                            fontWeight = FontWeight.Black,
-                            fontSize = 19.sp
-                        )
-                        Text(
-                            text = "ID: ${userProfile.id}",
-                            fontSize = 11.sp,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant
-                        )
+                        // User Name & ID
+                        Column(
+                            horizontalAlignment = Alignment.Start,
+                            verticalArrangement = Arrangement.spacedBy(2.dp)
+                        ) {
+                            Text(
+                                text = userProfile.name,
+                                fontWeight = FontWeight.Black,
+                                fontSize = 19.sp
+                            )
+                            Text(
+                                text = "ID: ${userProfile.id}",
+                                fontSize = 11.sp,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant
+                            )
+                        }
                     }
 
                     // Bio (plain text, no box — shown for own profile and others)
