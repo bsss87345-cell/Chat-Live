@@ -568,6 +568,42 @@ fun ProfileScreen(
             )
         }
     }
+
+    // Edit Post Dialog
+    editingPost?.let { post ->
+        EditPostDialog(
+            post = post,
+            onDismiss = { editingPost = null },
+            onSave = { newContent ->
+                onEditPost(post.id, newContent)
+                editingPost = null
+            }
+        )
+    }
+
+    // Delete Post Confirmation Dialog
+    deletingPost?.let { post ->
+        DeletePostConfirmDialog(
+            post = post,
+            onDismiss = { deletingPost = null },
+            onConfirm = {
+                onDeletePost(post.id)
+                deletingPost = null
+            }
+        )
+    }
+
+    // Report Post Dialog
+    reportingPost?.let { post ->
+        ReportPostDialog(
+            post = post,
+            onDismiss = { reportingPost = null },
+            onConfirm = { reason ->
+                onReportPost(post.id)
+                reportingPost = null
+            }
+        )
+    }
 }
 
 private fun FollowUser.toUserProfile(): UserProfile {
