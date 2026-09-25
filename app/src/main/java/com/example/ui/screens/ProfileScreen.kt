@@ -369,94 +369,92 @@ fun ProfileScreen(
                 }
         }
     }
-    }
 
     // -------------------------------------------------------------
     // DIALOGS
     // -------------------------------------------------------------
 
-    // Edit Bio Bar - shown above the keyboard, replaces the old dialog
-    if (showEditBioDialog) {
+    // Edit Bio Overlay - full-screen, animated, inside the same Box (no separate Dialog window)
+    AnimatedVisibility(
+        visible = showEditBioDialog,
+        enter = slideInVertically(initialOffsetY = { it }) + fadeIn(),
+        exit = slideOutVertically(targetOffsetY = { it }) + fadeOut(),
+        modifier = Modifier.fillMaxSize()
+    ) {
         var bioText by remember { mutableStateOf(userProfile.bio) }
         val focusRequester = remember { FocusRequester() }
         val keyboardController = LocalSoftwareKeyboardController.current
-        Dialog(
-            onDismissRequest = { showEditBioDialog = false },
-            properties = DialogProperties(
-                usePlatformDefaultWidth = false,
-                decorFitsSystemWindows = false
-            )
+        LaunchedEffect(Unit) {
+            focusRequester.requestFocus()
+            keyboardController?.show()
+        }
+        Surface(
+            modifier = Modifier.fillMaxSize(),
+            color = MaterialTheme.colorScheme.surface
         ) {
-            val view = LocalView.current
-            SideEffect {
-                val window = (view.parent as? DialogWindowProvider)?.window
-                window?.setBackgroundDrawable(
-                    ColorDrawable(android.graphics.Color.TRANSPARENT)
-                )
-                window?.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE)
-                window?.let { WindowCompat.setDecorFitsSystemWindows(it, false) }
-                window?.setLayout(
-                    WindowManager.LayoutParams.MATCH_PARENT,
-                    WindowManager.LayoutParams.MATCH_PARENT
-                )
-            }
-            LaunchedEffect(Unit) {
-                focusRequester.requestFocus()
-                keyboardController?.show()
-            }
-            Box(
+            Column(
                 modifier = Modifier
                     .fillMaxSize()
-                    .background(Color.Black.copy(alpha = 0.4f))
-                    .clickable(
-                        indication = null,
-                        interactionSource = remember { MutableInteractionSource() }
-                    ) { showEditBioDialog = false }
+                    .imePadding()
+                    .padding(16.dp)
             ) {
-                Column(
-                    modifier = Modifier
-                        .align(Alignment.BottomCenter)
-                        .fillMaxWidth()
-                        .imePadding()
-                        .background(MaterialTheme.colorScheme.surface)
-                        .clickable(
-                            indication = null,
-                            interactionSource = remember { MutableInteractionSource() }
-                        ) { }
-                        .padding(horizontal = 12.dp, vertical = 8.dp)
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
                 ) {
+                    IconButton(onClick = { showEditBioDialog = false }) {
+                        Icon(
+                            imageVector = Icons.Default.Close,
+                            contentDescription = "إغلاق",
+                            tint = MaterialTheme.colorScheme.onSurface
+                        )
+                    }
                     Text(
-                        text = "${bioText.length}/500",
-                        fontSize = 11.sp,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
-                        modifier = Modifier.fillMaxWidth(),
-                        textAlign = TextAlign.End
+                        text = "أضف نبذة تعريفية",
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 17.sp
                     )
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically,
-                        modifier = Modifier.fillMaxWidth()
-                    ) {
+                    IconButton(onClick = {
+                        onUpdateBio(bioText)
+                        showEditBioDialog = false
+                    }) {
+                        Icon(
+                            imageVector = Icons.Default.Check,
+                            contentDescription = "حفظ",
+                            tint = MaterialTheme.colorScheme.primary
+                        )
+                    }
+                }
+                Spacer(modifier = Modifier.height(24.dp))
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .border(1.dp, MaterialTheme.colorScheme.onSurface, RoundedCornerShape(16.dp))
+                        .padding(16.dp)
+                ) {
+                    Column {
+                        Text(
+                            text = "${bioText.length}/150",
+                            fontSize = 12.sp,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                        )
+                        Spacer(modifier = Modifier.height(8.dp))
                         OutlinedTextField(
                             value = bioText,
-                            onValueChange = { if (it.length <= 500) bioText = it },
+                            onValueChange = { if (it.length <= 150) bioText = it },
                             modifier = Modifier
-                                .weight(1f)
+                                .fillMaxWidth()
                                 .focusRequester(focusRequester),
                             placeholder = { Text("اكتب نبذة مميزة تعبر عن اهتماماتك", fontSize = 12.sp) }
                         )
-                        TextButton(
-                            onClick = {
-                                onUpdateBio(bioText)
-                                showEditBioDialog = false
-                            }
-                        ) {
-                            Text("تم", fontWeight = FontWeight.Bold)
-                        }
                     }
                 }
             }
         }
     }
+    }
+
     // Followers List - Full Screen
     if (showFollowersDialog) {
         FollowListFullScreen(
