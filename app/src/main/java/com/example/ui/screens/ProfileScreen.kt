@@ -78,7 +78,7 @@ fun ProfileScreen(
     var showFollowersDialog by remember { mutableStateOf(false) }
     var showFollowingDialog by remember { mutableStateOf(false) }
     var settingsExpanded by remember { mutableStateOf(false) }
-
+    var selectedProfileTab by remember { mutableStateOf(0) }
     val context = LocalContext.current
     val avatarImageLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.PickVisualMedia()
