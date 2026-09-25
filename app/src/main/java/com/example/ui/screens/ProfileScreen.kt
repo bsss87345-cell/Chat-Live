@@ -236,22 +236,6 @@ fun ProfileScreen(
                                 }
                             }
 
-                            // Speech bubble ("what's on your mind?")
-                            Box(
-                                modifier = Modifier
-                                    .align(Alignment.TopEnd)
-                                    .offset(y = (-14).dp)
-                                    .clip(RoundedCornerShape(14.dp))
-                                    .background(MaterialTheme.colorScheme.surfaceVariant)
-                                    .padding(horizontal = 10.dp, vertical = 6.dp)
-                                    .testTag("profile_speech_bubble")
-                            ) {
-                                Text(
-                                    text = "ماذا يدور في ذهنك؟",
-                                    fontSize = 10.sp,
-                                    color = MaterialTheme.colorScheme.onSurfaceVariant
-                                )
-                            }
                         }
 
                         // User Name & ID
