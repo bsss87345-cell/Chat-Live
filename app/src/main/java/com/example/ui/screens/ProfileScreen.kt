@@ -175,19 +175,7 @@ fun ProfileScreen(
                         }
                     }
 
-                    // Name (centered above the stats/avatar row)
-                    Text(
-                        text = userProfile.name,
-                        fontWeight = FontWeight.Black,
-                        fontSize = 19.sp,
-                        textAlign = TextAlign.Center,
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(horizontal = 40.dp)
-                            .offset(y = 36.dp)
-                    )
-
-                    // Avatar + Stats side-by-side
+                    // Avatar + Stats side-by-side, with the name floating above (no reserved space)
                     var avatarGlowStarted by remember { mutableStateOf(false) }
                     val avatarGlowAlpha by animateFloatAsState(
                         targetValue = if (avatarGlowStarted) 0f else 1f,
@@ -197,6 +185,7 @@ fun ProfileScreen(
                     LaunchedEffect(Unit) {
                         avatarGlowStarted = true
                     }
+                    Box(modifier = Modifier.fillMaxWidth()) {
                     Row(
                         modifier = Modifier
                             .fillMaxWidth()
@@ -292,6 +281,18 @@ fun ProfileScreen(
                                 onClick = { showFollowingDialog = true }
                             )
                         }
+                    }
+                        Text(
+                            text = userProfile.name,
+                            fontWeight = FontWeight.Black,
+                            fontSize = 19.sp,
+                            textAlign = TextAlign.Center,
+                            modifier = Modifier
+                                .align(Alignment.TopCenter)
+                                .fillMaxWidth()
+                                .padding(horizontal = 40.dp)
+                                .offset(y = 36.dp)
+                        )
                     }
 
                     // Bio (plain text, no box — shown for own profile and others)
