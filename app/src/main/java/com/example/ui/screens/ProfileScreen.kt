@@ -23,6 +23,7 @@ import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.compose.foundation.layout.offset
 import androidx.compose.ui.unit.sp
 import android.net.Uri
 import android.content.Context
@@ -169,8 +170,8 @@ fun ProfileScreen(
                         textAlign = TextAlign.Center,
                         modifier = Modifier
                             .fillMaxWidth()
-                            .padding(horizontal = 40.dp, vertical = 0.dp)
-                            .padding(top = 36.dp)
+                            .padding(horizontal = 40.dp)
+                            .offset(y = 36.dp)
                     )
 
                     // Avatar + Stats side-by-side
