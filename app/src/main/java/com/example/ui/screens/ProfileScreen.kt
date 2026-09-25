@@ -106,12 +106,18 @@ fun ProfileScreen(
                 verticalArrangement = Arrangement.spacedBy(12.dp)
             ) { 
                     // Menu icon (top-left corner in RTL) → opens the separate account-settings page
-                    if (isOnOwnProfile) {
-                        Row(
-                            modifier = Modifier.fillMaxWidth(),
-                            horizontalArrangement = Arrangement.End,
-                            verticalAlignment = Alignment.CenterVertically
-                        ) {
+                    // Top bar: ID (right) + settings icons (left, own profile only)
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Text(
+                            text = "ID: ${userProfile.id}",
+                            fontSize = 13.sp,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                        )
+                        Spacer(modifier = Modifier.weight(1f))
+                        if (isOnOwnProfile) {
                             IconButton(
                                 onClick = { },
                                 modifier = Modifier
@@ -154,7 +160,15 @@ fun ProfileScreen(
                         }
                     }
 
-                    // Avatar (with edit badge + speech bubble) placed side-by-side with Name/ID
+                    // User Name
+                    Text(
+                        text = userProfile.name,
+                        fontWeight = FontWeight.Black,
+                        fontSize = 19.sp,
+                        modifier = Modifier.fillMaxWidth()
+                    )
+
+                    // Avatar + Stats side-by-side
                     var avatarGlowStarted by remember { mutableStateOf(false) }
                     val avatarGlowAlpha by animateFloatAsState(
                         targetValue = if (avatarGlowStarted) 0f else 1f,
@@ -166,7 +180,6 @@ fun ProfileScreen(
                     }
                     Row(
                         modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.spacedBy(12.dp),
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         Box(
@@ -235,23 +248,25 @@ fun ProfileScreen(
                                     )
                                 }
                             }
-
                         }
 
-                        // User Name & ID
-                        Column(
-                            horizontalAlignment = Alignment.Start,
-                            verticalArrangement = Arrangement.spacedBy(2.dp)
+                        Spacer(modifier = Modifier.width(16.dp))
+
+                        Row(
+                            modifier = Modifier.weight(1f),
+                            horizontalArrangement = Arrangement.spacedBy(24.dp, Alignment.CenterHorizontally),
+                            verticalAlignment = Alignment.CenterVertically
                         ) {
-                            Text(
-                                text = userProfile.name,
-                                fontWeight = FontWeight.Black,
-                                fontSize = 19.sp
+                            ProfileStatItem(title = "المنشورات", count = "$totalPostsCount")
+                            ProfileStatItem(
+                                title = "المتابعون",
+                                count = "${userProfile.followersCount}",
+                                onClick = { showFollowersDialog = true }
                             )
-                            Text(
-                                text = "ID: ${userProfile.id}",
-                                fontSize = 11.sp,
-                                color = MaterialTheme.colorScheme.onSurfaceVariant
+                            ProfileStatItem(
+                                title = "يتابع",
+                                count = "${userProfile.followingCount}",
+                                onClick = { showFollowingDialog = true }
                             )
                         }
                     }
@@ -272,27 +287,6 @@ fun ProfileScreen(
                                 )
                         )
                     }
-                    // Stats Grid Row (Posts, Followers, Following)
-                    Row(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(top = 4.dp),
-                        horizontalArrangement = Arrangement.spacedBy(32.dp, Alignment.CenterHorizontally),
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        ProfileStatItem(title = "المنشورات", count = "$totalPostsCount")
-                        ProfileStatItem(
-                            title = "المتابعون",
-                            count = "${userProfile.followersCount}",
-                            onClick = { showFollowersDialog = true }
-                        )
-                        ProfileStatItem(
-                            title = "يتابع",
-                            count = "${userProfile.followingCount}",
-                            onClick = { showFollowingDialog = true }
-                        )
-                    }
-
                     // Content type tabs (Posts / Reposts)
                     Row(
                         modifier = Modifier
