@@ -121,56 +121,71 @@ fun ProfileScreen(
                         Spacer(modifier = Modifier.weight(1f))
                         if (isOnOwnProfile) {
                             IconButton(
-                                onClick = { },
-                                modifier = Modifier
-                                    .size(32.dp)
-                                    .testTag("profile_add_friend_button")
-                            ) {
-                                Icon(
-                                    imageVector = Icons.Default.PersonAdd,
-                                    contentDescription = "إضافة صديق",
-                                    tint = MaterialTheme.colorScheme.onSurface,
-                                    modifier = Modifier.size(24.dp)
-                                )
-                            }
-                            IconButton(
-                                onClick = { },
-                                modifier = Modifier
-                                    .size(32.dp)
-                                    .testTag("profile_views_icon_button")
-                            ) {
-                                Icon(
-                                    imageVector = Icons.Default.RemoveRedEye,
-                                    contentDescription = "من شاهد الملف الشخصي",
-                                    tint = MaterialTheme.colorScheme.onSurface,
-                                    modifier = Modifier.size(24.dp)
-                                )
-                            }
-                            IconButton(
                                 onClick = { onOpenAccountSettings() },
                                 modifier = Modifier
-                                    .size(32.dp)
+                                    .size(36.dp)
                                     .testTag("profile_settings_menu_button")
                             ) {
                                 Icon(
                                     imageVector = Icons.Default.Menu,
                                     contentDescription = "القائمة",
                                     tint = MaterialTheme.colorScheme.onSurface,
-                                    modifier = Modifier.size(26.dp)
+                                    modifier = Modifier.size(28.dp)
                                 )
                             }
                             IconButton(
-                                onClick = { },
+                                onClick = { settingsExpanded = !settingsExpanded },
                                 modifier = Modifier
-                                    .size(32.dp)
-                                    .testTag("profile_swap_icon_button")
+                                    .size(36.dp)
+                                    .testTag("profile_settings_expand_button")
                             ) {
                                 Icon(
-                                    imageVector = Icons.Default.SwapHoriz,
-                                    contentDescription = "تحويل",
+                                    imageVector = if (settingsExpanded) Icons.Default.KeyboardArrowLeft else Icons.Default.KeyboardArrowRight,
+                                    contentDescription = "توسيع الإعدادات",
                                     tint = MaterialTheme.colorScheme.onSurface,
-                                    modifier = Modifier.size(24.dp)
+                                    modifier = Modifier.size(28.dp)
                                 )
+                            }
+                            if (settingsExpanded) {
+                                IconButton(
+                                    onClick = { },
+                                    modifier = Modifier
+                                        .size(36.dp)
+                                        .testTag("profile_swap_icon_button")
+                                ) {
+                                    Icon(
+                                        imageVector = Icons.Default.SwapHoriz,
+                                        contentDescription = "تحويل",
+                                        tint = MaterialTheme.colorScheme.onSurface,
+                                        modifier = Modifier.size(28.dp)
+                                    )
+                                }
+                                IconButton(
+                                    onClick = { },
+                                    modifier = Modifier
+                                        .size(36.dp)
+                                        .testTag("profile_add_friend_button")
+                                ) {
+                                    Icon(
+                                        imageVector = Icons.Default.PersonAdd,
+                                        contentDescription = "إضافة صديق",
+                                        tint = MaterialTheme.colorScheme.onSurface,
+                                        modifier = Modifier.size(28.dp)
+                                    )
+                                }
+                                IconButton(
+                                    onClick = { },
+                                    modifier = Modifier
+                                        .size(36.dp)
+                                        .testTag("profile_views_icon_button")
+                                ) {
+                                    Icon(
+                                        imageVector = Icons.Default.RemoveRedEye,
+                                        contentDescription = "من شاهد الملف الشخصي",
+                                        tint = MaterialTheme.colorScheme.onSurface,
+                                        modifier = Modifier.size(28.dp)
+                                    )
+                                }
                             }
                         }
                     }
