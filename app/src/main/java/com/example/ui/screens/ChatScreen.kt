@@ -4071,6 +4071,13 @@ fun GiftBoxDialog(
     var selectedQuantity by remember { mutableStateOf(1) }
     var showQuantityPicker by remember { mutableStateOf(false) }
     var selectedGift by remember { mutableStateOf<GiftItem?>(roomGiftCatalog.firstOrNull()) }
+    var insufficientBalanceMessage by remember { mutableStateOf<String?>(null) }
+    val balanceShakeTrigger = remember { androidx.compose.runtime.mutableIntStateOf(0) }
+    val balanceShakeOffset by animateFloatAsState(
+        targetValue = 0f,
+        animationSpec = tween(0),
+        label = "balance_shake"
+    )
     val sheetState = androidx.compose.material3.rememberModalBottomSheetState(skipPartiallyExpanded = true)
     androidx.compose.material3.ModalBottomSheet(
         onDismissRequest = onDismiss,
