@@ -1442,6 +1442,7 @@ Box(modifier = Modifier.fillMaxSize()) {
                                     )
                                 )
                             }
+                            true
                         },
                         members = room.members,
                         walletBalance = walletBalance
