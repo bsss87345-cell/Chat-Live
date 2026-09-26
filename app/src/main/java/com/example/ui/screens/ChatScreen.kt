@@ -4121,6 +4121,7 @@ fun GiftBoxDialog(
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
                     modifier = Modifier
+                        .offset(x = balanceShakeAnim.value.dp)
                         .clip(RoundedCornerShape(20.dp))
                         .background(
                             Brush.horizontalGradient(
@@ -4135,7 +4136,7 @@ fun GiftBoxDialog(
                         text = "$walletBalance",
                         fontSize = 13.sp,
                         fontWeight = FontWeight.Bold,
-                        color = MujtamaGold
+                        color = if (insufficientBalanceMessage != null) MaterialTheme.colorScheme.error else MujtamaGold
                     )
                 }
             }
