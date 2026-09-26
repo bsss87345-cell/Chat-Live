@@ -63,6 +63,7 @@ import android.net.Uri
 import coil.compose.AsyncImage
 import androidx.compose.ui.res.painterResource
 import com.example.R
+import com.aistudio.mujtamauna.ar8vzp.R
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
