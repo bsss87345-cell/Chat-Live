@@ -623,7 +623,10 @@ private fun FollowUser.toUserProfile(): UserProfile {
 private fun FollowListFullScreen(
     title: String,
     users: List<FollowUser>,
-    onDismiss: () -> Unit
+    onDismiss: () -> Unit,
+    onLoadProfileFor: (String) -> UserProfile? = { null },
+    onLoadFollowersFor: (String) -> List<FollowUser> = { emptyList() },
+    onLoadFollowingFor: (String) -> List<FollowUser> = { emptyList() }
 ) {
     var selectedUser by remember { mutableStateOf<FollowUser?>(null) }
     Dialog(
