@@ -657,7 +657,7 @@ private fun FollowListFullScreen(
                     title = { Text(title, fontWeight = FontWeight.Bold) },
                     navigationIcon = {
                         IconButton(onClick = onDismiss) {
-                            Icon(Icons.Default.ArrowBack, contentDescription = "رجوع")
+                            Icon(Icons.Default.ArrowForward, contentDescription = "رجوع")
                         }
                     }
                 )
