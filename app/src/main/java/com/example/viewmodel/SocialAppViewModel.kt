@@ -230,6 +230,19 @@ class SocialAppViewModel : ViewModel() {
         return _follows.value.filter { it.followerId == userId }
     }
 
+    // دليل مستخدمين وهميين للاختبار المحلي فقط (مؤقت، يُستبدل بـ Firestore لاحقاً)
+    private val mockUsersDirectory: List<UserProfile> = listOf(
+        UserProfile(id = "mock_1", name = "سارة أحمد", handle = "@sara_a", bio = "أحب التصوير والسفر", avatarEmoji = "👩", followersCount = 120, followingCount = 80),
+        UserProfile(id = "mock_2", name = "محمد العلي", handle = "@m_ali", bio = "مطور تطبيقات", avatarEmoji = "👨", followersCount = 340, followingCount = 90),
+        UserProfile(id = "mock_3", name = "نورة سالم", handle = "@noura_s", bio = "طالبة جامعية", avatarEmoji = "👩‍🎓", followersCount = 75, followingCount = 200),
+        UserProfile(id = "mock_4", name = "خالد فهد", handle = "@khalid_f", bio = "شغوف بالرياضة", avatarEmoji = "🏃", followersCount = 500, followingCount = 30)
+    )
+
+    // يرجع بروفايل أي مستخدم بالـID (أنا أو من الدليل الوهمي)
+    fun getUserProfileById(userId: String): UserProfile? {
+        if (userId == _userProfile.value.id) return _userProfile.value
+        return mockUsersDirectory.find { it.id == userId }
+    }
     // Notification toast / snackbar message
     private val _userMessage = MutableStateFlow<String?>(null)
     val userMessage: StateFlow<String?> = _userMessage.asStateFlow()
