@@ -4198,7 +4198,28 @@ fun GiftBoxDialog(
                         )
                         .clickable {
                             selectedGift?.let { gift ->
-                                repeat(selectedQuantity) { onSendGift(gift, selectedMember) }
+                                var allSucceeded = true
+                                for (i in 0 until selectedQuantity) {
+                                    if (!onSendGift(gift, selectedMember)) {
+                                        allSucceeded = false
+                                        break
+                                    }
+                                }
+                                if (!allSucceeded) {
+                                    insufficientBalanceMessage = "رصيدك غير كافٍ لإرسال هذه الهدية"
+                                    giftDialogScope.launch {
+                                        kotlinx.coroutines.delay(2000)
+                                        insufficientBalanceMessage = null
+                                    }
+                                    giftDialogScope.launch {
+                                        balanceShakeAnim.snapTo(0f)
+                                        repeat(3) {
+                                            balanceShakeAnim.animateTo(10f, tween(50))
+                                            balanceShakeAnim.animateTo(-10f, tween(50))
+                                        }
+                                        balanceShakeAnim.animateTo(0f, tween(50))
+                                    }
+                                }
                             }
                         }
                         .padding(vertical = 12.dp),
