@@ -545,7 +545,10 @@ fun ProfileScreen(
         FollowListFullScreen(
             title = "المتابعون",
             users = followersList,
-            onDismiss = { showFollowersDialog = false }
+            onDismiss = { showFollowersDialog = false },
+            onLoadProfileFor = onLoadProfileFor,
+            onLoadFollowersFor = onLoadFollowersFor,
+            onLoadFollowingFor = onLoadFollowingFor
         )
     }
 
@@ -554,7 +557,10 @@ fun ProfileScreen(
         FollowListFullScreen(
             title = "يتابع",
             users = followingList,
-            onDismiss = { showFollowingDialog = false }
+            onDismiss = { showFollowingDialog = false },
+            onLoadProfileFor = onLoadProfileFor,
+            onLoadFollowersFor = onLoadFollowersFor,
+            onLoadFollowingFor = onLoadFollowingFor
         )
     }
 
