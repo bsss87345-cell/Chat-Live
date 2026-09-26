@@ -3938,21 +3938,6 @@ fun findGameTypeFromTitle(title: String?): GameType {
         title.contains("شطرنج") -> GameType.CHESS
         else -> GameType.LUDO
     }
-    data class GiftItem(
-    val id: String,
-    val name: String,
-    val emoji: String,
-    val colorHex: Long,
-    val price: Int = 10,
-    val videoRes: Int? = null
-)
-
-private val roomGiftCatalog = listOf(
-    GiftItem(id = "rose", name = "وردة", emoji = "🌹", colorHex = 0xFFE0245E, price = 10, videoRes = R.raw.gift_video_rose),
-    GiftItem(id = "teddy_bear", name = "دبدوب", emoji = "🧸", colorHex = 0xFFB5651D, price = 10),
-    GiftItem(id = "kafo", name = "كفو", emoji = "👏", colorHex = 0xFF1E88E5, price = 10),
-    GiftItem(id = "coffee", name = "قهوة", emoji = "☕", colorHex = 0xFF6F4E37, price = 10)
-)
     Dialog(onDismissRequest = onDismiss) {
         Surface(
             shape = RoundedCornerShape(20.dp),
