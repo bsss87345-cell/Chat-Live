@@ -144,6 +144,21 @@ fun ProfileScreen(
                         modifier = Modifier.fillMaxWidth(),
                         verticalAlignment = Alignment.CenterVertically
                     ) {
+                        if (!isOnOwnProfile) {
+                            IconButton(
+                                onClick = onBackFromOtherProfile,
+                                modifier = Modifier
+                                    .size(36.dp)
+                                    .testTag("profile_back_button")
+                            ) {
+                                Icon(
+                                    imageVector = Icons.Default.ArrowForward,
+                                    contentDescription = "رجوع",
+                                    tint = MaterialTheme.colorScheme.onSurface,
+                                    modifier = Modifier.size(28.dp)
+                                )
+                            }
+                        }
                         Text(
                             text = "ID: ${userProfile.id}",
                             fontSize = 13.sp,
