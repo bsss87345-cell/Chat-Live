@@ -3938,6 +3938,21 @@ fun findGameTypeFromTitle(title: String?): GameType {
         title.contains("شطرنج") -> GameType.CHESS
         else -> GameType.LUDO
     }
+}
+
+@Composable
+fun GamePickerDialog(
+    onDismiss: () -> Unit,
+    onSelectGame: (GameType) -> Unit
+) {
+    val games = listOf(
+        GameType.LUDO,
+        GameType.JACKAROO,
+        GameType.DOMINO,
+        GameType.SNAKES_AND_LADDERS,
+        GameType.CHESS
+    )
+
     Dialog(onDismissRequest = onDismiss) {
         Surface(
             shape = RoundedCornerShape(20.dp),
@@ -4028,12 +4043,11 @@ data class GiftItem(
     val name: String,
     val emoji: String,
     val colorHex: Long,
-    val price: Int = 10,
-    val videoRes: Int? = null
+    val price: Int = 10
 )
 
 private val roomGiftCatalog = listOf(
-    GiftItem(id = "rose", name = "وردة", emoji = "🌹", colorHex = 0xFFE0245E, price = 10, videoRes = R.raw.gift_video_rose),
+    GiftItem(id = "rose", name = "وردة", emoji = "🌹", colorHex = 0xFFE0245E, price = 10),
     GiftItem(id = "teddy_bear", name = "دبدوب", emoji = "🧸", colorHex = 0xFFB5651D, price = 10),
     GiftItem(id = "kafo", name = "كفو", emoji = "👏", colorHex = 0xFF1E88E5, price = 10),
     GiftItem(id = "coffee", name = "قهوة", emoji = "☕", colorHex = 0xFF6F4E37, price = 10)
