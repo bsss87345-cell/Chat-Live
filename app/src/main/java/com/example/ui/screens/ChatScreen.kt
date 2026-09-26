@@ -118,6 +118,7 @@ fun ChatScreen(
     onLeaveOwnerSeat: () -> Unit = {},
     onRemoveOwnerSeatMember: () -> Unit = {},
     onInviteMemberToOwnerSeat: (String) -> Unit = {},
+    onSpendOnGift: (String, Int, Int) -> Boolean = { _, _, _ -> true },
     onRequestJoinWheel: () -> Unit = {},
     onRespondWheelRequest: (String, Boolean) -> Unit = { _, _ -> },
     onStartWheelSpin: () -> Unit = {},
