@@ -4073,9 +4073,22 @@ fun GiftBoxDialog(
     var showQuantityPicker by remember { mutableStateOf(false) }
     var selectedGift by remember { mutableStateOf<GiftItem?>(roomGiftCatalog.firstOrNull()) }
     var insufficientBalanceMessage by remember { mutableStateOf<String?>(null) }
+    var giftErrorTrigger by remember { mutableStateOf(0) }
     val balanceShakeAnim = remember { androidx.compose.animation.core.Animatable(0f) }
-    val giftDialogScope = androidx.compose.runtime.rememberCoroutineScope()
     val sheetState = androidx.compose.material3.rememberModalBottomSheetState(skipPartiallyExpanded = true)
+
+    LaunchedEffect(giftErrorTrigger) {
+        if (giftErrorTrigger > 0) {
+            balanceShakeAnim.snapTo(0f)
+            repeat(3) {
+                balanceShakeAnim.animateTo(10f, tween(50))
+                balanceShakeAnim.animateTo(-10f, tween(50))
+            }
+            balanceShakeAnim.animateTo(0f, tween(50))
+            kotlinx.coroutines.delay(2000)
+            insufficientBalanceMessage = null
+        }
+    }
     androidx.compose.material3.ModalBottomSheet(
         onDismissRequest = onDismiss,
         sheetState = sheetState,
