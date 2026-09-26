@@ -4196,6 +4196,15 @@ fun GiftBoxDialog(
                 }
             }
             Spacer(modifier = Modifier.height(14.dp))
+            if (insufficientBalanceMessage != null) {
+                Text(
+                    text = insufficientBalanceMessage!!,
+                    fontSize = 12.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = MaterialTheme.colorScheme.error,
+                    modifier = Modifier.padding(bottom = 6.dp)
+                )
+            }
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 verticalAlignment = Alignment.CenterVertically,
