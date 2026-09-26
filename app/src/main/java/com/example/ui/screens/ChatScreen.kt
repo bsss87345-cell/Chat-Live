@@ -1418,7 +1418,7 @@ Box(modifier = Modifier.fillMaxSize()) {
                         onDismiss = { showGiftBoxDialog = false },
                         onSendGift = { gift, receiver ->
                             if (!onSpendOnGift(gift.name, gift.price, 1)) {
-                                return@GiftBoxDialog
+                                return@GiftBoxDialog false
                             }
                             showGiftBoxDialog = false
                             val receiverLabel = receiver?.name ?: "الجميع"
