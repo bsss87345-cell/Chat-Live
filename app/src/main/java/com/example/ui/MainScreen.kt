@@ -261,6 +261,7 @@ onSendImage = { convId, uri -> viewModel.sendMessage(convId, "", ChatMessageType
                                 onLeaveOwnerSeat = { viewModel.leaveOwnerVoiceSeat(activeRoomId ?: "") },
                                 onRemoveOwnerSeatMember = { viewModel.removeMemberFromOwnerSeat(activeRoomId ?: "") },
                                 onInviteMemberToOwnerSeat = { memberId -> viewModel.inviteMemberToOwnerSeat(activeRoomId ?: "", memberId) },
+                                onSpendOnGift = { giftName, giftPrice, quantity -> viewModel.spendOnGift(giftName, giftPrice, quantity) },
                                 onRequestJoinWheel = { viewModel.requestJoinWheel(activeRoomId ?: "") },
                                 onRespondWheelRequest = { requestId, accept -> viewModel.respondToWheelRequest(activeRoomId ?: "", requestId, accept) },
                                 onStartWheelSpin = { viewModel.startWheelSpin(activeRoomId ?: "") },
