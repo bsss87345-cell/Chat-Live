@@ -331,7 +331,10 @@ onSendImage = { convId, uri -> viewModel.sendMessage(convId, "", ChatMessageType
                                 onDeletePost = { viewModel.deletePost(it) },
                                 onReportPost = { viewModel.reportPost(it) },
                                 followersList = followersList,
-                                followingList = followingList
+                                followingList = followingList,
+                                onLoadProfileFor = { userId -> viewModel.getUserProfileById(userId) },
+                                onLoadFollowersFor = { userId -> viewModel.getFollowersOf(userId) },
+                                onLoadFollowingFor = { userId -> viewModel.getFollowingOf(userId) }
                                 )
                         }
                     }
