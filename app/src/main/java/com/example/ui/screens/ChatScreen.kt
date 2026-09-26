@@ -186,7 +186,8 @@ fun ChatScreen(
                 onLeaveOwnerSeat = onLeaveOwnerSeat,
                 onRemoveOwnerSeatMember = onRemoveOwnerSeatMember,
                 onInviteMemberToOwnerSeat = onInviteMemberToOwnerSeat,
-                onRequestJoinWheel = onRequestJoinWheel,
+                    onSpendOnGift = onSpendOnGift,
+                    onRequestJoinWheel = onRequestJoinWheel,
                 onRespondWheelRequest = onRespondWheelRequest,
                 onStartWheelSpin = onStartWheelSpin,
                 onResetWheel = onResetWheel
