@@ -4062,7 +4062,7 @@ private val roomGiftCatalog = listOf(
 @Composable
 fun GiftBoxDialog(
     onDismiss: () -> Unit,
-    onSendGift: (GiftItem, RoomMember?) -> Unit,
+    onSendGift: (GiftItem, RoomMember?) -> Boolean,
     members: List<RoomMember> = emptyList(),
     walletBalance: Int = 0
 ) {
