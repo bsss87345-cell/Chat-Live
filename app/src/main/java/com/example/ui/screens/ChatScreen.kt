@@ -4207,17 +4207,19 @@ fun GiftBoxDialog(
                                 }
                                 if (!allSucceeded) {
                                     insufficientBalanceMessage = "رصيدك غير كافٍ لإرسال هذه الهدية"
-                                    kotlinx.coroutines.launch(giftDialogScope) {
-                                        kotlinx.coroutines.delay(2000)
-                                        insufficientBalanceMessage = null
-                                    }
-                                    kotlinx.coroutines.launch(giftDialogScope) {
-                                        balanceShakeAnim.snapTo(0f)
-                                        repeat(3) {
-                                            balanceShakeAnim.animateTo(10f, tween(50))
-                                            balanceShakeAnim.animateTo(-10f, tween(50))
+                                    with(giftDialogScope) {
+                                        launch {
+                                            kotlinx.coroutines.delay(2000)
+                                            insufficientBalanceMessage = null
                                         }
-                                        balanceShakeAnim.animateTo(0f, tween(50))
+                                        launch {
+                                            balanceShakeAnim.snapTo(0f)
+                                            repeat(3) {
+                                                balanceShakeAnim.animateTo(10f, tween(50))
+                                                balanceShakeAnim.animateTo(-10f, tween(50))
+                                            }
+                                            balanceShakeAnim.animateTo(0f, tween(50))
+                                        }
                                     }
                                 }
                             }
