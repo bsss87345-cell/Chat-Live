@@ -252,6 +252,24 @@ class SocialAppViewModel : ViewModel() {
         if (userId == _userProfile.value.id) return _userProfile.value
         return mockUsersDirectory.find { it.id == userId }
     }
+
+    // يرجع قائمة متابعي مستخدم معيّن (بأي id) كـ FollowUser جاهزة للعرض
+    fun getFollowersOf(userId: String): List<FollowUser> {
+        return loadFollowers(userId).mapNotNull { follow ->
+            getUserProfileById(follow.followerId)?.let { profile ->
+                FollowUser(id = profile.id, name = profile.name, handle = profile.handle, avatarUrl = profile.avatarUrl)
+            }
+        }
+    }
+
+    // يرجع قائمة من يتابعهم مستخدم معيّن (بأي id) كـ FollowUser جاهزة للعرض
+    fun getFollowingOf(userId: String): List<FollowUser> {
+        return loadFollowing(userId).mapNotNull { follow ->
+            getUserProfileById(follow.followingId)?.let { profile ->
+                FollowUser(id = profile.id, name = profile.name, handle = profile.handle, avatarUrl = profile.avatarUrl)
+            }
+        }
+    }
     // Notification toast / snackbar message
     private val _userMessage = MutableStateFlow<String?>(null)
     val userMessage: StateFlow<String?> = _userMessage.asStateFlow()
