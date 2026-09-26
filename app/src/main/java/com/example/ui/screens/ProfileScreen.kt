@@ -86,7 +86,8 @@ fun ProfileScreen(
     isOnOwnProfile: Boolean = true,
     onLoadProfileFor: (String) -> UserProfile? = { null },
     onLoadFollowersFor: (String) -> List<FollowUser> = { emptyList() },
-    onLoadFollowingFor: (String) -> List<FollowUser> = { emptyList() }
+    onLoadFollowingFor: (String) -> List<FollowUser> = { emptyList() },
+    onBackFromOtherProfile: () -> Unit = {}
 ) {
     var showEditBioDialog by remember { mutableStateOf(false) }
     var showFollowersDialog by remember { mutableStateOf(false) }
