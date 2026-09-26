@@ -739,17 +739,19 @@ private fun FollowListFullScreen(
                 modifier = Modifier.fillMaxSize(),
                 color = Color.White
             ) {
-                val vm: com.example.viewmodel.SocialAppViewModel = androidx.lifecycle.viewmodel.compose.viewModel()
-                ProfileScreen(
-                    userProfile = vm.getUserProfileById(selectedUser!!.id) ?: selectedUser!!.toUserProfile(),
+               ProfileScreen(
+                    userProfile = onLoadProfileFor(selectedUser!!.id) ?: selectedUser!!.toUserProfile(),
                     posts = emptyList(),
                     balance = 0,
                     onUpdateBio = {},
                     onLogout = {},
-                    followersList = vm.getFollowersOf(selectedUser!!.id),
-                    followingList = vm.getFollowingOf(selectedUser!!.id),
-                    isOnOwnProfile = false
-                )
+                    followersList = onLoadFollowersFor(selectedUser!!.id),
+                    followingList = onLoadFollowingFor(selectedUser!!.id),
+                    isOnOwnProfile = false,
+                    onLoadProfileFor = onLoadProfileFor,
+                    onLoadFollowersFor = onLoadFollowersFor,
+                    onLoadFollowingFor = onLoadFollowingFor
+                ) 
             }
         }
     }
