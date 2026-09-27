@@ -791,8 +791,10 @@ private fun FollowListFullScreen(
                     onLoadFollowersFor = onLoadFollowersFor,
                     onLoadFollowingFor = onLoadFollowingFor,
                     onBackFromOtherProfile = { selectedUser = null },
-                    onLoadPostsFor = onLoadPostsFor
-                ) 
+                    onLoadPostsFor = onLoadPostsFor,
+                    isUserFollowing = isUserFollowing,
+                    onToggleFollow = onToggleFollow
+                )
             }
         }
     }
