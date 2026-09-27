@@ -32,7 +32,11 @@ class MainActivity : ComponentActivity() {
             fadeOut.doOnEnd { provider.remove() }
             fadeOut.start()
         }
-        enableEdgeToEdge()
+        enableEdgeToEdge(
+            navigationBarStyle = androidx.activity.SystemBarStyle.dark(
+                android.graphics.Color.TRANSPARENT
+            )
+        )
         setContent {
             val viewModel: SocialAppViewModel = viewModel()
             val isDarkMode by viewModel.isDarkMode.collectAsStateWithLifecycle()
