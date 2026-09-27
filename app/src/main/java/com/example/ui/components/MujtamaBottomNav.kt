@@ -95,7 +95,7 @@ fun MujtamaBottomNav(
                                 ) else Modifier
                             )
                             .clip(CircleShape)
-                            .background(if (isSelected) GlowingMagenta else Color.Transparent)
+                            .background(if (isSelected) GlowingMagenta.copy(alpha = 0.3f) else Color.Transparent)
                             .clickable(
                                 interactionSource = interactionSource,
                                 indication = null
