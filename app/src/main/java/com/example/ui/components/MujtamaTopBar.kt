@@ -40,6 +40,7 @@ fun MujtamaTopBar(
             ) {
                 Text(
                     text = "Chat Live",
+                    color = Color.White,
                     style = MaterialTheme.typography.titleLarge.copy(
                         fontWeight = FontWeight.Black,
                         fontSize = 20.sp
