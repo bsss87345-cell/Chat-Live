@@ -248,6 +248,22 @@ class SocialAppViewModel : ViewModel() {
         return mockUsersDirectory.find { it.id == userId }
     }
 
+    // عدد منشورات وهمي ثابت لكل مستخدم بالدليل الوهمي (اختبار محلي فقط، يُستبدل بعدّ حقيقي عند ربط Firestore)
+    private val mockPostsCountByUserId: Map<String, Int> = mapOf(
+        "mock_1" to 14,
+        "mock_2" to 27,
+        "mock_3" to 6,
+        "mock_4" to 41
+    )
+
+    // يرجع عدد منشورات أي مستخدم (أنا: من _posts الحقيقية، غيري: من الدليل الوهمي)
+    fun getPostsCountByUserId(userId: String): Int {
+        if (userId == _userProfile.value.id) {
+            return _posts.value.count { it.authorId == userId }
+        }
+        return mockPostsCountByUserId[userId] ?: 0
+    }
+
     // يرجع قائمة متابعي مستخدم معيّن (بأي id) كـ FollowUser جاهزة للعرض
     fun getFollowersOf(userId: String): List<FollowUser> {
         return loadFollowers(userId).mapNotNull { follow ->
