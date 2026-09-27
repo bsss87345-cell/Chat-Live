@@ -62,15 +62,15 @@ fun MujtamaBottomNav(
                     elevation = 16.dp,
                     shape = RoundedCornerShape(50),
                     ambientColor = NeonCyan,
-                    spotColor = NeonPurple
+                    spotColor = NeonCyan
                 )
                 .border(
-                    width = 1.5.dp,
-                    brush = Brush.linearGradient(listOf(NeonCyan, NeonPurple)),
+                    width = 1.dp,
+                    color = NeonCyan,
                     shape = RoundedCornerShape(50)
                 ),
             shape = RoundedCornerShape(50),
-            color = DarkSurface.copy(alpha = 0.92f),
+            color = DarkSurface.copy(alpha = 0.7f),
             tonalElevation = 8.dp
         ) {
             Row(
