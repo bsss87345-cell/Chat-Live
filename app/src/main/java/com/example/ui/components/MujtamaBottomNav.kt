@@ -70,7 +70,7 @@ fun MujtamaBottomNav(
                     shape = RoundedCornerShape(50)
                 ),
             shape = RoundedCornerShape(50),
-            color = DarkSurface.copy(alpha = 0.7f),
+            color = DarkSurface.copy(alpha = 0.85f),
             tonalElevation = 8.dp
         ) {
             Row(
