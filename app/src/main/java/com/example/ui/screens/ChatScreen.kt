@@ -252,7 +252,7 @@ fun ChatScreen(
                                     modifier = Modifier.size(18.dp)
                                 )
                                 Text(
-                                    text = title,
+                                    text = if (title == "المحادثات الخاصة") "الرسائل" else title,
                                     fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Normal,
                                     color = if (isSelected) Color.Black else TextSecondary,
                                     fontSize = 14.sp,
