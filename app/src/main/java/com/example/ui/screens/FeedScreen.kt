@@ -583,18 +583,18 @@ fun PostCard(
                                 contentPadding = PaddingValues(horizontal = 10.dp, vertical = 0.dp),
                                 shape = RoundedCornerShape(14.dp),
                                 colors = ButtonDefaults.filledTonalButtonColors(
-                                    containerColor = if (post.isFollowing)
+                                    containerColor = if (isFollowing)
                                         MaterialTheme.colorScheme.surfaceVariant
                                     else
                                         MaterialTheme.colorScheme.primaryContainer,
-                                    contentColor = if (post.isFollowing)
+                                    contentColor = if (isFollowing)
                                         MaterialTheme.colorScheme.onSurfaceVariant
                                     else
                                         MaterialTheme.colorScheme.primary
                                 )
                             ) {
                                 Text(
-                                    text = if (post.isFollowing) "متابَع" else "متابعة",
+                                    text = if (isFollowing) "متابَع" else "متابعة",
                                     fontSize = 11.sp,
                                     fontWeight = FontWeight.SemiBold
                                 )
