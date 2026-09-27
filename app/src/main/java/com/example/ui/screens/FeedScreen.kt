@@ -442,8 +442,8 @@ fun QuickCreatePostCard(
             .padding(horizontal = 12.dp)
             .testTag("quick_create_post_card"),
         shape = RoundedCornerShape(16.dp),
-        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
-        elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
+        colors = CardDefaults.cardColors(containerColor = DarkSurface),
+        elevation = CardDefaults.cardElevation(defaultElevation = 0.dp)
     ) {
         Row(
             modifier = Modifier
@@ -456,7 +456,7 @@ fun QuickCreatePostCard(
                 modifier = Modifier
                     .size(42.dp)
                     .clip(CircleShape)
-                    .background(MujtamaPrimary),
+                    .background(MaterialTheme.colorScheme.primaryContainer),
                 contentAlignment = Alignment.Center
             ) {
                 if (userProfile.avatarUrl.isNotBlank()) {
@@ -475,12 +475,12 @@ fun QuickCreatePostCard(
                     .weight(1f)
                     .clickable(onClick = onTextClick),
                 shape = RoundedCornerShape(24.dp),
-                color = MaterialTheme.colorScheme.surfaceVariant
+                color = Color.White.copy(alpha = 0.08f)
             ) {
                 Text(
                     text = "شارك أفكارك وتحدياتك مع المجتمع...",
                     modifier = Modifier.padding(horizontal = 16.dp, vertical = 10.dp),
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    color = Color.White.copy(alpha = 0.85f),
                     fontSize = 13.sp
                 )
             }
@@ -488,7 +488,7 @@ fun QuickCreatePostCard(
                 Icon(
                     imageVector = Icons.Default.AddPhotoAlternate,
                     contentDescription = "إرفاق صورة أو فيديو",
-                    tint = MaterialTheme.colorScheme.primary
+                    tint = NeonPurple
                 )
             }
         }
