@@ -447,9 +447,11 @@ fun ProfileScreen(
                 items(userPosts) { post ->
                     PostCard(
                         post = post,
+                        isFollowing = isUserFollowing(post.authorId),
                         onLikeClick = { onLikeClick(post.id) },
                         onCommentClick = { onCommentClick(post.id) },
                         onShareClick = { onShareClick(post) },
+                        onFollowClick = { onToggleFollow(post.authorId) },
                         onEditClick = { editingPost = post },
                         onDeleteClick = { deletingPost = post },
                         onReportClick = { reportingPost = post }
