@@ -239,24 +239,24 @@ fun ChatScreen(
                                 color = if (isSelected) NeonCyan else NeonPurple.copy(alpha = 0.5f),
                                 shape = RoundedCornerShape(50)
                             )
-                            .padding(horizontal = 10.dp, vertical = 4.dp)
+                            .padding(horizontal = 20.dp, vertical = 10.dp)
                             .testTag("chat_subtab_$index"),
                         text = {
                             Row(
                                 verticalAlignment = Alignment.CenterVertically,
-                                horizontalArrangement = Arrangement.spacedBy(6.dp)
+                                horizontalArrangement = Arrangement.spacedBy(8.dp)
                             ) {
                                 Icon(
                                     imageVector = if (index == 0) Icons.AutoMirrored.Filled.Chat else Icons.Outlined.Groups,
                                     contentDescription = null,
                                     tint = if (isSelected) Color.Black else NeonPurple,
-                                    modifier = Modifier.size(18.dp)
+                                    modifier = Modifier.size(22.dp)
                                 )
                                 Text(
                                     text = title,
                                     fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Normal,
                                     color = if (isSelected) Color.Black else TextSecondary,
-                                    fontSize = 13.sp
+                                    fontSize = 16.sp
                                 )
                             }
                         }
