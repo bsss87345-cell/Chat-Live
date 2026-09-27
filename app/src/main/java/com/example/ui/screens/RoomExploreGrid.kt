@@ -157,18 +157,42 @@ val sortedRooms = remember(rooms, searchQuery, roomViewFilter) {
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                        FilterChip(
-                            selected = roomViewFilter == "العامة",
+                        val isPublicSelected = roomViewFilter == "العامة"
+                        Surface(
                             onClick = { roomViewFilter = "العامة" },
-                            label = { Text("العامة", fontSize = 12.sp) },
-                            modifier = Modifier.testTag("rooms_tab_public")
-                        )
-                        FilterChip(
-                            selected = roomViewFilter == "الخاص بي",
+                            modifier = Modifier.testTag("rooms_tab_public"),
+                            shape = RoundedCornerShape(50),
+                            color = if (isPublicSelected) TextSecondary.copy(alpha = 0.25f) else Color.Transparent,
+                            border = androidx.compose.foundation.BorderStroke(
+                                1.dp,
+                                if (isPublicSelected) NeonPurple else NeonPurple.copy(alpha = 0.5f)
+                            )
+                        ) {
+                            Text(
+                                text = "العامة",
+                                fontSize = 12.sp,
+                                color = Color.White,
+                                modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)
+                            )
+                        }
+                        val isMineSelected = roomViewFilter == "الخاص بي"
+                        Surface(
                             onClick = { roomViewFilter = "الخاص بي" },
-                            label = { Text("الخاص بي", fontSize = 12.sp) },
-                            modifier = Modifier.testTag("rooms_tab_mine")
-                        )
+                            modifier = Modifier.testTag("rooms_tab_mine"),
+                            shape = RoundedCornerShape(50),
+                            color = Color.Transparent,
+                            border = androidx.compose.foundation.BorderStroke(
+                                1.dp,
+                                if (isMineSelected) NeonCyan else NeonCyan.copy(alpha = 0.5f)
+                            )
+                        ) {
+                            Text(
+                                text = "الخاص بي",
+                                fontSize = 12.sp,
+                                color = Color.White,
+                                modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)
+                            )
+                        }
                     }
 
                     Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
