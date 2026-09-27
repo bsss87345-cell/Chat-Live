@@ -47,6 +47,7 @@ import com.example.ui.theme.MujtamaPrimary
 import com.example.ui.theme.MujtamaTeal
 import com.example.ui.theme.DarkBackground
 import com.example.ui.theme.NeonCyan
+import com.example.ui.theme.NeonPurple
 import com.example.ui.theme.TextSecondary
 
 /**
