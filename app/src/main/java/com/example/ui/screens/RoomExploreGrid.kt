@@ -737,6 +737,56 @@ fun CreateRoomDialogWithImage(
                                 shape = RoundedCornerShape(12.dp)
                             )
                             .clickable {
+                                photoPickerLauncher.launch(
+                                    PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly)
+                                )
+                            },
+                        contentAlignment = Alignment.Center
+                    ) {
+                        if (!selectedImageUrl.isNullOrBlank()) {
+                            AsyncImage(
+                                model = selectedImageUrl,
+                                contentDescription = "معاينة صورة الغرفة",
+                                contentScale = ContentScale.Crop,
+                                modifier = Modifier.fillMaxSize()
+                            )
+                            Surface(
+                                modifier = Modifier
+                                    .align(Alignment.BottomEnd)
+                                    .padding(6.dp),
+                                shape = RoundedCornerShape(6.dp),
+                                color = Color.Black.copy(alpha = 0.6f)
+                            ) {
+                                Text("تغيير الصورة ✏️", color = Color.White, fontSize = 10.sp, modifier = Modifier.padding(4.dp))
+                            }
+                        } else {
+                            Column(
+                                horizontalAlignment = Alignment.CenterHorizontally,
+                                verticalArrangement = Arrangement.spacedBy(4.dp)
+                            ) {
+                                Icon(Icons.Default.AddPhotoAlternate, contentDescription = null, tint = NeonCyan, modifier = Modifier.size(28.dp))
+                                Text("اضغط لرفع صورة الغرفة من جهازك", fontSize = 11.sp, color = TextSecondary)
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        confirmButton = {
+            Surface(
+                onClick = {
+                    val maxCount = maxMembersText.toIntOrNull() ?: 100
+                    onCreate(
+                        name,
+                        description,
+                        category,
+                        accessType,
+                        password,
+                        maxCount,
+                        selectedEmoji,
+                        selectedImageUrl
+                    )
+                },
                 enabled = name.isNotBlank(),
                 shape = RoundedCornerShape(50),
                 color = if (name.isNotBlank()) NeonCyan else DarkBackground,
