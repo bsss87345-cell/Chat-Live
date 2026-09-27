@@ -322,117 +322,107 @@ fun StoriesBar(
     onAddStoryClick: () -> Unit,
     myAvatarUrl: String = ""
 ) {
-    val friendStories = stories.filter { !it.isCurrentUser }
-
-    Row(
+    LazyRow(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(horizontal = 12.dp, vertical = 4.dp),
-        horizontalArrangement = Arrangement.spacedBy(12.dp),
+            .padding(horizontal = 12.dp, vertical = 8.dp),
+        horizontalArrangement = Arrangement.spacedBy(14.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
-        // Friends Stories Slider (Large Preview Box)
-        Box(
-            modifier = Modifier
-                .weight(1f)
-                .height(120.dp)
-                .clip(RoundedCornerShape(16.dp))
-                .background(DarkSurface)
-                .border(
-                    width = 1.5.dp,
-                    color = NeonPurple,
-                    shape = RoundedCornerShape(16.dp)
-                )
-        ) {
-            if (friendStories.isNotEmpty()) {
-                val pagerState = rememberPagerState(pageCount = { friendStories.size })
-                HorizontalPager(
-                    state = pagerState,
-                    modifier = Modifier.fillMaxSize()
-                ) { page ->
-                    val story = friendStories[page]
-                    Box(
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .clickable { onStoryClick(story) },
-                        contentAlignment = Alignment.Center
-                    ) {
-                        if (story.authorAvatarUrl.isNotBlank()) {
-                            AsyncImage(
-                                model = story.authorAvatarUrl,
-                                contentDescription = story.authorName,
-                                contentScale = ContentScale.Crop,
-                                modifier = Modifier.fillMaxSize()
-                            )
-                        } else {
-                            Text(
-                                text = story.authorName,
-                                color = Color.White,
-                                fontWeight = FontWeight.Bold
-                            )
-                        }
-                        Surface(
-                            modifier = Modifier
-                                .align(Alignment.BottomStart)
-                                .padding(8.dp),
-                            shape = RoundedCornerShape(6.dp),
-                            color = Color.Black.copy(alpha = 0.5f)
-                        ) {
-                            Text(
-                                text = story.authorName.split(" ").firstOrNull() ?: story.authorName,
-                                color = Color.White,
-                                fontSize = 12.sp,
-                                modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp)
-                            )
-                        }
+        // My Story Avatar (Add Story)
+        item {
+            Column(
+                horizontalAlignment = Alignment.CenterHorizontally,
+                modifier = Modifier
+                    .clickable(onClick = onAddStoryClick)
+                    .testTag("add_story_button")
+            ) {
+                Box(
+                    modifier = Modifier
+                        .size(64.dp)
+                        .border(width = 2.dp, color = NeonCyan, shape = CircleShape)
+                        .padding(4.dp)
+                        .clip(CircleShape)
+                        .background(DarkSurface),
+                    contentAlignment = Alignment.Center
+                ) {
+                    if (myAvatarUrl.isNotBlank()) {
+                        AsyncImage(
+                            model = myAvatarUrl,
+                            contentDescription = "إضافة قصة",
+                            contentScale = ContentScale.Crop,
+                            modifier = Modifier.fillMaxSize().clip(CircleShape)
+                        )
+                    } else {
+                        Icon(
+                            imageVector = Icons.Default.Add,
+                            contentDescription = "إضافة قصة",
+                            tint = NeonCyan,
+                            modifier = Modifier.size(28.dp)
+                        )
                     }
                 }
+                Spacer(modifier = Modifier.height(6.dp))
+                Text(
+                    text = "قصتي +",
+                    fontSize = 12.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = Color.White
+                )
             }
         }
 
-        // My Story Avatar (Add Story)
-        Column(
-            horizontalAlignment = Alignment.CenterHorizontally,
-            modifier = Modifier
-                .clickable(onClick = onAddStoryClick)
-                .testTag("add_story_button")
-        ) {
-            Box(
-                modifier = Modifier
-                    .size(64.dp)
-                    .border(width = 2.dp, color = NeonCyan, shape = CircleShape)
-                    .padding(4.dp)
-                    .clip(CircleShape)
-                    .background(DarkSurface),
-                contentAlignment = Alignment.Center
-            ) {
-                if (myAvatarUrl.isNotBlank()) {
-                    AsyncImage(
-                        model = myAvatarUrl,
-                        contentDescription = "إضافة قصة",
-                        contentScale = ContentScale.Crop,
-                        modifier = Modifier.fillMaxSize().clip(CircleShape)
-                    )
-                } else {
-                    Icon(
-                        imageVector = Icons.Default.Add,
-                        contentDescription = "إضافة قصة",
-                        tint = NeonCyan,
-                        modifier = Modifier.size(28.dp)
-                    )
-                }
+        // Friends Stories
+        items(stories.filter { !it.isCurrentUser }) { story ->
+            val ringBrush = if (!story.isViewed) {
+                Brush.sweepGradient(listOf(NeonCyan, NeonPurple, NeonCyan))
+            } else {
+                Brush.sweepGradient(listOf(Color.Gray.copy(alpha = 0.5f), Color.Gray.copy(alpha = 0.5f)))
             }
-            Spacer(modifier = Modifier.height(6.dp))
-            Text(
-                text = "قصتي +",
-                fontSize = 12.sp,
-                fontWeight = FontWeight.Bold,
-                color = Color.White
-            )
+
+            Column(
+                horizontalAlignment = Alignment.CenterHorizontally,
+                modifier = Modifier
+                    .clickable { onStoryClick(story) }
+                    .testTag("story_${story.id}")
+            ) {
+                Box(
+                    modifier = Modifier
+                        .size(64.dp)
+                        .border(width = 2.5.dp, brush = ringBrush, shape = CircleShape)
+                        .padding(4.dp)
+                        .clip(CircleShape)
+                        .background(DarkSurface),
+                    contentAlignment = Alignment.Center
+                ) {
+                    if (story.authorAvatarUrl.isNotBlank()) {
+                        AsyncImage(
+                            model = story.authorAvatarUrl,
+                            contentDescription = story.authorName,
+                            contentScale = ContentScale.Crop,
+                            modifier = Modifier.fillMaxSize().clip(CircleShape)
+                        )
+                    } else {
+                        Text(
+                            text = story.authorName.take(1),
+                            color = Color.White,
+                            fontWeight = FontWeight.Bold,
+                            fontSize = 20.sp
+                        )
+                    }
+                }
+                Spacer(modifier = Modifier.height(6.dp))
+                Text(
+                    text = story.authorName.split(" ").firstOrNull() ?: story.authorName,
+                    fontSize = 11.sp,
+                    fontWeight = if (!story.isViewed) FontWeight.Bold else FontWeight.Normal,
+                    maxLines = 1,
+                    color = Color.White
+                )
+            }
         }
     }
 }
-
 @Composable
 fun QuickCreatePostCard(
     userProfile: UserProfile,
