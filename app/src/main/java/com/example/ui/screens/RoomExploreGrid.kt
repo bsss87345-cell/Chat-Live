@@ -136,15 +136,22 @@ val sortedRooms = remember(rooms, searchQuery, roomViewFilter) {
         filtered.sortedByDescending { it.memberCount }
 }
 
-    LazyVerticalGrid(
-        columns = GridCells.Fixed(2),
+    Box(
         modifier = modifier
             .fillMaxSize()
-            .testTag("explore_rooms_grid"),
-        contentPadding = PaddingValues(start = 12.dp, end = 12.dp, bottom = 84.dp, top = 8.dp),
-        horizontalArrangement = Arrangement.spacedBy(10.dp),
-        verticalArrangement = Arrangement.spacedBy(10.dp)
+            .background(DarkBackground)
     ) {
+        RoomsNeonBackground(modifier = Modifier.fillMaxSize())
+
+        LazyVerticalGrid(
+            columns = GridCells.Fixed(2),
+            modifier = Modifier
+                .fillMaxSize()
+                .testTag("explore_rooms_grid"),
+            contentPadding = PaddingValues(start = 12.dp, end = 12.dp, bottom = 84.dp, top = 8.dp),
+            horizontalArrangement = Arrangement.spacedBy(10.dp),
+            verticalArrangement = Arrangement.spacedBy(10.dp)
+        ) {
 // شريط التبويبات والإجراءات الجديد
         item(span = { GridItemSpan(2) }) {
             Column(modifier = Modifier.fillMaxWidth()) {
