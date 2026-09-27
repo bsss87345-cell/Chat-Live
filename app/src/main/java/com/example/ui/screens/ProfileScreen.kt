@@ -574,7 +574,9 @@ fun ProfileScreen(
             onLoadProfileFor = onLoadProfileFor,
             onLoadFollowersFor = onLoadFollowersFor,
             onLoadFollowingFor = onLoadFollowingFor,
-            onLoadPostsFor = onLoadPostsFor
+            onLoadPostsFor = onLoadPostsFor,
+            isUserFollowing = isUserFollowing,
+            onToggleFollow = onToggleFollow
         )
     }
 
@@ -587,10 +589,11 @@ fun ProfileScreen(
             onLoadProfileFor = onLoadProfileFor,
             onLoadFollowersFor = onLoadFollowersFor,
             onLoadFollowingFor = onLoadFollowingFor,
-            onLoadPostsFor = onLoadPostsFor
+            onLoadPostsFor = onLoadPostsFor,
+            isUserFollowing = isUserFollowing,
+            onToggleFollow = onToggleFollow
         )
     }
-
     // Comments Bottom Sheet
     if (activeCommentPostId != null) {
         val currentPost = posts.find { it.id == activeCommentPostId }
