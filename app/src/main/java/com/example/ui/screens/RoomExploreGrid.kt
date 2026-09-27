@@ -735,15 +735,7 @@ fun CreateRoomDialogWithImage(
                                 width = 1.dp,
                                 color = NeonCyan,
                                 shape = RoundedCornerShape(12.dp)
-                            )
-                            .clickable {
-                                photoPickerLauncher.launch(
-                                    PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly)
-                                )
-                            },
-                        contentAlignment = Alignment.Center
-                    ) {
-                            Box(
+Box(
                         modifier = Modifier
                             .fillMaxWidth()
                             .height(100.dp)
@@ -754,13 +746,6 @@ fun CreateRoomDialogWithImage(
                                 color = NeonCyan,
                                 shape = RoundedCornerShape(12.dp)
                             )
-                            .clickable {
-                                photoPickerLauncher.launch(
-                                    PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly)
-                                )
-                            },
-                        contentAlignment = Alignment.Center
-                    ) {
                             .clickable {
                                 photoPickerLauncher.launch(
                                     PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly)
@@ -796,6 +781,7 @@ fun CreateRoomDialogWithImage(
                     }
                 }
             }
+        },
         },
         confirmButton = {
             Surface(
