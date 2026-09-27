@@ -736,6 +736,13 @@ fun CreateRoomDialogWithImage(
                                 color = NeonCyan,
                                 shape = RoundedCornerShape(12.dp)
                             )
+                            .clickable {
+                                photoPickerLauncher.launch(
+                                    PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly)
+                                )
+                            },
+                        contentAlignment = Alignment.Center
+                    ) {
                             Box(
                         modifier = Modifier
                             .fillMaxWidth()
