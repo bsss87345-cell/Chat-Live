@@ -27,12 +27,10 @@ import com.example.ui.theme.MujtamaTeal
 fun MujtamaTopBar(
     currentTab: AppTab,
     walletBalance: Int = 0,
-    isDarkMode: Boolean = false,
     onWalletClick: () -> Unit = {},
     onNotificationsClick: () -> Unit = {},
     unreadCount: Int = 0,
-    onSearchClick: () -> Unit = {},
-    onToggleDarkMode: () -> Unit = {}
+    onSearchClick: () -> Unit = {}
 ) {
     CenterAlignedTopAppBar(
         title = {
