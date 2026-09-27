@@ -47,10 +47,10 @@ import com.example.ui.theme.MujtamaOnlineGreen
 import com.example.ui.theme.MujtamaPrimary
 import com.example.ui.theme.MujtamaTeal
 import com.example.ui.theme.DarkBackground
+import com.example.ui.theme.DarkSurface
 import com.example.ui.theme.NeonCyan
 import com.example.ui.theme.NeonPurple
 import com.example.ui.theme.TextSecondary
-
 /**
  * شاشة استكشاف غرف الدردشة بتصميم شبكة مربعات حديثة (Grid Cards).
  * - خلفية المربع صورة الغرفة المرفوعة من المالك مع غطاء زجاجي وتدرج أنيق
