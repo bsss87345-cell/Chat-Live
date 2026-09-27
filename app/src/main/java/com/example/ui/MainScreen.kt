@@ -79,6 +79,7 @@ fun MainScreen(viewModel: SocialAppViewModel) {
 
         Scaffold(
             modifier = Modifier.fillMaxSize(),
+            containerColor = com.example.ui.theme.DarkBackground,
             topBar = {
                 AnimatedVisibility(
                     visible = currentTab == AppTab.FEED,
