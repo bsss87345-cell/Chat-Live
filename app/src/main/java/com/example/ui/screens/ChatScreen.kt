@@ -215,7 +215,7 @@ fun ChatScreen(
                 selectedTabIndex = if (chatSubTab == "المحادثات الخاصة") 0 else 1,
                 modifier = Modifier
                     .padding(horizontal = 16.dp, vertical = 4.dp)
-                    .height(52.dp),
+                    .height(60.dp),
                 containerColor = Color.Transparent,
                 indicator = {},
                 divider = {}
