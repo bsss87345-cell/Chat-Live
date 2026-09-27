@@ -94,29 +94,7 @@ fun MujtamaTopBar(
                 }
             }
 
-            // Dark/Light mode toggle button
-            Surface(
-                shape = CircleShape,
-                color = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.55f),
-                modifier = Modifier
-                    .size(40.dp)
-                    .padding(end = 8.dp)
-            ) {
-                IconButton(
-                    onClick = onToggleDarkMode,
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .testTag("top_bar_theme_toggle_button")
-                ) {
-                    Icon(
-                        imageVector = if (isDarkMode) Icons.Filled.Brightness7 else Icons.Filled.Brightness4,
-                        contentDescription = if (isDarkMode) "التبديل للوضع النهاري" else "التبديل للوضع الليلي",
-                        tint = MaterialTheme.colorScheme.onSurface,
-                        modifier = Modifier.size(22.dp)
-                    )
-                }
-            }
-        },
+            },
         colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
             containerColor = MaterialTheme.colorScheme.surface,
             titleContentColor = MaterialTheme.colorScheme.onSurface
