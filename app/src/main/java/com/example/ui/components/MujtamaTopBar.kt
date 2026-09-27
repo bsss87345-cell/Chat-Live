@@ -21,6 +21,9 @@ import androidx.compose.ui.unit.sp
 import com.example.model.AppTab
 import com.example.ui.theme.MujtamaPrimary
 import com.example.ui.theme.MujtamaTeal
+import com.example.ui.theme.DarkSurface
+import com.example.ui.theme.DarkBackground
+import com.example.ui.theme.NeonCyan
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
