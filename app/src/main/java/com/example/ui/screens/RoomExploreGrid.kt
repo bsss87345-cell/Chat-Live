@@ -688,9 +688,21 @@ fun CreateRoomDialogWithImage(
     )
 
     AlertDialog(
-        onDismissRequest = onDismiss,
-        containerColor = DarkSurface,
-        title = {
+            onDismissRequest = onDismiss,
+            containerColor = DarkSurface.copy(alpha = 0.85f),
+            modifier = Modifier
+                .shadow(
+                    elevation = 24.dp,
+                    shape = RoundedCornerShape(24.dp),
+                    ambientColor = NeonCyan,
+                    spotColor = NeonPurple
+                )
+                .border(
+                    width = 1.5.dp,
+                    brush = Brush.linearGradient(listOf(NeonCyan, NeonPurple)),
+                    shape = RoundedCornerShape(24.dp)
+                ),
+            title = {
             Text(
                 "إنشاء غرفة دردشة جديدة 🎙️",
                 fontSize = 16.sp,
