@@ -781,7 +781,8 @@ private fun FollowListFullScreen(
                     onLoadProfileFor = onLoadProfileFor,
                     onLoadFollowersFor = onLoadFollowersFor,
                     onLoadFollowingFor = onLoadFollowingFor,
-                    onBackFromOtherProfile = { selectedUser = null }
+                    onBackFromOtherProfile = { selectedUser = null },
+                    onLoadPostsFor = onLoadPostsFor
                 ) 
             }
         }
