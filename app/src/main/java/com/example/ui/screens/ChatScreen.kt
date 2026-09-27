@@ -3190,6 +3190,66 @@ fun RoomMessageBubble(
 // -------------------------------------------------------------
 // DIRECT / GROUP CHAT LIST (المحادثات الفردية والجماعية)
 // -------------------------------------------------------------
+
+// شكل هيكسجون (سداسي) لإطار الأفاتار
+private class HexagonShape : Shape {
+    override fun createOutline(
+        size: Size,
+        layoutDirection: LayoutDirection,
+        density: Density
+    ): Outline {
+        val w = size.width
+        val h = size.height
+        val path = Path().apply {
+            moveTo(w * 0.5f, 0f)
+            lineTo(w, h * 0.25f)
+            lineTo(w, h * 0.75f)
+            lineTo(w * 0.5f, h)
+            lineTo(0f, h * 0.75f)
+            lineTo(0f, h * 0.25f)
+            close()
+        }
+        return Outline.Generic(path)
+    }
+}
+
+// خلفية زخرفية: خطوط شبكة + أشكال هيكسجون شفافة
+@Composable
+private fun NeonChatBackground(modifier: Modifier = Modifier) {
+    Canvas(modifier = modifier.fillMaxSize()) {
+        val gridColor = TextSecondary.copy(alpha = 0.05f)
+        val step = 40.dp.toPx()
+
+        var x = 0f
+        while (x < size.width) {
+            drawLine(gridColor, Offset(x, 0f), Offset(x, size.height), strokeWidth = 1f)
+            x += step
+        }
+        var y = 0f
+        while (y < size.height) {
+            drawLine(gridColor, Offset(0f, y), Offset(size.width, y), strokeWidth = 1f)
+            y += step
+        }
+
+        fun hexPath(cx: Float, cy: Float, r: Float): Path {
+            return Path().apply {
+                for (i in 0..5) {
+                    val angle = Math.toRadians((60 * i - 30).toDouble())
+                    val px = cx + r * kotlin.math.cos(angle).toFloat()
+                    val py = cy + r * kotlin.math.sin(angle).toFloat()
+                    if (i == 0) moveTo(px, py) else lineTo(px, py)
+                }
+                close()
+            }
+        }
+
+        val hexColor = NeonCyan.copy(alpha = 0.08f)
+        drawPath(hexPath(size.width * 0.85f, size.height * 0.12f, 60.dp.toPx()), color = hexColor, style = Stroke(width = 2f))
+        drawPath(hexPath(size.width * 0.1f, size.height * 0.55f, 45.dp.toPx()), color = hexColor, style = Stroke(width = 2f))
+        drawPath(hexPath(size.width * 0.2f, size.height * 0.65f, 30.dp.toPx()), color = hexColor, style = Stroke(width = 2f))
+    }
+}
+
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun ChatListView(
@@ -3214,225 +3274,262 @@ fun ChatListView(
         matchesFilter && matchesSearch
     }.sortedByDescending { it.isPinned }
 
-LazyColumn(
-        modifier = Modifier.fillMaxSize(),
-        contentPadding = PaddingValues(bottom = 80.dp),
-        verticalArrangement = Arrangement.spacedBy(8.dp)
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(DarkBackground)
     ) {
-        // Filter Chips Row
-        item {
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 12.dp, vertical = 4.dp),
-                horizontalArrangement = Arrangement.spacedBy(8.dp)
-            ) {
-                listOf("الكل", "متصل الآن").forEach { filter ->
-                    FilterChip(
-                        selected = chatFilter == filter,
-                        onClick = { onFilterChange(filter) },
-                        label = { Text(filter, fontSize = 12.sp) },
-                        modifier = Modifier.testTag("chat_filter_${if (filter == "الكل") "all" else "online"}")
-                    )
-                }
-            }
-        }
+        NeonChatBackground(modifier = Modifier.fillMaxSize())
 
-        // Conversation List Items
-        items(filteredConversations, key = { it.id }) { conv ->
-            var showOptionsMenu by remember { mutableStateOf(false) }
-            var showDeleteConfirm by remember { mutableStateOf(false) }
-            var showBlockConfirm by remember { mutableStateOf(false) }
-
-            Box {
-                Card(
+        LazyColumn(
+            modifier = Modifier.fillMaxSize(),
+            contentPadding = PaddingValues(bottom = 80.dp),
+            verticalArrangement = Arrangement.spacedBy(8.dp)
+        ) {
+            // Filter Chips Row
+            item {
+                Row(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(horizontal = 12.dp)
-                        .combinedClickable(
-                            onClick = { onOpenChat(conv.id) },
-                            onLongClick = { showOptionsMenu = true }
-                        )
-                        .testTag("conversation_item_${conv.id}"),
-                    shape = RoundedCornerShape(16.dp),
-                    colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
-                    elevation = CardDefaults.cardElevation(defaultElevation = 1.dp)
+                        .padding(horizontal = 12.dp, vertical = 4.dp),
+                    horizontalArrangement = Arrangement.spacedBy(10.dp)
                 ) {
-                    Row(
+                    listOf("الكل", "متصل الآن").forEach { filter ->
+                        val isSelected = chatFilter == filter
+                        Box(
+                            modifier = Modifier
+                                .clip(RoundedCornerShape(50))
+                                .background(
+                                    if (isSelected) Brush.linearGradient(listOf(NeonPurple, GlowingMagenta))
+                                    else Brush.linearGradient(listOf(Color.Transparent, Color.Transparent))
+                                )
+                                .border(
+                                    width = 1.5.dp,
+                                    color = if (isSelected) GlowingMagenta else NeonCyan,
+                                    shape = RoundedCornerShape(50)
+                                )
+                                .clickable { onFilterChange(filter) }
+                                .padding(horizontal = 18.dp, vertical = 10.dp)
+                                .testTag("chat_filter_${if (filter == "الكل") "all" else "online"}")
+                        ) {
+                            Text(
+                                text = filter,
+                                fontSize = 12.sp,
+                                fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Normal,
+                                color = if (isSelected) TextPrimary else NeonCyan
+                            )
+                        }
+                    }
+                }
+            }
+
+            // Conversation List Items
+            items(filteredConversations, key = { it.id }) { conv ->
+                var showOptionsMenu by remember { mutableStateOf(false) }
+                var showDeleteConfirm by remember { mutableStateOf(false) }
+                var showBlockConfirm by remember { mutableStateOf(false) }
+
+                Box {
+                    Card(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .padding(14.dp),
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.spacedBy(12.dp)
+                            .padding(horizontal = 12.dp)
+                            .combinedClickable(
+                                onClick = { onOpenChat(conv.id) },
+                                onLongClick = { showOptionsMenu = true }
+                            )
+                            .testTag("conversation_item_${conv.id}"),
+                        shape = RoundedCornerShape(16.dp),
+                        colors = CardDefaults.cardColors(containerColor = DarkSurface),
+                        elevation = CardDefaults.cardElevation(defaultElevation = 1.dp),
+                        border = androidx.compose.foundation.BorderStroke(1.dp, TextSecondary.copy(alpha = 0.15f))
                     ) {
-                        // Avatar with online badge
-                        Box {
-                            Box(
-                                modifier = Modifier
-                                    .size(48.dp)
-                                    .clip(CircleShape)
-                                    .background(
-                                        Brush.linearGradient(
-                                            if (conv.isGroup) listOf(MujtamaPrimary, MujtamaTeal)
-                                            else listOf(MujtamaTeal, MujtamaGold)
-                                        )
-                                    ),
-                                contentAlignment = Alignment.Center
-                            ) {
-                                Icon(
-                                    imageVector = if (conv.isGroup) Icons.Default.Groups else Icons.Default.Person,
-                                    contentDescription = conv.name,
-                                    tint = Color.White,
-                                    modifier = Modifier.size(24.dp)
-                                )
-                            }
-
-                            if (conv.isOnline) {
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(14.dp),
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.spacedBy(12.dp)
+                        ) {
+                            // Avatar with hexagon frame + neon glow + online badge
+                            Box(contentAlignment = Alignment.Center) {
                                 Box(
                                     modifier = Modifier
-                                        .size(14.dp)
-                                        .clip(CircleShape)
-                                        .background(MujtamaOnlineGreen)
-                                        .align(Alignment.BottomEnd)
+                                        .size(64.dp)
+                                        .background(
+                                            Brush.radialGradient(
+                                                colors = listOf(NeonCyan.copy(alpha = 0.35f), Color.Transparent)
+                                            )
+                                        )
                                 )
-                            }
-                        }
-
-                        // Texts
-                        Column(modifier = Modifier.weight(1f)) {
-                            Row(
-                                modifier = Modifier.fillMaxWidth(),
-                                horizontalArrangement = Arrangement.SpaceBetween,
-                                verticalAlignment = Alignment.CenterVertically
-                            ) {
-                                Row(
-                                    verticalAlignment = Alignment.CenterVertically,
-                                    horizontalArrangement = Arrangement.spacedBy(4.dp)
+                                Box(
+                                    modifier = Modifier
+                                        .size(48.dp)
+                                        .clip(HexagonShape())
+                                        .background(
+                                            Brush.linearGradient(
+                                                if (conv.isGroup) listOf(MujtamaPrimary, MujtamaTeal)
+                                                else listOf(MujtamaTeal, MujtamaGold)
+                                            )
+                                        )
+                                        .border(2.dp, NeonCyan, HexagonShape()),
+                                    contentAlignment = Alignment.Center
                                 ) {
-                                    if (conv.isPinned) {
-                                        Icon(
-                                            imageVector = Icons.Default.PushPin,
-                                            contentDescription = "مثبتة",
-                                            tint = MaterialTheme.colorScheme.onSurfaceVariant,
-                                            modifier = Modifier.size(14.dp)
+                                    Icon(
+                                        imageVector = if (conv.isGroup) Icons.Default.Groups else Icons.Default.Person,
+                                        contentDescription = conv.name,
+                                        tint = Color.White,
+                                        modifier = Modifier.size(24.dp)
+                                    )
+                                }
+
+                                if (conv.isOnline) {
+                                    Box(
+                                        modifier = Modifier
+                                            .size(14.dp)
+                                            .clip(CircleShape)
+                                            .background(MujtamaOnlineGreen)
+                                            .align(Alignment.BottomEnd)
+                                    )
+                                }
+                            }
+
+                            // Texts
+                            Column(modifier = Modifier.weight(1f)) {
+                                Row(
+                                    modifier = Modifier.fillMaxWidth(),
+                                    horizontalArrangement = Arrangement.SpaceBetween,
+                                    verticalAlignment = Alignment.CenterVertically
+                                ) {
+                                    Row(
+                                        verticalAlignment = Alignment.CenterVertically,
+                                        horizontalArrangement = Arrangement.spacedBy(4.dp)
+                                    ) {
+                                        if (conv.isPinned) {
+                                            Icon(
+                                                imageVector = Icons.Default.PushPin,
+                                                contentDescription = "مثبتة",
+                                                tint = TextSecondary,
+                                                modifier = Modifier.size(14.dp)
+                                            )
+                                        }
+                                        Text(
+                                            text = conv.name,
+                                            fontWeight = FontWeight.Bold,
+                                            fontSize = 15.sp,
+                                            color = TextPrimary
                                         )
                                     }
                                     Text(
-                                        text = conv.name,
-                                        fontWeight = FontWeight.Bold,
-                                        fontSize = 15.sp
+                                        text = conv.time,
+                                        fontSize = 11.sp,
+                                        color = TextSecondary
                                     )
                                 }
-                                Text(
-                                    text = conv.time,
-                                    fontSize = 11.sp,
-                                    color = MaterialTheme.colorScheme.onSurfaceVariant
-                                )
-                            }
 
-                            Spacer(modifier = Modifier.height(4.dp))
+                                Spacer(modifier = Modifier.height(4.dp))
 
-                            Row(
-                                modifier = Modifier.fillMaxWidth(),
-                                horizontalArrangement = Arrangement.SpaceBetween,
-                                verticalAlignment = Alignment.CenterVertically
-                            ) {
-                                Text(
-                                    text = conv.lastMessage,
-                                    fontSize = 13.sp,
-                                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                                    maxLines = 1
-                                )
+                                Row(
+                                    modifier = Modifier.fillMaxWidth(),
+                                    horizontalArrangement = Arrangement.SpaceBetween,
+                                    verticalAlignment = Alignment.CenterVertically
+                                ) {
+                                    Text(
+                                        text = conv.lastMessage,
+                                        fontSize = 13.sp,
+                                        color = TextSecondary,
+                                        maxLines = 1
+                                    )
 
-                                if (conv.unreadCount > 0) {
-                                    Badge(
-                                        containerColor = MaterialTheme.colorScheme.primary,
-                                        contentColor = Color.White
-                                    ) {
-                                        Text("${conv.unreadCount}")
+                                    if (conv.unreadCount > 0) {
+                                        Badge(
+                                            containerColor = GlowingMagenta,
+                                            contentColor = TextPrimary
+                                        ) {
+                                            Text("${conv.unreadCount}")
+                                        }
                                     }
                                 }
                             }
                         }
                     }
-                }
 
-                DropdownMenu(
-                    expanded = showOptionsMenu,
-                    onDismissRequest = { showOptionsMenu = false }
-                ) {
-                    DropdownMenuItem(
-                        text = { Text("تثبيت المحادثة") },
-                        onClick = {
-                            onTogglePin(conv.id)
-                            showOptionsMenu = false
-                        },
-                        leadingIcon = { Icon(Icons.Default.PushPin, contentDescription = null) }
-                    )
-                    DropdownMenuItem(
-                        text = { Text("حذف المحادثة") },
-                        onClick = {
-                            showOptionsMenu = false
-                            showDeleteConfirm = true
-                        },
-                        leadingIcon = { Icon(Icons.Default.Delete, contentDescription = null) }
-                    )
-                    DropdownMenuItem(
-                        text = { Text("حظر") },
-                        onClick = {
-                            showOptionsMenu = false
-                            showBlockConfirm = true
-                        },
-                        leadingIcon = { Icon(Icons.Default.Block, contentDescription = null) }
-                    )
-                }
+                    DropdownMenu(
+                        expanded = showOptionsMenu,
+                        onDismissRequest = { showOptionsMenu = false }
+                    ) {
+                        DropdownMenuItem(
+                            text = { Text("تثبيت المحادثة") },
+                            onClick = {
+                                onTogglePin(conv.id)
+                                showOptionsMenu = false
+                            },
+                            leadingIcon = { Icon(Icons.Default.PushPin, contentDescription = null) }
+                        )
+                        DropdownMenuItem(
+                            text = { Text("حذف المحادثة") },
+                            onClick = {
+                                showOptionsMenu = false
+                                showDeleteConfirm = true
+                            },
+                            leadingIcon = { Icon(Icons.Default.Delete, contentDescription = null) }
+                        )
+                        DropdownMenuItem(
+                            text = { Text("حظر") },
+                            onClick = {
+                                showOptionsMenu = false
+                                showBlockConfirm = true
+                            },
+                            leadingIcon = { Icon(Icons.Default.Block, contentDescription = null) }
+                        )
+                    }
 
-                if (showDeleteConfirm) {
-                    AlertDialog(
-                        onDismissRequest = { showDeleteConfirm = false },
-                        title = { Text("هل تريد حذف هذه الدردشة؟", fontWeight = FontWeight.Bold) },
-                        text = { Text("لا يمكن التراجع عن هذا الإجراء.") },
-                        confirmButton = {
-                            TextButton(onClick = {
-                                showDeleteConfirm = false
-                                onDeleteConversation(conv.id)
-                            }) {
-                                Text("حذف", color = Color.Red)
+                    if (showDeleteConfirm) {
+                        AlertDialog(
+                            onDismissRequest = { showDeleteConfirm = false },
+                            title = { Text("هل تريد حذف هذه الدردشة؟", fontWeight = FontWeight.Bold) },
+                            text = { Text("لا يمكن التراجع عن هذا الإجراء.") },
+                            confirmButton = {
+                                TextButton(onClick = {
+                                    showDeleteConfirm = false
+                                    onDeleteConversation(conv.id)
+                                }) {
+                                    Text("حذف", color = Color.Red)
+                                }
+                            },
+                            dismissButton = {
+                                TextButton(onClick = { showDeleteConfirm = false }) {
+                                    Text("إلغاء")
+                                }
                             }
-                        },
-                        dismissButton = {
-                            TextButton(onClick = { showDeleteConfirm = false }) {
-                                Text("إلغاء")
-                            }
-                        }
-                    )
-                }
+                        )
+                    }
 
-                if (showBlockConfirm) {
-                    AlertDialog(
-                        onDismissRequest = { showBlockConfirm = false },
-                        title = { Text("هل تريد حظر ${conv.name}؟", fontWeight = FontWeight.Bold) },
-                        text = { Text("لن يتمكن من إرسال رسائل إليك أو رؤية منشوراتك أو العثور على ملفك الشخصي.") },
-                        confirmButton = {
-                            TextButton(onClick = {
-                                showBlockConfirm = false
-                                onBlockUser(conv.id)
-                            }) {
-                                Text("حظر", color = Color.Red)
+                    if (showBlockConfirm) {
+                        AlertDialog(
+                            onDismissRequest = { showBlockConfirm = false },
+                            title = { Text("هل تريد حظر ${conv.name}؟", fontWeight = FontWeight.Bold) },
+                            text = { Text("لن يتمكن من إرسال رسائل إليك أو رؤية منشوراتك أو العثور على ملفك الشخصي.") },
+                            confirmButton = {
+                                TextButton(onClick = {
+                                    showBlockConfirm = false
+                                    onBlockUser(conv.id)
+                                }) {
+                                    Text("حظر", color = Color.Red)
+                                }
+                            },
+                            dismissButton = {
+                                TextButton(onClick = { showBlockConfirm = false }) {
+                                    Text("إلغاء")
+                                }
                             }
-                        },
-                        dismissButton = {
-                            TextButton(onClick = { showBlockConfirm = false }) {
-                                Text("إلغاء")
-                            }
-                        }
-                    )
+                        )
+                    }
                 }
             }
         }
     }
 }
-
 // -------------------------------------------------------------
 // DIRECT CONVERSATION DETAIL VIEW (المحادثة الفردية)
 // -------------------------------------------------------------
