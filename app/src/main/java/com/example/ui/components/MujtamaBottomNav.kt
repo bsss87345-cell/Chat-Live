@@ -41,11 +41,11 @@ fun MujtamaBottomNav(
     unreadChatCount: Int = 2
 ) {
     val items = listOf(
-        BottomNavItem(tab = AppTab.PROFILE, icon = Icons.Outlined.Person),
-        BottomNavItem(tab = AppTab.TEAM, icon = Icons.Outlined.Groups),
-        BottomNavItem(tab = AppTab.GAMES, icon = Icons.Outlined.SportsEsports),
+        BottomNavItem(tab = AppTab.FEED, icon = Icons.Outlined.Home),
         BottomNavItem(tab = AppTab.CHAT, icon = Icons.Outlined.ChatBubbleOutline),
-        BottomNavItem(tab = AppTab.FEED, icon = Icons.Outlined.Home)
+        BottomNavItem(tab = AppTab.GAMES, icon = Icons.Outlined.SportsEsports),
+        BottomNavItem(tab = AppTab.TEAM, icon = Icons.Outlined.Groups),
+        BottomNavItem(tab = AppTab.PROFILE, icon = Icons.Outlined.Person)
     )
 
     Box(
