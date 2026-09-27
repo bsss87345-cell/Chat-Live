@@ -62,6 +62,7 @@ data class PostComment(
 
 data class Post(
     val id: String,
+    val authorId: String = "",
     val authorName: String,
     val authorHandle: String,
     val authorRole: String = "عضو نشط",
