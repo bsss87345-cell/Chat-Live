@@ -214,8 +214,7 @@ fun ChatScreen(
             TabRow(
                 selectedTabIndex = if (chatSubTab == "المحادثات الخاصة") 0 else 1,
                 modifier = Modifier
-                    .padding(horizontal = 16.dp, vertical = 4.dp)
-                    .height(60.dp),
+                    .padding(horizontal = 16.dp, vertical = 4.dp),
                 containerColor = Color.Transparent,
                 indicator = {},
                 divider = {}
@@ -239,24 +238,26 @@ fun ChatScreen(
                                 color = if (isSelected) NeonCyan else NeonPurple.copy(alpha = 0.5f),
                                 shape = RoundedCornerShape(50)
                             )
-                            .padding(horizontal = 20.dp, vertical = 10.dp)
+                            .padding(horizontal = 16.dp, vertical = 6.dp)
                             .testTag("chat_subtab_$index"),
                         text = {
                             Row(
                                 verticalAlignment = Alignment.CenterVertically,
-                                horizontalArrangement = Arrangement.spacedBy(8.dp)
+                                horizontalArrangement = Arrangement.spacedBy(6.dp)
                             ) {
                                 Icon(
                                     imageVector = if (index == 0) Icons.AutoMirrored.Filled.Chat else Icons.Outlined.Groups,
                                     contentDescription = null,
                                     tint = if (isSelected) Color.Black else NeonPurple,
-                                    modifier = Modifier.size(22.dp)
+                                    modifier = Modifier.size(18.dp)
                                 )
                                 Text(
                                     text = title,
                                     fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Normal,
                                     color = if (isSelected) Color.Black else TextSecondary,
-                                    fontSize = 16.sp
+                                    fontSize = 14.sp,
+                                    maxLines = 1,
+                                    softWrap = false
                                 )
                             }
                         }
