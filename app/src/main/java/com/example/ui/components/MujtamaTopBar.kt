@@ -96,8 +96,8 @@ fun MujtamaTopBar(
 
             },
         colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
-            containerColor = MaterialTheme.colorScheme.surface,
-            titleContentColor = MaterialTheme.colorScheme.onSurface
+            containerColor = DarkBackground,
+            titleContentColor = Color.White
         )
     )
 }
