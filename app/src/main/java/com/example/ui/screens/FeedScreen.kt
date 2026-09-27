@@ -498,6 +498,7 @@ fun QuickCreatePostCard(
 @Composable
 fun PostCard(
     post: Post,
+    isFollowing: Boolean = post.isFollowing,
     onLikeClick: () -> Unit,
     onCommentClick: () -> Unit,
     onShareClick: () -> Unit,
