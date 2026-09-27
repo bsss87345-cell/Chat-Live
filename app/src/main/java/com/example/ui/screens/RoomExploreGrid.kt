@@ -315,13 +315,33 @@ val sortedRooms = remember(rooms, searchQuery, roomViewFilter) {
                 ) {
                     Column(
                         horizontalAlignment = Alignment.CenterHorizontally,
-                        verticalArrangement = Arrangement.spacedBy(8.dp)
+                        verticalArrangement = Arrangement.spacedBy(12.dp)
                     ) {
-                        Text("🔍", fontSize = 32.sp)
+                        Box(
+                            modifier = Modifier
+                                .size(72.dp)
+                                .shadow(
+                                    elevation = 20.dp,
+                                    shape = CircleShape,
+                                    ambientColor = NeonCyan,
+                                    spotColor = NeonCyan
+                                )
+                                .clip(CircleShape)
+                                .background(DarkSurface)
+                                .border(1.dp, NeonCyan.copy(alpha = 0.6f), CircleShape),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Icon(
+                                imageVector = Icons.Default.Search,
+                                contentDescription = null,
+                                tint = NeonCyan,
+                                modifier = Modifier.size(32.dp)
+                            )
+                        }
                         Text(
                             text = "لم يتم العثور على غرفة تطابق البحث",
                             fontSize = 13.sp,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                            color = TextSecondary,
                             fontWeight = FontWeight.Medium
                         )
                     }
