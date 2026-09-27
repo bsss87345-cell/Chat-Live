@@ -170,8 +170,8 @@ val sortedRooms = remember(rooms, searchQuery, roomViewFilter) {
                         )
                     }
 
-                    Row(horizontalArrangement = Arrangement.spacedBy(4.dp)) {
-IconButton(
+                    Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                        Surface(
                             onClick = {
                                 val myRoom = rooms.find { it.isOwner }
                                 if (myRoom != null) {
@@ -180,23 +180,39 @@ IconButton(
                                     showCreateDialog = true
                                 }
                             },
-                            modifier = Modifier.testTag("create_room_button")
+                            modifier = Modifier
+                                .size(36.dp)
+                                .testTag("create_room_button"),
+                            shape = RoundedCornerShape(10.dp),
+                            color = Color.Transparent,
+                            border = androidx.compose.foundation.BorderStroke(1.dp, NeonPurple)
                         ) {
-                            Icon(
-                                imageVector = Icons.Default.AddHome,
-                                contentDescription = "غرفتي",
-                                tint = MujtamaPrimary
-                            )
-}
-                        IconButton(
+                            Box(contentAlignment = Alignment.Center) {
+                                Icon(
+                                    imageVector = Icons.Default.AddHome,
+                                    contentDescription = "غرفتي",
+                                    tint = NeonPurple,
+                                    modifier = Modifier.size(18.dp)
+                                )
+                            }
+                        }
+                        Surface(
                             onClick = { showSearchBar = !showSearchBar },
-                            modifier = Modifier.testTag("rooms_search_toggle")
+                            modifier = Modifier
+                                .size(36.dp)
+                                .testTag("rooms_search_toggle"),
+                            shape = RoundedCornerShape(10.dp),
+                            color = Color.Transparent,
+                            border = androidx.compose.foundation.BorderStroke(1.dp, NeonCyan)
                         ) {
-                            Icon(
-                                imageVector = Icons.Default.Search,
-                                contentDescription = "بحث",
-                                tint = MujtamaTeal
-                            )
+                            Box(contentAlignment = Alignment.Center) {
+                                Icon(
+                                    imageVector = Icons.Default.Search,
+                                    contentDescription = "بحث",
+                                    tint = NeonCyan,
+                                    modifier = Modifier.size(18.dp)
+                                )
+                            }
                         }
                     }
                 }
