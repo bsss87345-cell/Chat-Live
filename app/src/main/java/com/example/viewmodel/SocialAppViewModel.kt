@@ -336,6 +336,7 @@ class SocialAppViewModel : ViewModel() {
         val profile = _userProfile.value
         val newPost = Post(
             id = "p_${System.currentTimeMillis()}",
+            authorId = profile.id,
             authorName = profile.name,
             authorHandle = "ID: ${profile.id}",
             authorAvatarUrl = profile.avatarUrl,
