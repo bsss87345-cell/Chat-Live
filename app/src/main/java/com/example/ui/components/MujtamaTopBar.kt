@@ -55,7 +55,8 @@ fun MujtamaTopBar(
             ) {
                 Surface(
                     shape = CircleShape,
-                    color = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.55f),
+                    color = DarkSurface,
+                    border = androidx.compose.foundation.BorderStroke(1.dp, NeonCyan),
                     modifier = Modifier.size(40.dp)
                 ) {
                     IconButton(
@@ -67,7 +68,7 @@ fun MujtamaTopBar(
                         Icon(
                             imageVector = Icons.Outlined.Notifications,
                             contentDescription = "الإشعارات",
-                            tint = MaterialTheme.colorScheme.onSurface,
+                            tint = NeonCyan,
                             modifier = Modifier.size(22.dp)
                         )
                     }
