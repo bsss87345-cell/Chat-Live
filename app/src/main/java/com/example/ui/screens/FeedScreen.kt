@@ -597,7 +597,7 @@ fun PostCard(
                                 )
                             ) {
                                 Text(
-                                    text = if (isFollowing) "متابَع" else "متابعة",
+                                    text = if (isFollowing) "اتابع" else "متابعة",
                                     fontSize = 11.sp,
                                     fontWeight = FontWeight.SemiBold
                                 )
