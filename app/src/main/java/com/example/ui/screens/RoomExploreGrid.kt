@@ -41,10 +41,17 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.foundation.Canvas
 import androidx.compose.ui.unit.dp as dpUnit
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.graphics.Path
+import androidx.compose.ui.graphics.drawscope.Stroke
+import androidx.compose.foundation.Canvas
 import com.example.ui.theme.MujtamaGold
 import com.example.ui.theme.MujtamaOnlineGreen
 import com.example.ui.theme.MujtamaPrimary
 import com.example.ui.theme.MujtamaTeal
+import com.example.ui.theme.DarkBackground
+import com.example.ui.theme.NeonCyan
+import com.example.ui.theme.TextSecondary
 import com.example.ui.theme.DarkBackground
 import com.example.ui.theme.NeonCyan
 import com.example.ui.theme.TextSecondary
