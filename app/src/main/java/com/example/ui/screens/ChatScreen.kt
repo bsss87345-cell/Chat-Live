@@ -245,12 +245,14 @@ fun ChatScreen(
                                 verticalAlignment = Alignment.CenterVertically,
                                 horizontalArrangement = Arrangement.spacedBy(6.dp)
                             ) {
-                                Icon(
-                                    imageVector = if (index == 0) Icons.Default.ChatBubbleOutline else Icons.Default.Forum,
-                                    contentDescription = null,
-                                    tint = if (isSelected) Color.Black else TextSecondary,
-                                    modifier = Modifier.size(18.dp)
-                                )
+                                if (index == 0) {
+                                    Icon(
+                                        imageVector = Icons.AutoMirrored.Filled.Chat,
+                                        contentDescription = null,
+                                        tint = if (isSelected) Color.Black else TextSecondary,
+                                        modifier = Modifier.size(18.dp)
+                                    )
+                                }
                                 Text(
                                     text = title,
                                     fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Normal,
