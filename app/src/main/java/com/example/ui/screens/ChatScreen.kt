@@ -229,7 +229,7 @@ fun ChatScreen(
                         modifier = Modifier
                             .padding(horizontal = 4.dp, vertical = 4.dp)
                             .heightIn(min = 0.dp)
-                            .clip(RoundedCornerShape(14.dp))
+                            .clip(RoundedCornerShape(50))
                             .background(
                                 if (isSelected) NeonCyan
                                 else DarkSurface.copy(alpha = 0.5f)
@@ -237,7 +237,7 @@ fun ChatScreen(
                             .border(
                                 width = 1.dp,
                                 color = if (isSelected) NeonCyan else NeonPurple.copy(alpha = 0.5f),
-                                shape = RoundedCornerShape(14.dp)
+                                shape = RoundedCornerShape(50)
                             )
                             .padding(horizontal = 10.dp, vertical = 4.dp)
                             .testTag("chat_subtab_$index"),
