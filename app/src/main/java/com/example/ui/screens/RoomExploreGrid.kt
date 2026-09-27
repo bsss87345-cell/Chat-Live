@@ -689,7 +689,15 @@ fun CreateRoomDialogWithImage(
 
     AlertDialog(
         onDismissRequest = onDismiss,
-        title = { Text("إنشاء غرفة دردشة جديدة 🎙️", fontSize = 16.sp, fontWeight = FontWeight.Bold) },
+        containerColor = DarkSurface,
+        title = {
+            Text(
+                "إنشاء غرفة دردشة جديدة 🎙️",
+                fontSize = 16.sp,
+                fontWeight = FontWeight.Bold,
+                color = Color.White
+            )
+        },
         text = {
             LazyColumn(
                 modifier = Modifier.fillMaxWidth(),
@@ -700,54 +708,69 @@ fun CreateRoomDialogWithImage(
                     OutlinedTextField(
                         value = name,
                         onValueChange = { name = it },
-                        label = { Text("اسم الغرفة") },
-                        placeholder = { Text("مثال: رواد التقنية والبرمجة") },
+                        label = { Text("اسم الغرفة", color = TextSecondary) },
+                        placeholder = { Text("مثال: رواد التقنية والبرمجة", color = TextSecondary.copy(alpha = 0.6f)) },
                         modifier = Modifier.fillMaxWidth(),
-                        singleLine = true
+                        singleLine = true,
+                        colors = OutlinedTextFieldDefaults.colors(
+                            focusedBorderColor = NeonCyan,
+                            unfocusedBorderColor = NeonPurple.copy(alpha = 0.5f),
+                            focusedTextColor = Color.White,
+                            unfocusedTextColor = Color.White,
+                            cursorColor = NeonCyan
+                        )
                     )
                 }
 
                 // رفع / اختيار صورة الغرفة التي تملأ خلفية المربع
                 item {
-                    Text("صورة خلفية الغرفة 🖼️:", fontSize = 12.sp, fontWeight = FontWeight.SemiBold)
-                    Card(
+                    Text("صورة خلفية الغرفة 🖼️:", fontSize = 12.sp, fontWeight = FontWeight.SemiBold, color = Color.White)
+                    Box(
                         modifier = Modifier
                             .fillMaxWidth()
                             .height(100.dp)
                             .clip(RoundedCornerShape(12.dp))
+                            .background(DarkBackground)
+                            .border(
+                                width = 1.dp,
+                                color = NeonCyan,
+                                shape = RoundedCornerShape(12.dp)
+                            )
+                            .then(
+                                if (selectedImageUrl.isNullOrBlank())
+                                    Modifier.dashedBorder(NeonCyan, RoundedCornerShape(12.dp))
+                                else Modifier
+                            )
                             .clickable {
                                 photoPickerLauncher.launch(
                                     PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly)
                                 )
                             },
-                        shape = RoundedCornerShape(12.dp),
-                        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant)
+                        contentAlignment = Alignment.Center
                     ) {
-                        Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                            if (!selectedImageUrl.isNullOrBlank()) {
-                                AsyncImage(
-                                    model = selectedImageUrl,
-                                    contentDescription = "معاينة صورة الغرفة",
-                                    contentScale = ContentScale.Crop,
-                                    modifier = Modifier.fillMaxSize()
-                                )
-                                Surface(
-                                    modifier = Modifier
-                                        .align(Alignment.BottomEnd)
-                                        .padding(6.dp),
-                                    shape = RoundedCornerShape(6.dp),
-                                    color = Color.Black.copy(alpha = 0.6f)
-                                ) {
-                                    Text("تغيير الصورة ✏️", color = Color.White, fontSize = 10.sp, modifier = Modifier.padding(4.dp))
-                                }
-                            } else {
-                                Column(
-                                    horizontalAlignment = Alignment.CenterHorizontally,
-                                    verticalArrangement = Arrangement.spacedBy(4.dp)
-                                ) {
-                                    Icon(Icons.Default.AddPhotoAlternate, contentDescription = null, tint = MaterialTheme.colorScheme.primary, modifier = Modifier.size(28.dp))
-                                    Text("اضغط لرفع صورة الغرفة من جهازك", fontSize = 11.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
-                                }
+                        if (!selectedImageUrl.isNullOrBlank()) {
+                            AsyncImage(
+                                model = selectedImageUrl,
+                                contentDescription = "معاينة صورة الغرفة",
+                                contentScale = ContentScale.Crop,
+                                modifier = Modifier.fillMaxSize()
+                            )
+                            Surface(
+                                modifier = Modifier
+                                    .align(Alignment.BottomEnd)
+                                    .padding(6.dp),
+                                shape = RoundedCornerShape(6.dp),
+                                color = Color.Black.copy(alpha = 0.6f)
+                            ) {
+                                Text("تغيير الصورة ✏️", color = Color.White, fontSize = 10.sp, modifier = Modifier.padding(4.dp))
+                            }
+                        } else {
+                            Column(
+                                horizontalAlignment = Alignment.CenterHorizontally,
+                                verticalArrangement = Arrangement.spacedBy(4.dp)
+                            ) {
+                                Icon(Icons.Default.AddPhotoAlternate, contentDescription = null, tint = NeonCyan, modifier = Modifier.size(28.dp))
+                                Text("اضغط لرفع صورة الغرفة من جهازك", fontSize = 11.sp, color = TextSecondary)
                             }
                         }
                     }
@@ -755,7 +778,7 @@ fun CreateRoomDialogWithImage(
             }
         },
         confirmButton = {
-            Button(
+            Surface(
                 onClick = {
                     val maxCount = maxMembersText.toIntOrNull() ?: 100
                     onCreate(
@@ -769,14 +792,31 @@ fun CreateRoomDialogWithImage(
                         selectedImageUrl
                     )
                 },
-                enabled = name.isNotBlank()
+                enabled = name.isNotBlank(),
+                shape = RoundedCornerShape(50),
+                color = if (name.isNotBlank()) NeonCyan else DarkBackground,
+                border = androidx.compose.foundation.BorderStroke(1.dp, NeonCyan.copy(alpha = if (name.isNotBlank()) 1f else 0.4f))
             ) {
-                Text("إنشاء الغرفة")
+                Text(
+                    "إنشاء الغرفة",
+                    color = if (name.isNotBlank()) Color.Black else TextSecondary,
+                    fontWeight = FontWeight.Bold,
+                    modifier = Modifier.padding(horizontal = 20.dp, vertical = 10.dp)
+                )
             }
         },
         dismissButton = {
-            TextButton(onClick = onDismiss) {
-                Text("إلغاء")
+            Surface(
+                onClick = onDismiss,
+                shape = RoundedCornerShape(50),
+                color = Color.Transparent,
+                border = androidx.compose.foundation.BorderStroke(1.dp, NeonPurple)
+            ) {
+                Text(
+                    "إلغاء",
+                    color = NeonPurple,
+                    modifier = Modifier.padding(horizontal = 20.dp, vertical = 10.dp)
+                )
             }
         }
     )
