@@ -30,7 +30,43 @@ class SocialAppViewModel : ViewModel() {
     val activeStory: StateFlow<Story?> = _activeStory.asStateFlow()
 
     // --- Feed Posts State ---
-    private val _posts = MutableStateFlow<List<Post>>(emptyList())
+    private fun generateMockPostsFor(authorId: String, authorName: String, authorHandle: String, count: Int): List<Post> {
+        val sampleContents = listOf(
+            "يوم جميل اليوم، الحمدلله على كل شي!",
+            "أخيراً خلصت مشروع كنت شغال عليه من فترة",
+            "أفضل قهوة جربتها هالأسبوع ☕",
+            "مين عنده توصية مكان حلو للعشاء؟",
+            "بداية جديدة دايماً فيها حماس",
+            "شكراً لكل من دعمني وساندني، الله يوفقكم",
+            "لحظة هادئة وسط زحمة اليوم",
+            "تعلمت شي جديد اليوم، الحمدلله"
+        )
+        return (1..count).map { i ->
+            Post(
+                id = "mock_post_${authorId}_$i",
+                authorId = authorId,
+                authorName = authorName,
+                authorHandle = authorHandle,
+                authorRole = "عضو نشط",
+                timeAgo = "${i}س",
+                content = sampleContents[i % sampleContents.size],
+                likesCount = (5..150).random(),
+                isLiked = false,
+                commentsCount = (0..20).random(),
+                sharesCount = (0..10).random(),
+                commentsList = emptyList(),
+                isAuthor = false,
+                isFollowing = false
+            )
+        }
+    }
+
+    private val _posts = MutableStateFlow<List<Post>>(
+        generateMockPostsFor("mock_1", "سارة أحمد", "@sara_a", 14) +
+        generateMockPostsFor("mock_2", "محمد العلي", "@m_ali", 27) +
+        generateMockPostsFor("mock_3", "نورة سالم", "@noura_s", 6) +
+        generateMockPostsFor("mock_4", "خالد فهد", "@khalid_f", 41)
+    )
     val posts: StateFlow<List<Post>> = _posts.asStateFlow()
 
     private val _activeCommentPostId = MutableStateFlow<String?>(null)
