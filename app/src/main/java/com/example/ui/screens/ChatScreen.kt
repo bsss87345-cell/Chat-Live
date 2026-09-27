@@ -208,7 +208,7 @@ fun ChatScreen(
         // Sub-Tab Switcher
         Surface(
             tonalElevation = 2.dp,
-            color = MaterialTheme.colorScheme.surface
+            color = DarkBackground
         ) {
             TabRow(
                 selectedTabIndex = if (chatSubTab == "المحادثات الخاصة") 0 else 1,
@@ -230,8 +230,13 @@ fun ChatScreen(
                             .heightIn(min = 0.dp)
                             .clip(RoundedCornerShape(14.dp))
                             .background(
-                                if (isSelected) MaterialTheme.colorScheme.primary
-                                else MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f)
+                                if (isSelected) NeonCyan
+                                else DarkSurface.copy(alpha = 0.5f)
+                            )
+                            .border(
+                                width = 1.dp,
+                                color = if (isSelected) NeonCyan else NeonPurple.copy(alpha = 0.5f),
+                                shape = RoundedCornerShape(14.dp)
                             )
                             .padding(horizontal = 10.dp, vertical = 4.dp)
                             .testTag("chat_subtab_$index"),
@@ -243,13 +248,13 @@ fun ChatScreen(
                                 Icon(
                                     imageVector = if (index == 0) Icons.Default.ChatBubbleOutline else Icons.Default.Forum,
                                     contentDescription = null,
-                                    tint = if (isSelected) Color.White else MaterialTheme.colorScheme.onSurface,
+                                    tint = if (isSelected) Color.Black else TextSecondary,
                                     modifier = Modifier.size(18.dp)
                                 )
                                 Text(
                                     text = title,
                                     fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Normal,
-                                    color = if (isSelected) Color.White else MaterialTheme.colorScheme.onSurface,
+                                    color = if (isSelected) Color.Black else TextSecondary,
                                     fontSize = 13.sp
                                 )
                             }
