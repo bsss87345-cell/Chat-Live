@@ -86,16 +86,13 @@ fun MainScreen(viewModel: SocialAppViewModel) {
                     enter = fadeIn(animationSpec = tween(durationMillis = 180)),
                     exit = fadeOut(animationSpec = tween(durationMillis = 120))
                 ) {
-                    val isDarkMode by viewModel.isDarkMode.collectAsStateWithLifecycle()
                     MujtamaTopBar(
                         currentTab = currentTab,
                         walletBalance = walletBalance,
-                        isDarkMode = isDarkMode,
                         onWalletClick = { viewModel.setTab(AppTab.PROFILE) },
                         onNotificationsClick = { viewModel.openNotifications() },
                         unreadCount = viewModel.notifications.collectAsStateWithLifecycle().value.count { !it.isRead },
-                        onSearchClick = { viewModel.setTab(AppTab.CHAT) },
-                        onToggleDarkMode = { viewModel.toggleDarkMode() }
+                        onSearchClick = { viewModel.setTab(AppTab.CHAT) }
                     )
                 }
             },
