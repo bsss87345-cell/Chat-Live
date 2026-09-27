@@ -376,7 +376,20 @@ val sortedRooms = remember(rooms, searchQuery, roomViewFilter) {
         var errorMessage by remember { mutableStateOf<String?>(null) }
 
         AlertDialog(
-            onDismissRequest = { passwordPromptRoom = null },
+            onDismissRequest = onDismiss,
+            containerColor = DarkSurface.copy(alpha = 0.85f),
+            modifier = Modifier
+                .shadow(
+                    elevation = 24.dp,
+                    shape = RoundedCornerShape(24.dp),
+                    ambientColor = NeonCyan,
+                    spotColor = NeonPurple
+                )
+                .border(
+                    width = 1.5.dp,
+                    brush = Brush.linearGradient(listOf(NeonCyan, NeonPurple)),
+                    shape = RoundedCornerShape(24.dp)
+                ),
             title = {
                 Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(6.dp)) {
                     Text("🔒")
