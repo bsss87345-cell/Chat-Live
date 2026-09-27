@@ -569,7 +569,8 @@ fun ProfileScreen(
             onDismiss = { showFollowersDialog = false },
             onLoadProfileFor = onLoadProfileFor,
             onLoadFollowersFor = onLoadFollowersFor,
-            onLoadFollowingFor = onLoadFollowingFor
+            onLoadFollowingFor = onLoadFollowingFor,
+            onLoadPostsFor = onLoadPostsFor
         )
     }
 
@@ -581,7 +582,8 @@ fun ProfileScreen(
             onDismiss = { showFollowingDialog = false },
             onLoadProfileFor = onLoadProfileFor,
             onLoadFollowersFor = onLoadFollowersFor,
-            onLoadFollowingFor = onLoadFollowingFor
+            onLoadFollowingFor = onLoadFollowingFor,
+            onLoadPostsFor = onLoadPostsFor
         )
     }
 
