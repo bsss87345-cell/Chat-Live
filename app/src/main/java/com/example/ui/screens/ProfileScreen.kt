@@ -109,14 +109,18 @@ fun ProfileScreen(
         }
     }
 
-    // User's own posts or activity (used for the header stats count)
-    val userPosts = posts.filter {
-        it.authorHandle == userProfile.handle ||
-        it.authorHandle == "ID: ${userProfile.id}" ||
-        it.authorHandle == "@user_me" ||
-        it.id.startsWith("post_") ||
-        it.id.startsWith("p_")
-    }.take(6)
+    // User's own posts (own profile) or another user's posts (other profile) - used for the header stats count and grid
+    val userPosts = if (isOnOwnProfile) {
+        posts.filter {
+            it.authorHandle == userProfile.handle ||
+            it.authorHandle == "ID: ${userProfile.id}" ||
+            it.authorHandle == "@user_me" ||
+            it.id.startsWith("post_") ||
+            it.id.startsWith("p_")
+        }.take(6)
+    } else {
+        onLoadPostsFor(userProfile.id)
+    }
     val totalPostsCount = userPosts.size
 
     Box(modifier = Modifier.fillMaxSize()) {
