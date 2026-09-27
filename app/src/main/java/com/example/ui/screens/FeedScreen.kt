@@ -340,6 +340,12 @@ fun StoriesBar(
                 Box(
                     modifier = Modifier
                         .size(64.dp)
+                        .shadow(
+                            elevation = 12.dp,
+                            shape = CircleShape,
+                            ambientColor = NeonCyan,
+                            spotColor = NeonCyan
+                        )
                         .border(width = 2.dp, color = NeonCyan, shape = CircleShape)
                         .padding(4.dp)
                         .clip(CircleShape)
