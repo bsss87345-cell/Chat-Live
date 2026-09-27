@@ -284,6 +284,11 @@ class SocialAppViewModel : ViewModel() {
         return mockUsersDirectory.find { it.id == userId }
     }
 
+    // يرجع منشورات أي مستخدم بالـID (تُستخدم لعرض منشورات أي بروفايل مفتوح + حساب العدد)
+    fun getPostsByUserId(userId: String): List<Post> {
+        return _posts.value.filter { it.authorId == userId }
+    }
+
     // عدد منشورات وهمي ثابت لكل مستخدم بالدليل الوهمي (اختبار محلي فقط، يُستبدل بعدّ حقيقي عند ربط Firestore)
     private val mockPostsCountByUserId: Map<String, Int> = mapOf(
         "mock_1" to 14,
