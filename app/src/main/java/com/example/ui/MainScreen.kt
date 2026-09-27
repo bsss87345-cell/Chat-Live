@@ -175,6 +175,8 @@ fun MainScreen(viewModel: SocialAppViewModel) {
                                 onShareClick = { viewModel.sharePost(it) },
                                 onPublishPost = { text, tag, type -> viewModel.publishPost(text, tag, type) },
                                 onFollowClick = { viewModel.toggleFollowUser(it) },
+                                isUserFollowing = { userId -> viewModel.isFollowing(userId) },
+                                onToggleFollow = { userId -> viewModel.toggleFollow(userId) },
                                 onEditPost = { postId, newText -> viewModel.editPost(postId, newText) },
                                 onDeletePost = { viewModel.deletePost(it) },
                                 onReportPost = { viewModel.reportPost(it) }
