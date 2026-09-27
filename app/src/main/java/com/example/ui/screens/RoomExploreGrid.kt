@@ -736,11 +736,24 @@ fun CreateRoomDialogWithImage(
                                 color = NeonCyan,
                                 shape = RoundedCornerShape(12.dp)
                             )
-                            .then(
-                                if (selectedImageUrl.isNullOrBlank())
-                                    Modifier.dashedBorder(NeonCyan, RoundedCornerShape(12.dp))
-                                else Modifier
+                            Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(100.dp)
+                            .clip(RoundedCornerShape(12.dp))
+                            .background(DarkBackground)
+                            .border(
+                                width = 1.dp,
+                                color = NeonCyan,
+                                shape = RoundedCornerShape(12.dp)
                             )
+                            .clickable {
+                                photoPickerLauncher.launch(
+                                    PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly)
+                                )
+                            },
+                        contentAlignment = Alignment.Center
+                    ) {
                             .clickable {
                                 photoPickerLauncher.launch(
                                     PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly)
