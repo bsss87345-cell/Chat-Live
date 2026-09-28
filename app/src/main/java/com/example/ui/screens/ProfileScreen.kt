@@ -291,44 +291,45 @@ fun ProfileScreen(
                             modifier = Modifier.size(86.dp),
                             contentAlignment = Alignment.BottomEnd
                         ) {
-                            Box(
-                                modifier = Modifier
-                                    .size(100.dp)
-                                    .align(Alignment.Center)
-                                    .clip(CircleShape)
-                                    .background(
-                                        Brush.radialGradient(
-                                            listOf(
-                                                MujtamaGold.copy(alpha = 0.6f * avatarGlowAlpha),
-                                                MujtamaTeal.copy(alpha = 0.3f * avatarGlowAlpha),
-                                                Color.Transparent
-                                            )
-                                        )
-                                    )
-                            )
-                            Box(
-                                modifier = Modifier
-                                    .fillMaxSize()
-                                    .clip(CircleShape)
-                                    .background(
-                                        Brush.linearGradient(
-                                            listOf(MujtamaPrimary, MujtamaTeal, MujtamaGold)
-                                        )
-                                    )
-                                    .border(3.dp, MaterialTheme.colorScheme.surface, CircleShape),
-                                contentAlignment = Alignment.Center
-                            ) {
-                                if (userProfile.avatarUrl.isNotBlank()) {
-                                    AsyncImage(
-                                        model = userProfile.avatarUrl,
-                                        contentDescription = "صورة الملف الشخصي",
-                                        contentScale = ContentScale.Crop,
-                                        modifier = Modifier.fillMaxSize()
-                                    )
-                                } else {
-                                    Text(text = userProfile.avatarEmoji, fontSize = 42.sp)
-                                }
-                            }
+                            val hexShape = remember {
+    androidx.compose.foundation.shape.GenericShape { size, _ ->
+        val r = minOf(size.width, size.height) / 2f
+        val cx = size.width / 2f
+        val cy = size.height / 2f
+        for (i in 0..5) {
+            val angle = Math.toRadians((60 * i - 90).toDouble())
+            val px = cx + r * kotlin.math.cos(angle).toFloat()
+            val py = cy + r * kotlin.math.sin(angle).toFloat()
+            if (i == 0) moveTo(px, py) else lineTo(px, py)
+        }
+        close()
+    }
+}
+Box(
+    modifier = Modifier
+        .fillMaxSize()
+        .shadow(16.dp, hexShape, ambientColor = NeonCyan, spotColor = NeonPurple)
+        .background(DarkSurface, hexShape)
+        .border(3.dp, Brush.linearGradient(listOf(NeonCyan, NeonPurple)), hexShape)
+        .clip(hexShape)
+        .clickable(enabled = isOnOwnProfile) {
+            avatarImageLauncher.launch(
+                PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly)
+            )
+        },
+    contentAlignment = Alignment.Center
+) {
+    if (userProfile.avatarUrl.isNotBlank()) {
+        AsyncImage(
+            model = userProfile.avatarUrl,
+            contentDescription = "صورة الملف الشخصي",
+            contentScale = ContentScale.Crop,
+            modifier = Modifier.fillMaxSize()
+        )
+    } else {
+        Text(text = userProfile.avatarEmoji, fontSize = 42.sp)
+    }
+}
 
                             // Edit avatar icon button
                             if (isOnOwnProfile) {
