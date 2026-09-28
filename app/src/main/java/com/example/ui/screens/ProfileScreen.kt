@@ -406,6 +406,36 @@ Box(
                                 )
                         )
                     }
+                    Row(
+    modifier = Modifier
+        .fillMaxWidth()
+        .padding(horizontal = 4.dp),
+    horizontalArrangement = Arrangement.spacedBy(10.dp)
+) {
+    ProfileNeonStatCard(
+        title = "المنشورات",
+        count = "$totalPostsCount",
+        icon = Icons.Outlined.GridView,
+        accent = NeonCyan,
+        modifier = Modifier.weight(1f)
+    )
+    ProfileNeonStatCard(
+        title = "يتابع",
+        count = "${userProfile.followingCount}",
+        icon = Icons.Default.Person,
+        accent = NeonPurple,
+        modifier = Modifier.weight(1f),
+        onClick = { showFollowingDialog = true }
+    )
+    ProfileNeonStatCard(
+        title = "المتابعون",
+        count = "${userProfile.followersCount}",
+        icon = Icons.Default.People,
+        accent = NeonCyan,
+        modifier = Modifier.weight(1f),
+        onClick = { showFollowersDialog = true }
+    )
+                    }
                     val isDarkTheme = isSystemInDarkTheme()
                     // Content type tabs (Posts / Video / Reuse) - selected = black (light) / white+shadow (dark)
                     Row(
