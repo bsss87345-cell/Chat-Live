@@ -108,30 +108,94 @@ fun ProfileScreen(
             saveAvatarToInternalStorage(context, it)?.let { path ->
                 onUpdateAvatarImage(path)
             }
-        }
-    }
+        var avatarGlowStarted by remember { mutableStateOf(false) }
+                    val avatarGlowAlpha by animateFloatAsState(
+                        targetValue = if (avatarGlowStarted) 0f else 1f,
+                        animationSpec = tween(durationMillis = 1200),
+                        label = "avatarGlow"
+                    )
+                    LaunchedEffect(Unit) {
+                        avatarGlowStarted = true
+                    }
+                    // تعريف شكل السداسي (Hexagon)
+                    val hexagonShape = GenericShape { size, _ ->
+                        val w = size.width
+                        val h = size.height
+                        moveTo(w / 2f, 0f)
+                        lineTo(w, h * 0.25f)
+                        lineTo(w, h * 0.75f)
+                        lineTo(w / 2f, h)
+                        lineTo(0f, h * 0.75f)
+                        lineTo(0f, h * 0.25f)
+                        close()
+                    }
+                    Box(modifier = Modifier.fillMaxWidth()) {
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(top = 8.dp),
+                            verticalAlignment = Alignment.Bottom
+                        ) {
+                            Column(horizontalAlignment = Alignment.Start) {
+                                Box(
+                                    modifier = Modifier.size(86.dp),
+                                    contentAlignment = Alignment.BottomEnd
+                                ) {
+                                    // التوهج النيون (Neon Glow)
+                                    Box(
+                                        modifier = Modifier
+                                            .size(100.dp)
+                                            .align(Alignment.Center)
+                                            .clip(hexagonShape)
+                                            .background(NeonCyan.copy(alpha = 0.15f * avatarGlowAlpha))
+                                            .shadow(elevation = 16.dp, shape = hexagonShape, ambientColor = NeonCyan, spotColor = NeonCyan)
+                                    )
+                                    // إطار الصورة السداسي
+                                    Box(
+                                        modifier = Modifier
+                                            .fillMaxSize()
+                                            .clip(hexagonShape)
+                                            .border(2.dp, NeonCyan, hexagonShape)
+                                            .background(DarkSurface),
+                                        contentAlignment = Alignment.Center
+                                    ) {
+                                        if (userProfile.avatarUrl.isNotBlank()) {
+                                            AsyncImage(
+                                                model = userProfile.avatarUrl,
+                                                contentDescription = "صورة الملف الشخصي",
+                                                contentScale = ContentScale.Crop,
+                                                modifier = Modifier.fillMaxSize().clip(hexagonShape)
+                                            )
+                                        } else {
+                                            Text(text = userProfile.avatarEmoji, fontSize = 42.sp)
+                                        }
+                                    }
 
-    // User's own posts (own profile) or another user's posts (other profile) - used for the header stats count and grid
-    val userPosts = if (isOnOwnProfile) {
-        posts.filter {
-            it.authorHandle == userProfile.handle ||
-            it.authorHandle == "ID: ${userProfile.id}" ||
-            it.authorHandle == "@user_me" ||
-            it.id.startsWith("post_") ||
-            it.id.startsWith("p_")
-        }.take(6)
-    } else {
-        onLoadPostsFor(userProfile.id)
-    }
-    val totalPostsCount = userPosts.size
-
-    Box(modifier = Modifier.fillMaxSize()) {
-    LazyColumn(
-        modifier = Modifier
-            .fillMaxSize()
-            .testTag("profile_screen"),
-        contentPadding = PaddingValues(start = 12.dp, end = 12.dp, bottom = 80.dp, top = 8.dp),
-        verticalArrangement = Arrangement.spacedBy(14.dp)
+                                    // Edit avatar icon button
+                                    if (isOnOwnProfile) {
+                                        Box(
+                                            modifier = Modifier
+                                                .size(28.dp)
+                                                .clip(CircleShape)
+                                                .background(NeonCyan)
+                                                .clickable {
+                                                    avatarImageLauncher.launch(
+                                                        PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly)
+                                                    )
+                                                }
+                                                .padding(4.dp),
+                                            contentAlignment = Alignment.Center
+                                        ) {
+                                            Icon(
+                                                imageVector = Icons.Default.Edit,
+                                                contentDescription = "تغيير صورة الملف الشخصي",
+                                                tint = Color.Black,
+                                                modifier = Modifier.size(16.dp)
+                                            )
+                                        }
+                                    }
+                                }
+                            }
     ) {
         // -------------------------------------------------------------
         // 1. Profile Header (Avatar, Name, Bio, and Stats)
