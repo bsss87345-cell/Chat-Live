@@ -934,7 +934,7 @@ fun PostCard(
                     Icon(
                         imageVector = Icons.Outlined.Share,
                         contentDescription = "مشاركة",
-                        tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                        tint = if (shareHighlighted) NeonPurple else NeonCyan,
                         modifier = Modifier.size(20.dp)
                     )
                     Spacer(modifier = Modifier.width(6.dp))
