@@ -144,7 +144,7 @@ fun ProfileScreen(
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.spacedBy(12.dp)
             ) { 
-                    // Top bar: settings gear (physical left) + add-friend (physical right)
+                    // Top bar: add-friend (physical right) + settings (physical left)
                     Row(
                         modifier = Modifier.fillMaxWidth(),
                         verticalAlignment = Alignment.CenterVertically
@@ -152,77 +152,39 @@ fun ProfileScreen(
                         if (!isOnOwnProfile) {
                             IconButton(
                                 onClick = onBackFromOtherProfile,
-                                modifier = Modifier
-                                    .size(36.dp)
-                                    .testTag("profile_back_button")
+                                modifier = Modifier.size(36.dp).testTag("profile_back_button")
                             ) {
-                                Icon(
-                                    imageVector = Icons.Default.ArrowForward,
-                                    contentDescription = "رجوع",
-                                    tint = MaterialTheme.colorScheme.onSurface,
-                                    modifier = Modifier.size(28.dp)
-                                )
+                                Icon(Icons.Default.ArrowForward, contentDescription = "رجوع", tint = Color.White, modifier = Modifier.size(26.dp))
                             }
                         } else {
                             IconButton(
-                                onClick = { onOpenAccountSettings() },
-                                modifier = Modifier
-                                    .size(36.dp)
-                                    .testTag("profile_settings_menu_button")
+                                onClick = { },
+                                modifier = Modifier.size(36.dp).testTag("profile_add_friend_button")
                             ) {
-                                Icon(
-                                    imageVector = Icons.Default.Settings,
-                                    contentDescription = "الإعدادات",
-                                    tint = MaterialTheme.colorScheme.onSurface,
-                                    modifier = Modifier.size(28.dp)
-                                )
+                                Icon(Icons.Default.PersonAdd, contentDescription = "إضافة صديق", tint = Color.White, modifier = Modifier.size(26.dp))
                             }
                         }
                         Spacer(modifier = Modifier.weight(1f))
                         if (isOnOwnProfile) {
                             IconButton(
-                                onClick = { },
-                                modifier = Modifier
-                                    .size(36.dp)
-                                    .testTag("profile_add_friend_button")
+                                onClick = { onOpenAccountSettings() },
+                                modifier = Modifier.size(36.dp).testTag("profile_settings_menu_button")
                             ) {
-                                Icon(
-                                    imageVector = Icons.Default.PersonAdd,
-                                    contentDescription = "إضافة صديق",
-                                    tint = MaterialTheme.colorScheme.onSurface,
-                                    modifier = Modifier.size(28.dp)
-                                )
+                                Icon(Icons.Default.Settings, contentDescription = "الإعدادات", tint = Color.White, modifier = Modifier.size(26.dp))
                             }
                         }
                     }
 
-                    // Name + Online status (centered, under the icon row)
-                    if (isOnOwnProfile) {
-                        Column(
-                            modifier = Modifier.fillMaxWidth(),
-                            horizontalAlignment = Alignment.CenterHorizontally
-                        ) {
-                            Text(
-                                text = userProfile.name,
-                                fontWeight = FontWeight.Bold,
-                                fontSize = 16.sp,
-                                color = MaterialTheme.colorScheme.onSurface
-                            )
-                            Spacer(modifier = Modifier.height(2.dp))
-                            Row(verticalAlignment = Alignment.CenterVertically) {
-                                Box(
-                                    modifier = Modifier
-                                        .size(8.dp)
-                                        .clip(CircleShape)
-                                        .background(NeonCyan)
-                                )
-                                Spacer(modifier = Modifier.width(4.dp))
-                                Text(
-                                    text = "Online",
-                                    fontSize = 12.sp,
-                                    color = NeonCyan
-                                )
-                            }
+                    Column(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
+                        Text(text = userProfile.name, fontWeight = FontWeight.Bold, fontSize = 20.sp, color = Color.White)
+                        Spacer(modifier = Modifier.height(4.dp))
+                        Row(verticalAlignment = Alignment.CenterVertically) {
+                            Box(modifier = Modifier.size(8.dp).clip(CircleShape).background(NeonCyan))
+                            Spacer(modifier = Modifier.width(4.dp))
+                            Text(text = "Online", fontSize = 13.sp, color = NeonCyan)
                         }
                     }
 
