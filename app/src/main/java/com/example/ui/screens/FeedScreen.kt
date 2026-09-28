@@ -874,7 +874,7 @@ fun PostCard(
             }
 
             Spacer(modifier = Modifier.height(14.dp))
-            HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f))
+            HorizontalDivider(color = Color.White.copy(alpha = 0.12f))
             Spacer(modifier = Modifier.height(8.dp))
 
             // Action Buttons: Like, Comment, Share
