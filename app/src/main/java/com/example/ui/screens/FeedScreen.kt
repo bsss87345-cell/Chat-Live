@@ -705,9 +705,9 @@ fun PostCard(
                         modifier = Modifier.testTag("post_menu_button_${post.id}")
                     ) {
                         Icon(
-                            imageVector = Icons.Default.MoreVert,
+                            imageVector = Icons.Default.MoreHoriz,
                             contentDescription = "خيارات المنشور",
-                            tint = MaterialTheme.colorScheme.onSurfaceVariant
+                            tint = TextSecondary
                         )
                     }
 
