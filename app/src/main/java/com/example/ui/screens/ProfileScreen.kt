@@ -1,5 +1,6 @@
 package com.example.ui.screens
 
+import androidx.compose.ui.graphics.GenericShape
 import coil.compose.AsyncImage
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
