@@ -739,3 +739,53 @@ fun ProfileStatItem(title: String, count: String, onClick: (() -> Unit)? = null)
         )
     }
 }
+
+private val HexagonShape = androidx.compose.ui.graphics.GenericShape { size, _ ->
+    val w = size.width; val h = size.height
+    moveTo(w * 0.5f, 0f)
+    lineTo(w, h * 0.25f)
+    lineTo(w, h * 0.75f)
+    lineTo(w * 0.5f, h)
+    lineTo(0f, h * 0.75f)
+    lineTo(0f, h * 0.25f)
+    close()
+}
+
+@Composable
+private fun ProfileStatBox(
+    icon: androidx.compose.ui.graphics.vector.ImageVector,
+    count: String,
+    label: String,
+    borderColor: Color,
+    modifier: Modifier = Modifier,
+    onClick: (() -> Unit)? = null
+) {
+    Column(
+        modifier = modifier
+            .clip(RoundedCornerShape(14.dp))
+            .border(1.dp, borderColor, RoundedCornerShape(14.dp))
+            .background(DarkSurface.copy(alpha = 0.4f))
+            .then(if (onClick != null) Modifier.clickable { onClick() } else Modifier)
+            .padding(vertical = 10.dp),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.spacedBy(4.dp)
+    ) {
+        Icon(icon, contentDescription = null, tint = borderColor, modifier = Modifier.size(18.dp))
+        Text(count, fontWeight = FontWeight.Black, fontSize = 15.sp, color = Color.White)
+        Text(label, fontSize = 11.sp, color = TextSecondary)
+    }
+}
+
+@Composable
+private fun ProfileHexIcon(icon: androidx.compose.ui.graphics.vector.ImageVector, label: String, color: Color) {
+    Column(horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.spacedBy(6.dp)) {
+        Box(
+            modifier = Modifier.size(58.dp).clip(HexagonShape)
+                .background(DarkSurface).border(1.5.dp, color, HexagonShape),
+            contentAlignment = Alignment.Center
+        ) {
+            Icon(icon, contentDescription = label, tint = color, modifier = Modifier.size(24.dp))
+        }
+        Text(label, fontSize = 11.sp, color = Color.White)
+    }
+}
