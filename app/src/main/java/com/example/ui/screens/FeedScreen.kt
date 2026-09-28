@@ -502,7 +502,7 @@ fun QuickCreatePostCard(
             )
             .testTag("quick_create_post_card"),
         shape = cardShape,
-        colors = CardDefaults.cardColors(containerColor = DarkSurface.copy(alpha = 0.6f)),
+        colors = CardDefaults.cardColors(containerColor = DarkSurface),
         elevation = CardDefaults.cardElevation(defaultElevation = 0.dp)
     ) {
         Column(
