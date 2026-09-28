@@ -188,198 +188,142 @@ fun ProfileScreen(
                         }
                     }
 
-                    // Avatar + Stats side-by-side, with the name floating above (no reserved space)
                     var avatarGlowStarted by remember { mutableStateOf(false) }
                     val avatarGlowAlpha by animateFloatAsState(
-                        targetValue = if (avatarGlowStarted) 0f else 1f,
+                        targetValue = if (avatarGlowStarted) 1f else 0f,
                         animationSpec = tween(durationMillis = 1200),
                         label = "avatarGlow"
                     )
-                    LaunchedEffect(Unit) {
-                        avatarGlowStarted = true
-                    }
-                    Box(modifier = Modifier.fillMaxWidth()) {
-                    Row(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(top = 8.dp),
-                        verticalAlignment = Alignment.Bottom
-                    ) {
-                        Column(horizontalAlignment = Alignment.Start) {
+                    LaunchedEffect(Unit) { avatarGlowStarted = true }
+                    Box(modifier = Modifier.size(112.dp), contentAlignment = Alignment.Center) {
                         Box(
-                            modifier = Modifier.size(86.dp),
-                            contentAlignment = Alignment.BottomEnd
+                            modifier = Modifier.size(112.dp).clip(HexagonShape)
+                                .background(NeonCyan.copy(alpha = 0.25f * avatarGlowAlpha))
+                        )
+                        Box(
+                            modifier = Modifier.size(96.dp).clip(HexagonShape)
+                                .background(DarkSurface)
+                                .border(2.dp, NeonCyan, HexagonShape),
+                            contentAlignment = Alignment.Center
                         ) {
+                            if (userProfile.avatarUrl.isNotBlank()) {
+                                AsyncImage(
+                                    model = userProfile.avatarUrl,
+                                    contentDescription = "صورة الملف الشخصي",
+                                    contentScale = ContentScale.Crop,
+                                    modifier = Modifier.fillMaxSize().clip(HexagonShape)
+                                )
+                            } else {
+                                Text(text = userProfile.avatarEmoji, fontSize = 40.sp)
+                            }
+                        }
+                        if (isOnOwnProfile) {
                             Box(
-                                modifier = Modifier
-                                    .size(100.dp)
-                                    .align(Alignment.Center)
-                                    .clip(CircleShape)
-                                    .background(
-                                        Brush.radialGradient(
-                                            listOf(
-                                                MujtamaGold.copy(alpha = 0.6f * avatarGlowAlpha),
-                                                MujtamaTeal.copy(alpha = 0.3f * avatarGlowAlpha),
-                                                Color.Transparent
-                                            )
+                                modifier = Modifier.align(Alignment.BottomEnd).size(28.dp)
+                                    .clip(CircleShape).background(NeonCyan)
+                                    .clickable {
+                                        avatarImageLauncher.launch(
+                                            PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly)
                                         )
-                                    )
-                            )
-                            Box(
-                                modifier = Modifier
-                                    .fillMaxSize()
-                                    .clip(CircleShape)
-                                    .background(
-                                        Brush.linearGradient(
-                                            listOf(MujtamaPrimary, MujtamaTeal, MujtamaGold)
-                                        )
-                                    )
-                                    .border(3.dp, MaterialTheme.colorScheme.surface, CircleShape),
+                                    }
+                                    .padding(4.dp),
                                 contentAlignment = Alignment.Center
                             ) {
-                                if (userProfile.avatarUrl.isNotBlank()) {
-                                    AsyncImage(
-                                        model = userProfile.avatarUrl,
-                                        contentDescription = "صورة الملف الشخصي",
-                                        contentScale = ContentScale.Crop,
-                                        modifier = Modifier.fillMaxSize()
-                                    )
-                                } else {
-                                    Text(text = userProfile.avatarEmoji, fontSize = 42.sp)
-                                }
+                                Icon(Icons.Default.Edit, contentDescription = "تغيير صورة الملف الشخصي", tint = Color.Black, modifier = Modifier.size(16.dp))
                             }
-
-                            // Edit avatar icon button
-                            if (isOnOwnProfile) {
-                                Box(
-                                    modifier = Modifier
-                                        .size(28.dp)
-                                        .clip(CircleShape)
-                                        .background(MujtamaGold)
-                                        .clickable {
-                                            avatarImageLauncher.launch(
-                                                PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly)
-                                            )
-                                        }
-                                        .padding(4.dp),
-                                    contentAlignment = Alignment.Center
-                                ) {
-                                    Icon(
-                                        imageVector = Icons.Default.Edit,
-                                        contentDescription = "تغيير صورة الملف الشخصي",
-                                        tint = Color.Black,
-                                        modifier = Modifier.size(16.dp)
-                                    )
-                                }
-                            }
-                       }
-                        }
-
-                        Spacer(modifier = Modifier.width(16.dp))
-
-                        Row(
-                            modifier = Modifier.weight(1f),
-                            horizontalArrangement = Arrangement.spacedBy(24.dp, Alignment.CenterHorizontally),
-                            verticalAlignment = Alignment.CenterVertically
-                        ) {
-                            ProfileStatItem(title = "المنشورات", count = "$totalPostsCount")
-                            ProfileStatItem(
-                                title = "المتابعون",
-                                count = "${userProfile.followersCount}",
-                                onClick = { showFollowersDialog = true }
-                            )
-                            ProfileStatItem(
-                                title = "يتابع",
-                                count = "${userProfile.followingCount}",
-                                onClick = { showFollowingDialog = true }
-                            )
                         }
                     }
-                        Text(
-                            text = userProfile.name,
-                            fontWeight = FontWeight.Black,
-                            fontSize = 19.sp,
-                            textAlign = TextAlign.Center,
-                            modifier = Modifier
-                                .align(Alignment.TopCenter)
-                                .fillMaxWidth()
-                                .padding(horizontal = 40.dp)
-                                .offset(y = (-4).dp)
-                        )
+
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        Text(text = userProfile.handle, fontSize = 13.sp, color = TextSecondary)
+                        Spacer(modifier = Modifier.width(4.dp))
+                        Icon(Icons.Default.Verified, contentDescription = "موثّق", tint = NeonCyan, modifier = Modifier.size(14.dp))
                     }
 
-                    // Bio (plain text, no box — shown for own profile and others; placeholder for empty own bio)
                     if (userProfile.bio.isNotBlank() || isOnOwnProfile) {
                         Text(
                             text = if (userProfile.bio.isNotBlank()) userProfile.bio else "أضف نبذة تعريفية",
-                            fontSize = 12.sp,
-                            color = if (userProfile.bio.isNotBlank()) MaterialTheme.colorScheme.onSurface else MaterialTheme.colorScheme.onSurfaceVariant,
-                            lineHeight = 17.sp,
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(horizontal = 12.dp, vertical = 8.dp)
-                                .then(
-                                    if (isOnOwnProfile) Modifier.clickable { showEditBioDialog = true }
-                                    else Modifier
-                                )
+                            fontSize = 13.sp,
+                            color = if (userProfile.bio.isNotBlank()) TextPrimary else TextSecondary,
+                            textAlign = TextAlign.Center,
+                            lineHeight = 18.sp,
+                            modifier = Modifier.fillMaxWidth().padding(horizontal = 12.dp)
+                                .then(if (isOnOwnProfile) Modifier.clickable { showEditBioDialog = true } else Modifier)
                         )
                     }
-                    val isDarkTheme = isSystemInDarkTheme()
-                    // Content type tabs (Posts / Video / Reuse) - selected = black (light) / white+shadow (dark)
+
+                    Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(10.dp)) {
+                        ProfileStatBox(Icons.Default.Groups, "${userProfile.followersCount}", "متابعون", NeonCyan, Modifier.weight(1f)) { showFollowersDialog = true }
+                        ProfileStatBox(Icons.Default.Person, "${userProfile.followingCount}", "يتابع", NeonPurple, Modifier.weight(1f)) { showFollowingDialog = true }
+                        ProfileStatBox(Icons.Default.Home, "$totalPostsCount", "غرفة", NeonCyan, Modifier.weight(1f), null)
+                    }
+
                     Row(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(top = 4.dp, start = 24.dp, end = 24.dp),
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.spacedBy(8.dp),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Button(
+                            onClick = { showEditBioDialog = true },
+                            modifier = Modifier.weight(1f),
+                            shape = RoundedCornerShape(50),
+                            colors = ButtonDefaults.buttonColors(containerColor = NeonCyan, contentColor = Color.Black)
+                        ) {
+                            Icon(Icons.Default.Edit, contentDescription = null, modifier = Modifier.size(16.dp))
+                            Spacer(modifier = Modifier.width(6.dp))
+                            Text("تعديل الملف", fontSize = 13.sp, fontWeight = FontWeight.Bold)
+                        }
+                        OutlinedButton(
+                            onClick = { },
+                            modifier = Modifier.weight(1f),
+                            shape = RoundedCornerShape(50),
+                            border = BorderStroke(1.dp, NeonPurple),
+                            colors = ButtonDefaults.outlinedButtonColors(contentColor = NeonPurple)
+                        ) {
+                            Icon(Icons.Default.Share, contentDescription = null, modifier = Modifier.size(16.dp))
+                            Spacer(modifier = Modifier.width(6.dp))
+                            Text("مشاركة", fontSize = 13.sp, fontWeight = FontWeight.Bold)
+                        }
+                        Box(
+                            modifier = Modifier.size(40.dp).clip(RoundedCornerShape(50))
+                                .background(NeonCyan).clickable { },
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Icon(Icons.Default.Verified, contentDescription = "توثيق", tint = Color.Black, modifier = Modifier.size(20.dp))
+                        }
+                    }
+
+                    Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
+                        ProfileHexIcon(Icons.Default.EmojiEvents, "إنجازات", NeonPurple)
+                        ProfileHexIcon(Icons.Default.Movie, "مقاطع", NeonCyan)
+                        ProfileHexIcon(Icons.Default.Groups, "الأصدقاء", NeonPurple)
+                        ProfileHexIcon(Icons.Default.Home, "غرفي", NeonCyan)
+                    }
+
+                    Row(
+                        modifier = Modifier.fillMaxWidth().padding(top = 4.dp, start = 24.dp, end = 24.dp),
                         horizontalArrangement = Arrangement.SpaceBetween,
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         Icon(
                             imageVector = Icons.Outlined.GridView,
                             contentDescription = "المنشورات",
-                            tint = if (isDarkTheme) Color.White.copy(alpha = if (selectedProfileTab == 0) 1f else 0.4f)
-                                   else Color.Black.copy(alpha = if (selectedProfileTab == 0) 1f else 0.4f),
-                            modifier = Modifier
-                                .size(32.dp)
-                                .then(
-                                    if (isDarkTheme && selectedProfileTab == 0)
-                                        Modifier.shadow(elevation = 6.dp, shape = CircleShape, clip = false)
-                                    else Modifier
-                                )
-                                .testTag("profile_tab_posts")
-                                .clickable { selectedProfileTab = 0 }
+                            tint = if (selectedProfileTab == 0) NeonPurple else TextSecondary,
+                            modifier = Modifier.size(30.dp).testTag("profile_tab_posts").clickable { selectedProfileTab = 0 }
                         )
                         Icon(
                             imageVector = Icons.Outlined.PlayCircleOutline,
                             contentDescription = "فيديو",
-                            tint = if (isDarkTheme) Color.White.copy(alpha = if (selectedProfileTab == 1) 1f else 0.4f)
-                                   else Color.Black.copy(alpha = if (selectedProfileTab == 1) 1f else 0.4f),
-                            modifier = Modifier
-                                .size(32.dp)
-                                .then(
-                                    if (isDarkTheme && selectedProfileTab == 1)
-                                        Modifier.shadow(elevation = 6.dp, shape = CircleShape, clip = false)
-                                    else Modifier
-                                )
-                                .testTag("profile_tab_video")
-                                .clickable { selectedProfileTab = 1 }
+                            tint = if (selectedProfileTab == 1) NeonPurple else TextSecondary,
+                            modifier = Modifier.size(30.dp).testTag("profile_tab_video").clickable { selectedProfileTab = 1 }
                         )
                         Icon(
                             imageVector = Icons.Outlined.Repeat,
                             contentDescription = "إعادة استخدام",
-                            tint = if (isDarkTheme) Color.White.copy(alpha = if (selectedProfileTab == 2) 1f else 0.4f)
-                                   else Color.Black.copy(alpha = if (selectedProfileTab == 2) 1f else 0.4f),
-                            modifier = Modifier
-                                .size(32.dp)
-                                .then(
-                                    if (isDarkTheme && selectedProfileTab == 2)
-                                        Modifier.shadow(elevation = 6.dp, shape = CircleShape, clip = false)
-                                    else Modifier
-                                )
-                                .testTag("profile_tab_reuse")
-                                .clickable { selectedProfileTab = 2 }
+                            tint = if (selectedProfileTab == 2) NeonPurple else TextSecondary,
+                            modifier = Modifier.size(30.dp).testTag("profile_tab_reuse").clickable { selectedProfileTab = 2 }
                         )
                     }
-
                     }
         }
 
