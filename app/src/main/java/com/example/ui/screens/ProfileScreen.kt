@@ -739,3 +739,23 @@ fun ProfileStatItem(title: String, count: String, onClick: (() -> Unit)? = null)
         )
     }
 }
+@Composable
+fun ProfileStatItem(title: String, count: String, onClick: (() -> Unit)? = null) {
+    Column(
+        modifier = if (onClick != null) Modifier.clickable { onClick() } else Modifier,
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.spacedBy(2.dp)
+    ) {
+        Text(
+            text = count,
+            fontWeight = FontWeight.Black,
+            fontSize = 16.sp,
+            color = MaterialTheme.colorScheme.onSurface
+        )
+        Text(
+            text = title,
+            fontSize = 10.sp,
+            color = MaterialTheme.colorScheme.onSurfaceVariant
+        )
+    }
+}
