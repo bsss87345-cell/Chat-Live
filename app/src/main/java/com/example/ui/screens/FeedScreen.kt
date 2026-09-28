@@ -919,7 +919,7 @@ fun PostCard(
                     Spacer(modifier = Modifier.width(6.dp))
                     Text(
                         text = "${post.commentsCount}",
-                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                        color = if (commentHighlighted) NeonPurple else NeonCyan
                     )
                 }
 
