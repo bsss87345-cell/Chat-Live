@@ -194,93 +194,106 @@ fun ProfileScreen(
                         }
                     }
 
-                    // Avatar + Stats side-by-side, with the name floating above (no reserved space)
                     var avatarGlowStarted by remember { mutableStateOf(false) }
-                    val avatarGlowAlpha by animateFloatAsState(
-                        targetValue = if (avatarGlowStarted) 0f else 1f,
-                        animationSpec = tween(durationMillis = 1200),
-                        label = "avatarGlow"
-                    )
-                    LaunchedEffect(Unit) {
-                        avatarGlowStarted = true
+val avatarGlowAlpha by animateFloatAsState(
+    targetValue = if (avatarGlowStarted) 0f else 1f,
+    animationSpec = tween(durationMillis = 1200),
+    label = "avatarGlow"
+)
+LaunchedEffect(Unit) {
+    avatarGlowStarted = true
+}
+// تعريف شكل السداسي (Hexagon) - طريقة آمنة لأي إصدار Compose
+val hexagonShape = object : Shape {
+    override fun createOutline(
+        size: Size,
+        layoutDirection: LayoutDirection,
+        density: Density
+    ): Outline {
+        val path = Path().apply {
+            val w = size.width
+            val h = size.height
+            moveTo(w / 2f, 0f)
+            lineTo(w, h * 0.25f)
+            lineTo(w, h * 0.75f)
+            lineTo(w / 2f, h)
+            lineTo(0f, h * 0.75f)
+            lineTo(0f, h * 0.25f)
+            close()
+        }
+        return Outline.Generic(path)
+    }
+}
+Box(modifier = Modifier.fillMaxWidth()) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(top = 8.dp),
+        verticalAlignment = Alignment.Bottom
+    ) {
+        Column(horizontalAlignment = Alignment.Start) {
+            Box(
+                modifier = Modifier.size(86.dp),
+                contentAlignment = Alignment.BottomEnd
+            ) {
+                // التوهج النيون (Neon Glow)
+                Box(
+                    modifier = Modifier
+                        .size(100.dp)
+                        .align(Alignment.Center)
+                        .clip(hexagonShape)
+                        .background(NeonCyan.copy(alpha = 0.15f * avatarGlowAlpha))
+                        .shadow(elevation = 16.dp, shape = hexagonShape, ambientColor = NeonCyan, spotColor = NeonCyan)
+                )
+                // إطار الصورة السداسي
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .clip(hexagonShape)
+                        .border(2.dp, NeonCyan, hexagonShape)
+                        .background(DarkSurface),
+                    contentAlignment = Alignment.Center
+                ) {
+                    if (userProfile.avatarUrl.isNotBlank()) {
+                        AsyncImage(
+                            model = userProfile.avatarUrl,
+                            contentDescription = "صورة الملف الشخصي",
+                            contentScale = ContentScale.Crop,
+                            modifier = Modifier.fillMaxSize().clip(hexagonShape)
+                        )
+                    } else {
+                        Text(text = userProfile.avatarEmoji, fontSize = 42.sp)
                     }
-                    Box(modifier = Modifier.fillMaxWidth()) {
-                    Row(
+                }
+
+                // Edit avatar icon button
+                if (isOnOwnProfile) {
+                    Box(
                         modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(top = 8.dp),
-                        verticalAlignment = Alignment.Bottom
+                            .size(28.dp)
+                            .clip(CircleShape)
+                            .background(NeonCyan)
+                            .clickable {
+                                avatarImageLauncher.launch(
+                                    PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly)
+                                )
+                            }
+                            .padding(4.dp),
+                        contentAlignment = Alignment.Center
                     ) {
-                        Column(horizontalAlignment = Alignment.Start) {
-                        Box(
-                            modifier = Modifier.size(86.dp),
-                            contentAlignment = Alignment.BottomEnd
-                        ) {
-                            Box(
-                                modifier = Modifier
-                                    .size(100.dp)
-                                    .align(Alignment.Center)
-                                    .clip(CircleShape)
-                                    .background(
-                                        Brush.radialGradient(
-                                            listOf(
-                                                MujtamaGold.copy(alpha = 0.6f * avatarGlowAlpha),
-                                                MujtamaTeal.copy(alpha = 0.3f * avatarGlowAlpha),
-                                                Color.Transparent
-                                            )
-                                        )
-                                    )
-                            )
-                            Box(
-                                modifier = Modifier
-                                    .fillMaxSize()
-                                    .clip(CircleShape)
-                                    .background(
-                                        Brush.linearGradient(
-                                            listOf(MujtamaPrimary, MujtamaTeal, MujtamaGold)
-                                        )
-                                    )
-                                    .border(3.dp, MaterialTheme.colorScheme.surface, CircleShape),
-                                contentAlignment = Alignment.Center
-                            ) {
-                                if (userProfile.avatarUrl.isNotBlank()) {
-                                    AsyncImage(
-                                        model = userProfile.avatarUrl,
-                                        contentDescription = "صورة الملف الشخصي",
-                                        contentScale = ContentScale.Crop,
-                                        modifier = Modifier.fillMaxSize()
-                                    )
-                                } else {
-                                    Text(text = userProfile.avatarEmoji, fontSize = 42.sp)
-                                }
-                            }
-
-                            // Edit avatar icon button
-                            if (isOnOwnProfile) {
-                                Box(
-                                    modifier = Modifier
-                                        .size(28.dp)
-                                        .clip(CircleShape)
-                                        .background(MujtamaGold)
-                                        .clickable {
-                                            avatarImageLauncher.launch(
-                                                PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly)
-                                            )
-                                        }
-                                        .padding(4.dp),
-                                    contentAlignment = Alignment.Center
-                                ) {
-                                    Icon(
-                                        imageVector = Icons.Default.Edit,
-                                        contentDescription = "تغيير صورة الملف الشخصي",
-                                        tint = Color.Black,
-                                        modifier = Modifier.size(16.dp)
-                                    )
-                                }
-                            }
-                       }
-                        }
-
+                        Icon(
+                            imageVector = Icons.Default.Edit,
+                            contentDescription = "تغيير صورة الملف الشخصي",
+                            tint = Color.Black,
+                            modifier = Modifier.size(16.dp)
+                        )
+                    }
+                }
+            }
+        }
+    }
+}
+                                    
                         Spacer(modifier = Modifier.width(16.dp))
 
                         Row(
