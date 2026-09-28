@@ -771,30 +771,87 @@ private val HexagonShape = androidx.compose.foundation.shape.GenericShape { size
     close()
 }
 
-@Composable
-private fun ProfileStatBox(
-    icon: androidx.compose.ui.graphics.vector.ImageVector,
-    count: String,
-    label: String,
-    borderColor: Color,
-    modifier: Modifier = Modifier,
-    onClick: (() -> Unit)? = null
-) {
-    Column(
-        modifier = modifier
-            .clip(RoundedCornerShape(14.dp))
-            .border(1.dp, borderColor, RoundedCornerShape(14.dp))
-            .background(DarkSurface.copy(alpha = 0.4f))
-            .then(if (onClick != null) Modifier.clickable { onClick() } else Modifier)
-            .padding(vertical = 10.dp),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.spacedBy(4.dp)
-    ) {
-        Icon(icon, contentDescription = null, tint = borderColor, modifier = Modifier.size(18.dp))
-        Text(count, fontWeight = FontWeight.Black, fontSize = 15.sp, color = Color.White)
-        Text(label, fontSize = 11.sp, color = TextSecondary)
-    }
-}
+var avatarGlowStarted by remember { mutableStateOf(false) }
+                    val avatarGlowAlpha by animateFloatAsState(
+                        targetValue = if (avatarGlowStarted) 1f else 0f,
+                        animationSpec = tween(durationMillis = 1200),
+                        label = "avatarGlow"
+                    )
+                    LaunchedEffect(Unit) { avatarGlowStarted = true }
+
+                    CompositionLocalProvider(LocalLayoutDirection provides LayoutDirection.Ltr) {
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Box(modifier = Modifier.size(100.dp), contentAlignment = Alignment.Center) {
+                                Box(
+                                    modifier = Modifier.size(100.dp).clip(HexagonShape)
+                                        .background(NeonCyan.copy(alpha = 0.25f * avatarGlowAlpha))
+                                )
+                                Box(
+                                    modifier = Modifier.size(86.dp).clip(HexagonShape)
+                                        .background(DarkSurface)
+                                        .border(2.dp, NeonCyan, HexagonShape),
+                                    contentAlignment = Alignment.Center
+                                ) {
+                                    if (userProfile.avatarUrl.isNotBlank()) {
+                                        AsyncImage(
+                                            model = userProfile.avatarUrl,
+                                            contentDescription = "صورة الملف الشخصي",
+                                            contentScale = ContentScale.Crop,
+                                            modifier = Modifier.fillMaxSize().clip(HexagonShape)
+                                        )
+                                    } else {
+                                        Text(text = userProfile.avatarEmoji, fontSize = 36.sp)
+                                    }
+                                }
+                                if (isOnOwnProfile) {
+                                    Box(
+                                        modifier = Modifier.align(Alignment.BottomEnd).size(26.dp)
+                                            .clip(CircleShape).background(NeonCyan)
+                                            .clickable {
+                                                avatarImageLauncher.launch(
+                                                    PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly)
+                                                )
+                                            }
+                                            .padding(4.dp),
+                                        contentAlignment = Alignment.Center
+                                    ) {
+                                        Icon(Icons.Default.Edit, contentDescription = "تغيير صورة الملف الشخصي", tint = Color.Black, modifier = Modifier.size(14.dp))
+                                    }
+                                }
+                            }
+
+                            Spacer(modifier = Modifier.width(14.dp))
+
+                            Column(
+                                modifier = Modifier.weight(1f),
+                                horizontalAlignment = Alignment.Start
+                            ) {
+                                Row(verticalAlignment = Alignment.CenterVertically) {
+                                    Text(text = userProfile.name, fontWeight = FontWeight.Bold, fontSize = 16.sp, color = Color.White)
+                                    Spacer(modifier = Modifier.width(4.dp))
+                                    Icon(Icons.Default.Verified, contentDescription = "موثّق", tint = NeonCyan, modifier = Modifier.size(14.dp))
+                                }
+                                Spacer(modifier = Modifier.height(2.dp))
+                                Text(text = userProfile.handle, fontSize = 12.sp, color = TextSecondary)
+                                if (userProfile.bio.isNotBlank() || isOnOwnProfile) {
+                                    Spacer(modifier = Modifier.height(4.dp))
+                                    Text(
+                                        text = if (userProfile.bio.isNotBlank()) userProfile.bio else "أضف نبذة تعريفية",
+                                        fontSize = 12.sp,
+                                        color = if (userProfile.bio.isNotBlank()) TextPrimary else TextSecondary,
+                                        lineHeight = 16.sp,
+                                        maxLines = 2,
+                                        modifier = Modifier.then(
+                                            if (isOnOwnProfile) Modifier.clickable { showEditBioDialog = true } else Modifier
+                                        )
+                                    )
+                                }
+                            }
+                        }
+                    }
 
 @Composable
 private fun ProfileHexIcon(icon: androidx.compose.ui.graphics.vector.ImageVector, label: String, color: Color) {
