@@ -903,23 +903,23 @@ fun PostCard(
                 }
 
                 // Comment Button
+                val commentInteraction = remember { MutableInteractionSource() }
+                val commentPressed by commentInteraction.collectIsPressedAsState()
                 TextButton(
-                    onClick = {
-                        commentHighlighted = !commentHighlighted
-                        onCommentClick()
-                    },
+                    onClick = onCommentClick,
+                    interactionSource = commentInteraction,
                     modifier = Modifier.testTag("post_comment_button_${post.id}")
                 ) {
                     Icon(
                         imageVector = Icons.Outlined.ChatBubbleOutline,
                         contentDescription = "تعليق",
-                        tint = if (commentHighlighted) NeonPurple else NeonCyan,
+                        tint = if (commentPressed) NeonPurple else NeonCyan,
                         modifier = Modifier.size(20.dp)
                     )
                     Spacer(modifier = Modifier.width(6.dp))
                     Text(
                         text = "${post.commentsCount}",
-                        color = if (commentHighlighted) NeonPurple else NeonCyan
+                        color = if (commentPressed) NeonPurple else NeonCyan
                     )
                 }
 
