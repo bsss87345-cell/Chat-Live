@@ -942,6 +942,9 @@ fun PostCard(
                     )
                 }
             }
+        }
+    }
+}
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
