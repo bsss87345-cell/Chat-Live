@@ -573,6 +573,8 @@ fun PostCard(
     onReportClick: () -> Unit = {}
 ) {
     var menuExpanded by remember { mutableStateOf(false) }
+    var commentHighlighted by remember { mutableStateOf(false) }
+    var shareHighlighted by remember { mutableStateOf(false) }
 
     val postCardShape = RoundedCornerShape(18.dp)
     Card(
