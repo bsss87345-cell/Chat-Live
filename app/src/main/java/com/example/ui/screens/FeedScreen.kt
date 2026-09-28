@@ -321,6 +321,42 @@ fun FeedScreen(
 }
 
 @Composable
+private fun FeedNeonBackground(modifier: Modifier = Modifier) {
+    Canvas(modifier = modifier.fillMaxSize()) {
+        val gridColor = TextSecondary.copy(alpha = 0.05f)
+        val step = 40.dp.toPx()
+
+        var x = 0f
+        while (x < size.width) {
+            drawLine(gridColor, Offset(x, 0f), Offset(x, size.height), strokeWidth = 1f)
+            x += step
+        }
+        var y = 0f
+        while (y < size.height) {
+            drawLine(gridColor, Offset(0f, y), Offset(size.width, y), strokeWidth = 1f)
+            y += step
+        }
+
+        fun hexPath(cx: Float, cy: Float, r: Float): Path {
+            return Path().apply {
+                for (i in 0..5) {
+                    val angle = Math.toRadians((60 * i - 30).toDouble())
+                    val px = cx + r * kotlin.math.cos(angle).toFloat()
+                    val py = cy + r * kotlin.math.sin(angle).toFloat()
+                    if (i == 0) moveTo(px, py) else lineTo(px, py)
+                }
+                close()
+            }
+        }
+
+        val hexColor = NeonCyan.copy(alpha = 0.08f)
+        drawPath(hexPath(size.width * 0.85f, size.height * 0.12f, 60.dp.toPx()), color = hexColor, style = Stroke(width = 2f))
+        drawPath(hexPath(size.width * 0.1f, size.height * 0.55f, 45.dp.toPx()), color = hexColor, style = Stroke(width = 2f))
+        drawPath(hexPath(size.width * 0.2f, size.height * 0.65f, 30.dp.toPx()), color = hexColor, style = Stroke(width = 2f))
+    }
+}
+
+@Composable
 fun StoriesBar(
     stories: List<Story>,
     onStoryClick: (Story) -> Unit,
