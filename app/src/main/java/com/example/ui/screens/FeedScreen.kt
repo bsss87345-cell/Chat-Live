@@ -889,14 +889,14 @@ fun PostCard(
                     Icon(
                         imageVector = if (post.isLiked) Icons.Filled.Favorite else Icons.Outlined.FavoriteBorder,
                         contentDescription = "إعجاب",
-                        tint = if (post.isLiked) MujtamaCoral else MaterialTheme.colorScheme.onSurfaceVariant,
+                        tint = if (post.isLiked) NeonPurple else NeonCyan,
                         modifier = Modifier.size(20.dp)
                     )
                     Spacer(modifier = Modifier.width(6.dp))
                     Text(
                         text = "${post.likesCount}",
                         fontWeight = if (post.isLiked) FontWeight.Bold else FontWeight.Normal,
-                        color = if (post.isLiked) MujtamaCoral else MaterialTheme.colorScheme.onSurfaceVariant
+                        color = if (post.isLiked) NeonPurple else NeonCyan
                     )
                 }
 
@@ -911,37 +911,37 @@ fun PostCard(
                     Icon(
                         imageVector = Icons.Outlined.ChatBubbleOutline,
                         contentDescription = "تعليق",
-                        tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                        tint = if (commentHighlighted) NeonPurple else NeonCyan,
                         modifier = Modifier.size(20.dp)
                     )
                     Spacer(modifier = Modifier.width(6.dp))
                     Text(
                         text = "${post.commentsCount}",
-                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                        color = if (commentHighlighted) NeonPurple else NeonCyan
                     )
                 }
 
                 // Share Button
                 TextButton(
-                    onClick = onShareClick,
+                    onClick = {
+                        shareHighlighted = !shareHighlighted
+                        onShareClick()
+                    },
                     modifier = Modifier.testTag("post_share_button_${post.id}")
                 ) {
                     Icon(
                         imageVector = Icons.Outlined.Share,
                         contentDescription = "مشاركة",
-                        tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                        tint = if (shareHighlighted) NeonPurple else NeonCyan,
                         modifier = Modifier.size(20.dp)
                     )
                     Spacer(modifier = Modifier.width(6.dp))
                     Text(
                         text = "${post.sharesCount}",
-                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                        color = if (shareHighlighted) NeonPurple else NeonCyan
                     )
                 }
             }
-        }
-    }
-}
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
