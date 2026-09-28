@@ -364,35 +364,9 @@ Column(
 }
 
                     }
-                        Text(
-                            text = userProfile.name,
-                            fontWeight = FontWeight.Black,
-                            fontSize = 19.sp,
-                            textAlign = TextAlign.Center,
-                            modifier = Modifier
-                                .align(Alignment.TopCenter)
-                                .fillMaxWidth()
-                                .padding(horizontal = 40.dp)
-                                .offset(y = (-4).dp)
-                        )
+                        
                     }
 
-                    // Bio (plain text, no box — shown for own profile and others; placeholder for empty own bio)
-                    if (userProfile.bio.isNotBlank() || isOnOwnProfile) {
-                        Text(
-                            text = if (userProfile.bio.isNotBlank()) userProfile.bio else "أضف نبذة تعريفية",
-                            fontSize = 12.sp,
-                            color = if (userProfile.bio.isNotBlank()) MaterialTheme.colorScheme.onSurface else MaterialTheme.colorScheme.onSurfaceVariant,
-                            lineHeight = 17.sp,
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(horizontal = 12.dp, vertical = 8.dp)
-                                .then(
-                                    if (isOnOwnProfile) Modifier.clickable { showEditBioDialog = true }
-                                    else Modifier
-                                )
-                        )
-                    }
                     Row(
     modifier = Modifier
         .fillMaxWidth()
