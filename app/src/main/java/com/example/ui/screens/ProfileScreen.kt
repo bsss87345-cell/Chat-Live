@@ -925,3 +925,40 @@ private fun ProfileNeonStatCard(
         )
     }
 }
+@Composable
+private fun ProfileNeonActionButton(
+    text: String,
+    icon: androidx.compose.ui.graphics.vector.ImageVector,
+    accent: Color,
+    filled: Boolean,
+    modifier: Modifier = Modifier,
+    onClick: () -> Unit = {}
+) {
+    val shape = RoundedCornerShape(12.dp)
+    Row(
+        modifier = modifier
+            .shadow(10.dp, shape, ambientColor = accent, spotColor = accent)
+            .background(if (filled) accent else DarkSurface, shape)
+            .border(1.5.dp, accent, shape)
+            .clip(shape)
+            .clickable { onClick() }
+            .padding(horizontal = 12.dp, vertical = 12.dp),
+        horizontalArrangement = Arrangement.Center,
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Icon(
+            imageVector = icon,
+            contentDescription = null,
+            tint = if (filled) Color.Black else accent,
+            modifier = Modifier.size(20.dp)
+        )
+        Spacer(modifier = Modifier.width(8.dp))
+        Text(
+            text = text,
+            color = if (filled) Color.Black else Color.White,
+            fontWeight = FontWeight.Bold,
+            fontSize = 14.sp,
+            maxLines = 1
+        )
+    }
+}
