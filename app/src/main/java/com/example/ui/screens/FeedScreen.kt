@@ -653,27 +653,25 @@ fun PostCard(
                         Text(
                             text = post.authorName,
                             style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold),
-                            color = MaterialTheme.colorScheme.onSurface
+                            color = Color.White
                         )
 
                         // زر متابعة (Follow) فقط بجانب اسم المستخدم مباشرة (لغير صاحب المنشور)
                         if (!post.isAuthor) {
-                            FilledTonalButton(
+                            OutlinedButton(
                                 onClick = onFollowClick,
                                 modifier = Modifier
                                     .height(28.dp)
                                     .testTag("follow_button_${post.id}"),
                                 contentPadding = PaddingValues(horizontal = 10.dp, vertical = 0.dp),
-                                shape = RoundedCornerShape(14.dp),
-                                colors = ButtonDefaults.filledTonalButtonColors(
-                                    containerColor = if (isFollowing)
-                                        MaterialTheme.colorScheme.surfaceVariant
-                                    else
-                                        MaterialTheme.colorScheme.primaryContainer,
-                                    contentColor = if (isFollowing)
-                                        MaterialTheme.colorScheme.onSurfaceVariant
-                                    else
-                                        MaterialTheme.colorScheme.primary
+                                shape = RoundedCornerShape(50),
+                                border = androidx.compose.foundation.BorderStroke(
+                                    1.dp,
+                                    if (isFollowing) NeonPurple.copy(alpha = 0.4f) else NeonPurple
+                                ),
+                                colors = ButtonDefaults.outlinedButtonColors(
+                                    containerColor = Color.Transparent,
+                                    contentColor = if (isFollowing) TextSecondary else NeonPurple
                                 )
                             ) {
                                 Text(
