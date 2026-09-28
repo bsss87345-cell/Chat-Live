@@ -925,7 +925,10 @@ fun PostCard(
 
                 // Share Button
                 TextButton(
-                    onClick = onShareClick,
+                    onClick = {
+                        shareHighlighted = !shareHighlighted
+                        onShareClick()
+                    },
                     modifier = Modifier.testTag("post_share_button_${post.id}")
                 ) {
                     Icon(
