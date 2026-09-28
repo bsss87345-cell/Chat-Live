@@ -546,8 +546,13 @@ fun QuickCreatePostCard(
                     .fillMaxWidth()
                     .clickable(onClick = onTextClick),
                 shape = RoundedCornerShape(50),
-                color = Color.White.copy(alpha = 0.08f),
-                border = androidx.compose.foundation.BorderStroke(1.dp, Color.White.copy(alpha = 0.2f))
+                color = DarkBackground.copy(alpha = 0.7f),
+                border = androidx.compose.foundation.BorderStroke(
+                    1.dp,
+                    Brush.linearGradient(
+                        listOf(NeonCyan.copy(alpha = 0.5f), NeonPurple.copy(alpha = 0.5f))
+                    )
+                )
             ) {
                 Text(
                     text = "شارك أفكارك وتحدياتك مع المجتمع...",
