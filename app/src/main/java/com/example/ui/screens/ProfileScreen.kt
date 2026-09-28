@@ -95,7 +95,6 @@ fun ProfileScreen(
     var showEditBioDialog by remember { mutableStateOf(false) }
     var showFollowersDialog by remember { mutableStateOf(false) }
     var showFollowingDialog by remember { mutableStateOf(false) }
-    var settingsExpanded by remember { mutableStateOf(false) }
     var editingPost by remember { mutableStateOf<Post?>(null) }
     var deletingPost by remember { mutableStateOf<Post?>(null) }
     var reportingPost by remember { mutableStateOf<Post?>(null) }
