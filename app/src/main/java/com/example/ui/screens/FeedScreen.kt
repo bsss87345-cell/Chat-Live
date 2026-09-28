@@ -913,7 +913,7 @@ fun PostCard(
                     Icon(
                         imageVector = Icons.Outlined.ChatBubbleOutline,
                         contentDescription = "تعليق",
-                        tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                        tint = if (commentHighlighted) NeonPurple else NeonCyan,
                         modifier = Modifier.size(20.dp)
                     )
                     Spacer(modifier = Modifier.width(6.dp))
