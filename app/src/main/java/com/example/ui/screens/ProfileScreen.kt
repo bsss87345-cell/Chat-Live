@@ -1,11 +1,5 @@
 package com.example.ui.screens
 
-import androidx.compose.ui.geometry.Size
-import androidx.compose.ui.graphics.Outline
-import androidx.compose.ui.graphics.Path
-import androidx.compose.ui.graphics.Shape
-import androidx.compose.ui.unit.Density
-import androidx.compose.ui.unit.LayoutDirection
 import coil.compose.AsyncImage
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -101,6 +95,7 @@ fun ProfileScreen(
     var showEditBioDialog by remember { mutableStateOf(false) }
     var showFollowersDialog by remember { mutableStateOf(false) }
     var showFollowingDialog by remember { mutableStateOf(false) }
+    var settingsExpanded by remember { mutableStateOf(false) }
     var editingPost by remember { mutableStateOf<Post?>(null) }
     var deletingPost by remember { mutableStateOf<Post?>(null) }
     var reportingPost by remember { mutableStateOf<Post?>(null) }
@@ -150,7 +145,8 @@ fun ProfileScreen(
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.spacedBy(12.dp)
             ) { 
-                    // Top bar: add-friend (physical right) + settings (physical left)
+                    // Menu icon (top-left corner in RTL) → opens the separate account-settings page
+                    // Top bar: ID (right) + settings icons (left, own profile only)
                     Row(
                         modifier = Modifier.fillMaxWidth(),
                         verticalAlignment = Alignment.CenterVertically
@@ -158,142 +154,182 @@ fun ProfileScreen(
                         if (!isOnOwnProfile) {
                             IconButton(
                                 onClick = onBackFromOtherProfile,
-                                modifier = Modifier.size(36.dp).testTag("profile_back_button")
+                                modifier = Modifier
+                                    .size(36.dp)
+                                    .testTag("profile_back_button")
                             ) {
-                                Icon(Icons.Default.ArrowForward, contentDescription = "رجوع", tint = Color.White, modifier = Modifier.size(26.dp))
-                            }
-                        } else {
-                            IconButton(
-                                onClick = { },
-                                modifier = Modifier.size(36.dp).testTag("profile_add_friend_button")
-                            ) {
-                                Icon(Icons.Default.PersonAdd, contentDescription = "إضافة صديق", tint = Color.White, modifier = Modifier.size(26.dp))
+                                Icon(
+                                    imageVector = Icons.Default.ArrowForward,
+                                    contentDescription = "رجوع",
+                                    tint = MaterialTheme.colorScheme.onSurface,
+                                    modifier = Modifier.size(28.dp)
+                                )
                             }
                         }
+                        Text(
+                            text = "ID: ${userProfile.id}",
+                            fontSize = 13.sp,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                        )
                         Spacer(modifier = Modifier.weight(1f))
                         if (isOnOwnProfile) {
                             IconButton(
-                                onClick = { onOpenAccountSettings() },
-                                modifier = Modifier.size(36.dp).testTag("profile_settings_menu_button")
+                                onClick = { settingsExpanded = !settingsExpanded },
+                                modifier = Modifier
+                                    .size(36.dp)
+                                    .testTag("profile_settings_expand_button")
                             ) {
-                                Icon(Icons.Default.Settings, contentDescription = "الإعدادات", tint = Color.White, modifier = Modifier.size(26.dp))
-                            }
-                        }
-                    }
-
-                    Column(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalAlignment = Alignment.CenterHorizontally
-                    ) {
-                        Text(text = userProfile.name, fontWeight = FontWeight.Bold, fontSize = 20.sp, color = Color.White)
-                        Spacer(modifier = Modifier.height(4.dp))
-                        Row(verticalAlignment = Alignment.CenterVertically) {
-                            Box(modifier = Modifier.size(8.dp).clip(CircleShape).background(NeonCyan))
-                            Spacer(modifier = Modifier.width(4.dp))
-                            Text(text = "Online", fontSize = 13.sp, color = NeonCyan)
-                        }
-                    }
-
-                    var avatarGlowStarted by remember { mutableStateOf(false) }
-val avatarGlowAlpha by animateFloatAsState(
-    targetValue = if (avatarGlowStarted) 0f else 1f,
-    animationSpec = tween(durationMillis = 1200),
-    label = "avatarGlow"
-)
-LaunchedEffect(Unit) {
-    avatarGlowStarted = true
-}
-// تعريف شكل السداسي (Hexagon) - طريقة آمنة لأي إصدار Compose
-val hexagonShape = object : Shape {
-    override fun createOutline(
-        size: Size,
-        layoutDirection: LayoutDirection,
-        density: Density
-    ): Outline {
-        val path = Path().apply {
-            val w = size.width
-            val h = size.height
-            moveTo(w / 2f, 0f)
-            lineTo(w, h * 0.25f)
-            lineTo(w, h * 0.75f)
-            lineTo(w / 2f, h)
-            lineTo(0f, h * 0.75f)
-            lineTo(0f, h * 0.25f)
-            close()
-        }
-        return Outline.Generic(path)
-    }
-}
-Box(modifier = Modifier.fillMaxWidth()) {
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(top = 8.dp),
-        verticalAlignment = Alignment.Bottom
-    ) {
-        Column(horizontalAlignment = Alignment.Start) {
-            Box(
-                modifier = Modifier.size(86.dp),
-                contentAlignment = Alignment.BottomEnd
-            ) {
-                // التوهج النيون (Neon Glow)
-                Box(
-                    modifier = Modifier
-                        .size(100.dp)
-                        .align(Alignment.Center)
-                        .clip(hexagonShape)
-                        .background(NeonCyan.copy(alpha = 0.15f * avatarGlowAlpha))
-                        .shadow(elevation = 16.dp, shape = hexagonShape, ambientColor = NeonCyan, spotColor = NeonCyan)
-                )
-                // إطار الصورة السداسي
-                Box(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .clip(hexagonShape)
-                        .border(2.dp, NeonCyan, hexagonShape)
-                        .background(DarkSurface),
-                    contentAlignment = Alignment.Center
-                ) {
-                    if (userProfile.avatarUrl.isNotBlank()) {
-                        AsyncImage(
-                            model = userProfile.avatarUrl,
-                            contentDescription = "صورة الملف الشخصي",
-                            contentScale = ContentScale.Crop,
-                            modifier = Modifier.fillMaxSize().clip(hexagonShape)
-                        )
-                    } else {
-                        Text(text = userProfile.avatarEmoji, fontSize = 42.sp)
-                    }
-                }
-
-                // Edit avatar icon button
-                if (isOnOwnProfile) {
-                    Box(
-                        modifier = Modifier
-                            .size(28.dp)
-                            .clip(CircleShape)
-                            .background(NeonCyan)
-                            .clickable {
-                                avatarImageLauncher.launch(
-                                    PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly)
+                                Icon(
+                                    imageVector = if (settingsExpanded) Icons.Default.KeyboardArrowLeft else Icons.Default.KeyboardArrowRight,
+                                    contentDescription = "توسيع الإعدادات",
+                                    tint = MaterialTheme.colorScheme.onSurface,
+                                    modifier = Modifier.size(28.dp)
                                 )
                             }
-                            .padding(4.dp),
-                        contentAlignment = Alignment.Center
-                    ) {
-                        Icon(
-                            imageVector = Icons.Default.Edit,
-                            contentDescription = "تغيير صورة الملف الشخصي",
-                            tint = Color.Black,
-                            modifier = Modifier.size(16.dp)
-                        )
+                            IconButton(
+                                onClick = { onOpenAccountSettings() },
+                                modifier = Modifier
+                                    .size(36.dp)
+                                    .testTag("profile_settings_menu_button")
+                            ) {
+                                Icon(
+                                    imageVector = Icons.Default.Menu,
+                                    contentDescription = "القائمة",
+                                    tint = MaterialTheme.colorScheme.onSurface,
+                                    modifier = Modifier.size(28.dp)
+                                )
+                            }
+                            if (settingsExpanded) {
+                                IconButton(
+                                    onClick = { },
+                                    modifier = Modifier
+                                        .size(36.dp)
+                                        .testTag("profile_views_icon_button")
+                                ) {
+                                    Icon(
+                                        imageVector = Icons.Default.RemoveRedEye,
+                                        contentDescription = "من شاهد الملف الشخصي",
+                                        tint = MaterialTheme.colorScheme.onSurface,
+                                        modifier = Modifier.size(28.dp)
+                                    )
+                                }
+                                IconButton(
+                                    onClick = { },
+                                    modifier = Modifier
+                                        .size(36.dp)
+                                        .testTag("profile_add_friend_button")
+                                ) {
+                                    Icon(
+                                        imageVector = Icons.Default.PersonAdd,
+                                        contentDescription = "إضافة صديق",
+                                        tint = MaterialTheme.colorScheme.onSurface,
+                                        modifier = Modifier.size(28.dp)
+                                    )
+                                }
+                                IconButton(
+                                    onClick = { },
+                                    modifier = Modifier
+                                        .size(36.dp)
+                                        .testTag("profile_swap_icon_button")
+                                ) {
+                                    Icon(
+                                        imageVector = Icons.Default.SwapHoriz,
+                                        contentDescription = "تحويل",
+                                        tint = MaterialTheme.colorScheme.onSurface,
+                                        modifier = Modifier.size(28.dp)
+                                    )
+                                }
+                            }
+                        }
                     }
-                }
-            }
-        }
-    }
-}
-                                    
+
+                    // Avatar + Stats side-by-side, with the name floating above (no reserved space)
+                    var avatarGlowStarted by remember { mutableStateOf(false) }
+                    val avatarGlowAlpha by animateFloatAsState(
+                        targetValue = if (avatarGlowStarted) 0f else 1f,
+                        animationSpec = tween(durationMillis = 1200),
+                        label = "avatarGlow"
+                    )
+                    LaunchedEffect(Unit) {
+                        avatarGlowStarted = true
+                    }
+                    Box(modifier = Modifier.fillMaxWidth()) {
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(top = 8.dp),
+                        verticalAlignment = Alignment.Bottom
+                    ) {
+                        Column(horizontalAlignment = Alignment.Start) {
+                        Box(
+                            modifier = Modifier.size(86.dp),
+                            contentAlignment = Alignment.BottomEnd
+                        ) {
+                            Box(
+                                modifier = Modifier
+                                    .size(100.dp)
+                                    .align(Alignment.Center)
+                                    .clip(CircleShape)
+                                    .background(
+                                        Brush.radialGradient(
+                                            listOf(
+                                                MujtamaGold.copy(alpha = 0.6f * avatarGlowAlpha),
+                                                MujtamaTeal.copy(alpha = 0.3f * avatarGlowAlpha),
+                                                Color.Transparent
+                                            )
+                                        )
+                                    )
+                            )
+                            Box(
+                                modifier = Modifier
+                                    .fillMaxSize()
+                                    .clip(CircleShape)
+                                    .background(
+                                        Brush.linearGradient(
+                                            listOf(MujtamaPrimary, MujtamaTeal, MujtamaGold)
+                                        )
+                                    )
+                                    .border(3.dp, MaterialTheme.colorScheme.surface, CircleShape),
+                                contentAlignment = Alignment.Center
+                            ) {
+                                if (userProfile.avatarUrl.isNotBlank()) {
+                                    AsyncImage(
+                                        model = userProfile.avatarUrl,
+                                        contentDescription = "صورة الملف الشخصي",
+                                        contentScale = ContentScale.Crop,
+                                        modifier = Modifier.fillMaxSize()
+                                    )
+                                } else {
+                                    Text(text = userProfile.avatarEmoji, fontSize = 42.sp)
+                                }
+                            }
+
+                            // Edit avatar icon button
+                            if (isOnOwnProfile) {
+                                Box(
+                                    modifier = Modifier
+                                        .size(28.dp)
+                                        .clip(CircleShape)
+                                        .background(MujtamaGold)
+                                        .clickable {
+                                            avatarImageLauncher.launch(
+                                                PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly)
+                                            )
+                                        }
+                                        .padding(4.dp),
+                                    contentAlignment = Alignment.Center
+                                ) {
+                                    Icon(
+                                        imageVector = Icons.Default.Edit,
+                                        contentDescription = "تغيير صورة الملف الشخصي",
+                                        tint = Color.Black,
+                                        modifier = Modifier.size(16.dp)
+                                    )
+                                }
+                            }
+                       }
+                        }
+
                         Spacer(modifier = Modifier.width(16.dp))
 
                         Row(
