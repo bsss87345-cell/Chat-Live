@@ -357,25 +357,6 @@ Box(
                        }
                         }
 
-                        Spacer(modifier = Modifier.width(16.dp))
-
-                        Row(
-                            modifier = Modifier.weight(1f),
-                            horizontalArrangement = Arrangement.spacedBy(24.dp, Alignment.CenterHorizontally),
-                            verticalAlignment = Alignment.CenterVertically
-                        ) {
-                            ProfileStatItem(title = "المنشورات", count = "$totalPostsCount")
-                            ProfileStatItem(
-                                title = "المتابعون",
-                                count = "${userProfile.followersCount}",
-                                onClick = { showFollowersDialog = true }
-                            )
-                            ProfileStatItem(
-                                title = "يتابع",
-                                count = "${userProfile.followingCount}",
-                                onClick = { showFollowingDialog = true }
-                            )
-                        }
                     }
                         Text(
                             text = userProfile.name,
