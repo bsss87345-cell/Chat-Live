@@ -923,26 +923,26 @@ fun PostCard(
                     )
                 }
 
-                // Share Button
+               // Share Button
+                val shareInteraction = remember { MutableInteractionSource() }
+                val sharePressed by shareInteraction.collectIsPressedAsState()
                 TextButton(
-                    onClick = {
-                        shareHighlighted = !shareHighlighted
-                        onShareClick()
-                    },
+                    onClick = onShareClick,
+                    interactionSource = shareInteraction,
                     modifier = Modifier.testTag("post_share_button_${post.id}")
                 ) {
                     Icon(
                         imageVector = Icons.Outlined.Share,
                         contentDescription = "مشاركة",
-                        tint = if (shareHighlighted) NeonPurple else NeonCyan,
+                        tint = if (sharePressed) NeonPurple else NeonCyan,
                         modifier = Modifier.size(20.dp)
                     )
                     Spacer(modifier = Modifier.width(6.dp))
                     Text(
                         text = "${post.sharesCount}",
-                        color = if (shareHighlighted) NeonPurple else NeonCyan
+                        color = if (sharePressed) NeonPurple else NeonCyan
                     )
-                }
+                } 
             }
         }
     }
