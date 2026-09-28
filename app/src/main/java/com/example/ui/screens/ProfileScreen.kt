@@ -740,7 +740,7 @@ fun ProfileStatItem(title: String, count: String, onClick: (() -> Unit)? = null)
     }
 }
 
-private val HexagonShape = androidx.compose.ui.graphics.GenericShape { size, _ ->
+private val HexagonShape = androidx.compose.foundation.shape.GenericShape { size, _ ->
     val w = size.width; val h = size.height
     moveTo(w * 0.5f, 0f)
     lineTo(w, h * 0.25f)
