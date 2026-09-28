@@ -898,7 +898,7 @@ fun PostCard(
                     Text(
                         text = "${post.likesCount}",
                         fontWeight = if (post.isLiked) FontWeight.Bold else FontWeight.Normal,
-                        color = if (post.isLiked) MujtamaCoral else MaterialTheme.colorScheme.onSurfaceVariant
+                        color = if (post.isLiked) NeonPurple else NeonCyan
                     )
                 }
 
