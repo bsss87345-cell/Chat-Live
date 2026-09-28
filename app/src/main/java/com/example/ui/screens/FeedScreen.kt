@@ -575,8 +575,6 @@ fun PostCard(
     var menuExpanded by remember { mutableStateOf(false) }
     var commentHighlighted by remember { mutableStateOf(false) }
     var shareHighlighted by remember { mutableStateOf(false) }
-    var commentHighlighted by remember { mutableStateOf(false) }
-    var shareHighlighted by remember { mutableStateOf(false) }
 
     val postCardShape = RoundedCornerShape(18.dp)
     Card(
@@ -874,7 +872,7 @@ fun PostCard(
             }
 
             Spacer(modifier = Modifier.height(14.dp))
-            HorizontalDivider(color = Color.White.copy(alpha = 0.12f))
+            HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f))
             Spacer(modifier = Modifier.height(8.dp))
 
             // Action Buttons: Like, Comment, Share
@@ -891,14 +889,14 @@ fun PostCard(
                     Icon(
                         imageVector = if (post.isLiked) Icons.Filled.Favorite else Icons.Outlined.FavoriteBorder,
                         contentDescription = "إعجاب",
-                        tint = if (post.isLiked) NeonPurple else NeonCyan,
+                        tint = if (post.isLiked) MujtamaCoral else MaterialTheme.colorScheme.onSurfaceVariant,
                         modifier = Modifier.size(20.dp)
                     )
                     Spacer(modifier = Modifier.width(6.dp))
                     Text(
                         text = "${post.likesCount}",
                         fontWeight = if (post.isLiked) FontWeight.Bold else FontWeight.Normal,
-                        color = if (post.isLiked) NeonPurple else NeonCyan
+                        color = if (post.isLiked) MujtamaCoral else MaterialTheme.colorScheme.onSurfaceVariant
                     )
                 }
 
@@ -913,34 +911,31 @@ fun PostCard(
                     Icon(
                         imageVector = Icons.Outlined.ChatBubbleOutline,
                         contentDescription = "تعليق",
-                        tint = if (commentHighlighted) NeonPurple else NeonCyan,
+                        tint = MaterialTheme.colorScheme.onSurfaceVariant,
                         modifier = Modifier.size(20.dp)
                     )
                     Spacer(modifier = Modifier.width(6.dp))
                     Text(
                         text = "${post.commentsCount}",
-                        color = if (commentHighlighted) NeonPurple else NeonCyan
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
                 }
 
                 // Share Button
                 TextButton(
-                    onClick = {
-                        shareHighlighted = !shareHighlighted
-                        onShareClick()
-                    },
+                    onClick = onShareClick,
                     modifier = Modifier.testTag("post_share_button_${post.id}")
                 ) {
                     Icon(
                         imageVector = Icons.Outlined.Share,
                         contentDescription = "مشاركة",
-                        tint = if (shareHighlighted) NeonPurple else NeonCyan,
+                        tint = MaterialTheme.colorScheme.onSurfaceVariant,
                         modifier = Modifier.size(20.dp)
                     )
                     Spacer(modifier = Modifier.width(6.dp))
                     Text(
                         text = "${post.sharesCount}",
-                        color = if (shareHighlighted) NeonPurple else NeonCyan
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
                 }
             }
