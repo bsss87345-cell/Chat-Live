@@ -144,8 +144,7 @@ fun ProfileScreen(
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.spacedBy(12.dp)
             ) { 
-                    // Menu icon (top-left corner in RTL) → opens the separate account-settings page
-                    // Top bar: ID (right) + settings icons (left, own profile only)
+                    // Top bar: settings gear (physical left) + add-friend (physical right)
                     Row(
                         modifier = Modifier.fillMaxWidth(),
                         verticalAlignment = Alignment.CenterVertically
@@ -164,27 +163,7 @@ fun ProfileScreen(
                                     modifier = Modifier.size(28.dp)
                                 )
                             }
-                        }
-                        Text(
-                            text = "ID: ${userProfile.id}",
-                            fontSize = 13.sp,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant
-                        )
-                        Spacer(modifier = Modifier.weight(1f))
-                        if (isOnOwnProfile) {
-                            IconButton(
-                                onClick = { settingsExpanded = !settingsExpanded },
-                                modifier = Modifier
-                                    .size(36.dp)
-                                    .testTag("profile_settings_expand_button")
-                            ) {
-                                Icon(
-                                    imageVector = if (settingsExpanded) Icons.Default.KeyboardArrowLeft else Icons.Default.KeyboardArrowRight,
-                                    contentDescription = "توسيع الإعدادات",
-                                    tint = MaterialTheme.colorScheme.onSurface,
-                                    modifier = Modifier.size(28.dp)
-                                )
-                            }
+                        } else {
                             IconButton(
                                 onClick = { onOpenAccountSettings() },
                                 modifier = Modifier
@@ -192,52 +171,57 @@ fun ProfileScreen(
                                     .testTag("profile_settings_menu_button")
                             ) {
                                 Icon(
-                                    imageVector = Icons.Default.Menu,
-                                    contentDescription = "القائمة",
+                                    imageVector = Icons.Default.Settings,
+                                    contentDescription = "الإعدادات",
                                     tint = MaterialTheme.colorScheme.onSurface,
                                     modifier = Modifier.size(28.dp)
                                 )
                             }
-                            if (settingsExpanded) {
-                                IconButton(
-                                    onClick = { },
+                        }
+                        Spacer(modifier = Modifier.weight(1f))
+                        if (isOnOwnProfile) {
+                            IconButton(
+                                onClick = { },
+                                modifier = Modifier
+                                    .size(36.dp)
+                                    .testTag("profile_add_friend_button")
+                            ) {
+                                Icon(
+                                    imageVector = Icons.Default.PersonAdd,
+                                    contentDescription = "إضافة صديق",
+                                    tint = MaterialTheme.colorScheme.onSurface,
+                                    modifier = Modifier.size(28.dp)
+                                )
+                            }
+                        }
+                    }
+
+                    // Name + Online status (centered, under the icon row)
+                    if (isOnOwnProfile) {
+                        Column(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalAlignment = Alignment.CenterHorizontally
+                        ) {
+                            Text(
+                                text = userProfile.name,
+                                fontWeight = FontWeight.Bold,
+                                fontSize = 16.sp,
+                                color = MaterialTheme.colorScheme.onSurface
+                            )
+                            Spacer(modifier = Modifier.height(2.dp))
+                            Row(verticalAlignment = Alignment.CenterVertically) {
+                                Box(
                                     modifier = Modifier
-                                        .size(36.dp)
-                                        .testTag("profile_views_icon_button")
-                                ) {
-                                    Icon(
-                                        imageVector = Icons.Default.RemoveRedEye,
-                                        contentDescription = "من شاهد الملف الشخصي",
-                                        tint = MaterialTheme.colorScheme.onSurface,
-                                        modifier = Modifier.size(28.dp)
-                                    )
-                                }
-                                IconButton(
-                                    onClick = { },
-                                    modifier = Modifier
-                                        .size(36.dp)
-                                        .testTag("profile_add_friend_button")
-                                ) {
-                                    Icon(
-                                        imageVector = Icons.Default.PersonAdd,
-                                        contentDescription = "إضافة صديق",
-                                        tint = MaterialTheme.colorScheme.onSurface,
-                                        modifier = Modifier.size(28.dp)
-                                    )
-                                }
-                                IconButton(
-                                    onClick = { },
-                                    modifier = Modifier
-                                        .size(36.dp)
-                                        .testTag("profile_swap_icon_button")
-                                ) {
-                                    Icon(
-                                        imageVector = Icons.Default.SwapHoriz,
-                                        contentDescription = "تحويل",
-                                        tint = MaterialTheme.colorScheme.onSurface,
-                                        modifier = Modifier.size(28.dp)
-                                    )
-                                }
+                                        .size(8.dp)
+                                        .clip(CircleShape)
+                                        .background(NeonCyan)
+                                )
+                                Spacer(modifier = Modifier.width(4.dp))
+                                Text(
+                                    text = "Online",
+                                    fontSize = 12.sp,
+                                    color = NeonCyan
+                                )
                             }
                         }
                     }
