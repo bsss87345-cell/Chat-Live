@@ -876,3 +876,61 @@ fun ProfileStatItem(title: String, count: String, onClick: (() -> Unit)? = null)
         )
     }
 }
+@Composable
+private fun ProfileNeonStatCard(
+    title: String,
+    count: String,
+    icon: androidx.compose.ui.graphics.vector.ImageVector,
+    accent: Color,
+    modifier: Modifier = Modifier,
+    onClick: (() -> Unit)? = null
+) {
+    val cutShape = remember {
+        androidx.compose.foundation.shape.GenericShape { size, _ ->
+            val c = size.height * 0.22f
+            moveTo(c, 0f)
+            lineTo(size.width - c, 0f)
+            lineTo(size.width, c)
+            lineTo(size.width, size.height - c)
+            lineTo(size.width - c, size.height)
+            lineTo(c, size.height)
+            lineTo(0f, size.height - c)
+            lineTo(0f, c)
+            close()
+        }
+    }
+    Row(
+        modifier = modifier
+            .shadow(10.dp, cutShape, ambientColor = accent, spotColor = accent)
+            .background(DarkSurface, cutShape)
+            .border(1.5.dp, accent, cutShape)
+            .clip(cutShape)
+            .then(if (onClick != null) Modifier.clickable { onClick() } else Modifier)
+            .padding(horizontal = 8.dp, vertical = 10.dp),
+        horizontalArrangement = Arrangement.Center,
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Column(horizontalAlignment = Alignment.CenterHorizontally) {
+            Text(
+                text = count,
+                color = Color.White,
+                fontWeight = FontWeight.Bold,
+                fontSize = 16.sp,
+                maxLines = 1
+            )
+            Text(
+                text = title,
+                color = TextSecondary,
+                fontSize = 11.sp,
+                maxLines = 1
+            )
+        }
+        Spacer(modifier = Modifier.width(6.dp))
+        Icon(
+            imageVector = icon,
+            contentDescription = null,
+            tint = accent,
+            modifier = Modifier.size(22.dp)
+        )
+    }
+}
