@@ -574,14 +574,28 @@ fun PostCard(
 ) {
     var menuExpanded by remember { mutableStateOf(false) }
 
+    val postCardShape = RoundedCornerShape(18.dp)
     Card(
         modifier = Modifier
             .fillMaxWidth()
             .padding(horizontal = 12.dp)
+            .shadow(
+                elevation = 8.dp,
+                shape = postCardShape,
+                ambientColor = NeonPurple.copy(alpha = 0.3f),
+                spotColor = NeonPurple.copy(alpha = 0.3f)
+            )
+            .border(
+                width = 1.dp,
+                brush = Brush.linearGradient(
+                    listOf(Color.White.copy(alpha = 0.2f), NeonPurple.copy(alpha = 0.6f))
+                ),
+                shape = postCardShape
+            )
             .testTag("post_card_${post.id}"),
-        shape = RoundedCornerShape(18.dp),
-        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
-        elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
+        shape = postCardShape,
+        colors = CardDefaults.cardColors(containerColor = DarkSurface.copy(alpha = 0.6f)),
+        elevation = CardDefaults.cardElevation(defaultElevation = 0.dp)
     ) {
         Column(
             modifier = Modifier
