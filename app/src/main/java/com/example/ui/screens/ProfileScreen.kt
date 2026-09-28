@@ -164,7 +164,12 @@ fun ProfileScreen(
     }
     val totalPostsCount = userPosts.size
 
-    Box(modifier = Modifier.fillMaxSize()) {
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(DarkBackground)
+    ) {
+    ProfileNeonBackground()
     LazyColumn(
         modifier = Modifier
             .fillMaxSize()
