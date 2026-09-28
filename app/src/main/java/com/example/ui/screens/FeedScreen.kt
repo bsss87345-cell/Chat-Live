@@ -940,7 +940,7 @@ fun PostCard(
                     Spacer(modifier = Modifier.width(6.dp))
                     Text(
                         text = "${post.sharesCount}",
-                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                        color = if (shareHighlighted) NeonPurple else NeonCyan
                     )
                 }
             }
