@@ -74,8 +74,6 @@ import coil.compose.AsyncImage
 import com.example.model.*
 import com.example.ui.theme.*
 import kotlinx.coroutines.delay
-import androidx.compose.foundation.pager.HorizontalPager
-import androidx.compose.foundation.pager.rememberPagerState
 import kotlinx.coroutines.launch
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
