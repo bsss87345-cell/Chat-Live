@@ -891,7 +891,7 @@ fun PostCard(
                     Icon(
                         imageVector = if (post.isLiked) Icons.Filled.Favorite else Icons.Outlined.FavoriteBorder,
                         contentDescription = "إعجاب",
-                        tint = if (post.isLiked) MujtamaCoral else MaterialTheme.colorScheme.onSurfaceVariant,
+                        tint = if (post.isLiked) NeonPurple else NeonCyan,
                         modifier = Modifier.size(20.dp)
                     )
                     Spacer(modifier = Modifier.width(6.dp))
