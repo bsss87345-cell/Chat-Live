@@ -397,6 +397,38 @@ Column(
         onClick = { showFollowersDialog = true }
     )
                     }
+                    Row(
+    modifier = Modifier
+        .fillMaxWidth()
+        .padding(horizontal = 4.dp),
+    horizontalArrangement = Arrangement.spacedBy(10.dp)
+) {
+    if (isOnOwnProfile) {
+        ProfileNeonActionButton(
+            text = "مشاركة",
+            icon = Icons.Default.Share,
+            accent = NeonPurple,
+            filled = false,
+            modifier = Modifier.weight(1f)
+        )
+        ProfileNeonActionButton(
+            text = "تعديل الملف",
+            icon = Icons.Default.Edit,
+            accent = NeonCyan,
+            filled = true,
+            modifier = Modifier.weight(1f)
+        )
+    } else {
+        ProfileNeonActionButton(
+            text = if (isUserFollowing(userProfile.id)) "إلغاء المتابعة" else "متابعة",
+            icon = Icons.Default.PersonAdd,
+            accent = NeonCyan,
+            filled = !isUserFollowing(userProfile.id),
+            modifier = Modifier.weight(1f),
+            onClick = { onToggleFollow(userProfile.id) }
+        )
+    }
+}
                     val isDarkTheme = isSystemInDarkTheme()
                     // Content type tabs (Posts / Video / Reuse) - selected = black (light) / white+shadow (dark)
                     Row(
