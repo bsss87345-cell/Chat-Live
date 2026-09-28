@@ -482,59 +482,78 @@ fun QuickCreatePostCard(
     onTextClick: () -> Unit,
     onGalleryClick: () -> Unit
 ) {
+    val cardShape = RoundedCornerShape(16.dp)
     Card(
         modifier = Modifier
             .fillMaxWidth()
             .padding(horizontal = 12.dp)
+            .shadow(
+                elevation = 10.dp,
+                shape = cardShape,
+                ambientColor = NeonPurple.copy(alpha = 0.4f),
+                spotColor = NeonPurple.copy(alpha = 0.4f)
+            )
+            .border(
+                width = 1.dp,
+                brush = Brush.linearGradient(
+                    listOf(Color.White.copy(alpha = 0.25f), NeonPurple.copy(alpha = 0.7f))
+                ),
+                shape = cardShape
+            )
             .testTag("quick_create_post_card"),
-        shape = RoundedCornerShape(16.dp),
-        colors = CardDefaults.cardColors(containerColor = DarkSurface),
+        shape = cardShape,
+        colors = CardDefaults.cardColors(containerColor = DarkSurface.copy(alpha = 0.6f)),
         elevation = CardDefaults.cardElevation(defaultElevation = 0.dp)
     ) {
-        Row(
+        Column(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(14.dp),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(12.dp)
+            verticalArrangement = Arrangement.spacedBy(12.dp)
         ) {
+            // أيقونة المعرض بإطار متوهج
             Box(
-                modifier = Modifier
-                    .size(42.dp)
-                    .clip(CircleShape)
-                    .background(MaterialTheme.colorScheme.primaryContainer),
-                contentAlignment = Alignment.Center
+                modifier = Modifier.fillMaxWidth(),
+                contentAlignment = Alignment.CenterStart
             ) {
-                if (userProfile.avatarUrl.isNotBlank()) {
-                    AsyncImage(
-                        model = userProfile.avatarUrl,
-                        contentDescription = null,
-                        modifier = Modifier.fillMaxSize().clip(CircleShape),
-                        contentScale = ContentScale.Crop
-                    )
-                } else {
-                    Text(userProfile.avatarEmoji, fontSize = 16.sp)
+                Surface(
+                    onClick = onGalleryClick,
+                    shape = RoundedCornerShape(10.dp),
+                    color = Color.Transparent,
+                    border = androidx.compose.foundation.BorderStroke(1.5.dp, NeonPurple),
+                    modifier = Modifier
+                        .size(44.dp)
+                        .shadow(
+                            elevation = 8.dp,
+                            shape = RoundedCornerShape(10.dp),
+                            ambientColor = NeonPurple,
+                            spotColor = NeonPurple
+                        )
+                ) {
+                    Box(contentAlignment = Alignment.Center) {
+                        Icon(
+                            imageVector = Icons.Default.AddPhotoAlternate,
+                            contentDescription = "إرفاق صورة أو فيديو",
+                            tint = NeonPurple,
+                            modifier = Modifier.size(24.dp)
+                        )
+                    }
                 }
             }
+            // حقل النص كبسولة زجاجية بعرض كامل
             Surface(
                 modifier = Modifier
-                    .weight(1f)
+                    .fillMaxWidth()
                     .clickable(onClick = onTextClick),
-                shape = RoundedCornerShape(24.dp),
-                color = Color.White.copy(alpha = 0.08f)
+                shape = RoundedCornerShape(50),
+                color = Color.White.copy(alpha = 0.08f),
+                border = androidx.compose.foundation.BorderStroke(1.dp, Color.White.copy(alpha = 0.2f))
             ) {
                 Text(
                     text = "شارك أفكارك وتحدياتك مع المجتمع...",
-                    modifier = Modifier.padding(horizontal = 16.dp, vertical = 10.dp),
-                    color = Color.White.copy(alpha = 0.85f),
-                    fontSize = 13.sp
-                )
-            }
-            IconButton(onClick = onGalleryClick) {
-                Icon(
-                    imageVector = Icons.Default.AddPhotoAlternate,
-                    contentDescription = "إرفاق صورة أو فيديو",
-                    tint = NeonPurple
+                    modifier = Modifier.padding(horizontal = 20.dp, vertical = 14.dp),
+                    color = Color.White.copy(alpha = 0.6f),
+                    fontSize = 14.sp
                 )
             }
         }
