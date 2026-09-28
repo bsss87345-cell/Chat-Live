@@ -160,7 +160,13 @@ fun FeedScreen(
         startAnimation = true
     }
 
-    Box(modifier = Modifier.fillMaxSize().alpha(feedAlpha)) {
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(DarkBackground)
+            .alpha(feedAlpha)
+    ) {
+        FeedNeonBackground()
         LazyColumn(
             modifier = Modifier.fillMaxSize(),
             contentPadding = PaddingValues(bottom = 80.dp),
