@@ -902,7 +902,10 @@ fun PostCard(
 
                 // Comment Button
                 TextButton(
-                    onClick = onCommentClick,
+                    onClick = {
+                        commentHighlighted = !commentHighlighted
+                        onCommentClick()
+                    },
                     modifier = Modifier.testTag("post_comment_button_${post.id}")
                 ) {
                     Icon(
