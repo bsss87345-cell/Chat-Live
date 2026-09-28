@@ -614,13 +614,17 @@ fun PostCard(
                 // الأيقونة الرمزية للمستخدم (الحرف الأول)
                 Box(
                     modifier = Modifier
-                        .size(44.dp)
+                        .size(48.dp)
+                        .shadow(
+                            elevation = 10.dp,
+                            shape = CircleShape,
+                            ambientColor = NeonCyan,
+                            spotColor = NeonCyan
+                        )
+                        .border(width = 2.dp, color = NeonCyan, shape = CircleShape)
+                        .padding(3.dp)
                         .clip(CircleShape)
-                        .background(
-                            Brush.linearGradient(
-                                listOf(MujtamaPrimary, MujtamaTeal)
-                            )
-                        ),
+                        .background(DarkSurface),
                     contentAlignment = Alignment.Center
                 ) {
                     if (post.authorAvatarUrl.isNotBlank()) {
