@@ -333,6 +333,35 @@ Box(
 
                        }
                         }
+                        Spacer(modifier = Modifier.width(12.dp))
+Column(
+    modifier = Modifier
+        .weight(1f)
+        .padding(bottom = 4.dp),
+    horizontalAlignment = Alignment.Start,
+    verticalArrangement = Arrangement.spacedBy(4.dp)
+) {
+    Text(
+        text = userProfile.name,
+        fontWeight = FontWeight.Black,
+        fontSize = 20.sp,
+        color = Color.White,
+        maxLines = 1
+    )
+    Text(
+        text = userProfile.handle,
+        fontSize = 13.sp,
+        color = TextSecondary,
+        maxLines = 1
+    )
+    Text(
+        text = if (userProfile.bio.isNotBlank()) userProfile.bio else "أضف نبذة تعريفية",
+        fontSize = 13.sp,
+        color = if (userProfile.bio.isNotBlank()) Color.White.copy(alpha = 0.85f) else TextSecondary,
+        lineHeight = 18.sp,
+        maxLines = 3
+    )
+}
 
                     }
                         Text(
