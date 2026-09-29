@@ -412,12 +412,13 @@ Column(
             modifier = Modifier.weight(1f)
         )
         ProfileNeonActionButton(
-            text = "تعديل الملف",
-            icon = Icons.Default.Edit,
-            accent = NeonCyan,
-            filled = true,
-            modifier = Modifier.weight(1f)
-        )
+                text = "تعديل الملف",
+                icon = Icons.Default.Edit,
+                accent = NeonCyan,
+                filled = true,
+                modifier = Modifier.weight(1f),
+                onClick = { showEditBioDialog = true }
+            )
     } else {
         ProfileNeonActionButton(
             text = if (isUserFollowing(userProfile.id)) "إلغاء المتابعة" else "متابعة",
