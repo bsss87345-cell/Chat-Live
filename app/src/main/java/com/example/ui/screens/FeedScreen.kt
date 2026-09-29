@@ -1901,11 +1901,23 @@ fun CameraPreviewView(
     var isBound by remember(lensFacing) { mutableStateOf(false) }
     var bindError by remember(lensFacing) { mutableStateOf(false) }
     var camera by remember(lensFacing) { mutableStateOf<Camera?>(null) }
+    
+    // Focus indicator state
+    var tapOffset by remember { mutableStateOf<Offset?>(null) }
+    val previewView = remember { PreviewView(context) }
 
     LaunchedEffect(torchEnabled, camera) {
         val cam = camera ?: return@LaunchedEffect
         if (cam.cameraInfo.hasFlashUnit()) {
             cam.cameraControl.enableTorch(torchEnabled)
+        }
+    }
+    
+    // Clear focus indicator after 2 seconds
+    LaunchedEffect(tapOffset) {
+        if (tapOffset != null) {
+            delay(2000)
+            tapOffset = null
         }
     }
 
@@ -1916,12 +1928,29 @@ fun CameraPreviewView(
             .padding(8.dp) // Slight padding to show the background/rounding
             .clip(RoundedCornerShape(28.dp)) // Instagram style curved edges
             .background(Color.Black)
+            .pointerInput(camera, previewView) {
+                detectTapGestures(
+                    onTap = { offset ->
+                        val cam = camera ?: return@detectTapGestures
+                        tapOffset = offset
+                        
+                        // Convert UI offset to camera sensor coordinates
+                        val factory = previewView.meteringPointFactory
+                        val point = factory.createPoint(offset.x, offset.y)
+                        val action = FocusMeteringAction.Builder(point, FocusMeteringAction.FLAG_AF or FocusMeteringAction.FLAG_AE)
+                            .setAutoCancelDuration(3, TimeUnit.SECONDS)
+                            .build()
+                        
+                        cam.cameraControl.startFocusAndMetering(action)
+                    }
+                )
+            }
     ) {
         if (!bindError) {
             key(lensFacing) {
                 AndroidView(
                     factory = { ctx ->
-                        val previewView = PreviewView(ctx).apply {
+                        previewView.apply {
                             // FILL_CENTER to cover the rounded area completely
                             scaleType = PreviewView.ScaleType.FILL_CENTER
                         }
@@ -1947,8 +1976,7 @@ fun CameraPreviewView(
 
                                     cameraProvider.unbindAll()
 
-                                    // The Secret Sauce: UseCaseGroup + ViewPort
-                                    // This ensures what you see in the filled/rounded preview is EXACTLY what is captured
+                                    // UseCaseGroup + ViewPort ensures WYSIWYG
                                     val viewPort = previewView.viewPort
                                     val useCaseGroupBuilder = UseCaseGroup.Builder()
                                         .addUseCase(preview)
@@ -1983,6 +2011,31 @@ fun CameraPreviewView(
         }
 
         CameraViewfinderOverlay(modifier = Modifier.fillMaxSize())
+        
+        // Draw Focus Indicator
+        tapOffset?.let { offset ->
+            val animatedSize by animateFloatAsState(
+                targetValue = 1f,
+                animationSpec = tween(durationMillis = 300),
+                label = "focusScale"
+            )
+            val animatedAlpha by animateFloatAsState(
+                targetValue = if (animatedSize > 0.9f) 0.8f else 1f,
+                animationSpec = tween(durationMillis = 500),
+                label = "focusAlpha"
+            )
+            
+            Box(modifier = Modifier.fillMaxSize()) {
+                Canvas(modifier = Modifier.fillMaxSize()) {
+                    drawCircle(
+                        color = Color.White.copy(alpha = animatedAlpha),
+                        radius = (100f * animatedSize),
+                        center = offset,
+                        style = Stroke(width = 4f)
+                    )
+                }
+            }
+        }
     }
 }
 @Composable
