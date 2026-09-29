@@ -389,7 +389,7 @@ class SocialAppViewModel : ViewModel() {
     }
 
     fun publishPost(content: String, tag: String, mediaType: PostMediaType, mediaUri: String = "") {
-        if (content.isBlank()) return
+        if (content.isBlank() && mediaType == PostMediaType.NONE) return
         val profile = _userProfile.value
         val newPost = Post(
             id = "p_${System.currentTimeMillis()}",
