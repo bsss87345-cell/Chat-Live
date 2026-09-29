@@ -419,61 +419,36 @@ Column(
     }
 }
                     val isDarkTheme = isSystemInDarkTheme()
-                    // Content type tabs (Posts / Video / Reuse) - selected = black (light) / white+shadow (dark)
                     Row(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(top = 4.dp, start = 24.dp, end = 24.dp),
-                        horizontalArrangement = Arrangement.SpaceBetween,
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Icon(
-                            imageVector = Icons.Outlined.GridView,
-                            contentDescription = "المنشورات",
-                            tint = if (isDarkTheme) Color.White.copy(alpha = if (selectedProfileTab == 0) 1f else 0.4f)
-                                   else Color.Black.copy(alpha = if (selectedProfileTab == 0) 1f else 0.4f),
-                            modifier = Modifier
-                                .size(32.dp)
-                                .then(
-                                    if (isDarkTheme && selectedProfileTab == 0)
-                                        Modifier.shadow(elevation = 6.dp, shape = CircleShape, clip = false)
-                                    else Modifier
-                                )
-                                .testTag("profile_tab_posts")
-                                .clickable { selectedProfileTab = 0 }
-                        )
-                        Icon(
-                            imageVector = Icons.Outlined.PlayCircleOutline,
-                            contentDescription = "فيديو",
-                            tint = if (isDarkTheme) Color.White.copy(alpha = if (selectedProfileTab == 1) 1f else 0.4f)
-                                   else Color.Black.copy(alpha = if (selectedProfileTab == 1) 1f else 0.4f),
-                            modifier = Modifier
-                                .size(32.dp)
-                                .then(
-                                    if (isDarkTheme && selectedProfileTab == 1)
-                                        Modifier.shadow(elevation = 6.dp, shape = CircleShape, clip = false)
-                                    else Modifier
-                                )
-                                .testTag("profile_tab_video")
-                                .clickable { selectedProfileTab = 1 }
-                        )
-                        Icon(
-                            imageVector = Icons.Outlined.Repeat,
-                            contentDescription = "إعادة استخدام",
-                            tint = if (isDarkTheme) Color.White.copy(alpha = if (selectedProfileTab == 2) 1f else 0.4f)
-                                   else Color.Black.copy(alpha = if (selectedProfileTab == 2) 1f else 0.4f),
-                            modifier = Modifier
-                                .size(32.dp)
-                                .then(
-                                    if (isDarkTheme && selectedProfileTab == 2)
-                                        Modifier.shadow(elevation = 6.dp, shape = CircleShape, clip = false)
-                                    else Modifier
-                                )
-                                .testTag("profile_tab_reuse")
-                                .clickable { selectedProfileTab = 2 }
-                        )
+    modifier = Modifier
+        .fillMaxWidth()
+        .padding(top = 8.dp, start = 16.dp, end = 16.dp),
+    verticalAlignment = Alignment.CenterVertically
+) {
+    listOf("المنشورات", "الغرف", "الوسائط", "الإعجابات").forEachIndexed { index, label ->
+        Column(
+            modifier = Modifier
+                .weight(1f)
+                .clickable { selectedProfileTab = index }
+                .testTag("profile_tab_$index"),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            Text(
+                text = label,
+                color = if (selectedProfileTab == index) NeonCyan else TextSecondary,
+                fontSize = 15.sp,
+                fontWeight = if (selectedProfileTab == index) FontWeight.Bold else FontWeight.Normal,
+                modifier = Modifier.padding(vertical = 10.dp)
+            )
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(2.dp)
+                    .background(if (selectedProfileTab == index) NeonCyan else Color.Transparent)
+            )
+        }
+    }
                     }
-
                     }
         }
 
