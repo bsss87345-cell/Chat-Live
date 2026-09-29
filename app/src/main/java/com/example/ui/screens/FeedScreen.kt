@@ -123,7 +123,29 @@ fun FeedScreen(
         contract = ActivityResultContracts.PickVisualMedia()
     ) { uri: Uri? ->
         if (uri != null) {
-            selectedMediaUri = uri
+            val isVideoFile = context.contentResolver.getType(uri)?.startsWith("video") == true
+            var durationMs = 0L
+            if (isVideoFile) {
+                try {
+                    val retriever = android.media.MediaMetadataRetriever()
+                    retriever.setDataSource(context, uri)
+                    durationMs = retriever
+                        .extractMetadata(android.media.MediaMetadataRetriever.METADATA_KEY_DURATION)
+                        ?.toLongOrNull() ?: 0L
+                    retriever.release()
+                } catch (e: Exception) {
+                    durationMs = 0L
+                }
+            }
+            if (durationMs > 60_000L) {
+                android.widget.Toast.makeText(
+                    context,
+                    "مدة الفيديو أكثر من المسموح، حاول تقليل المدة",
+                    android.widget.Toast.LENGTH_LONG
+                ).show()
+            } else {
+                selectedMediaUri = uri
+            }
         }
     }
     var showStoryCreationScreen by remember { mutableStateOf(false) }
