@@ -270,16 +270,7 @@ fun ProfileScreen(
                         }
                     }
 
-                    // Avatar + Stats side-by-side, with the name floating above (no reserved space)
-                    var avatarGlowStarted by remember { mutableStateOf(false) }
-                    val avatarGlowAlpha by animateFloatAsState(
-                        targetValue = if (avatarGlowStarted) 0f else 1f,
-                        animationSpec = tween(durationMillis = 1200),
-                        label = "avatarGlow"
-                    )
-                    LaunchedEffect(Unit) {
-                        avatarGlowStarted = true
-                    }
+                    
                     Box(modifier = Modifier.fillMaxWidth()) {
                     Row(
                         modifier = Modifier
