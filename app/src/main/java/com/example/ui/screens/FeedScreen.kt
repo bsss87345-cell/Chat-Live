@@ -858,64 +858,74 @@ fun PostCard(
 
             // Post Media Representation
             if (post.mediaType != PostMediaType.NONE) {
-                Spacer(modifier = Modifier.height(12.dp))
-                Box(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(190.dp)
-                        .clip(RoundedCornerShape(14.dp))
-                        .background(
-                            Brush.verticalGradient(
-                                listOf(
-                                    Color(0xFF261D42),
-                                    Color(0xFF161226)
+                    Spacer(modifier = Modifier.height(12.dp))
+                    val hasRealImage = post.mediaType == PostMediaType.IMAGE && post.mediaUri.isNotBlank()
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(190.dp)
+                            .clip(RoundedCornerShape(14.dp))
+                            .background(
+                                Brush.verticalGradient(
+                                    listOf(
+                                        Color(0xFF261D42),
+                                        Color(0xFF161226)
+                                    )
                                 )
-                            )
-                        ),
-                    contentAlignment = Alignment.Center
-                ) {
-                    Column(
-                        horizontalAlignment = Alignment.CenterHorizontally,
-                        verticalArrangement = Arrangement.spacedBy(8.dp),
-                        modifier = Modifier.padding(16.dp)
+                            ),
+                        contentAlignment = Alignment.Center
                     ) {
-                        if (post.mediaType == PostMediaType.SHORT_VIDEO) {
-                            Box(
-                                modifier = Modifier
-                                    .size(54.dp)
-                                    .clip(CircleShape)
-                                    .background(MujtamaCoral.copy(alpha = 0.9f)),
-                                contentAlignment = Alignment.Center
-                            ) {
-                                Icon(
-                                    imageVector = Icons.Filled.PlayArrow,
-                                    contentDescription = "تشغيل الفيديو",
-                                    tint = Color.White,
-                                    modifier = Modifier.size(32.dp)
-                                )
-                            }
-                            Text(
-                                text = post.mediaCaption ?: "فيديو قصير مجتمعي",
-                                color = Color.White,
-                                fontSize = 12.sp,
-                                fontWeight = FontWeight.SemiBold
+                        if (hasRealImage) {
+                            AsyncImage(
+                                model = File(post.mediaUri),
+                                contentDescription = "صورة المنشور",
+                                modifier = Modifier.fillMaxSize(),
+                                contentScale = ContentScale.Crop
                             )
                         } else {
-                            Icon(
-                                imageVector = Icons.Filled.Image,
-                                contentDescription = "صورة مرفقة",
-                                tint = MujtamaGold,
-                                modifier = Modifier.size(44.dp)
-                            )
-                            Text(
-                                text = post.mediaCaption ?: "صورة المنشور المميزة",
-                                color = Color.White,
-                                fontSize = 12.sp,
-                                fontWeight = FontWeight.SemiBold
-                            )
+                            Column(
+                                horizontalAlignment = Alignment.CenterHorizontally,
+                                verticalArrangement = Arrangement.spacedBy(8.dp),
+                                modifier = Modifier.padding(16.dp)
+                            ) {
+                                if (post.mediaType == PostMediaType.SHORT_VIDEO) {
+                                    Box(
+                                        modifier = Modifier
+                                            .size(54.dp)
+                                            .clip(CircleShape)
+                                            .background(MujtamaCoral.copy(alpha = 0.9f)),
+                                        contentAlignment = Alignment.Center
+                                    ) {
+                                        Icon(
+                                            imageVector = Icons.Filled.PlayArrow,
+                                            contentDescription = "تشغيل الفيديو",
+                                            tint = Color.White,
+                                            modifier = Modifier.size(32.dp)
+                                        )
+                                    }
+                                    Text(
+                                        text = post.mediaCaption ?: "فيديو قصير مجتمعي",
+                                        color = Color.White,
+                                        fontSize = 12.sp,
+                                        fontWeight = FontWeight.SemiBold
+                                    )
+                                } else {
+                                    Icon(
+                                        imageVector = Icons.Filled.Image,
+                                        contentDescription = "صورة مرفقة",
+                                        tint = MujtamaGold,
+                                        modifier = Modifier.size(44.dp)
+                                    )
+                                    Text(
+                                        text = post.mediaCaption ?: "صورة المنشور المميزة",
+                                        color = Color.White,
+                                        fontSize = 12.sp,
+                                        fontWeight = FontWeight.SemiBold
+                                    )
+                                }
+                            }
                         }
                     }
-                }
             }
 
             Spacer(modifier = Modifier.height(14.dp))
