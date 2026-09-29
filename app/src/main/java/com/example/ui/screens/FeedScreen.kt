@@ -1864,9 +1864,17 @@ fun CameraPreviewView(
                                     .requireLensFacing(lensFacing)
                                     .build()
                                 if (cameraProvider.hasCamera(cameraSelector)) {
-                                    val preview = Preview.Builder().build().also {
-                                        it.setSurfaceProvider(previewView.surfaceProvider)
-                                    }
+                                            val preview = Preview.Builder()
+                                        .setResolutionSelector(
+                                            ResolutionSelector.Builder()
+                                                .setAspectRatioStrategy(
+                                                    AspectRatioStrategy.RATIO_16_9_FALLBACK_AUTO_STRATEGY
+                                                )
+                                                .build()
+                                        )
+                                        .build().also {
+                                            it.setSurfaceProvider(previewView.surfaceProvider)
+                                        }
                                     cameraProvider.unbindAll()
                                     val useCases = buildList {
                                         add(preview)
