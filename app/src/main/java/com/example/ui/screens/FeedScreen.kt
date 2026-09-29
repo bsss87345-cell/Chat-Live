@@ -863,7 +863,10 @@ fun PostCard(
                     Box(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .height(190.dp)
+                            .then(
+                                if (hasRealImage) Modifier.heightIn(max = 480.dp)
+                                else Modifier.height(190.dp)
+                            )
                             .clip(RoundedCornerShape(14.dp))
                             .background(
                                 Brush.verticalGradient(
