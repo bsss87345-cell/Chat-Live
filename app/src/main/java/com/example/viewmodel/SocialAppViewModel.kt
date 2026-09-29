@@ -388,7 +388,7 @@ class SocialAppViewModel : ViewModel() {
         _userMessage.value = "تم نسخ رابط المنشور ومشاركته مع الأصدقاء!"
     }
 
-    fun publishPost(content: String, tag: String, mediaType: PostMediaType) {
+    fun publishPost(content: String, tag: String, mediaType: PostMediaType, mediaUri: String = "") {
         if (content.isBlank()) return
         val profile = _userProfile.value
         val newPost = Post(
