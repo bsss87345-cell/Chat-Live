@@ -1616,7 +1616,7 @@ fun StoryCreationDialog(
                 StoryBottomShutterBar(
                     currentMode = currentMode,
                     isRecording = isRecording,
-                                        onCapturePhoto = {
+                                                            onCapturePhoto = {
                         val photoFile = File(
                             context.filesDir,
                             "story_${System.currentTimeMillis()}.jpg"
@@ -1627,17 +1627,21 @@ fun StoryCreationDialog(
                         val outputOptions = OutputFileOptions.Builder(photoFile)
                             .setMetadata(metadata)
                             .build()
+                        if (lensFacing == CameraSelector.LENS_FACING_FRONT && flashMode != FlashMode.OFF) {
+                            isScreenFlashing = true
+                        }
                         imageCapture.takePicture(
                             outputOptions,
                             ContextCompat.getMainExecutor(context),
                             object : ImageCapture.OnImageSavedCallback {
                                 override fun onImageSaved(output: ImageCapture.OutputFileResults) {
+                                    isScreenFlashing = false
                                     capturedMediaUri = photoFile.absolutePath
                                     isVideoStory = false
                                     isReviewing = true
                                 }
                                 override fun onError(exception: ImageCaptureException) {
-                                    // Fallback so the flow doesn't break if capture fails
+                                    isScreenFlashing = false
                                 }
                             }
                         )
