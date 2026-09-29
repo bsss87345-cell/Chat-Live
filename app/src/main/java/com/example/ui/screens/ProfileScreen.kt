@@ -580,6 +580,7 @@ Column(
                     )
                     IconButton(onClick = {
                         onUpdateBio(bioText)
+                        onUpdateHandle(handleText)
                         showEditBioDialog = false
                     }) {
                         Icon(
