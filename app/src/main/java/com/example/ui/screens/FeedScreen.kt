@@ -2177,7 +2177,7 @@ fun StoryReviewView(
                         setVideoPath(mediaUri)
                         setOnPreparedListener { mp ->
                             mp.isLooping = true
-                            mp.setVideoScalingMode(android.media.MediaPlayer.VIDEO_SCALING_MODE_SCALE_TO_FIT)
+                            mp.setVideoScalingMode(android.media.MediaPlayer.VIDEO_SCALING_MODE_SCALE_TO_FIT_WITH_CROPPING)
                             start()
                         }
                     }
