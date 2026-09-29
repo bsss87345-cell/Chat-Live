@@ -402,7 +402,7 @@ class SocialAppViewModel : ViewModel() {
             content = content.trim(),
             mediaType = mediaType,
             mediaUri = mediaUri,
-            mediaCaption = if (mediaType != PostMediaType.NONE) "محتوى مرئي مرفق" else null,
+            mediaCaption = null,
             tag = if (tag.isNotBlank()) if (tag.startsWith("#")) tag else "#$tag" else null,
             likesCount = 1,
             isLiked = true,
