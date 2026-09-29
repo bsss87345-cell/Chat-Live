@@ -1615,12 +1615,17 @@ fun StoryCreationDialog(
                 StoryBottomShutterBar(
                     currentMode = currentMode,
                     isRecording = isRecording,
-                    onCapturePhoto = {
+                                        onCapturePhoto = {
                         val photoFile = File(
                             context.filesDir,
                             "story_${System.currentTimeMillis()}.jpg"
                         )
-                        val outputOptions = OutputFileOptions.Builder(photoFile).build()
+                        val metadata = ImageCapture.Metadata().apply {
+                            isReversedHorizontal = lensFacing == CameraSelector.LENS_FACING_FRONT
+                        }
+                        val outputOptions = OutputFileOptions.Builder(photoFile)
+                            .setMetadata(metadata)
+                            .build()
                         imageCapture.takePicture(
                             outputOptions,
                             ContextCompat.getMainExecutor(context),
