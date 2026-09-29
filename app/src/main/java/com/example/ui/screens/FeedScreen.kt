@@ -273,7 +273,7 @@ fun FeedScreen(
                 mediaUri = uri,
                 onDismiss = { selectedMediaUri = null },
                 onPublish = { caption, tag, mediaType ->
-                    onPublishPost(caption, tag, mediaType)
+                    onPublishPost(caption, tag, mediaType, uri.toString())
                     selectedMediaUri = null
                 }
             )
