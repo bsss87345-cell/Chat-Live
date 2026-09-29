@@ -473,23 +473,18 @@ Column(
                     Spacer(modifier = Modifier.height(8.dp))
                 }
             }
-            1 -> {
-                item {
-                    // TODO: تبويب الفيديو - يُنفذ لاحقاً بطلب صريح من المستخدم
-                }
-            }
-            2 -> {
-                item {
-                    Text(
-                        text = "لا يوجد إعادة استخدام بعد",
-                        fontSize = 13.sp,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
-                        textAlign = TextAlign.Center,
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(vertical = 24.dp)
-                    )
-                }
+            else -> {
+    item {
+        Text(
+            text = "قريباً",
+            fontSize = 13.sp,
+            color = TextSecondary,
+            textAlign = TextAlign.Center,
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(vertical = 24.dp)
+        )
+    }
             }
         }
     }
