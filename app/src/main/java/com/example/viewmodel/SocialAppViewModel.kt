@@ -435,22 +435,6 @@ class SocialAppViewModel : ViewModel() {
         _userMessage.value = "تم استلام البلاغ وسيتم مراجعته من قِبل المشرفين، شكراً لمساعدتك في حماية المجتمع"
     }
 
-    fun toggleFollowUser(postId: String) {
-        var isNowFollowing = false
-        _posts.update { list ->
-            val target = list.find { it.id == postId } ?: return@update list
-            val author = target.authorName
-            val newFollow = !target.isFollowing
-            isNowFollowing = newFollow
-            list.map { post ->
-                if (post.authorName == author) {
-                    post.copy(isFollowing = newFollow)
-                } else post
-            }
-        }
-        _userMessage.value = if (isNowFollowing) "تمت متابعة المستخدم بنجاح" else "تم إلغاء المتابعة"
-    }
-
     fun togglePinConversation(conversationId: String) {
         _conversations.update { list ->
             list.map { conv ->
