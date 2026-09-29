@@ -318,6 +318,7 @@ onSendImage = { convId, uri -> viewModel.sendMessage(convId, "", ChatMessageType
                                 posts = posts,
                                 balance = walletBalance,
                                 onUpdateBio = { viewModel.updateUserBio(it) },
+                            onUpdateHandle = { viewModel.updateUserHandle(it) },
                                 onLogout = { viewModel.logoutUser() },
                                 onOpenAccountSettings = { viewModel.openAccountSettings() },
                                 onUpdateAvatarImage = { viewModel.updateUserAvatarUrl(it) },
