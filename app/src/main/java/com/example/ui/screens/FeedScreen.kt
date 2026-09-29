@@ -261,7 +261,7 @@ fun FeedScreen(
             FullScreenTextComposer(
                 onDismiss = { showTextComposer = false },
                 onPublish = { text, tag ->
-                    onPublishPost(text, tag, PostMediaType.NONE)
+                    onPublishPost(text, tag, PostMediaType.NONE, "")
                     showTextComposer = false
                 }
             )
