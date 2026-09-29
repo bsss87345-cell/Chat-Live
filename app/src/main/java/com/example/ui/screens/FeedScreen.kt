@@ -186,7 +186,7 @@ fun FeedScreen(
     LaunchedEffect(Unit) {
         startAnimation = true
     }
-
+    val feedListState = rememberLazyListState()
     Box(
         modifier = Modifier
             .fillMaxSize()
