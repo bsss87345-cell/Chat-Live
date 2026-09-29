@@ -78,7 +78,8 @@ data class Post(
     val commentsList: List<PostComment> = emptyList(),
     val isAuthor: Boolean = false,
     val isFollowing: Boolean = false,
-    val authorAvatarUrl: String = ""
+    val authorAvatarUrl: String = "",
+    val mediaUri: String = ""
 )
 
 enum class ChatMessageType {
