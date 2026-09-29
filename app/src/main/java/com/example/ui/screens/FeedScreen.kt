@@ -1852,14 +1852,23 @@ fun CameraPreviewView(
         }
     }
 
-    Box(modifier = modifier.fillMaxSize()) {
+    // Container with Instagram-style rounded corners
+    Box(
+        modifier = modifier
+            .fillMaxSize()
+            .padding(8.dp) // Slight padding to show the background/rounding
+            .clip(RoundedCornerShape(28.dp)) // Instagram style curved edges
+            .background(Color.Black)
+    ) {
         if (!bindError) {
             key(lensFacing) {
                 AndroidView(
                     factory = { ctx ->
                         val previewView = PreviewView(ctx).apply {
-                            scaleType = PreviewView.ScaleType.FIT_CENTER
+                            // FILL_CENTER to cover the rounded area completely
+                            scaleType = PreviewView.ScaleType.FILL_CENTER
                         }
+                        
                         val cameraProviderFuture = ProcessCameraProvider.getInstance(ctx)
                         cameraProviderFuture.addListener({
                             try {
@@ -1867,28 +1876,35 @@ fun CameraPreviewView(
                                 val cameraSelector = CameraSelector.Builder()
                                     .requireLensFacing(lensFacing)
                                     .build()
+                                
                                 if (cameraProvider.hasCamera(cameraSelector)) {
-                                            val preview = Preview.Builder()
+                                    val preview = Preview.Builder()
                                         .setResolutionSelector(
                                             ResolutionSelector.Builder()
-                                                .setAspectRatioStrategy(
-                                                    AspectRatioStrategy.RATIO_16_9_FALLBACK_AUTO_STRATEGY
-                                                )
+                                                .setAspectRatioStrategy(AspectRatioStrategy.RATIO_16_9_FALLBACK_AUTO_STRATEGY)
                                                 .build()
                                         )
                                         .build().also {
                                             it.setSurfaceProvider(previewView.surfaceProvider)
                                         }
+
                                     cameraProvider.unbindAll()
-                                    val useCases = buildList {
-                                        add(preview)
-                                        if (imageCapture != null) add(imageCapture)
-                                        if (videoCapture != null) add(videoCapture)
-                                    }.toTypedArray()
+
+                                    // The Secret Sauce: UseCaseGroup + ViewPort
+                                    // This ensures what you see in the filled/rounded preview is EXACTLY what is captured
+                                    val viewPort = previewView.viewPort
+                                    val useCaseGroupBuilder = UseCaseGroup.Builder()
+                                        .addUseCase(preview)
+                                    
+                                    imageCapture?.let { useCaseGroupBuilder.addUseCase(it) }
+                                    videoCapture?.let { useCaseGroupBuilder.addUseCase(it) }
+                                    
+                                    viewPort?.let { useCaseGroupBuilder.setViewPort(it) }
+
                                     camera = cameraProvider.bindToLifecycle(
                                         lifecycleOwner,
                                         cameraSelector,
-                                        *useCases
+                                        useCaseGroupBuilder.build()
                                     )
                                     isBound = true
                                 } else {
