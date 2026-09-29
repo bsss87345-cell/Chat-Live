@@ -52,7 +52,6 @@ import android.view.WindowManager
 import androidx.core.view.ViewCompat
 import com.example.model.*
 import com.example.ui.theme.*
-import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.fadeIn
