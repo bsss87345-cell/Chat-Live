@@ -107,7 +107,7 @@ fun FeedScreen(
     onCloseComments: () -> Unit,
     onAddComment: (String, String) -> Unit,
     onShareClick: (Post) -> Unit,
-    onPublishPost: (String, String, PostMediaType) -> Unit,
+    onPublishPost: (String, String, PostMediaType, String) -> Unit,
     isUserFollowing: (String) -> Boolean = { false },
     onToggleFollow: (String) -> Unit = {},
     onEditPost: (String, String) -> Unit = { _, _ -> },
