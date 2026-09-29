@@ -1908,7 +1908,6 @@ fun CameraPreviewView(
     var bindError by remember(lensFacing) { mutableStateOf(false) }
     var camera by remember(lensFacing) { mutableStateOf<Camera?>(null) }
     
-    // Focus indicator state
     var tapOffset by remember { mutableStateOf<Offset?>(null) }
     val previewView = remember { PreviewView(context) }
 
@@ -1919,7 +1918,6 @@ fun CameraPreviewView(
         }
     }
     
-    // Clear focus indicator after 2 seconds
     LaunchedEffect(tapOffset) {
         if (tapOffset != null) {
             delay(2000)
@@ -1927,12 +1925,11 @@ fun CameraPreviewView(
         }
     }
 
-    // Container with Instagram-style rounded corners
     Box(
         modifier = modifier
             .fillMaxSize()
-            .padding(8.dp) // Slight padding to show the background/rounding
-            .clip(RoundedCornerShape(28.dp)) // Instagram style curved edges
+            .padding(8.dp)
+            .clip(RoundedCornerShape(28.dp))
             .background(Color.Black)
             .pointerInput(camera, previewView) {
                 detectTapGestures(
@@ -1940,7 +1937,6 @@ fun CameraPreviewView(
                         val cam = camera ?: return@detectTapGestures
                         tapOffset = offset
                         
-                        // Convert UI offset to camera sensor coordinates
                         val factory = previewView.meteringPointFactory
                         val point = factory.createPoint(offset.x, offset.y)
                         val action = FocusMeteringAction.Builder(point, FocusMeteringAction.FLAG_AF or FocusMeteringAction.FLAG_AE)
@@ -1957,7 +1953,6 @@ fun CameraPreviewView(
                 AndroidView(
                     factory = { ctx ->
                         previewView.apply {
-                            // FILL_CENTER to cover the rounded area completely
                             scaleType = PreviewView.ScaleType.FILL_CENTER
                         }
                         
@@ -1982,7 +1977,6 @@ fun CameraPreviewView(
 
                                     cameraProvider.unbindAll()
 
-                                    // UseCaseGroup + ViewPort ensures WYSIWYG
                                     val viewPort = previewView.viewPort
                                     val useCaseGroupBuilder = UseCaseGroup.Builder()
                                         .addUseCase(preview)
@@ -2018,7 +2012,6 @@ fun CameraPreviewView(
 
         CameraViewfinderOverlay(modifier = Modifier.fillMaxSize())
         
-        // Draw Focus Indicator
         tapOffset?.let { offset ->
             val animatedSize by animateFloatAsState(
                 targetValue = 1f,
