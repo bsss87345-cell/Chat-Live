@@ -52,6 +52,7 @@ import android.view.WindowManager
 import androidx.core.view.ViewCompat
 import com.example.model.*
 import com.example.ui.theme.*
+import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.fadeIn
@@ -269,7 +270,16 @@ fun ProfileScreen(
                         }
                     }
 
-                    
+                    // Avatar + Stats side-by-side, with the name floating above (no reserved space)
+                    var avatarGlowStarted by remember { mutableStateOf(false) }
+                    val avatarGlowAlpha by animateFloatAsState(
+                        targetValue = if (avatarGlowStarted) 0f else 1f,
+                        animationSpec = tween(durationMillis = 1200),
+                        label = "avatarGlow"
+                    )
+                    LaunchedEffect(Unit) {
+                        avatarGlowStarted = true
+                    }
                     Box(modifier = Modifier.fillMaxWidth()) {
                     Row(
                         modifier = Modifier
