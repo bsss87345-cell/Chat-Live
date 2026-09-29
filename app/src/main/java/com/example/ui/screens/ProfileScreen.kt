@@ -614,6 +614,22 @@ Column(
                         )
                     }
                 }
+                Spacer(modifier = Modifier.height(16.dp))
+                Text(
+                    text = "اسم المستخدم",
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 14.sp,
+                    color = MaterialTheme.colorScheme.onSurface
+                )
+                Spacer(modifier = Modifier.height(8.dp))
+                OutlinedTextField(
+                    value = handleText,
+                    onValueChange = { if (it.length <= 50 && !it.contains(" ")) handleText = it },
+                    modifier = Modifier.fillMaxWidth(),
+                    leadingIcon = { Text("@", fontSize = 16.sp) },
+                    singleLine = true,
+                    placeholder = { Text("username", fontSize = 12.sp) }
+                )
             }
         }
     }
