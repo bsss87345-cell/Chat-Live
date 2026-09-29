@@ -1431,10 +1431,18 @@ fun StoryCreationDialog(
     onPublishStory: (String, String?, StoryMediaType, List<Long>) -> Unit
 ) {
     val context = LocalContext.current
-    val imageCapture = remember { ImageCapture.Builder().build() }
+        val imageCapture = remember {
+        ImageCapture.Builder()
+            .setCaptureMode(ImageCapture.CAPTURE_MODE_MAXIMIZE_QUALITY)
+            .build()
+    }
     val videoCapture = remember {
+        val qualitySelector = QualitySelector.fromOrderedList(
+            listOf(Quality.UHD, Quality.FHD, Quality.HD, Quality.SD),
+            FallbackStrategy.lowerQualityOrHigherThan(Quality.SD)
+        )
         val recorder = Recorder.Builder()
-            .setQualitySelector(QualitySelector.from(Quality.SD))
+            .setQualitySelector(qualitySelector)
             .build()
         VideoCapture.withOutput(recorder)
     }
