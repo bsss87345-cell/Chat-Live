@@ -1683,7 +1683,16 @@ fun StoryCreationDialog(
                             isRecording = true
                         }
                     }
-                )
+                                )
+
+                // Front Camera Screen Flash (White Full-Screen Burst)
+                if (isScreenFlashing) {
+                    Box(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .background(Color.White)
+                    )
+                }
             }
 
             // 2. Right Side Vertical Selection Buttons (strictly on the right side of the screen)
