@@ -544,7 +544,8 @@ Column(
         modifier = Modifier.fillMaxSize()
     ) {
         var bioText by remember { mutableStateOf(userProfile.bio) }
-        val focusRequester = remember { FocusRequester() }
+            var handleText by remember { mutableStateOf(userProfile.handle.removePrefix("@")) }
+            val focusRequester = remember { FocusRequester() }
         val keyboardController = LocalSoftwareKeyboardController.current
         LaunchedEffect(Unit) {
             focusRequester.requestFocus()
