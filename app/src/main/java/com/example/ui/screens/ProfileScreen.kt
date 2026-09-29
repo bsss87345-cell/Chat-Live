@@ -52,7 +52,6 @@ import android.view.WindowManager
 import androidx.core.view.ViewCompat
 import com.example.model.*
 import com.example.ui.theme.*
-import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.fadeIn
@@ -270,16 +269,6 @@ fun ProfileScreen(
                         }
                     }
 
-                    // Avatar + Stats side-by-side, with the name floating above (no reserved space)
-                    var avatarGlowStarted by remember { mutableStateOf(false) }
-                    val avatarGlowAlpha by animateFloatAsState(
-                        targetValue = if (avatarGlowStarted) 0f else 1f,
-                        animationSpec = tween(durationMillis = 1200),
-                        label = "avatarGlow"
-                    )
-                    LaunchedEffect(Unit) {
-                        avatarGlowStarted = true
-                    }
                     Box(modifier = Modifier.fillMaxWidth()) {
                     Row(
                         modifier = Modifier
@@ -899,26 +888,6 @@ private fun saveAvatarToInternalStorage(context: Context, uri: Uri): String? {
     }
 }
 
-@Composable
-fun ProfileStatItem(title: String, count: String, onClick: (() -> Unit)? = null) {
-    Column(
-        modifier = if (onClick != null) Modifier.clickable { onClick() } else Modifier,
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.spacedBy(2.dp)
-    ) {
-        Text(
-            text = count,
-            fontWeight = FontWeight.Black,
-            fontSize = 16.sp,
-            color = MaterialTheme.colorScheme.onSurface
-        )
-        Text(
-            text = title,
-            fontSize = 10.sp,
-            color = MaterialTheme.colorScheme.onSurfaceVariant
-        )
-    }
-}
 @Composable
 private fun ProfileNeonStatCard(
     title: String,
