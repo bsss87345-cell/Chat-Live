@@ -1854,7 +1854,7 @@ fun CameraPreviewView(
                 AndroidView(
                     factory = { ctx ->
                         val previewView = PreviewView(ctx).apply {
-                            scaleType = PreviewView.ScaleType.FILL_CENTER
+                            scaleType = PreviewView.ScaleType.FIT_CENTER
                         }
                         val cameraProviderFuture = ProcessCameraProvider.getInstance(ctx)
                         cameraProviderFuture.addListener({
