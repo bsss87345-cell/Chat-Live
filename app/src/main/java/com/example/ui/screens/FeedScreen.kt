@@ -195,6 +195,7 @@ fun FeedScreen(
     ) {
         FeedNeonBackground()
         LazyColumn(
+            state = feedListState,
             modifier = Modifier.fillMaxSize(),
             contentPadding = PaddingValues(bottom = 80.dp),
             verticalArrangement = Arrangement.spacedBy(12.dp)
