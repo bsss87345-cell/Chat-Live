@@ -2159,24 +2159,30 @@ fun StoryReviewView(
     onRetake: () -> Unit,
     onPublish: () -> Unit
 ) {
+    // State for the "..." dropdown menu
+    var showMoreMenu by remember { mutableStateOf(false) }
+
     Box(modifier = Modifier.fillMaxSize()) {
-        // Media Preview
+
+        // ── 1. Media Background ──────────────────────────────────
         if (isVideo) {
             AndroidView(
                 modifier = Modifier.fillMaxSize(),
                 factory = { ctx ->
                     object : android.widget.VideoView(ctx) {
-                        override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
+                        override fun onMeasure(w: Int, h: Int) {
                             setMeasuredDimension(
-                                android.view.View.MeasureSpec.getSize(widthMeasureSpec),
-                                android.view.View.MeasureSpec.getSize(heightMeasureSpec)
+                                android.view.View.MeasureSpec.getSize(w),
+                                android.view.View.MeasureSpec.getSize(h)
                             )
                         }
                     }.apply {
                         setVideoPath(mediaUri)
                         setOnPreparedListener { mp ->
                             mp.isLooping = true
-                            mp.setVideoScalingMode(android.media.MediaPlayer.VIDEO_SCALING_MODE_SCALE_TO_FIT_WITH_CROPPING)
+                            mp.setVideoScalingMode(
+                                android.media.MediaPlayer.VIDEO_SCALING_MODE_SCALE_TO_FIT_WITH_CROPPING
+                            )
                             start()
                         }
                     }
@@ -2191,105 +2197,369 @@ fun StoryReviewView(
             )
         }
 
-        // Subtle gradient overlay at top and bottom
+        // ── 2. Top gradient scrim ────────────────────────────────
         Box(
             modifier = Modifier
                 .fillMaxWidth()
-                .height(120.dp)
+                .height(140.dp)
                 .align(Alignment.TopCenter)
                 .background(
                     Brush.verticalGradient(
-                        colors = listOf(Color.Black.copy(alpha = 0.7f), Color.Transparent)
+                        colors = listOf(Color.Black.copy(alpha = 0.55f), Color.Transparent)
                     )
                 )
         )
 
-        // Top Retake / Back Button
+        // ── 3. Bottom gradient scrim ─────────────────────────────
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(160.dp)
+                .align(Alignment.BottomCenter)
+                .background(
+                    Brush.verticalGradient(
+                        colors = listOf(Color.Transparent, Color.Black.copy(alpha = 0.75f))
+                    )
+                )
+        )
+
+        // ── 4. Top Bar ───────────────────────────────────────────
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(horizontal = 16.dp, vertical = 36.dp),
+                .statusBarsPadding()
+                .padding(horizontal = 12.dp, vertical = 8.dp),
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
-            FilledTonalButton(
+            // Back / Retake button (circle)
+            IconButton(
                 onClick = onRetake,
-                colors = ButtonDefaults.filledTonalButtonColors(
-                    containerColor = Color.Black.copy(alpha = 0.6f),
-                    contentColor = Color.White
-                ),
-                shape = RoundedCornerShape(20.dp),
-                modifier = Modifier.testTag("retake_media_button")
+                modifier = Modifier
+                    .size(42.dp)
+                    .background(Color.Black.copy(alpha = 0.45f), CircleShape)
+                    .testTag("retake_media_button")
             ) {
                 Icon(
                     imageVector = Icons.Default.ArrowBack,
                     contentDescription = "إعادة",
-                    modifier = Modifier.size(18.dp)
+                    tint = Color.White,
+                    modifier = Modifier.size(22.dp)
                 )
-                Spacer(modifier = Modifier.width(6.dp))
-                Text("إعادة التصوير")
             }
 
-            if (isVideo) {
-                Surface(
-                    shape = RoundedCornerShape(16.dp),
-                    color = Color.Black.copy(alpha = 0.6f)
+            // Right icons row: Aa | Stickers | Sparkle | More(...)
+            Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                // Aa — Text (شكلي)
+                Box(
+                    modifier = Modifier
+                        .size(42.dp)
+                        .background(Color.Black.copy(alpha = 0.45f), CircleShape),
+                    contentAlignment = Alignment.Center
                 ) {
-                    Row(
-                        modifier = Modifier.padding(horizontal = 10.dp, vertical = 6.dp),
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.spacedBy(4.dp)
+                    Text(
+                        text = "Aa",
+                        color = Color.White,
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 14.sp
+                    )
+                }
+
+                // Stickers (شكلي)
+                IconButton(
+                    onClick = { },
+                    modifier = Modifier
+                        .size(42.dp)
+                        .background(Color.Black.copy(alpha = 0.45f), CircleShape)
+                ) {
+                    Icon(
+                        imageVector = Icons.Outlined.EmojiEmotions,
+                        contentDescription = "ملصقات",
+                        tint = Color.White,
+                        modifier = Modifier.size(22.dp)
+                    )
+                }
+
+                // Sparkle / Filters (شكلي)
+                IconButton(
+                    onClick = { },
+                    modifier = Modifier
+                        .size(42.dp)
+                        .background(Color.Black.copy(alpha = 0.45f), CircleShape)
+                ) {
+                    Icon(
+                        imageVector = Icons.Outlined.AutoAwesome,
+                        contentDescription = "فلاتر",
+                        tint = Color.White,
+                        modifier = Modifier.size(22.dp)
+                    )
+                }
+
+                // More (...) — opens dropdown
+                Box {
+                    IconButton(
+                        onClick = { showMoreMenu = !showMoreMenu },
+                        modifier = Modifier
+                            .size(42.dp)
+                            .background(
+                                if (showMoreMenu) Color.White.copy(alpha = 0.25f)
+                                else Color.Black.copy(alpha = 0.45f),
+                                CircleShape
+                            )
                     ) {
                         Icon(
-                            imageVector = Icons.Default.PlayArrow,
-                            contentDescription = null,
+                            imageVector = Icons.Default.MoreHoriz,
+                            contentDescription = "المزيد",
                             tint = Color.White,
-                            modifier = Modifier.size(16.dp)
+                            modifier = Modifier.size(22.dp)
                         )
-                        Text("مقطع فيديو", color = Color.White, fontSize = 12.sp)
+                    }
+
+                    // Dropdown Menu — opens below the "..." button, overlays side icons
+                    DropdownMenu(
+                        expanded = showMoreMenu,
+                        onDismissRequest = { showMoreMenu = false },
+                        modifier = Modifier
+                            .background(
+                                Color(0xFF1C1C1E),
+                                RoundedCornerShape(14.dp)
+                            )
+                            .width(210.dp)
+                    ) {
+                        // حفظ في الجهاز (شكلي)
+                        DropdownMenuItem(
+                            text = { Text("حفظ في الجهاز", color = Color.White, fontSize = 15.sp) },
+                            onClick = { showMoreMenu = false },
+                            leadingIcon = {
+                                Icon(Icons.Outlined.SaveAlt, contentDescription = null, tint = Color.White)
+                            }
+                        )
+                        // تنزيل بدون نشر (شكلي)
+                        DropdownMenuItem(
+                            text = { Text("تنزيل بدون نشر", color = Color.White, fontSize = 15.sp) },
+                            onClick = { showMoreMenu = false },
+                            leadingIcon = {
+                                Icon(Icons.Outlined.Download, contentDescription = null, tint = Color.White)
+                            }
+                        )
+                        // إعادة التصوير — يعمل فعلاً
+                        DropdownMenuItem(
+                            text = { Text("إعادة التصوير", color = Color.White, fontSize = 15.sp) },
+                            onClick = { showMoreMenu = false; onRetake() },
+                            leadingIcon = {
+                                Icon(Icons.Outlined.Refresh, contentDescription = null, tint = Color.White)
+                            }
+                        )
+                        HorizontalDivider(color = Color.White.copy(alpha = 0.12f))
+                        // حذف — يعمل فعلاً (= إعادة التصوير)
+                        DropdownMenuItem(
+                            text = { Text("حذف", color = Color(0xFFFF453A), fontSize = 15.sp) },
+                            onClick = { showMoreMenu = false; onRetake() },
+                            leadingIcon = {
+                                Icon(Icons.Outlined.Delete, contentDescription = null, tint = Color(0xFFFF453A))
+                            }
+                        )
+                        HorizontalDivider(color = Color.White.copy(alpha = 0.12f))
+                        // إعدادات الخصوصية (شكلي)
+                        DropdownMenuItem(
+                            text = { Text("إعدادات الخصوصية", color = Color.White, fontSize = 15.sp) },
+                            onClick = { showMoreMenu = false },
+                            leadingIcon = {
+                                Icon(Icons.Outlined.Lock, contentDescription = null, tint = Color.White)
+                            }
+                        )
                     }
                 }
             }
         }
 
-        // Bottom Caption and Publish Bar
+        // ── 5. Right Side Tool Icons ─────────────────────────────
+        // ظاهرة دائماً، مو متأثرة بفتح القائمة
         Column(
             modifier = Modifier
-                .fillMaxWidth()
-                .align(Alignment.BottomCenter)
-                .background(
-                    Brush.verticalGradient(
-                        colors = listOf(Color.Transparent, Color.Black.copy(alpha = 0.9f))
-                    )
-                )
-                .padding(start = 16.dp, end = 16.dp, top = 16.dp, bottom = 56.dp),
-            verticalArrangement = Arrangement.spacedBy(12.dp)
+                .align(Alignment.CenterEnd)
+                .padding(end = 12.dp),
+            verticalArrangement = Arrangement.spacedBy(20.dp),
+            horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Button(
-                onClick = onPublish,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(52.dp)
-                    .testTag("publish_story_button"),
-                colors = ButtonDefaults.buttonColors(
-                    containerColor = MujtamaPrimary,
-                    contentColor = Color.White
-                ),
-                shape = RoundedCornerShape(16.dp)
+            // الموسيقى (شكلي)
+            StoryReviewToolButton(
+                icon = Icons.Outlined.MusicNote,
+                label = "الموسيقى"
+            )
+            // الفلاتر (شكلي)
+            StoryReviewToolButton(
+                icon = Icons.Outlined.AutoAwesome,
+                label = "الفلاتر"
+            )
+            // ملصقات (شكلي)
+            StoryReviewToolButton(
+                icon = Icons.Outlined.EmojiEmotions,
+                label = "ملصقات"
+            )
+            // الرسم (شكلي)
+            StoryReviewToolButton(
+                icon = Icons.Outlined.Edit,
+                label = "الرسم"
+            )
+            // النص (شكلي)
+            Column(
+                horizontalAlignment = Alignment.CenterHorizontally,
+                modifier = Modifier.clickable { }
             ) {
-                Icon(
-                    imageVector = Icons.Default.Check,
-                    contentDescription = null,
-                    modifier = Modifier.size(20.dp)
-                )
-                Spacer(modifier = Modifier.width(8.dp))
+                Box(
+                    modifier = Modifier
+                        .size(48.dp)
+                        .background(Color.Black.copy(alpha = 0.35f), CircleShape),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Text(
+                        text = "Aa",
+                        color = Color.White,
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 16.sp
+                    )
+                }
+                Spacer(modifier = Modifier.height(3.dp))
                 Text(
-                    text = "نشر القصة الآن",
-                    fontWeight = FontWeight.Bold,
-                    fontSize = 16.sp
+                    text = "النص",
+                    color = Color.White,
+                    fontSize = 11.sp,
+                    fontWeight = FontWeight.Medium
                 )
             }
         }
+
+        // ── 6. Bottom Action Bar ─────────────────────────────────
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .align(Alignment.BottomCenter)
+                .navigationBarsPadding()
+                .padding(horizontal = 12.dp, bottom = 16.dp),
+            horizontalArrangement = Arrangement.spacedBy(8.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            // حفظ (شكلي)
+            OutlinedButton(
+                onClick = { },
+                modifier = Modifier
+                    .height(52.dp)
+                    .weight(0.85f),
+                shape = RoundedCornerShape(26.dp),
+                border = androidx.compose.foundation.BorderStroke(
+                    1.dp, Color.White.copy(alpha = 0.5f)
+                ),
+                colors = ButtonDefaults.outlinedButtonColors(
+                    containerColor = Color.Black.copy(alpha = 0.35f),
+                    contentColor = Color.White
+                )
+            ) {
+                Icon(
+                    imageVector = Icons.Outlined.SaveAlt,
+                    contentDescription = "حفظ",
+                    modifier = Modifier.size(18.dp)
+                )
+                Spacer(modifier = Modifier.width(4.dp))
+                Text("حفظ", fontSize = 14.sp, fontWeight = FontWeight.Medium)
+            }
+
+            // الأصدقاء المقربون (شكلي)
+            OutlinedButton(
+                onClick = { },
+                modifier = Modifier
+                    .height(52.dp)
+                    .weight(1.3f),
+                shape = RoundedCornerShape(26.dp),
+                border = androidx.compose.foundation.BorderStroke(
+                    1.dp, Color.White.copy(alpha = 0.35f)
+                ),
+                colors = ButtonDefaults.outlinedButtonColors(
+                    containerColor = Color.Black.copy(alpha = 0.35f),
+                    contentColor = Color.White
+                )
+            ) {
+                Box(
+                    modifier = Modifier
+                        .size(22.dp)
+                        .background(Color(0xFF34C759), CircleShape),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Icon(
+                        imageVector = Icons.Filled.Star,
+                        contentDescription = null,
+                        tint = Color.White,
+                        modifier = Modifier.size(13.dp)
+                    )
+                }
+                Spacer(modifier = Modifier.width(6.dp))
+                Text("الأصدقاء المقربون", fontSize = 13.sp)
+                Icon(
+                    imageVector = Icons.Default.ChevronRight,
+                    contentDescription = null,
+                    modifier = Modifier.size(16.dp)
+                )
+            }
+
+            // إرسال إلى — يعمل فعلاً (= نشر)
+            Button(
+                onClick = onPublish,
+                modifier = Modifier
+                    .height(52.dp)
+                    .weight(1.5f)
+                    .testTag("publish_story_button"),
+                shape = RoundedCornerShape(26.dp),
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = Color(0xFF0A84FF),
+                    contentColor = Color.White
+                )
+            ) {
+                Icon(
+                    imageVector = Icons.Outlined.Send,
+                    contentDescription = "إرسال",
+                    modifier = Modifier.size(18.dp)
+                )
+                Spacer(modifier = Modifier.width(6.dp))
+                Text(
+                    text = "إرسال إلى",
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 14.sp
+                )
+            }
+        }
+    }
+}
+
+// أيقونة أداة صغيرة (يمين الشاشة) — private لهذه الشاشة فقط
+@Composable
+private fun StoryReviewToolButton(
+    icon: ImageVector,
+    label: String
+) {
+    Column(
+        horizontalAlignment = Alignment.CenterHorizontally,
+        modifier = Modifier.clickable { }
+    ) {
+        Box(
+            modifier = Modifier
+                .size(48.dp)
+                .background(Color.Black.copy(alpha = 0.35f), CircleShape),
+            contentAlignment = Alignment.Center
+        ) {
+            Icon(
+                imageVector = icon,
+                contentDescription = label,
+                tint = Color.White,
+                modifier = Modifier.size(26.dp)
+            )
+        }
+        Spacer(modifier = Modifier.height(3.dp))
+        Text(
+            text = label,
+            color = Color.White,
+            fontSize = 11.sp,
+            fontWeight = FontWeight.Medium
+        )
     }
 }
 
