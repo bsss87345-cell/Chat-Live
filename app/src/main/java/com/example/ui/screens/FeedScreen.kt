@@ -1568,7 +1568,7 @@ fun StoryCreationDialog(
                 CameraPreviewView(
                     modifier = Modifier.fillMaxSize(),
                     lensFacing = lensFacing,
-                    torchEnabled = flashMode != FlashMode.OFF,
+                    torchEnabled = currentMode == StoryCreationMode.VIDEO && isRecording && flashMode == FlashMode.ON,
                     imageCapture = imageCapture,
                     videoCapture = videoCapture
                 )
