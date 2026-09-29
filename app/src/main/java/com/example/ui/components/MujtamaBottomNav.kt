@@ -39,7 +39,6 @@ data class BottomNavItem(
 fun MujtamaBottomNav(
     currentTab: AppTab,
     onTabSelected: (AppTab) -> Unit,
-    unreadChatCount: Int = 2
 ) {
     val items = listOf(
         BottomNavItem(tab = AppTab.FEED, icon = Icons.Outlined.Home),
