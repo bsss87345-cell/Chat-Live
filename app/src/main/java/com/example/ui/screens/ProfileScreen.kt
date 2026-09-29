@@ -52,7 +52,6 @@ import android.view.WindowManager
 import androidx.core.view.ViewCompat
 import com.example.model.*
 import com.example.ui.theme.*
-import androidx.compose.animation.core.tween
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
@@ -134,7 +133,6 @@ fun ProfileScreen(
     var showEditBioDialog by remember { mutableStateOf(false) }
     var showFollowersDialog by remember { mutableStateOf(false) }
     var showFollowingDialog by remember { mutableStateOf(false) }
-    var settingsExpanded by remember { mutableStateOf(false) }
     var editingPost by remember { mutableStateOf<Post?>(null) }
     var deletingPost by remember { mutableStateOf<Post?>(null) }
     var reportingPost by remember { mutableStateOf<Post?>(null) }
