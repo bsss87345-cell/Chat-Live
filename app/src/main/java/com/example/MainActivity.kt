@@ -19,8 +19,9 @@ import com.example.viewmodel.SocialAppViewModel
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
-        val splashScreen = installSplashScreen()
+                val splashScreen = installSplashScreen()
         super.onCreate(savedInstanceState)
+        LocalStore.initialize(this)
         splashScreen.setOnExitAnimationListener { provider ->
             val fadeOut = android.animation.ObjectAnimator.ofFloat(
                 provider.view,
