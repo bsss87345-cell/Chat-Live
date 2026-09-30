@@ -428,7 +428,8 @@ class SocialAppViewModel : ViewModel() {
             isAuthor = true,
             isFollowing = false
         )
-        _posts.update { listOf(newPost) + it }
+                _posts.update { listOf(newPost) + it }
+        persistMyPosts()
         _userMessage.value = "تم نشر منشورك بنجاح في خلاصة المجتمع!"
         addNotification(NotificationType.SYSTEM, "تم نشر منشورك بنجاح")
     }
