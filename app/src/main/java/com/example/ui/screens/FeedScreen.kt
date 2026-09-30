@@ -129,6 +129,7 @@ fun FeedScreen(
     onReportPost: (String) -> Unit = {}
 ) {
     val context = LocalContext.current
+    val mediaSaveScope = rememberCoroutineScope()
     var showCreatePostDialog by remember { mutableStateOf(false) }
     var showTextComposer by remember { mutableStateOf(false) }
     var selectedMediaUri by remember { mutableStateOf<Uri?>(null) }
