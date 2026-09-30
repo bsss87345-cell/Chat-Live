@@ -736,8 +736,9 @@ private fun PostVideoPlayer(
 
     Box(modifier = modifier) {
         AndroidView(
-            factory = { ctx ->
-                PlayerView(ctx).apply {
+                        factory = { ctx ->
+                (android.view.LayoutInflater.from(ctx)
+                    .inflate(R.layout.view_post_player, null) as PlayerView).apply {
                     useController = false
                     resizeMode = androidx.media3.ui.AspectRatioFrameLayout.RESIZE_MODE_ZOOM
                     this.player = exoPlayer
