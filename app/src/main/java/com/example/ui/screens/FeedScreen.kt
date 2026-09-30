@@ -670,17 +670,20 @@ private fun readMediaAspectRatio(path: String, isVideo: Boolean): Float {
     var w = 0
     var h = 0
     try {
-        if (isVideo) {
+                if (isVideo) {
             val r = android.media.MediaMetadataRetriever()
-            r.setDataSource(path)
-            w = r.extractMetadata(android.media.MediaMetadataRetriever.METADATA_KEY_VIDEO_WIDTH)?.toIntOrNull() ?: 0
-            h = r.extractMetadata(android.media.MediaMetadataRetriever.METADATA_KEY_VIDEO_HEIGHT)?.toIntOrNull() ?: 0
-            val rot = r.extractMetadata(android.media.MediaMetadataRetriever.METADATA_KEY_VIDEO_ROTATION)?.toIntOrNull() ?: 0
-            r.release()
-            if (rot == 90 || rot == 270) {
-                val t = w
-                w = h
-                h = t
+            try {
+                r.setDataSource(path)
+                w = r.extractMetadata(android.media.MediaMetadataRetriever.METADATA_KEY_VIDEO_WIDTH)?.toIntOrNull() ?: 0
+                h = r.extractMetadata(android.media.MediaMetadataRetriever.METADATA_KEY_VIDEO_HEIGHT)?.toIntOrNull() ?: 0
+                val rot = r.extractMetadata(android.media.MediaMetadataRetriever.METADATA_KEY_VIDEO_ROTATION)?.toIntOrNull() ?: 0
+                if (rot == 90 || rot == 270) {
+                    val t = w
+                    w = h
+                    h = t
+                }
+            } finally {
+                r.release()
             }
         } else {
             val opts = BitmapFactory.Options().apply { inJustDecodeBounds = true }
