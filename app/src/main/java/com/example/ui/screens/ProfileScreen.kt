@@ -508,7 +508,6 @@ Column(
         )
     }
 }
-                    val isDarkTheme = isSystemInDarkTheme()
                     Row(
     modifier = Modifier
         .fillMaxWidth()
