@@ -195,6 +195,19 @@ fun FeedScreen(
         startAnimation = true
     }
     val feedListState = rememberLazyListState()
+    val activeVideoId by remember(posts) {
+        derivedStateOf {
+            val layout = feedListState.layoutInfo
+            val center = (layout.viewportStartOffset + layout.viewportEndOffset) / 2
+            layout.visibleItemsInfo
+                .filter { info ->
+                    val p = posts.getOrNull(info.index - 2)
+                    p != null && p.mediaType == PostMediaType.SHORT_VIDEO
+                }
+                .minByOrNull { info -> kotlin.math.abs(info.offset + info.size / 2 - center) }
+                ?.let { posts.getOrNull(it.index - 2)?.id }
+        }
+    }
     Box(
         modifier = Modifier
             .fillMaxSize()
