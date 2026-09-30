@@ -616,6 +616,58 @@ fun QuickCreatePostCard(
 }
 
 @Composable
+private fun PostVideoPlayer(
+    filePath: String,
+    isActive: Boolean,
+    modifier: Modifier = Modifier
+) {
+    val context = LocalContext.current
+    var isMuted by remember { mutableStateOf(true) }
+    val exoPlayer = remember(filePath) {
+        ExoPlayer.Builder(context).build().apply {
+            setMediaItem(MediaItem.fromUri(Uri.fromFile(File(filePath))))
+            repeatMode = androidx.media3.common.Player.REPEAT_MODE_ONE
+            volume = 0f
+            playWhenReady = false
+            prepare()
+        }
+    }
+    DisposableEffect(exoPlayer) {
+        onDispose { exoPlayer.release() }
+    }
+    LaunchedEffect(isActive) { exoPlayer.playWhenReady = isActive }
+    LaunchedEffect(isMuted) { exoPlayer.volume = if (isMuted) 0f else 1f }
+
+    Box(modifier = modifier) {
+        AndroidView(
+            factory = { ctx ->
+                PlayerView(ctx).apply {
+                    useController = false
+                    resizeMode = androidx.media3.ui.AspectRatioFrameLayout.RESIZE_MODE_FIT
+                    this.player = exoPlayer
+                }
+            },
+            update = { it.player = exoPlayer },
+            modifier = Modifier.fillMaxSize()
+        )
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .clickable { isMuted = !isMuted }
+        )
+        Icon(
+            imageVector = if (isMuted) Icons.Filled.VolumeOff else Icons.Filled.VolumeUp,
+            contentDescription = if (isMuted) "الصوت مكتوم" else "الصوت شغال",
+            tint = Color.White,
+            modifier = Modifier
+                .align(Alignment.BottomStart)
+                .padding(10.dp)
+                .size(20.dp)
+        )
+    }
+}
+
+@Composable
 fun PostCard(
     post: Post,
     isFollowing: Boolean = post.isFollowing,
