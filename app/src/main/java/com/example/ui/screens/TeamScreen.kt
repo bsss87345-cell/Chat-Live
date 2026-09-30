@@ -257,7 +257,7 @@ fun TeamScreen(
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(horizontal = 12.dp, vertical = 6.dp),
+                .padding(horizontal = 12.dp, vertical = 8.dp),
             horizontalArrangement = Arrangement.spacedBy(8.dp)
         ) {
             TeamSubSection.values().reversed().forEach { section ->
@@ -277,11 +277,16 @@ fun TeamScreen(
                     TeamSubSection.FRIEND_REQUESTS -> 205f
                     TeamSubSection.REFERRALS -> 167f
                 }
+                val baseFill = when (section) {
+                    TeamSubSection.ADD_FRIEND -> 0.18f
+                    TeamSubSection.FRIEND_REQUESTS -> 0.30f
+                    TeamSubSection.REFERRALS -> 0.20f
+                }
 
-                TeamGlowBox(
+                NeonGlowBox(
                     glowColor = glow,
                     shape = RoundedCornerShape(12.dp),
-                    fill = glow.copy(alpha = if (isSelected) 0.28f else 0.14f),
+                    fill = glow.copy(alpha = baseFill + (if (isSelected) 0.08f else 0f)),
                     onClick = { activeSubSection = section },
                     modifier = Modifier
                         .weight(sectionWeight)
@@ -291,7 +296,7 @@ fun TeamScreen(
                     Row(
                         modifier = Modifier
                             .fillMaxSize()
-                            .padding(horizontal = 6.dp),
+                            .padding(horizontal = 4.dp),
                         verticalAlignment = Alignment.CenterVertically,
                         horizontalArrangement = Arrangement.Center
                     ) {
@@ -299,12 +304,12 @@ fun TeamScreen(
                             imageVector = sectionIcon,
                             contentDescription = null,
                             tint = glow,
-                            modifier = Modifier.size(18.dp)
+                            modifier = Modifier.size(20.dp)
                         )
-                        Spacer(modifier = Modifier.width(5.dp))
+                        Spacer(modifier = Modifier.width(6.dp))
                         Text(
                             text = section.titleAr,
-                            fontSize = 12.sp,
+                            fontSize = 14.sp,
                             fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Medium,
                             color = glow,
                             maxLines = 1,
