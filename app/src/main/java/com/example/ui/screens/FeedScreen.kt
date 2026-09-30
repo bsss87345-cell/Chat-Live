@@ -2186,17 +2186,6 @@ fun StoryBottomShutterBar(
     currentMode: StoryCreationMode,
     isRecording: Boolean,
     onCapturePhoto: () -> Unit,
-    onToggleRecordVideo: () -> Unit
-) {
-    Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(bottom = 44.dp),
-@Composable
-fun StoryBottomShutterBar(
-    currentMode: StoryCreationMode,
-    isRecording: Boolean,
-    onCapturePhoto: () -> Unit,
     onToggleRecordVideo: () -> Unit,
     onFlipCamera: () -> Unit,
     onOpenGallery: () -> Unit
@@ -2212,7 +2201,6 @@ fun StoryBottomShutterBar(
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
-            // Zoom indicator (Visual Only)
             Surface(
                 shape = RoundedCornerShape(20.dp),
                 color = Color.Black.copy(alpha = 0.5f)
@@ -2222,49 +2210,114 @@ fun StoryBottomShutterBar(
                     horizontalArrangement = Arrangement.spacedBy(12.dp),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    Text("0.5", color = Color.White, fontSize = 12.sp, modifier = Modifier.padding(start = 12.dp, top=6.dp, bottom=6.dp))
-                    Box(modifier = Modifier.background(Color.White, CircleShape).padding(horizontal = 10.dp, vertical = 6.dp)) {
-                        Text("1x", color = Color.Black, fontSize = 12.sp, fontWeight = FontWeight.Bold)
+                    Text(
+                        text = "0.5",
+                        color = Color.White,
+                        fontSize = 12.sp,
+                        modifier = Modifier.padding(start = 12.dp, top = 6.dp, bottom = 6.dp)
+                    )
+                    Box(
+                        modifier = Modifier
+                            .background(Color.White, CircleShape)
+                            .padding(horizontal = 10.dp, vertical = 6.dp)
+                    ) {
+                        Text(
+                            text = "1x",
+                            color = Color.Black,
+                            fontSize = 12.sp,
+                            fontWeight = FontWeight.Bold
+                        )
                     }
-                    Text("2", color = Color.White, fontSize = 12.sp, modifier = Modifier.padding(end = 12.dp, top=6.dp, bottom=6.dp))
+                    Text(
+                        text = "2",
+                        color = Color.White,
+                        fontSize = 12.sp,
+                        modifier = Modifier.padding(end = 12.dp, top = 6.dp, bottom = 6.dp)
+                    )
                 }
             }
 
             Row(
-                modifier = Modifier.fillMaxWidth().padding(horizontal = 32.dp),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 32.dp),
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                // Gallery
                 IconButton(onClick = onOpenGallery) {
-                    Box(modifier = Modifier.size(42.dp).border(2.dp, Color.White, RoundedCornerShape(8.dp)).clip(RoundedCornerShape(8.dp)).background(Color.DarkGray)) {
-                        Icon(Icons.Outlined.PhotoLibrary, contentDescription = null, tint = Color.White, modifier = Modifier.align(Alignment.Center))
+                    Box(
+                        modifier = Modifier
+                            .size(42.dp)
+                            .border(2.dp, Color.White, RoundedCornerShape(8.dp))
+                            .clip(RoundedCornerShape(8.dp))
+                            .background(Color.DarkGray),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Icon(
+                            imageVector = Icons.Outlined.PhotoLibrary,
+                            contentDescription = "المعرض",
+                            tint = Color.White
+                        )
                     }
                 }
 
-                // Shutter
                 Box(
                     modifier = Modifier
                         .size(86.dp)
-                        .border(5.dp, if(isRecording && currentMode == StoryCreationMode.VIDEO) Color.Red else Color.White, CircleShape)
+                        .border(
+                            5.dp,
+                            if (isRecording && currentMode == StoryCreationMode.VIDEO) Color.Red else Color.White,
+                            CircleShape
+                        )
                         .padding(4.dp)
-                        .clip(CircleShape)
-                        .background(if(isRecording && currentMode == StoryCreationMode.VIDEO) Color.Red else Color.White)
-                        .clickable { if(currentMode == StoryCreationMode.VIDEO) onToggleRecordVideo() else onCapturePhoto() }
+                        .clip(
+                            if (isRecording && currentMode == StoryCreationMode.VIDEO) {
+                                RoundedCornerShape(12.dp)
+                            } else {
+                                CircleShape
+                            }
+                        )
+                        .background(
+                            if (isRecording && currentMode == StoryCreationMode.VIDEO) Color.Red else Color.White
+                        )
+                        .clickable {
+                            if (currentMode == StoryCreationMode.VIDEO) {
+                                onToggleRecordVideo()
+                            } else {
+                                onCapturePhoto()
+                            }
+                        }
                 )
 
-                // Flip
-                IconButton(onClick = onFlipCamera, modifier = Modifier.background(Color.Black.copy(alpha = 0.2f), CircleShape)) {
-                    Icon(Icons.Outlined.FlipCameraAndroid, contentDescription = null, tint = Color.White)
+                IconButton(
+                    onClick = onFlipCamera,
+                    modifier = Modifier.background(Color.Black.copy(alpha = 0.2f), CircleShape)
+                ) {
+                    Icon(
+                        imageVector = Icons.Outlined.FlipCameraAndroid,
+                        contentDescription = "تبديل الكاميرا",
+                        tint = Color.White
+                    )
                 }
             }
 
-            // Tabs
-            Row(horizontalArrangement = Arrangement.spacedBy(16.dp), verticalAlignment = Alignment.CenterVertically) {
+            Row(
+                horizontalArrangement = Arrangement.spacedBy(16.dp),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
                 Text("بث مباشر", color = Color.Gray, fontSize = 14.sp)
                 Text("صورة", color = Color.Gray, fontSize = 14.sp)
-                Surface(shape = RoundedCornerShape(20.dp), color = Color.White) {
-                    Text("قصة", color = Color.Black, fontSize = 14.sp, fontWeight = FontWeight.Bold, modifier = Modifier.padding(horizontal = 16.dp, vertical = 6.dp))
+                Surface(
+                    shape = RoundedCornerShape(20.dp),
+                    color = Color.White
+                ) {
+                    Text(
+                        text = "قصة",
+                        color = Color.Black,
+                        fontSize = 14.sp,
+                        fontWeight = FontWeight.Bold,
+                        modifier = Modifier.padding(horizontal = 16.dp, vertical = 6.dp)
+                    )
                 }
                 Text("فيديو", color = Color.Gray, fontSize = 14.sp)
                 Text("نص", color = Color.Gray, fontSize = 14.sp)
@@ -2272,7 +2325,6 @@ fun StoryBottomShutterBar(
         }
     }
 }
-
 @Composable
 fun StoryReviewView(
     mediaUri: String,
