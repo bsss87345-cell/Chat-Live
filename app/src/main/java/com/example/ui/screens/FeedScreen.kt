@@ -211,8 +211,9 @@ fun FeedScreen(
                 .filter { info -> (info.key as? String) in videoIds }
                 .minByOrNull { info -> kotlin.math.abs(info.offset + info.size / 2 - center) }
                 ?.key as? String
+                }
         }
-        }
+    val isFeedScrolling by remember { derivedStateOf { feedListState.isScrollInProgress } }
     Box(
         modifier = Modifier
             .fillMaxSize()
