@@ -625,7 +625,8 @@ fun PostCard(
     onFollowClick: () -> Unit = {},
     onEditClick: () -> Unit = {},
     onDeleteClick: () -> Unit = {},
-    onReportClick: () -> Unit = {}
+    onReportClick: () -> Unit = {},
+    isActiveVideo: Boolean = false
 ) {
     var menuExpanded by remember { mutableStateOf(false) }
 
