@@ -358,7 +358,16 @@ fun FeedScreen(
                             context.contentResolver.openInputStream(pickedUri)?.use { input ->
                                 outFile.outputStream().use { output -> input.copyTo(output) }
                             }
-                            if (outFile.exists() && outFile.length() > 0L) outFile.absolutePath else ""
+                                                        if (outFile.exists() && outFile.length() > 0L) {
+                                val savedFilePath = outFile.absolutePath
+                                // نحن أصلاً على خيط IO: نحسب نسبة الأبعاد ونخزنها بالكاش
+                                // حتى يظهر المنشور بمقاسه الصحيح من أول إطار بلا أي قفزة
+                                mediaRatioCache[savedFilePath] = readMediaAspectRatio(
+                                    savedFilePath,
+                                    mediaType == PostMediaType.SHORT_VIDEO
+                                )
+                                savedFilePath
+                            } else ""
                         } catch (e: Exception) {
                             ""
                         }
