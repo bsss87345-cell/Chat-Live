@@ -1003,8 +1003,8 @@ fun PostCard(
                             AsyncImage(
                                 model = File(post.mediaUri),
                                 contentDescription = "صورة المنشور",
-                                modifier = Modifier.fillMaxWidth(),
-                                contentScale = ContentScale.FillWidth
+                                modifier = Modifier.fillMaxSize(),
+                            contentScale = ContentScale.Crop
                             )
                         } else {
                             Column(
