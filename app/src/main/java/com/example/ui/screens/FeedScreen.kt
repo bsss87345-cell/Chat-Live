@@ -1222,10 +1222,11 @@ fun MediaPostItem(
             .testTag("post_card_${post.id}")
     ) {
         // ===== الوسائط بعرض الشاشة كامل =====
-        Box(
+                Box(
             modifier = Modifier
                 .fillMaxWidth()
                 .aspectRatio(mediaRatio)
+                .clipToBounds()
                 .background(Color.Black)
         ) {
             if (isVideo) {
