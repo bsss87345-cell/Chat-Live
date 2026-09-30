@@ -995,9 +995,7 @@ fun PostCard(
                             PostVideoPlayer(
                                 filePath = post.mediaUri,
                                 isActive = isActiveVideo,
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .height(320.dp)
+                                modifier = Modifier.fillMaxSize()
                             )
                         } else if (hasRealImage) {
                             AsyncImage(
