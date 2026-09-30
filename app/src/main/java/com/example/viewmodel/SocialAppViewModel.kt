@@ -445,7 +445,8 @@ class SocialAppViewModel : ViewModel() {
                 // تجاهل فشل الحذف حتى لا يتعطل حذف المنشور نفسه
             }
         }
-        _posts.update { list -> list.filter { it.id != postId } }
+                _posts.update { list -> list.filter { it.id != postId } }
+        persistMyPosts()
         _userMessage.value = "تم حذف المنشور بنجاح"
         }
 
