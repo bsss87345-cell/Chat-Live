@@ -1003,14 +1003,15 @@ fun PostCard(
             // Optional Tag
             if (post.tag != null) {
                 Spacer(modifier = Modifier.height(8.dp))
-                Surface(
+                                Surface(
                     shape = RoundedCornerShape(12.dp),
-                    color = MujtamaTeal.copy(alpha = 0.12f)
+                    color = NeonPurple.copy(alpha = 0.18f)
                 ) {
                     Text(
                         text = post.tag,
                         modifier = Modifier.padding(horizontal = 10.dp, vertical = 4.dp),
-                        color = MujtamaTeal,
+                        color = NeonPurple,
+                    
                         fontSize = 12.sp,
                         fontWeight = FontWeight.Bold
                     )
