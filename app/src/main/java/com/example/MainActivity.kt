@@ -12,6 +12,7 @@ import androidx.compose.runtime.setValue
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.data.LocalStore
 import com.example.ui.MainScreen
 import com.example.ui.SplashScreen
 import com.example.ui.theme.MyApplicationTheme
