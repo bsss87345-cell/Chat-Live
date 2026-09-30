@@ -261,7 +261,8 @@ fun FeedScreen(
                     onEditClick = { editingPost = post },
                     onDeleteClick = { deletingPost = post },
                     onReportClick = { reportingPost = post },
-                        isActiveVideo = post.id == activeVideoId
+                           isActiveVideo = post.id == activeVideoId,
+                        canMountVideo = !isFeedScrolling
                 )
             }
         }
