@@ -1204,10 +1204,12 @@ fun MediaPostItem(
         initialValue = mediaRatioCache[post.mediaUri] ?: 1f,
         key1 = post.mediaUri
     ) {
-        val cached = mediaRatioCache[post.mediaUri]
+                val cached = mediaRatioCache[post.mediaUri]
         value = cached ?: withContext(Dispatchers.IO) {
-            readMediaAspectRatio(post.mediaUri, isVideo)
-        }.also { mediaRatioCache[post.mediaUri] = it }
+            mediaRatioCache.getOrPut(post.mediaUri) {
+                readMediaAspectRatio(post.mediaUri, isVideo)
+            }
+        }
     }
 
     Column(
