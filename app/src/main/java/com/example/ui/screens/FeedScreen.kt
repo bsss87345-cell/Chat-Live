@@ -84,6 +84,7 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import coil.compose.AsyncImage
+import com.example.R
 import com.example.model.*
 import com.example.ui.theme.*
 import kotlinx.coroutines.Dispatchers
