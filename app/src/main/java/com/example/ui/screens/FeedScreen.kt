@@ -922,7 +922,8 @@ fun PostCard(
             if (post.mediaType != PostMediaType.NONE) {
                     Spacer(modifier = Modifier.height(12.dp))
                     val hasRealImage = post.mediaType == PostMediaType.IMAGE && post.mediaUri.isNotBlank()
-                    Box(
+                    val hasRealVideo = post.mediaType == PostMediaType.SHORT_VIDEO && post.mediaUri.isNotBlank() && File(post.mediaUri).exists()
+                Box(
                         modifier = Modifier
                             .fillMaxWidth()
                             .then(
