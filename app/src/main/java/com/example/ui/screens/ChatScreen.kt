@@ -2876,85 +2876,14 @@ private fun VoiceSeatItem(
             .clickable(onClick = onClick)
             .testTag("room_member_mic_$seatNumber")
     ) {
-        Box(
-            modifier = Modifier
-                .size(44.dp)
-                .scale(if (isSpeaking) glowScale else 1f)
-                .clip(CircleShape)
-                .background(
-                    when {
-                        isSpeaking -> Brush.radialGradient(
-                            listOf(
-                                MujtamaTeal.copy(alpha = 0.55f),
-                                Color.White.copy(alpha = 0.25f),
-                                Color.Transparent
-                            )
-                        )
-                        isOccupied -> Brush.radialGradient(
-                            listOf(
-                                MaterialTheme.colorScheme.primary.copy(alpha = 0.40f),
-                                Color.White.copy(alpha = 0.18f),
-                                Color.Transparent
-                            )
-                        )
-                        else -> Brush.radialGradient(
-                            listOf(
-                                Color.White.copy(alpha = 0.12f),
-                                MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.25f),
-                                Color.Transparent
-                            )
-                        )
-                    }
-                )
-                .border(
-                    width = if (isSpeaking) 3.dp else 2.dp,
-                    brush = when {
-                        isSpeaking -> Brush.linearGradient(
-                            listOf(
-                                MujtamaTeal.copy(alpha = glowAlpha),
-                                Color.White.copy(alpha = 1f)
-                            )
-                        )
-                        isOccupied -> Brush.linearGradient(
-                            listOf(
-                                MaterialTheme.colorScheme.primary.copy(alpha = 1f),
-                                Color.White.copy(alpha = 0.75f)
-                            )
-                        )
-                        else -> Brush.linearGradient(
-                            listOf(
-                                MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.70f),
-                                MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.50f)
-                            )
-                        )
-                    },
-                    shape = CircleShape
-                ),
-            contentAlignment = Alignment.Center
-        ) {
-            if (isOccupied && !occupantAvatarUrl.isNullOrBlank()) {
-                AsyncImage(
-                    model = occupantAvatarUrl,
-                    contentDescription = occupantName,
-                    contentScale = ContentScale.Crop,
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .clip(CircleShape)
-                )
-            } else {
-                Icon(
-                    imageVector = if (isOccupied) Icons.Default.Mic else Icons.Default.MicNone,
-                    contentDescription = "مايك $seatNumber",
-                    tint = when {
-                        isSpeaking -> MujtamaTeal
-                        isOccupied -> MaterialTheme.colorScheme.primary
-                        else -> MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.35f)
-                    },
-                    modifier = Modifier.size(20.dp)
-                )
-            }
-        }
-
+        NeonMicCircle(
+            isOccupied = isOccupied,
+            isSpeaking = isSpeaking,
+            isOwner = false,
+            avatarUrl = occupantAvatarUrl,
+            contentDesc = occupantName ?: "مايك $seatNumber",
+            circleSize = 62.dp
+        )
         Text(
             text = if (isOccupied && !occupantName.isNullOrBlank()) occupantName else "$seatNumber",
             fontSize = 11.sp,
