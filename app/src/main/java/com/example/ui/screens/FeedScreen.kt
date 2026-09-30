@@ -242,7 +242,8 @@ fun FeedScreen(
                     onFollowClick = { onToggleFollow(post.authorId) },
                     onEditClick = { editingPost = post },
                     onDeleteClick = { deletingPost = post },
-                    onReportClick = { reportingPost = post }
+                    onReportClick = { reportingPost = post },
+                        isActiveVideo = post.id == activeVideoId
                 )
             }
         }
