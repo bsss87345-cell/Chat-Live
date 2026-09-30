@@ -170,50 +170,60 @@ fun TeamScreen(
             }
         }
 
-        // --- 2. شريط الأقسام الأربعة بتصميم شبه شفاف وزجاجي متناسق مع الواجهة ---
+        // --- 2. أزرار الأقسام الثلاثة (نيون): إضافة صديق، طلبات الصداقة، الإحالات ---
         Row(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(horizontal = 12.dp, vertical = 6.dp),
-            horizontalArrangement = Arrangement.spacedBy(6.dp)
+            horizontalArrangement = Arrangement.spacedBy(8.dp)
         ) {
-            TeamSubSection.values().forEach { section ->
+            TeamSubSection.values().reversed().forEach { section ->
                 val isSelected = activeSubSection == section
+                val glow = when (section) {
+                    TeamSubSection.ADD_FRIEND -> TeamGlowCyan
+                    TeamSubSection.FRIEND_REQUESTS -> TeamGlowPurple
+                    TeamSubSection.REFERRALS -> TeamGlowMagenta
+                }
+                val sectionIcon = when (section) {
+                    TeamSubSection.ADD_FRIEND -> Icons.Default.Add
+                    TeamSubSection.FRIEND_REQUESTS -> Icons.Default.Group
+                    TeamSubSection.REFERRALS -> Icons.Default.Link
+                }
+                val sectionWeight = when (section) {
+                    TeamSubSection.ADD_FRIEND -> 185f
+                    TeamSubSection.FRIEND_REQUESTS -> 205f
+                    TeamSubSection.REFERRALS -> 167f
+                }
 
-                Surface(
+                TeamGlowBox(
+                    glowColor = glow,
+                    shape = RoundedCornerShape(12.dp),
+                    fill = glow.copy(alpha = if (isSelected) 0.28f else 0.14f),
                     onClick = { activeSubSection = section },
                     modifier = Modifier
-                        .weight(1f)
-                        .height(44.dp)
-                        .testTag("team_tab_${section.name.lowercase()}"),
-                    shape = RoundedCornerShape(12.dp),
-                    color = if (isSelected) {
-                        MujtamaPrimary.copy(alpha = 0.20f)
-                    } else {
-                        MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.35f)
-                    },
-                    border = androidx.compose.foundation.BorderStroke(
-                        width = if (isSelected) 1.5.dp else 1.dp,
-                        color = if (isSelected) MujtamaPrimary.copy(alpha = 0.75f) else MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.30f)
-                    )
+                        .weight(sectionWeight)
+                        .height(40.dp)
+                        .testTag("team_tab_${section.name.lowercase()}")
                 ) {
                     Row(
                         modifier = Modifier
                             .fillMaxSize()
-                            .padding(horizontal = 4.dp),
+                            .padding(horizontal = 6.dp),
                         verticalAlignment = Alignment.CenterVertically,
                         horizontalArrangement = Arrangement.Center
                     ) {
-                        Text(
-                            text = section.iconEmoji,
-                            fontSize = 13.sp
+                        Icon(
+                            imageVector = sectionIcon,
+                            contentDescription = null,
+                            tint = glow,
+                            modifier = Modifier.size(18.dp)
                         )
-                        Spacer(modifier = Modifier.width(3.dp))
+                        Spacer(modifier = Modifier.width(5.dp))
                         Text(
                             text = section.titleAr,
-                            fontSize = 11.sp,
+                            fontSize = 12.sp,
                             fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Medium,
-                            color = if (isSelected) MujtamaPrimary else MaterialTheme.colorScheme.onSurface,
+                            color = glow,
                             maxLines = 1,
                             overflow = TextOverflow.Ellipsis
                         )
