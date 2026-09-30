@@ -977,7 +977,7 @@ fun PostCard(
                         modifier = Modifier
                             .fillMaxWidth()
                             .then(
-                                if (hasRealImage) Modifier.heightIn(max = 480.dp)
+                                if (hasRealImage || hasRealVideo) Modifier.aspectRatio(mediaRatio)
                                 else Modifier.height(190.dp)
                             )
                             .clip(RoundedCornerShape(14.dp))
