@@ -2334,299 +2334,280 @@ fun StoryReviewView(
     onRetake: () -> Unit,
     onPublish: () -> Unit
 ) {
-    // State for the "..." dropdown menu
     var showMoreMenu by remember { mutableStateOf(false) }
 
-    Box(modifier = Modifier.fillMaxSize()) {
-
-        // ── 1. Media Background ──────────────────────────────────
-        if (isVideo) {
-            AndroidView(
-                modifier = Modifier.fillMaxSize(),
-                factory = { ctx ->
-                    object : android.widget.VideoView(ctx) {
-                        override fun onMeasure(w: Int, h: Int) {
-                            setMeasuredDimension(
-                                android.view.View.MeasureSpec.getSize(w),
-                                android.view.View.MeasureSpec.getSize(h)
-                            )
-                        }
-                    }.apply {
-                        setVideoPath(mediaUri)
-                        setOnPreparedListener { mp ->
-                            mp.isLooping = true
-                            mp.setVideoScalingMode(
-                                android.media.MediaPlayer.VIDEO_SCALING_MODE_SCALE_TO_FIT_WITH_CROPPING
-                            )
-                            start()
-                        }
-                    }
-                }
-            )
-        } else {
-            AsyncImage(
-                model = mediaUri,
-                contentDescription = "معاينة القصة",
-                modifier = Modifier.fillMaxSize(),
-                contentScale = ContentScale.Crop
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(Color(0xFF07090E))
+    ) {
+        // Top Left Back
+        IconButton(
+            onClick = onRetake,
+            modifier = Modifier
+                .align(AbsoluteAlignment.TopLeft)
+                .statusBarsPadding()
+                .padding(start = 14.dp, top = 10.dp)
+                .size(46.dp)
+                .background(Color.White.copy(alpha = 0.08f), CircleShape)
+                .border(1.dp, Color.White.copy(alpha = 0.12f), CircleShape)
+                .testTag("retake_media_button")
+        ) {
+            Icon(
+                imageVector = Icons.Default.ArrowBack,
+                contentDescription = "رجوع",
+                tint = Color.White,
+                modifier = Modifier.size(22.dp)
             )
         }
 
-        // ── 2. Top gradient scrim ────────────────────────────────
-        Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(140.dp)
-                .align(Alignment.TopCenter)
-                .background(
-                    Brush.verticalGradient(
-                        colors = listOf(Color.Black.copy(alpha = 0.55f), Color.Transparent)
-                    )
-                )
-        )
-
-        // ── 3. Bottom gradient scrim ─────────────────────────────
-        Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(160.dp)
-                .align(Alignment.BottomCenter)
-                .background(
-                    Brush.verticalGradient(
-                        colors = listOf(Color.Transparent, Color.Black.copy(alpha = 0.75f))
-                    )
-                )
-        )
-
-        // ── 4. Top Bar ───────────────────────────────────────────
+        // Top Right Tools
         Row(
             modifier = Modifier
-                .fillMaxWidth()
+                .align(AbsoluteAlignment.TopRight)
                 .statusBarsPadding()
-                .padding(horizontal = 12.dp, vertical = 8.dp),
-            horizontalArrangement = Arrangement.SpaceBetween,
+                .padding(end = 14.dp, top = 10.dp),
+            horizontalArrangement = Arrangement.spacedBy(10.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            // Back / Retake button (circle)
-            IconButton(
-                onClick = onRetake,
+            Box(
                 modifier = Modifier
-                    .size(42.dp)
-                    .background(Color.Black.copy(alpha = 0.45f), CircleShape)
-                    .testTag("retake_media_button")
+                    .size(46.dp)
+                    .background(Color.White.copy(alpha = 0.08f), CircleShape)
+                    .border(1.dp, Color.White.copy(alpha = 0.12f), CircleShape),
+                contentAlignment = Alignment.Center
+            ) {
+                Text(
+                    text = "Aa",
+                    color = Color.White,
+                    fontSize = 15.sp,
+                    fontWeight = FontWeight.Bold
+                )
+            }
+
+            IconButton(
+                onClick = { },
+                modifier = Modifier
+                    .size(46.dp)
+                    .background(Color.White.copy(alpha = 0.08f), CircleShape)
+                    .border(1.dp, Color.White.copy(alpha = 0.12f), CircleShape)
             ) {
                 Icon(
-                    imageVector = Icons.Default.ArrowBack,
-                    contentDescription = "إعادة",
+                    imageVector = Icons.Outlined.EmojiEmotions,
+                    contentDescription = "ملصقات",
                     tint = Color.White,
                     modifier = Modifier.size(22.dp)
                 )
             }
 
-            // Right icons row: Aa | Stickers | Sparkle | More(...)
-            Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                // Aa — Text (شكلي)
-                Box(
-                    modifier = Modifier
-                        .size(42.dp)
-                        .background(Color.Black.copy(alpha = 0.45f), CircleShape),
-                    contentAlignment = Alignment.Center
-                ) {
-                    Text(
-                        text = "Aa",
-                        color = Color.White,
-                        fontWeight = FontWeight.Bold,
-                        fontSize = 14.sp
-                    )
-                }
-
-                // Stickers (شكلي)
-                IconButton(
-                    onClick = { },
-                    modifier = Modifier
-                        .size(42.dp)
-                        .background(Color.Black.copy(alpha = 0.45f), CircleShape)
-                ) {
-                    Icon(
-                        imageVector = Icons.Outlined.EmojiEmotions,
-                        contentDescription = "ملصقات",
-                        tint = Color.White,
-                        modifier = Modifier.size(22.dp)
-                    )
-                }
-
-                // Sparkle / Filters (شكلي)
-                IconButton(
-                    onClick = { },
-                    modifier = Modifier
-                        .size(42.dp)
-                        .background(Color.Black.copy(alpha = 0.45f), CircleShape)
-                ) {
-                    Icon(
-                        imageVector = Icons.Outlined.AutoAwesome,
-                        contentDescription = "فلاتر",
-                        tint = Color.White,
-                        modifier = Modifier.size(22.dp)
-                    )
-                }
-
-                // More (...) — opens dropdown
-                Box {
-                    IconButton(
-                        onClick = { showMoreMenu = !showMoreMenu },
-                        modifier = Modifier
-                            .size(42.dp)
-                            .background(
-                                if (showMoreMenu) Color.White.copy(alpha = 0.25f)
-                                else Color.Black.copy(alpha = 0.45f),
-                                CircleShape
-                            )
-                    ) {
-                        Icon(
-                            imageVector = Icons.Default.MoreHoriz,
-                            contentDescription = "المزيد",
-                            tint = Color.White,
-                            modifier = Modifier.size(22.dp)
-                        )
-                    }
-
-                    // Dropdown Menu — opens below the "..." button, overlays side icons
-                    DropdownMenu(
-                        expanded = showMoreMenu,
-                        onDismissRequest = { showMoreMenu = false },
-                        modifier = Modifier
-                            .background(
-                                Color(0xFF1C1C1E),
-                                RoundedCornerShape(14.dp)
-                            )
-                            .width(210.dp)
-                    ) {
-                        // حفظ في الجهاز (شكلي)
-                        DropdownMenuItem(
-                            text = { Text("حفظ في الجهاز", color = Color.White, fontSize = 15.sp) },
-                            onClick = { showMoreMenu = false },
-                            leadingIcon = {
-                                Icon(Icons.Outlined.SaveAlt, contentDescription = null, tint = Color.White)
-                            }
-                        )
-                        // تنزيل بدون نشر (شكلي)
-                        DropdownMenuItem(
-                            text = { Text("تنزيل بدون نشر", color = Color.White, fontSize = 15.sp) },
-                            onClick = { showMoreMenu = false },
-                            leadingIcon = {
-                                Icon(Icons.Outlined.Download, contentDescription = null, tint = Color.White)
-                            }
-                        )
-                        // إعادة التصوير — يعمل فعلاً
-                        DropdownMenuItem(
-                            text = { Text("إعادة التصوير", color = Color.White, fontSize = 15.sp) },
-                            onClick = { showMoreMenu = false; onRetake() },
-                            leadingIcon = {
-                                Icon(Icons.Outlined.Refresh, contentDescription = null, tint = Color.White)
-                            }
-                        )
-                        HorizontalDivider(color = Color.White.copy(alpha = 0.12f))
-                        // حذف — يعمل فعلاً (= إعادة التصوير)
-                        DropdownMenuItem(
-                            text = { Text("حذف", color = Color(0xFFFF453A), fontSize = 15.sp) },
-                            onClick = { showMoreMenu = false; onRetake() },
-                            leadingIcon = {
-                                Icon(Icons.Outlined.Delete, contentDescription = null, tint = Color(0xFFFF453A))
-                            }
-                        )
-                        HorizontalDivider(color = Color.White.copy(alpha = 0.12f))
-                        // إعدادات الخصوصية (شكلي)
-                        DropdownMenuItem(
-                            text = { Text("إعدادات الخصوصية", color = Color.White, fontSize = 15.sp) },
-                            onClick = { showMoreMenu = false },
-                            leadingIcon = {
-                                Icon(Icons.Outlined.Lock, contentDescription = null, tint = Color.White)
-                            }
-                        )
-                    }
-                }
-            }
-        }
-
-        // ── 5. Right Side Tool Icons ─────────────────────────────
-        // ظاهرة دائماً، مو متأثرة بفتح القائمة
-        Column(
-            modifier = Modifier
-                .align(Alignment.CenterEnd)
-                .padding(end = 12.dp),
-            verticalArrangement = Arrangement.spacedBy(20.dp),
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-            // الموسيقى (شكلي)
-            StoryReviewToolButton(
-                icon = Icons.Outlined.MusicNote,
-                label = "الموسيقى"
-            )
-            // الفلاتر (شكلي)
-            StoryReviewToolButton(
-                icon = Icons.Outlined.AutoAwesome,
-                label = "الفلاتر"
-            )
-            // ملصقات (شكلي)
-            StoryReviewToolButton(
-                icon = Icons.Outlined.EmojiEmotions,
-                label = "ملصقات"
-            )
-            // الرسم (شكلي)
-            StoryReviewToolButton(
-                icon = Icons.Outlined.Edit,
-                label = "الرسم"
-            )
-            // النص (شكلي)
-            Column(
-                horizontalAlignment = Alignment.CenterHorizontally,
-                modifier = Modifier.clickable { }
+            IconButton(
+                onClick = { },
+                modifier = Modifier
+                    .size(46.dp)
+                    .background(Color.White.copy(alpha = 0.08f), CircleShape)
+                    .border(1.dp, Color.White.copy(alpha = 0.12f), CircleShape)
             ) {
-                Box(
-                    modifier = Modifier
-                        .size(48.dp)
-                        .background(Color.Black.copy(alpha = 0.35f), CircleShape),
-                    contentAlignment = Alignment.Center
-                ) {
-                    Text(
-                        text = "Aa",
-                        color = Color.White,
-                        fontWeight = FontWeight.Bold,
-                        fontSize = 16.sp
-                    )
-                }
-                Spacer(modifier = Modifier.height(3.dp))
-                Text(
-                    text = "النص",
-                    color = Color.White,
-                    fontSize = 11.sp,
-                    fontWeight = FontWeight.Medium
+                Icon(
+                    imageVector = Icons.Outlined.AutoAwesome,
+                    contentDescription = "تجميل",
+                    tint = Color.White,
+                    modifier = Modifier.size(22.dp)
                 )
             }
+
+            Box {
+                IconButton(
+                    onClick = { showMoreMenu = !showMoreMenu },
+                    modifier = Modifier
+                        .size(46.dp)
+                        .background(Color.White.copy(alpha = 0.08f), CircleShape)
+                        .border(1.dp, Color.White.copy(alpha = 0.12f), CircleShape)
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.MoreHoriz,
+                        contentDescription = "المزيد",
+                        tint = Color.White,
+                        modifier = Modifier.size(22.dp)
+                    )
+                }
+
+                DropdownMenu(
+                    expanded = showMoreMenu,
+                    onDismissRequest = { showMoreMenu = false },
+                    modifier = Modifier
+                        .background(Color(0xFF121722), RoundedCornerShape(18.dp))
+                        .width(220.dp)
+                ) {
+                    DropdownMenuItem(
+                        text = { Text("حفظ في الجهاز", color = Color.White, fontSize = 15.sp) },
+                        onClick = { showMoreMenu = false },
+                        leadingIcon = {
+                            Icon(Icons.Outlined.SaveAlt, contentDescription = null, tint = Color.White)
+                        }
+                    )
+                    DropdownMenuItem(
+                        text = { Text("تنزيل بدون نشر", color = Color.White, fontSize = 15.sp) },
+                        onClick = { showMoreMenu = false },
+                        leadingIcon = {
+                            Icon(Icons.Outlined.Download, contentDescription = null, tint = Color.White)
+                        }
+                    )
+                    DropdownMenuItem(
+                        text = { Text("إعادة التصوير", color = Color.White, fontSize = 15.sp) },
+                        onClick = {
+                            showMoreMenu = false
+                            onRetake()
+                        },
+                        leadingIcon = {
+                            Icon(Icons.Outlined.Refresh, contentDescription = null, tint = Color.White)
+                        }
+                    )
+                    HorizontalDivider(color = Color.White.copy(alpha = 0.10f))
+                    DropdownMenuItem(
+                        text = { Text("حذف", color = Color(0xFFFF453A), fontSize = 15.sp) },
+                        onClick = {
+                            showMoreMenu = false
+                            onRetake()
+                        },
+                        leadingIcon = {
+                            Icon(Icons.Outlined.Delete, contentDescription = null, tint = Color(0xFFFF453A))
+                        }
+                    )
+                    HorizontalDivider(color = Color.White.copy(alpha = 0.10f))
+                    DropdownMenuItem(
+                        text = { Text("إعدادات الخصوصية", color = Color.White, fontSize = 15.sp) },
+                        onClick = { showMoreMenu = false },
+                        leadingIcon = {
+                            Icon(Icons.Outlined.Lock, contentDescription = null, tint = Color.White)
+                        }
+                    )
+                }
+            }
         }
 
-        // ── 6. Bottom Action Bar ─────────────────────────────────
+        // Center Media Card
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .fillMaxHeight(0.70f)
+                .align(Alignment.Center)
+                .padding(start = 18.dp, end = 18.dp, top = 84.dp, bottom = 130.dp)
+                .clip(RoundedCornerShape(28.dp))
+                .background(Color(0xFF0E1320))
+                .border(1.dp, Color.White.copy(alpha = 0.08f), RoundedCornerShape(28.dp))
+        ) {
+            if (isVideo) {
+                AndroidView(
+                    modifier = Modifier.fillMaxSize(),
+                    factory = { ctx ->
+                        object : android.widget.VideoView(ctx) {
+                            override fun onMeasure(w: Int, h: Int) {
+                                setMeasuredDimension(
+                                    android.view.View.MeasureSpec.getSize(w),
+                                    android.view.View.MeasureSpec.getSize(h)
+                                )
+                            }
+                        }.apply {
+                            setVideoPath(mediaUri)
+                            setOnPreparedListener { mp ->
+                                mp.isLooping = true
+                                mp.setVideoScalingMode(
+                                    android.media.MediaPlayer.VIDEO_SCALING_MODE_SCALE_TO_FIT_WITH_CROPPING
+                                )
+                                start()
+                            }
+                        }
+                    }
+                )
+            } else {
+                AsyncImage(
+                    model = mediaUri,
+                    contentDescription = "معاينة القصة",
+                    modifier = Modifier.fillMaxSize(),
+                    contentScale = ContentScale.Crop
+                )
+            }
+
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(90.dp)
+                    .align(Alignment.BottomCenter)
+                    .background(
+                        Brush.verticalGradient(
+                            colors = listOf(Color.Transparent, Color.Black.copy(alpha = 0.45f))
+                        )
+                    )
+            )
+
+            Surface(
+                modifier = Modifier
+                    .align(AbsoluteAlignment.BottomLeft)
+                    .padding(start = 14.dp, bottom = 14.dp),
+                shape = RoundedCornerShape(20.dp),
+                color = Color(0xCC1A2130),
+                border = androidx.compose.foundation.BorderStroke(
+                    1.dp,
+                    Color.White.copy(alpha = 0.10f)
+                )
+            ) {
+                Row(
+                    modifier = Modifier.padding(horizontal = 12.dp, vertical = 8.dp),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(8.dp)
+                ) {
+                    Box(
+                        modifier = Modifier
+                            .size(26.dp)
+                            .clip(CircleShape)
+                            .background(Color(0xFF2A3142)),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Text(
+                            text = "+",
+                            color = Color.White,
+                            fontWeight = FontWeight.Bold,
+                            fontSize = 13.sp
+                        )
+                    }
+                    Text(
+                        text = "قصتك",
+                        color = Color.White,
+                        fontSize = 13.sp,
+                        fontWeight = FontWeight.SemiBold
+                    )
+                    Text(
+                        text = "+",
+                        color = Color.White.copy(alpha = 0.9f),
+                        fontSize = 14.sp,
+                        fontWeight = FontWeight.Bold
+                    )
+                }
+            }
+        }
+
+        // Bottom Action Bar
         Row(
             modifier = Modifier
                 .fillMaxWidth()
                 .align(Alignment.BottomCenter)
                 .navigationBarsPadding()
-                .padding(start = 12.dp, end = 12.dp, bottom = 16.dp),
-            horizontalArrangement = Arrangement.spacedBy(8.dp),
+                .padding(start = 14.dp, end = 14.dp, bottom = 16.dp),
+            horizontalArrangement = Arrangement.spacedBy(10.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            // حفظ (شكلي)
             OutlinedButton(
                 onClick = { },
                 modifier = Modifier
-                    .height(52.dp)
-                    .weight(0.85f),
-                shape = RoundedCornerShape(26.dp),
+                    .height(56.dp)
+                    .weight(0.90f),
+                shape = RoundedCornerShape(24.dp),
                 border = androidx.compose.foundation.BorderStroke(
-                    1.dp, Color.White.copy(alpha = 0.5f)
+                    1.dp,
+                    Color.White.copy(alpha = 0.14f)
                 ),
                 colors = ButtonDefaults.outlinedButtonColors(
-                    containerColor = Color.Black.copy(alpha = 0.35f),
+                    containerColor = Color.White.copy(alpha = 0.06f),
                     contentColor = Color.White
                 )
             ) {
@@ -2636,21 +2617,25 @@ fun StoryReviewView(
                     modifier = Modifier.size(18.dp)
                 )
                 Spacer(modifier = Modifier.width(4.dp))
-                Text("حفظ", fontSize = 14.sp, fontWeight = FontWeight.Medium)
+                Text(
+                    text = "حفظ",
+                    fontSize = 14.sp,
+                    fontWeight = FontWeight.Medium
+                )
             }
 
-            // الأصدقاء المقربون (شكلي)
             OutlinedButton(
                 onClick = { },
                 modifier = Modifier
-                    .height(52.dp)
-                    .weight(1.3f),
-                shape = RoundedCornerShape(26.dp),
+                    .height(56.dp)
+                    .weight(1.30f),
+                shape = RoundedCornerShape(24.dp),
                 border = androidx.compose.foundation.BorderStroke(
-                    1.dp, Color.White.copy(alpha = 0.35f)
+                    1.dp,
+                    Color.White.copy(alpha = 0.14f)
                 ),
                 colors = ButtonDefaults.outlinedButtonColors(
-                    containerColor = Color.Black.copy(alpha = 0.35f),
+                    containerColor = Color.White.copy(alpha = 0.06f),
                     contentColor = Color.White
                 )
             ) {
@@ -2668,22 +2653,19 @@ fun StoryReviewView(
                     )
                 }
                 Spacer(modifier = Modifier.width(6.dp))
-                Text("الأصدقاء المقربون", fontSize = 13.sp)
-                Icon(
-                    imageVector = Icons.Default.ChevronRight,
-                    contentDescription = null,
-                    modifier = Modifier.size(16.dp)
+                Text(
+                    text = "الأصدقاء المقربون",
+                    fontSize = 13.sp
                 )
             }
 
-            // إرسال إلى — يعمل فعلاً (= نشر)
             Button(
                 onClick = onPublish,
                 modifier = Modifier
-                    .height(52.dp)
-                    .weight(1.5f)
+                    .height(56.dp)
+                    .weight(1.45f)
                     .testTag("publish_story_button"),
-                shape = RoundedCornerShape(26.dp),
+                shape = RoundedCornerShape(24.dp),
                 colors = ButtonDefaults.buttonColors(
                     containerColor = Color(0xFF0A84FF),
                     contentColor = Color.White
