@@ -2100,90 +2100,77 @@ fun StoryTopBar(
     recordDuration: Int,
     flashMode: FlashMode,
     onToggleFlash: () -> Unit,
-    onFlipCamera: () -> Unit,
     onClose: () -> Unit
 ) {
-    Row(
+    Box(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(horizontal = 16.dp, vertical = 36.dp),
-        horizontalArrangement = Arrangement.SpaceBetween,
-        verticalAlignment = Alignment.CenterVertically
+            .statusBarsPadding()
+            .padding(horizontal = 16.dp, vertical = 12.dp)
     ) {
-        // Close Button
+        // Close Button (Left)
         IconButton(
             onClick = onClose,
-            modifier = Modifier
-                .background(Color.Black.copy(alpha = 0.45f), CircleShape)
-                .testTag("close_story_creation_button")
+            modifier = Modifier.align(Alignment.CenterStart).testTag("close_story_creation_button")
         ) {
             Icon(
                 imageVector = Icons.Default.Close,
                 contentDescription = "إغلاق",
-                tint = Color.White
+                tint = Color.White,
+                modifier = Modifier.size(28.dp)
             )
         }
 
-        // Mode or Timer Badge
-        Surface(
-            shape = RoundedCornerShape(16.dp),
-            color = if (isRecording) Color.Red.copy(alpha = 0.85f) else Color.Black.copy(alpha = 0.45f)
+        // Flash Button (Center)
+        IconButton(
+            onClick = onToggleFlash,
+            modifier = Modifier.align(Alignment.Center)
         ) {
-            Row(
-                modifier = Modifier.padding(horizontal = 12.dp, vertical = 6.dp),
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(6.dp)
+            Icon(
+                imageVector = when (flashMode) {
+                    FlashMode.OFF -> Icons.Outlined.FlashOff
+                    FlashMode.ON -> Icons.Filled.FlashOn
+                    FlashMode.AUTO -> Icons.Filled.FlashAuto
+                },
+                contentDescription = "الفلاش",
+                tint = Color.White,
+                modifier = Modifier.size(24.dp)
+            )
+        }
+
+        // Settings Button (Right - Visual only)
+        IconButton(
+            onClick = { },
+            modifier = Modifier.align(Alignment.CenterEnd)
+        ) {
+            Icon(
+                imageVector = Icons.Outlined.Settings,
+                contentDescription = "إعدادات",
+                tint = Color.White,
+                modifier = Modifier.size(26.dp)
+            )
+        }
+
+        // Optional: Timer Badge if recording
+        if (isRecording) {
+            Surface(
+                shape = RoundedCornerShape(16.dp),
+                color = Color.Red.copy(alpha = 0.85f),
+                modifier = Modifier.align(Alignment.BottomCenter).padding(top = 40.dp)
             ) {
-                if (isRecording) {
-                    Box(
-                        modifier = Modifier
-                            .size(8.dp)
-                            .clip(CircleShape)
-                            .background(Color.White)
-                    )
+                Row(
+                    modifier = Modifier.padding(horizontal = 12.dp, vertical = 6.dp),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(6.dp)
+                ) {
+                    Box(modifier = Modifier.size(8.dp).clip(CircleShape).background(Color.White))
                     Text(
-                        text = "تسجيل 00:${if (recordDuration < 10) "0$recordDuration" else recordDuration}",
+                        text = "00:${if (recordDuration < 10) "0$recordDuration" else recordDuration}",
                         color = Color.White,
                         fontSize = 12.sp,
                         fontWeight = FontWeight.Bold
                     )
-                } else {
-                    Text(
-                        text = if (currentMode == StoryCreationMode.VIDEO) "وضع الفيديو 🎥" else "التقاط صورة 📸",
-                        color = Color.White,
-                        fontSize = 12.sp,
-                        fontWeight = FontWeight.Medium
-                    )
                 }
-            }
-        }
-
-        // Action Icons (Flash, Flip Camera)
-        Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-         IconButton(
-                onClick = onToggleFlash,
-                modifier = Modifier.background(Color.Black.copy(alpha = 0.45f), CircleShape)
-            ) {
-                Icon(
-                    imageVector = when (flashMode) {
-                        FlashMode.OFF -> Icons.Outlined.FlashOff
-                        FlashMode.ON -> Icons.Filled.FlashOn
-                        FlashMode.AUTO -> Icons.Filled.FlashAuto
-                    },
-                    contentDescription = "الفلاش",
-                    tint = if (flashMode == FlashMode.OFF) Color.White else MujtamaGold
-                )
-         }   
-
-            IconButton(
-                onClick = onFlipCamera,
-                modifier = Modifier.background(Color.Black.copy(alpha = 0.45f), CircleShape)
-            ) {
-                Icon(
-                    imageVector = Icons.Outlined.FlipCameraAndroid,
-                    contentDescription = "تبديل الكاميرا",
-                    tint = Color.White
-                )
             }
         }
     }
