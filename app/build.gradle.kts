@@ -38,11 +38,18 @@ android {
   }
 
   buildTypes {
-    release {
+        release {
       isCrunchPngs = false
       isMinifyEnabled = false
       proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
-      signingConfig = signingConfigs.getByName("release")
+      // لو مفتاح الإصدار الحقيقي غير موجود (مثل بيئة GitHub Actions) نستخدم توقيع Debug
+      // حتى نقدر نبني ونثبّت نسخة Release للقياس. عند وجود المفتاح الحقيقي ما يتغير شي.
+      val releaseKeystore = file(System.getenv("KEYSTORE_PATH") ?: "${rootDir}/my-upload-key.jks")
+      signingConfig = if (releaseKeystore.exists()) {
+        signingConfigs.getByName("release")
+      } else {
+        signingConfigs.getByName("debug")
+      }
     }
     debug {
       // يُترك بدون signingConfig مخصص ليستخدم توقيع Debug التلقائي الخاص بـ Gradle
