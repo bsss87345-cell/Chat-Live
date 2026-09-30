@@ -451,11 +451,12 @@ class SocialAppViewModel : ViewModel() {
 
     fun editPost(postId: String, newContent: String) {
         if (newContent.isBlank()) return
-        _posts.update { list ->
+                _posts.update { list ->
             list.map { post ->
                 if (post.id == postId) post.copy(content = newContent.trim()) else post
             }
         }
+        persistMyPosts()
         _userMessage.value = "تم تعديل المنشور بنجاح"
     }
 
