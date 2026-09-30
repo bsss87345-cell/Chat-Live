@@ -347,27 +347,29 @@ fun FeedScreen(
             FullScreenMediaComposer(
                 mediaUri = uri,
                 onDismiss = { selectedMediaUri = null },
-                onPublish = { caption, tag, mediaType ->
-                var savedPath = ""
-                try {
-                    val ext = if (mediaType == PostMediaType.SHORT_VIDEO) "mp4" else "jpg"
-                    val outFile = File(context.filesDir, "post_${System.currentTimeMillis()}.$ext")
-                    context.contentResolver.openInputStream(uri)?.use { input ->
-                        outFile.outputStream().use { output -> input.copyTo(output) }
-                    }
-                    if (outFile.exists() && outFile.length() > 0L) {
-                        savedPath = outFile.absolutePath
-                    }
-                } catch (e: Exception) {
-                    savedPath = ""
-                }
-                if (savedPath.isNotEmpty()) {
-                    onPublishPost(caption, tag, mediaType, savedPath)
-                } else {
-                    android.widget.Toast.makeText(context, "تعذر حفظ الملف، حاول مرة ثانية", android.widget.Toast.LENGTH_LONG).show()
-                }
+                                onPublish = { caption, tag, mediaType ->
+                val pickedUri = uri
                 selectedMediaUri = null
+                mediaSaveScope.launch {
+                    val savedPath = withContext(Dispatchers.IO) {
+                        try {
+                            val ext = if (mediaType == PostMediaType.SHORT_VIDEO) "mp4" else "jpg"
+                            val outFile = File(context.filesDir, "post_${System.currentTimeMillis()}.$ext")
+                            context.contentResolver.openInputStream(pickedUri)?.use { input ->
+                                outFile.outputStream().use { output -> input.copyTo(output) }
+                            }
+                            if (outFile.exists() && outFile.length() > 0L) outFile.absolutePath else ""
+                        } catch (e: Exception) {
+                            ""
+                        }
+                    }
+                    if (savedPath.isNotEmpty()) {
+                        onPublishPost(caption, tag, mediaType, savedPath)
+                    } else {
+                        android.widget.Toast.makeText(context, "تعذر حفظ الملف، حاول مرة ثانية", android.widget.Toast.LENGTH_LONG).show()
+                    }
                 }
+                                }
             )
         }
 
