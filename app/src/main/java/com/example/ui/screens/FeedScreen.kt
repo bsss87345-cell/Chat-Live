@@ -1024,8 +1024,10 @@ fun PostCard(
                         if (hasRealImage || hasRealVideo) {
                             val cached = mediaRatioCache[post.mediaUri]
                             value = cached ?: withContext(Dispatchers.IO) {
-                                readMediaAspectRatio(post.mediaUri, hasRealVideo)
-                            }.also { mediaRatioCache[post.mediaUri] = it }
+                                mediaRatioCache.getOrPut(post.mediaUri) {
+                                    readMediaAspectRatio(post.mediaUri, hasRealVideo)
+                                }
+                            }
                         } else {
                             value = 1f
                         }
