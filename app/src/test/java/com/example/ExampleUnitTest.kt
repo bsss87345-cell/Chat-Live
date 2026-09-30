@@ -148,7 +148,7 @@ class ExampleUnitTest {
     @Test
     fun testPostEditAndDelete() {
         val vm = SocialAppViewModel()
-        vm.addNewPost("منشور قبل التعديل", emptyList())
+        vm.publishPost("منشور قبل التعديل", "", com.example.model.PostMediaType.NONE)
         val authorPost = vm.posts.value.first()
         val updatedText = "محتوى معدل جديد للمنشور الخاص بي ✍️"
 
