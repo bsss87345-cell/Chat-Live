@@ -2809,72 +2809,15 @@ private fun OwnerVoiceSeat(
             .clickable(onClick = onClick)
             .testTag("room_owner_mic")
     ) {
-        Box(
-            modifier = Modifier
-                .size(58.dp)
-                .scale(if (isSpeaking) glowScale else 1f)
-                .clip(CircleShape)
-                // خلفية شفافة زجاجية بنمط Glassmorphism ولمسة ذهبية فخمة
-                .background(
-                    Brush.radialGradient(
-                        colors = listOf(
-                            MujtamaGold.copy(alpha = if (isSpeaking) 0.32f else 0.16f),
-                            Color.White.copy(alpha = 0.10f),
-                            Color.Transparent
-                        )
-                    )
-                )
-// حواف دائرية أوضح مع تأثير توهج حيوي عند التحدث
-                .border(
-                    width = if (isSpeaking) 3.dp else 2.5.dp,
-                    brush = if (isSpeaking) {
-                        Brush.linearGradient(
-                            listOf(
-                                MujtamaGold.copy(alpha = glowAlpha),
-                                Color.White.copy(alpha = 0.95f)
-                            )
-                        )
-                    } else if (!isOccupied) {
-                        Brush.linearGradient(
-                            listOf(
-                                Color.White.copy(alpha = 0.25f),
-                                Color.White.copy(alpha = 0.10f)
-                            )
-                        )
-                    } else {
-                        Brush.linearGradient(
-                            listOf(
-                                MujtamaGold.copy(alpha = 0.9f),
-                                Color.White.copy(alpha = 0.4f)
-                            )
-                        )
-                    },
-                    shape = CircleShape
-                ),
-            contentAlignment = Alignment.Center
-        ) {
-            if (isOccupied && !occupantAvatarUrl.isNullOrBlank()) {
-                AsyncImage(
-                    model = occupantAvatarUrl,
-                    contentDescription = "مايك المالك",
-                    contentScale = ContentScale.Crop,
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .clip(CircleShape)
-                )
-            } else {
-                Icon(
-                    imageVector = Icons.Default.Mic,
-                    contentDescription = "مايك المالك",
-                    tint = when {
-                        !isOccupied -> MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.35f)
-                        isOwnerMuted -> MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.5f)
-                        else -> MujtamaGold
-                    },
-                    modifier = Modifier.size(28.dp)
-                )
-            }
-        }
+        NeonMicCircle(
+            isOccupied = isOccupied,
+            isSpeaking = isSpeaking,
+            isOwner = true,
+            isMuted = isOwnerMuted,
+            avatarUrl = occupantAvatarUrl,
+            contentDesc = "مايك المالك",
+            circleSize = 70.dp
+        )
 
         Row(
             verticalAlignment = Alignment.CenterVertically,
