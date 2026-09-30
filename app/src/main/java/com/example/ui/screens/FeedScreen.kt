@@ -1070,49 +1070,7 @@ fun PostCard(
                                 modifier = Modifier.fillMaxSize(),
                             contentScale = ContentScale.Crop
                             )
-                        } else {
-                            Column(
-                                horizontalAlignment = Alignment.CenterHorizontally,
-                                verticalArrangement = Arrangement.spacedBy(8.dp),
-                                modifier = Modifier.padding(16.dp)
-                            ) {
-                                if (post.mediaType == PostMediaType.SHORT_VIDEO) {
-                                    Box(
-                                        modifier = Modifier
-                                            .size(54.dp)
-                                            .clip(CircleShape)
-                                            .background(MujtamaCoral.copy(alpha = 0.9f)),
-                                        contentAlignment = Alignment.Center
-                                    ) {
-                                        Icon(
-                                            imageVector = Icons.Filled.PlayArrow,
-                                            contentDescription = "تشغيل الفيديو",
-                                            tint = Color.White,
-                                            modifier = Modifier.size(32.dp)
-                                        )
-                                    }
-                                    Text(
-                                        text = post.mediaCaption ?: "فيديو قصير مجتمعي",
-                                        color = Color.White,
-                                        fontSize = 12.sp,
-                                        fontWeight = FontWeight.SemiBold
-                                    )
-                                } else {
-                                    Icon(
-                                        imageVector = Icons.Filled.Image,
-                                        contentDescription = "صورة مرفقة",
-                                        tint = MujtamaGold,
-                                        modifier = Modifier.size(44.dp)
-                                    )
-                                    Text(
-                                        text = post.mediaCaption ?: "صورة المنشور المميزة",
-                                        color = Color.White,
-                                        fontSize = 12.sp,
-                                        fontWeight = FontWeight.SemiBold
-                                    )
-                                }
-                            }
-                        }
+                                                }
                     }
             }
 
