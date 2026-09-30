@@ -635,6 +635,8 @@ fun QuickCreatePostCard(
     }
 }
 
+private val mediaRatioCache = java.util.concurrent.ConcurrentHashMap<String, Float>()
+
 private fun readMediaAspectRatio(path: String, isVideo: Boolean): Float {
     var w = 0
     var h = 0
