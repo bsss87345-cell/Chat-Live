@@ -251,21 +251,42 @@ fun FeedScreen(
             }
 
             // Feed Posts
-            items(posts, key = { it.id }) { post ->
-                PostCard(
-                    post = post,
-                    isFollowing = isUserFollowing(post.authorId),
-                    onLikeClick = { onLikeClick(post.id) },
-                    onCommentClick = { onCommentClick(post.id) },
-                    onShareClick = { onShareClick(post) },
-                    onFollowClick = { onToggleFollow(post.authorId) },
-                    onEditClick = { editingPost = post },
-                    onDeleteClick = { deletingPost = post },
-                    onReportClick = { reportingPost = post },
-                           isActiveVideo = post.id == activeVideoId,
+                        items(posts, key = { it.id }) { post ->
+                val hasRealMedia = remember(post.mediaType, post.mediaUri) {
+                    post.mediaType != PostMediaType.NONE &&
+                        post.mediaUri.isNotBlank() &&
+                        File(post.mediaUri).exists()
+                }
+                if (hasRealMedia) {
+                    MediaPostItem(
+                        post = post,
+                        isFollowing = isUserFollowing(post.authorId),
+                        onLikeClick = { onLikeClick(post.id) },
+                        onCommentClick = { onCommentClick(post.id) },
+                        onShareClick = { onShareClick(post) },
+                        onFollowClick = { onToggleFollow(post.authorId) },
+                        onEditClick = { editingPost = post },
+                        onDeleteClick = { deletingPost = post },
+                        onReportClick = { reportingPost = post },
+                        isActiveVideo = post.id == activeVideoId,
                         canMountVideo = !isFeedScrolling
-                )
-            }
+                    )
+                } else {
+                    PostCard(
+                        post = post,
+                        isFollowing = isUserFollowing(post.authorId),
+                        onLikeClick = { onLikeClick(post.id) },
+                        onCommentClick = { onCommentClick(post.id) },
+                        onShareClick = { onShareClick(post) },
+                        onFollowClick = { onToggleFollow(post.authorId) },
+                        onEditClick = { editingPost = post },
+                        onDeleteClick = { deletingPost = post },
+                        onReportClick = { reportingPost = post },
+                        isActiveVideo = post.id == activeVideoId,
+                        canMountVideo = !isFeedScrolling
+                    )
+                }
+                        }
         }
 
 // Active Story Viewer Modal
