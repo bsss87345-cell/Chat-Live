@@ -56,6 +56,8 @@ class ExampleUnitTest {
         )
 
         val passRoom = vm.chatRooms.value.first()
+        // المالك يُضاف للغرفة تلقائياً عند الإنشاء، فنغادرها أولاً حتى يُفحص حاجز كلمة المرور فعلياً
+        vm.leaveChatRoom(passRoom.id)
         val wrongJoin = vm.joinChatRoom(passRoom.id, "wrong_pass")
         assertFalse(wrongJoin)
 
