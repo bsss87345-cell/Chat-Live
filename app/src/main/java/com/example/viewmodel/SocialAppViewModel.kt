@@ -139,8 +139,23 @@ class SocialAppViewModel : ViewModel() {
     private val _chatRooms = MutableStateFlow<List<ChatRoom>>(emptyList())
     val chatRooms: StateFlow<List<ChatRoom>> = _chatRooms.asStateFlow()
 
-    init {
+        init {
+        restoreLocalData()
         startLiveRoomUpdates()
+    }
+
+    /**
+     * يستعيد منشورات المستخدم المحفوظة محلياً ويضعها فوق المنشورات التجريبية،
+     * ثم يحذف ملفات الوسائط اليتيمة اللي ما عاد لها منشور.
+     */
+    private fun restoreLocalData() {
+        val savedPosts = LocalStore.loadMyPosts()
+        if (savedPosts.isNotEmpty()) {
+            _posts.update { savedPosts + it }
+        }
+        LocalStore.cleanupOrphanMedia(
+            _posts.value.map { it.mediaUri }.filter { it.isNotBlank() }.toSet()
+        )
     }
 
     private fun startLiveRoomUpdates() {
