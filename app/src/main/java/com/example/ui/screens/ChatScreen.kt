@@ -3027,6 +3027,100 @@ private fun VoiceSeatItem(
         )
     }
 }
+
+@Composable
+private fun NeonMicCircle(
+    isOccupied: Boolean,
+    isSpeaking: Boolean,
+    isOwner: Boolean,
+    isMuted: Boolean = false,
+    avatarUrl: String? = null,
+    contentDesc: String? = null,
+    circleSize: androidx.compose.ui.unit.Dp = 44.dp
+) {
+    val neonCyan = Color(0xFF19F0F0)
+    val neonMagenta = Color(0xFFE63BFF)
+    val ringColor = if (isOwner) neonMagenta else neonCyan
+    val mutedGray = Color(0xFF7A8086)
+    val transition = rememberInfiniteTransition(label = "neon_seat")
+    val pulse by transition.animateFloat(
+        initialValue = 0.35f,
+        targetValue = 1f,
+        animationSpec = infiniteRepeatable(
+            animation = tween(700, easing = FastOutSlowInEasing),
+            repeatMode = RepeatMode.Reverse
+        ),
+        label = "neon_seat_pulse"
+    )
+    val glowAlpha = if (isSpeaking) pulse else 0.4f
+
+    Box(
+        modifier = Modifier
+            .size(circleSize)
+            .scale(if (isSpeaking) 1f + 0.06f * pulse else 1f),
+        contentAlignment = Alignment.Center
+    ) {
+        Canvas(modifier = Modifier.fillMaxSize()) {
+            val strokeW = 2.5.dp.toPx()
+            val r = size.minDimension / 2f - strokeW / 2f
+            val step = 1.5.dp.toPx()
+            // توهج نيون: حلقات متدرجة الشفافية
+            for (i in 1..4) {
+                drawCircle(
+                    color = ringColor.copy(alpha = glowAlpha * 0.30f / i),
+                    radius = r + strokeW / 2f + step * (i - 0.5f),
+                    style = Stroke(width = step)
+                )
+            }
+            // تعبئة داكنة
+            drawCircle(
+                color = Color(0xFF12262B).copy(alpha = 0.9f),
+                radius = r
+            )
+            // الحلقة الرئيسية
+            drawCircle(
+                color = ringColor,
+                radius = r,
+                style = Stroke(width = strokeW)
+            )
+            // حلقة متقطعة خارجية للمالك
+            if (isOwner) {
+                drawCircle(
+                    color = ringColor.copy(alpha = 0.55f),
+                    radius = r + strokeW / 2f + 5.dp.toPx(),
+                    style = Stroke(
+                        width = 1.dp.toPx(),
+                        pathEffect = androidx.compose.ui.graphics.PathEffect.dashPathEffect(
+                            floatArrayOf(5.dp.toPx(), 4.dp.toPx())
+                        )
+                    )
+                )
+            }
+        }
+
+        if (isOccupied && !avatarUrl.isNullOrBlank()) {
+            AsyncImage(
+                model = avatarUrl,
+                contentDescription = contentDesc,
+                contentScale = ContentScale.Crop,
+                modifier = Modifier
+                    .size(circleSize - 8.dp)
+                    .clip(CircleShape)
+            )
+        } else {
+            Icon(
+                imageVector = if (isOccupied) Icons.Default.Mic else Icons.Default.MicNone,
+                contentDescription = contentDesc,
+                tint = when {
+                    !isOccupied -> if (isOwner) ringColor.copy(alpha = 0.85f) else mutedGray
+                    isMuted -> mutedGray
+                    else -> ringColor
+                },
+                modifier = Modifier.size(circleSize * 0.45f)
+            )
+        }
+    }
+}
 @Composable
 fun RoomMessageBubble(
     message: ChatMessage,
