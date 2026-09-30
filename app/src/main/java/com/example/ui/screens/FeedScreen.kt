@@ -685,10 +685,23 @@ private fun PostVideoPlayer(
             prepare()
         }
     }
-    DisposableEffect(exoPlayer) {
+        DisposableEffect(exoPlayer) {
         onDispose { exoPlayer.release() }
     }
-    LaunchedEffect(isActive) { exoPlayer.playWhenReady = isActive }
+    val lifecycleOwner = LocalLifecycleOwner.current
+    var isResumed by remember { mutableStateOf(true) }
+    DisposableEffect(lifecycleOwner) {
+        val observer = LifecycleEventObserver { _, event ->
+            when (event) {
+                Lifecycle.Event.ON_RESUME -> isResumed = true
+                Lifecycle.Event.ON_PAUSE -> isResumed = false
+                else -> {}
+            }
+        }
+        lifecycleOwner.lifecycle.addObserver(observer)
+        onDispose { lifecycleOwner.lifecycle.removeObserver(observer) }
+    }
+    LaunchedEffect(isActive, isResumed) { exoPlayer.playWhenReady = isActive && isResumed }
     LaunchedEffect(isMuted) { exoPlayer.volume = if (isMuted) 0f else 1f }
 
     Box(modifier = modifier) {
