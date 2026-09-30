@@ -632,6 +632,42 @@ fun QuickCreatePostCard(
     }
 }
 
+private fun readMediaAspectRatio(path: String, isVideo: Boolean): Float {
+    var w = 0
+    var h = 0
+    try {
+        if (isVideo) {
+            val r = android.media.MediaMetadataRetriever()
+            r.setDataSource(path)
+            w = r.extractMetadata(android.media.MediaMetadataRetriever.METADATA_KEY_VIDEO_WIDTH)?.toIntOrNull() ?: 0
+            h = r.extractMetadata(android.media.MediaMetadataRetriever.METADATA_KEY_VIDEO_HEIGHT)?.toIntOrNull() ?: 0
+            val rot = r.extractMetadata(android.media.MediaMetadataRetriever.METADATA_KEY_VIDEO_ROTATION)?.toIntOrNull() ?: 0
+            r.release()
+            if (rot == 90 || rot == 270) {
+                val t = w
+                w = h
+                h = t
+            }
+        } else {
+            val opts = BitmapFactory.Options().apply { inJustDecodeBounds = true }
+            BitmapFactory.decodeFile(path, opts)
+            w = opts.outWidth
+            h = opts.outHeight
+            val orientation = android.media.ExifInterface(path)
+                .getAttributeInt(android.media.ExifInterface.TAG_ORIENTATION, 1)
+            if (orientation == 6 || orientation == 8) {
+                val t = w
+                w = h
+                h = t
+            }
+        }
+    } catch (e: Exception) {
+        return 1f
+    }
+    if (w <= 0 || h <= 0) return 1f
+    return (w.toFloat() / h.toFloat()).coerceIn(0.8f, 1.91f)
+}
+
 @Composable
 private fun PostVideoPlayer(
     filePath: String,
