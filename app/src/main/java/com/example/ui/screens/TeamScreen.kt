@@ -72,10 +72,10 @@ fun TeamGlowBox(
     )
 }
 
-private val TeamGlowCyan = Color(0xFF22E5F0)
-private val TeamGlowPurple = Color(0xFF9F86F5)
-private val TeamGlowMagenta = Color(0xFFD046F5)
-private val TeamGlowGold = Color(0xFFF2C46B)
+private val TeamGlowCyan = Color(0xFF28E8ED)
+private val TeamGlowPurple = Color(0xFFA986EE)
+private val TeamGlowMagenta = Color(0xFFCD35E8)
+private val TeamGlowGold = Color(0xFFF5DA95)
 
 @Composable
 fun TeamScreen(
