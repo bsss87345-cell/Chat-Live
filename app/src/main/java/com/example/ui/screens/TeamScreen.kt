@@ -78,6 +78,83 @@ fun TeamGlowBox(
     )
 }
 
+@Composable
+fun NeonGlowBox(
+    glowColor: Color,
+    shape: RoundedCornerShape,
+    modifier: Modifier = Modifier,
+    fill: Color = Color.Transparent,
+    borderColor: Color = glowColor,
+    borderWidth: Dp = 1.5.dp,
+    outerReach: Dp = 12.dp,
+    outerAlpha: Float = 0.26f,
+    innerReach: Dp = 10.dp,
+    innerAlpha: Float = 0.22f,
+    onClick: (() -> Unit)? = null,
+    content: @Composable BoxScope.() -> Unit
+) {
+    Box(modifier = modifier) {
+        Canvas(modifier = Modifier.matchParentSize()) {
+            val w = size.width
+            val h = size.height
+            val r = shape.topStart.toPx(size, this)
+            val bw = borderWidth.toPx()
+
+            // 1) توهج خارجي متدرج
+            val outerN = 12
+            val outerStep = outerReach.toPx() / outerN
+            for (i in 0 until outerN) {
+                val t = (i + 0.5f) / outerN
+                val off = outerStep * (i + 0.5f)
+                drawRoundRect(
+                    color = glowColor.copy(alpha = outerAlpha * (1f - t) * (1f - t)),
+                    topLeft = Offset(-off, -off),
+                    size = Size(w + off * 2f, h + off * 2f),
+                    cornerRadius = CornerRadius(r + off),
+                    style = Stroke(width = outerStep)
+                )
+            }
+
+            // 2) تعبئة الخلفية
+            drawRoundRect(color = fill, cornerRadius = CornerRadius(r))
+
+            // 3) توهج داخلي متدرج
+            val innerN = 10
+            val innerStep = innerReach.toPx() / innerN
+            for (i in 0 until innerN) {
+                val t = (i + 0.5f) / innerN
+                val inset = innerStep * (i + 0.5f)
+                val rw = w - inset * 2f
+                val rh = h - inset * 2f
+                if (rw > 0f && rh > 0f) {
+                    drawRoundRect(
+                        color = glowColor.copy(alpha = innerAlpha * (1f - t) * (1f - t)),
+                        topLeft = Offset(inset, inset),
+                        size = Size(rw, rh),
+                        cornerRadius = CornerRadius((r - inset).coerceAtLeast(0f)),
+                        style = Stroke(width = innerStep)
+                    )
+                }
+            }
+
+            // 4) الحد الرفيع
+            drawRoundRect(
+                color = borderColor,
+                topLeft = Offset(bw / 2f, bw / 2f),
+                size = Size(w - bw, h - bw),
+                cornerRadius = CornerRadius((r - bw / 2f).coerceAtLeast(0f)),
+                style = Stroke(width = bw)
+            )
+        }
+        Box(
+            modifier = Modifier
+                .clip(shape)
+                .then(if (onClick != null) Modifier.clickable(onClick = onClick) else Modifier),
+            content = content
+        )
+    }
+}
+
 private val TeamGlowCyan = Color(0xFF28E8ED)
 private val TeamGlowPurple = Color(0xFFA986EE)
 private val TeamGlowMagenta = Color(0xFFCD35E8)
