@@ -1034,7 +1034,11 @@ fun PostCard(
             if (post.mediaType != PostMediaType.NONE) {
                     Spacer(modifier = Modifier.height(12.dp))
                     val hasRealImage = post.mediaType == PostMediaType.IMAGE && post.mediaUri.isNotBlank()
-                    val hasRealVideo = post.mediaType == PostMediaType.SHORT_VIDEO && post.mediaUri.isNotBlank() && File(post.mediaUri).exists()
+                    val hasRealVideo = remember(post.mediaType, post.mediaUri) {
+                        post.mediaType == PostMediaType.SHORT_VIDEO &&
+                            post.mediaUri.isNotBlank() &&
+                            File(post.mediaUri).exists()
+                    }
                     val mediaRatio by produceState(
                         initialValue = mediaRatioCache[post.mediaUri] ?: 1f,
                         key1 = post.mediaUri
