@@ -284,8 +284,10 @@ fun FeedScreen(
                         onEditClick = { editingPost = post },
                         onDeleteClick = { deletingPost = post },
                         onReportClick = { reportingPost = post },
-                        isActiveVideo = post.id == activeVideoId,
-                        canMountVideo = !isFeedScrolling
+                        // المنشور النصي ما فيه فيديو، فما يقرأ activeVideoId ولا isFeedScrolling
+                        // وبهذا ما ينبّه نفسه مع كل تغيير لهما أثناء التمرير
+                        isActiveVideo = false,
+                        canMountVideo = true
                     )
                 }
                         }
