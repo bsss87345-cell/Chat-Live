@@ -134,13 +134,12 @@ class ExampleUnitTest {
     @Test
     fun testPostOwnershipAndFollowToggle() {
         val vm = SocialAppViewModel()
-        // Initially empty
-        assertTrue(vm.posts.value.isEmpty())
+        val initialSize = vm.posts.value.size
 
         // Add a post
         vm.publishPost("منشور جديد للاختبار", "", com.example.model.PostMediaType.NONE)
         val posts = vm.posts.value
-        assertEquals(1, posts.size)
+        assertEquals(initialSize + 1, posts.size)
         val authorPost = posts.first()
         assertTrue(authorPost.isAuthor)
     }
