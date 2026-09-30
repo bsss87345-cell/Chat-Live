@@ -52,6 +52,32 @@ enum class TeamSubSection(val titleAr: String, val iconEmoji: String) {
 }
 
 @Composable
+fun TeamGlowBox(
+    glowColor: Color,
+    shape: androidx.compose.ui.graphics.Shape,
+    modifier: Modifier = Modifier,
+    fill: Color = glowColor.copy(alpha = 0.06f),
+    onClick: (() -> Unit)? = null,
+    content: @Composable BoxScope.() -> Unit
+) {
+    Box(
+        modifier = modifier
+            .clip(shape)
+            .background(fill)
+            .border(6.dp, glowColor.copy(alpha = 0.08f), shape)
+            .border(3.dp, glowColor.copy(alpha = 0.16f), shape)
+            .border(1.5.dp, glowColor, shape)
+            .then(if (onClick != null) Modifier.clickable(onClick = onClick) else Modifier),
+        content = content
+    )
+}
+
+private val TeamGlowCyan = Color(0xFF22E5F0)
+private val TeamGlowPurple = Color(0xFF9F86F5)
+private val TeamGlowMagenta = Color(0xFFD046F5)
+private val TeamGlowGold = Color(0xFFF2C46B)
+
+@Composable
 fun TeamScreen(
     userProfile: UserProfile,
     team: Team,
