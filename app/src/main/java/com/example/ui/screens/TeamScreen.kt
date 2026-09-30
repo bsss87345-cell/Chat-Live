@@ -180,77 +180,48 @@ fun TeamScreen(
             .fillMaxSize()
             .testTag("team_screen_container")
     ) {
-        // --- 1. الشريط العلوي مع سهم الرجوع في الزاوية اليمنى مع RTL ---
-        Surface(
-            modifier = Modifier.fillMaxWidth(),
-            color = Color.Transparent
+        // --- 1. الهيدر: زر الرجوع (نيون) ثم العنوان ثم الوصف ---
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(start = 14.dp, end = 14.dp, top = 10.dp, bottom = 8.dp)
         ) {
-            Row(
+            NeonGlowBox(
+                glowColor = TeamGlowCyan,
+                shape = RoundedCornerShape(12.dp),
+                fill = TeamGlowCyan.copy(alpha = 0.10f),
+                borderColor = Color(0xFF45EAEE),
+                outerReach = 8.dp,
+                outerAlpha = 0.22f,
+                innerReach = 8.dp,
+                innerAlpha = 0.18f,
+                onClick = onBackClick,
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 14.dp, vertical = 8.dp),
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(10.dp)
+                    .size(38.dp)
+                    .testTag("team_back_button")
             ) {
-                // زر سهم الرجوع شبه الشفاف والمدمج في الزاوية
-                Surface(
-                    onClick = onBackClick,
-                    shape = RoundedCornerShape(12.dp),
-                    color = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.45f),
-                    border = androidx.compose.foundation.BorderStroke(
-                        1.dp,
-                        MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.35f)
-                    ),
-                    modifier = Modifier
-                        .size(42.dp)
-                        .testTag("team_back_button")
-                ) {
-                    Box(contentAlignment = Alignment.Center, modifier = Modifier.fillMaxSize()) {
-                        // في واجهة RTL سهم ArrowForward يشير إلى اليمين (الرجوع للخلف)
-                        Icon(
-                            imageVector = Icons.AutoMirrored.Filled.ArrowForward,
-                            contentDescription = "رجوع",
-                            tint = MaterialTheme.colorScheme.onSurface,
-                            modifier = Modifier.size(20.dp)
-                        )
-                    }
-                }
-
-                // عنوان القسم وشارة الفريق
-                Column(modifier = Modifier.weight(1f)) {
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.spacedBy(6.dp)
-                    ) {
-                        Text(
-                            text = "قسم الفريق والمجتمع",
-                            style = MaterialTheme.typography.titleMedium.copy(
-                                fontWeight = FontWeight.Black,
-                                fontSize = 17.sp
-                            )
-                        )
-                        Surface(
-                            shape = RoundedCornerShape(6.dp),
-                            color = MujtamaGold.copy(alpha = 0.18f)
-                        ) {
-                            Text(
-                                text = "🛡️ ${team.name}",
-                                color = MujtamaGold,
-                                fontSize = 10.sp,
-                                fontWeight = FontWeight.Bold,
-                                modifier = Modifier.padding(horizontal = 6.dp, vertical = 2.dp)
-                            )
-                        }
-                    }
-                    Text(
-                        text = "إدارة العلاقات، الإحالات، ورسائل الأصدقاء",
-                        style = MaterialTheme.typography.bodySmall.copy(
-                            color = MaterialTheme.colorScheme.onSurfaceVariant,
-                            fontSize = 11.sp
-                        )
+                Box(contentAlignment = Alignment.Center, modifier = Modifier.fillMaxSize()) {
+                    Icon(
+                        imageVector = Icons.AutoMirrored.Filled.ArrowForward,
+                        contentDescription = "رجوع",
+                        tint = Color(0xFF45EAEE),
+                        modifier = Modifier.size(20.dp)
                     )
                 }
             }
+            Spacer(modifier = Modifier.height(16.dp))
+            Text(
+                text = "قسم الفريق والمجتمع",
+                color = Color.White,
+                fontSize = 28.sp,
+                fontWeight = FontWeight.Bold
+            )
+            Spacer(modifier = Modifier.height(4.dp))
+            Text(
+                text = "إدارة العلاقات، الإحالات، ورسائل الأصدقاء",
+                color = Color(0xFFBFBFC1),
+                fontSize = 18.sp
+            )
         }
 
         // --- 2. أزرار الأقسام الثلاثة (نيون): إضافة صديق، طلبات الصداقة، الإحالات ---
