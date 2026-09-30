@@ -123,7 +123,7 @@ class ExampleUnitTest {
         assertEquals("مطور ومتحمس لتحديات مجتمعنا الذكية 🚀", vm.userProfile.value.bio)
 
         vm.toggleProfilePrivacy()
-        assertEquals("للأصدقاء فقط", vm.userProfile.value.privacyLevel)
+        assertEquals("خاص", vm.userProfile.value.privacyLevel)
 
         // Verify clean wallet balance is zeroed
         val currentBalance = vm.walletBalance.value
@@ -138,7 +138,7 @@ class ExampleUnitTest {
         assertTrue(vm.posts.value.isEmpty())
 
         // Add a post
-        vm.addNewPost("منشور جديد للاختبار", emptyList())
+        vm.publishPost("منشور جديد للاختبار", "", com.example.model.PostMediaType.NONE)
         val posts = vm.posts.value
         assertEquals(1, posts.size)
         val authorPost = posts.first()
