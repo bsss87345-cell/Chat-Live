@@ -40,9 +40,12 @@ jobs:
       - name: Build Debug APK with Gradle
         run: ./gradlew assembleDebug --stacktrace
 
-      - name: Upload Debug APK as Artifact
+            - name: Upload Debug APK as Artifact
         uses: actions/upload-artifact@v4
         with:
           name: app-debug-apk
           path: app/build/outputs/apk/debug/*.apk
           retention-days: 14
+
+      - name: Run Unit Tests
+        run: ./gradlew testDebugUnitTest --tests "com.example.ExampleUnitTest" --stacktrace
