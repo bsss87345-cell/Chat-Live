@@ -940,7 +940,15 @@ fun PostCard(
                             ),
                         contentAlignment = Alignment.Center
                     ) {
-                        if (hasRealImage) {
+                        if (hasRealVideo) {
+                            PostVideoPlayer(
+                                filePath = post.mediaUri,
+                                isActive = isActiveVideo,
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .height(320.dp)
+                            )
+                        } else if (hasRealImage) {
                             AsyncImage(
                                 model = File(post.mediaUri),
                                 contentDescription = "صورة المنشور",
