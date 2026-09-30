@@ -154,9 +154,17 @@ class SocialAppViewModel : ViewModel() {
         if (savedPosts.isNotEmpty()) {
             _posts.update { savedPosts + it }
         }
-        LocalStore.cleanupOrphanMedia(
+                LocalStore.cleanupOrphanMedia(
             _posts.value.map { it.mediaUri }.filter { it.isNotBlank() }.toSet()
         )
+    }
+
+    /**
+     * يحفظ منشورات المستخدم فقط (المنشورات التجريبية تُولَّد من جديد بكل إقلاع).
+     * الكتابة مجمّعة وغير متزامنة داخل LocalStore فما تعطل الواجهة.
+     */
+    private fun persistMyPosts() {
+        LocalStore.saveMyPosts(_posts.value.filter { it.isAuthor })
     }
 
     private fun startLiveRoomUpdates() {
