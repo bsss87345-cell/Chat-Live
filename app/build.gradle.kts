@@ -144,6 +144,9 @@ dependencies {
   androidTestImplementation(libs.androidx.runner)
   debugImplementation(libs.androidx.compose.ui.test.manifest)
   debugImplementation(libs.androidx.compose.ui.tooling)
-  "ksp"(libs.androidx.room.compiler)
-  "ksp"(libs.moshi.kotlin.codegen)
+    // معطّلان: لا يوجد @Entity/@Dao ولا @JsonClass بأي ملف بالمشروع،
+  // فكانا يفحصان كل الكود بكل بناء بلا فائدة ويرميان تحذير KSP/IntelliJ.
+  // فعّلهما لو استخدمت Room أو Moshi codegen فعلياً.
+  // "ksp"(libs.androidx.room.compiler)
+  // "ksp"(libs.moshi.kotlin.codegen)
 }
