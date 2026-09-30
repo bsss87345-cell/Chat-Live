@@ -1070,7 +1070,7 @@ fun PostCard(
                                 modifier = Modifier.fillMaxSize(),
                             contentScale = ContentScale.Crop
                             )
-                                                }
+                         }
                     }
             }
 
