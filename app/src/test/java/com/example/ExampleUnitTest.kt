@@ -160,7 +160,8 @@ class ExampleUnitTest {
 
         // Delete
         vm.deletePost(authorPost.id)
-        assertTrue(vm.posts.value.isEmpty())
+        assertEquals(initialSize, vm.posts.value.size)
+        assertNull(vm.posts.value.find { it.id == authorPost.id })
     }
 
     @Test
