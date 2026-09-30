@@ -417,10 +417,21 @@ class SocialAppViewModel : ViewModel() {
         addNotification(NotificationType.SYSTEM, "تم نشر منشورك بنجاح")
     }
 
-    fun deletePost(postId: String) {
+        fun deletePost(postId: String) {
+        val path = _posts.value.find { it.id == postId }?.mediaUri ?: ""
+        if (path.isNotBlank()) {
+            try {
+                val file = java.io.File(path)
+                if (file.exists() && file.name.startsWith("post_")) {
+                    file.delete()
+                }
+            } catch (e: Exception) {
+                // تجاهل فشل الحذف حتى لا يتعطل حذف المنشور نفسه
+            }
+        }
         _posts.update { list -> list.filter { it.id != postId } }
         _userMessage.value = "تم حذف المنشور بنجاح"
-    }
+        }
 
     fun editPost(postId: String, newContent: String) {
         if (newContent.isBlank()) return
