@@ -675,6 +675,14 @@ fun QuickCreatePostCard(
 
 private val mediaRatioCache = java.util.concurrent.ConcurrentHashMap<String, Float>()
 
+// ثوابت على مستوى الملف: تُنشأ مرة وحدة بعمر التطبيق بدل مرة لكل بطاقة بالقائمة.
+// مهم: ثبات كائن الفرشاة يخلي كاش مسار الإطار داخل Modifier.border يشتغل فعلاً.
+private val PostCardShape = RoundedCornerShape(18.dp)
+private val PostCardGlowColor = NeonPurple.copy(alpha = 0.3f)
+private val PostCardBorderBrush = Brush.linearGradient(
+    listOf(Color.White.copy(alpha = 0.2f), NeonPurple.copy(alpha = 0.6f))
+)
+
 private fun readMediaAspectRatio(path: String, isVideo: Boolean): Float {
     var w = 0
     var h = 0
