@@ -2192,55 +2192,82 @@ fun StoryBottomShutterBar(
         modifier = Modifier
             .fillMaxSize()
             .padding(bottom = 44.dp),
+@Composable
+fun StoryBottomShutterBar(
+    currentMode: StoryCreationMode,
+    isRecording: Boolean,
+    onCapturePhoto: () -> Unit,
+    onToggleRecordVideo: () -> Unit,
+    onFlipCamera: () -> Unit,
+    onOpenGallery: () -> Unit
+) {
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(bottom = 24.dp)
+            .navigationBarsPadding(),
         contentAlignment = Alignment.BottomCenter
     ) {
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.spacedBy(10.dp)
+            verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
-            if (currentMode == StoryCreationMode.PHOTO) {
-                // Still Photo Shutter Button
-                Box(
-                    modifier = Modifier
-                        .size(80.dp)
-                        .border(4.dp, Color.White, CircleShape)
-                        .padding(6.dp)
-                        .clip(CircleShape)
-                        .background(Color.White)
-                        .clickable(onClick = onCapturePhoto)
-                        .testTag("camera_photo_shutter_button"),
-                    contentAlignment = Alignment.Center
+            // Zoom indicator (Visual Only)
+            Surface(
+                shape = RoundedCornerShape(20.dp),
+                color = Color.Black.copy(alpha = 0.5f)
+            ) {
+                Row(
+                    modifier = Modifier.padding(horizontal = 4.dp, vertical = 2.dp),
+                    horizontalArrangement = Arrangement.spacedBy(12.dp),
+                    verticalAlignment = Alignment.CenterVertically
                 ) {
-                    Box(
-                        modifier = Modifier
-                            .size(24.dp)
-                            .clip(CircleShape)
-                            .background(Color.White.copy(alpha = 0.4f))
-                    )
+                    Text("0.5", color = Color.White, fontSize = 12.sp, modifier = Modifier.padding(start = 12.dp, top=6.dp, bottom=6.dp))
+                    Box(modifier = Modifier.background(Color.White, CircleShape).padding(horizontal = 10.dp, vertical = 6.dp)) {
+                        Text("1x", color = Color.Black, fontSize = 12.sp, fontWeight = FontWeight.Bold)
+                    }
+                    Text("2", color = Color.White, fontSize = 12.sp, modifier = Modifier.padding(end = 12.dp, top=6.dp, bottom=6.dp))
                 }
-                Text(
-                    text = "اضغط للالتقاط",
-                    color = Color.White.copy(alpha = 0.85f),
-                    fontSize = 12.sp
-                )
-            } else if (currentMode == StoryCreationMode.VIDEO) {
-                // Video Recording Shutter Button
+            }
+
+            Row(
+                modifier = Modifier.fillMaxWidth().padding(horizontal = 32.dp),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                // Gallery
+                IconButton(onClick = onOpenGallery) {
+                    Box(modifier = Modifier.size(42.dp).border(2.dp, Color.White, RoundedCornerShape(8.dp)).clip(RoundedCornerShape(8.dp)).background(Color.DarkGray)) {
+                        Icon(Icons.Outlined.PhotoLibrary, contentDescription = null, tint = Color.White, modifier = Modifier.align(Alignment.Center))
+                    }
+                }
+
+                // Shutter
                 Box(
                     modifier = Modifier
-                        .size(80.dp)
-                        .border(4.dp, Color.Red, CircleShape)
-                        .padding(if (isRecording) 18.dp else 6.dp)
-                        .clip(if (isRecording) RoundedCornerShape(8.dp) else CircleShape)
-                        .background(Color.Red)
-                        .clickable(onClick = onToggleRecordVideo)
-                        .testTag("camera_video_shutter_button")
+                        .size(86.dp)
+                        .border(5.dp, if(isRecording && currentMode == StoryCreationMode.VIDEO) Color.Red else Color.White, CircleShape)
+                        .padding(4.dp)
+                        .clip(CircleShape)
+                        .background(if(isRecording && currentMode == StoryCreationMode.VIDEO) Color.Red else Color.White)
+                        .clickable { if(currentMode == StoryCreationMode.VIDEO) onToggleRecordVideo() else onCapturePhoto() }
                 )
-                Text(
-                    text = if (isRecording) "اضغط لإيقاف التسجيل" else "اضغط لبدء تسجيل الفيديو",
-                    color = Color.White.copy(alpha = 0.85f),
-                    fontSize = 12.sp,
-                    fontWeight = FontWeight.Medium
-                )
+
+                // Flip
+                IconButton(onClick = onFlipCamera, modifier = Modifier.background(Color.Black.copy(alpha = 0.2f), CircleShape)) {
+                    Icon(Icons.Outlined.FlipCameraAndroid, contentDescription = null, tint = Color.White)
+                }
+            }
+
+            // Tabs
+            Row(horizontalArrangement = Arrangement.spacedBy(16.dp), verticalAlignment = Alignment.CenterVertically) {
+                Text("بث مباشر", color = Color.Gray, fontSize = 14.sp)
+                Text("صورة", color = Color.Gray, fontSize = 14.sp)
+                Surface(shape = RoundedCornerShape(20.dp), color = Color.White) {
+                    Text("قصة", color = Color.Black, fontSize = 14.sp, fontWeight = FontWeight.Bold, modifier = Modifier.padding(horizontal = 16.dp, vertical = 6.dp))
+                }
+                Text("فيديو", color = Color.Gray, fontSize = 14.sp)
+                Text("نص", color = Color.Gray, fontSize = 14.sp)
             }
         }
     }
