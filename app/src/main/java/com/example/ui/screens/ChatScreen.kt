@@ -2961,7 +2961,7 @@ private fun VoiceSeatItem(
             fontWeight = FontWeight.Bold,
             maxLines = 1,
             overflow = androidx.compose.ui.text.style.TextOverflow.Ellipsis,
-            modifier = Modifier.widthIn(max = 44.dp),
+            modifier = Modifier.widthIn(max = 62.dp),
             color = when {
                 isSpeaking -> MujtamaTeal
                 isOccupied -> MaterialTheme.colorScheme.primary
