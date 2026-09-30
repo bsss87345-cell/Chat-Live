@@ -1654,7 +1654,7 @@ fun StoryCreationDialog(
                     }
                 }
 
-                StoryTopBar(
+                                StoryTopBar(
                     currentMode = currentMode,
                     isRecording = isRecording,
                     recordDuration = recordDuration,
@@ -1666,12 +1666,6 @@ fun StoryCreationDialog(
                             FlashMode.AUTO -> FlashMode.OFF
                         }
                     },
-                    onFlipCamera = {
-                        lensFacing = if (lensFacing == CameraSelector.LENS_FACING_BACK)
-                            CameraSelector.LENS_FACING_FRONT
-                        else
-                            CameraSelector.LENS_FACING_BACK
-                    },
                     onClose = onDismiss
                 )
 
@@ -1679,7 +1673,18 @@ fun StoryCreationDialog(
                 StoryBottomShutterBar(
                     currentMode = currentMode,
                     isRecording = isRecording,
-                                                            onCapturePhoto = {
+                    onFlipCamera = {
+                        lensFacing = if (lensFacing == CameraSelector.LENS_FACING_BACK)
+                            CameraSelector.LENS_FACING_FRONT
+                        else
+                            CameraSelector.LENS_FACING_BACK
+                    },
+                    onOpenGallery = {
+                        galleryPicker.launch(
+                            PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageAndVideo)
+                        )
+                    },
+                    onCapturePhoto = {
                         val photoFile = File(
                             context.filesDir,
                             "story_${System.currentTimeMillis()}.jpg"
