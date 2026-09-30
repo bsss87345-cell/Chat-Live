@@ -49,3 +49,13 @@ jobs:
 
       - name: Run Unit Tests
         run: ./gradlew testDebugUnitTest --tests "com.example.ExampleUnitTest" --stacktrace
+
+      - name: Build Release APK (for performance measurement)
+        run: ./gradlew assembleRelease --stacktrace
+
+      - name: Upload Release APK as Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: app-release-apk
+          path: app/build/outputs/apk/release/*.apk
+          retention-days: 14
