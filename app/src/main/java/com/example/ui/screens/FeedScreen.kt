@@ -270,8 +270,10 @@ fun FeedScreen(
                         onEditClick = { editingPost = post },
                         onDeleteClick = { deletingPost = post },
                         onReportClick = { reportingPost = post },
-                        isActiveVideo = post.id == activeVideoId,
-                        canMountVideo = !isFeedScrolling
+                            isActiveVideo = post.mediaType == PostMediaType.SHORT_VIDEO &&
+                            post.id == activeVideoId,
+                        canMountVideo = post.mediaType != PostMediaType.SHORT_VIDEO ||
+                            !isFeedScrolling
                     )
                 } else {
                     PostCard(
