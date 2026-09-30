@@ -1163,9 +1163,336 @@ fun PostCard(
     }
 }
 
+@Composable
+fun MediaPostItem(
+    post: Post,
+    isFollowing: Boolean = post.isFollowing,
+    onLikeClick: () -> Unit,
+    onCommentClick: () -> Unit,
+    onShareClick: () -> Unit,
+    onFollowClick: () -> Unit = {},
+    onEditClick: () -> Unit = {},
+    onDeleteClick: () -> Unit = {},
+    onReportClick: () -> Unit = {},
+    isActiveVideo: Boolean = false,
+    canMountVideo: Boolean = true
+) {
+    var menuExpanded by remember { mutableStateOf(false) }
+    val isVideo = post.mediaType == PostMediaType.SHORT_VIDEO
+    val mediaRatio by produceState(
+        initialValue = mediaRatioCache[post.mediaUri] ?: 1f,
+        key1 = post.mediaUri
+    ) {
+        val cached = mediaRatioCache[post.mediaUri]
+        value = cached ?: withContext(Dispatchers.IO) {
+            readMediaAspectRatio(post.mediaUri, isVideo)
+        }.also { mediaRatioCache[post.mediaUri] = it }
+    }
+
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .testTag("post_card_${post.id}")
+    ) {
+        // ===== الوسائط بعرض الشاشة كامل =====
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .aspectRatio(mediaRatio)
+                .background(Color.Black)
+        ) {
+            if (isVideo) {
+                if (canMountVideo) {
+                    PostVideoPlayer(
+                        filePath = post.mediaUri,
+                        isActive = isActiveVideo,
+                        modifier = Modifier.fillMaxSize()
+                    )
+                }
+            } else {
+                AsyncImage(
+                    model = File(post.mediaUri),
+                    contentDescription = "صورة المنشور",
+                    modifier = Modifier.fillMaxSize(),
+                    contentScale = ContentScale.Crop
+                )
+            }
+
+            // تدرج أسود خفيف أعلى الوسائط لوضوح الاسم
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(88.dp)
+                    .align(Alignment.TopCenter)
+                    .background(
+                        Brush.verticalGradient(
+                            listOf(Color.Black.copy(alpha = 0.55f), Color.Transparent)
+                        )
+                    )
+            )
+
+            // الأفاتار + الاسم + متابعة + النقاط الثلاث (داخل الوسائط)
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .align(Alignment.TopCenter)
+                    .padding(horizontal = 12.dp, vertical = 6.dp),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(10.dp)
+            ) {
+                Box(
+                    modifier = Modifier
+                        .size(40.dp)
+                        .border(width = 2.dp, color = NeonCyan, shape = CircleShape)
+                        .padding(3.dp)
+                        .clip(CircleShape)
+                        .background(DarkSurface),
+                    contentAlignment = Alignment.Center
+                ) {
+                    if (post.authorAvatarUrl.isNotBlank()) {
+                        AsyncImage(
+                            model = post.authorAvatarUrl,
+                            contentDescription = post.authorName,
+                            modifier = Modifier.fillMaxSize().clip(CircleShape),
+                            contentScale = ContentScale.Crop
+                        )
+                    } else {
+                        Text(
+                            text = post.authorName.take(1),
+                            color = Color.White,
+                            fontWeight = FontWeight.Bold,
+                            fontSize = 16.sp
+                        )
+                    }
+                }
+
+                Column(modifier = Modifier.weight(1f)) {
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(8.dp)
+                    ) {
+                        Text(
+                            text = post.authorName,
+                            style = MaterialTheme.typography.titleSmall.copy(fontWeight = FontWeight.Bold),
+                            color = Color.White
+                        )
+
+                        if (!post.isAuthor) {
+                            OutlinedButton(
+                                onClick = onFollowClick,
+                                modifier = Modifier
+                                    .height(26.dp)
+                                    .testTag("follow_button_${post.id}"),
+                                contentPadding = PaddingValues(horizontal = 10.dp, vertical = 0.dp),
+                                shape = RoundedCornerShape(50),
+                                border = androidx.compose.foundation.BorderStroke(
+                                    1.dp,
+                                    if (isFollowing) Color.White.copy(alpha = 0.5f) else Color.White
+                                ),
+                                colors = ButtonDefaults.outlinedButtonColors(
+                                    containerColor = Color.Transparent,
+                                    contentColor = Color.White
+                                )
+                            ) {
+                                Text(
+                                    text = if (isFollowing) "اتابع" else "متابعة",
+                                    fontSize = 11.sp,
+                                    fontWeight = FontWeight.SemiBold
+                                )
+                            }
+                        }
+                    }
+
+                    Text(
+                        text = post.timeAgo,
+                        fontSize = 11.sp,
+                        color = Color.White.copy(alpha = 0.75f)
+                    )
+                }
+
+                Box {
+                    IconButton(
+                        onClick = { menuExpanded = true },
+                        modifier = Modifier.testTag("post_menu_button_${post.id}")
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.MoreHoriz,
+                            contentDescription = "خيارات المنشور",
+                            tint = Color.White
+                        )
+                    }
+
+                    DropdownMenu(
+                        expanded = menuExpanded,
+                        onDismissRequest = { menuExpanded = false },
+                        modifier = Modifier.background(MaterialTheme.colorScheme.surface)
+                    ) {
+                        if (post.isAuthor) {
+                            DropdownMenuItem(
+                                text = { Text("تعديل", fontWeight = FontWeight.Medium) },
+                                leadingIcon = {
+                                    Icon(
+                                        imageVector = Icons.Outlined.Edit,
+                                        contentDescription = "تعديل",
+                                        tint = MaterialTheme.colorScheme.primary
+                                    )
+                                },
+                                onClick = {
+                                    menuExpanded = false
+                                    onEditClick()
+                                },
+                                modifier = Modifier.testTag("menu_edit_post_${post.id}")
+                            )
+
+                            DropdownMenuItem(
+                                text = {
+                                    Text(
+                                        "حذف المنشور",
+                                        fontWeight = FontWeight.Medium,
+                                        color = MaterialTheme.colorScheme.error
+                                    )
+                                },
+                                leadingIcon = {
+                                    Icon(
+                                        imageVector = Icons.Outlined.Delete,
+                                        contentDescription = "حذف المنشور",
+                                        tint = MaterialTheme.colorScheme.error
+                                    )
+                                },
+                                onClick = {
+                                    menuExpanded = false
+                                    onDeleteClick()
+                                },
+                                modifier = Modifier.testTag("menu_delete_post_${post.id}")
+                            )
+                        } else {
+                            DropdownMenuItem(
+                                text = { Text("إبلاغ عن مشكلة", fontWeight = FontWeight.Medium) },
+                                leadingIcon = {
+                                    Icon(
+                                        imageVector = Icons.Outlined.ReportProblem,
+                                        contentDescription = "إبلاغ عن مشكلة",
+                                        tint = MaterialTheme.colorScheme.error
+                                    )
+                                },
+                                onClick = {
+                                    menuExpanded = false
+                                    onReportClick()
+                                },
+                                modifier = Modifier.testTag("menu_report_post_${post.id}")
+                            )
+                        }
+                    }
+                }
+            }
+        }
+
+        // ===== أزرار الإعجاب والتعليق والمشاركة (أسفل الوسائط) =====
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 4.dp),
+            horizontalArrangement = Arrangement.SpaceAround,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            TextButton(
+                onClick = onLikeClick,
+                modifier = Modifier.testTag("post_like_button_${post.id}")
+            ) {
+                Icon(
+                    imageVector = if (post.isLiked) Icons.Filled.Favorite else Icons.Outlined.FavoriteBorder,
+                    contentDescription = "إعجاب",
+                    tint = if (post.isLiked) NeonPurple else NeonCyan,
+                    modifier = Modifier.size(20.dp)
+                )
+                Spacer(modifier = Modifier.width(6.dp))
+                Text(
+                    text = "${post.likesCount}",
+                    fontWeight = if (post.isLiked) FontWeight.Bold else FontWeight.Normal,
+                    color = if (post.isLiked) NeonPurple else NeonCyan
+                )
+            }
+
+            val commentInteraction = remember { MutableInteractionSource() }
+            val commentPressed by commentInteraction.collectIsPressedAsState()
+            TextButton(
+                onClick = onCommentClick,
+                interactionSource = commentInteraction,
+                modifier = Modifier.testTag("post_comment_button_${post.id}")
+            ) {
+                Icon(
+                    imageVector = Icons.Outlined.ChatBubbleOutline,
+                    contentDescription = "تعليق",
+                    tint = if (commentPressed) NeonPurple else NeonCyan,
+                    modifier = Modifier.size(20.dp)
+                )
+                Spacer(modifier = Modifier.width(6.dp))
+                Text(
+                    text = "${post.commentsCount}",
+                    color = if (commentPressed) NeonPurple else NeonCyan
+                )
+            }
+
+            val shareInteraction = remember { MutableInteractionSource() }
+            val sharePressed by shareInteraction.collectIsPressedAsState()
+            TextButton(
+                onClick = onShareClick,
+                interactionSource = shareInteraction,
+                modifier = Modifier.testTag("post_share_button_${post.id}")
+            ) {
+                Icon(
+                    imageVector = Icons.Outlined.Share,
+                    contentDescription = "مشاركة",
+                    tint = if (sharePressed) NeonPurple else NeonCyan,
+                    modifier = Modifier.size(20.dp)
+                )
+                Spacer(modifier = Modifier.width(6.dp))
+                Text(
+                    text = "${post.sharesCount}",
+                    color = if (sharePressed) NeonPurple else NeonCyan
+                )
+            }
+        }
+
+        // ===== النص والوسم (أسفل الأزرار) =====
+        if (post.content.isNotBlank() || post.tag != null) {
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(start = 16.dp, end = 16.dp, bottom = 6.dp)
+            ) {
+                if (post.content.isNotBlank()) {
+                    Text(
+                        text = post.content,
+                        fontSize = 14.sp,
+                        lineHeight = 22.sp,
+                        color = Color.White
+                    )
+                }
+                if (post.tag != null) {
+                    Spacer(modifier = Modifier.height(6.dp))
+                    Surface(
+                        shape = RoundedCornerShape(12.dp),
+                        color = MujtamaTeal.copy(alpha = 0.12f)
+                    ) {
+                        Text(
+                            text = post.tag,
+                            modifier = Modifier.padding(horizontal = 10.dp, vertical = 4.dp),
+                            color = MujtamaTeal,
+                            fontSize = 12.sp,
+                            fontWeight = FontWeight.Bold
+                        )
+                    }
+                }
+            }
+        }
+    }
+}
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CommentsBottomSheet(
+
     post: Post,
     onDismiss: () -> Unit,
     onAddComment: (String) -> Unit
