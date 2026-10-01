@@ -228,7 +228,8 @@ fun AccountSettingsScreen(
                 )
             }
 
-            LazyColumn(
+                        LazyColumn(
+                state = settingsListState,
                 modifier = Modifier
                     .fillMaxSize()
                     .testTag("account_settings_content"),
