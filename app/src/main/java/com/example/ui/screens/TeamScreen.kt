@@ -642,10 +642,9 @@ fun ReferralsSection(
     }
 }
 
-
 /**
  * محتوى قسم "طلبات الصداقة":
- * عرض طلبات الصداقة المعلقة مع أزرار قبول/رفض شفافة وزجاجية.
+ * عرض طلبات الصداقة المعلقة بتصميم نيون بنفسجي مع أزرار قبول/رفض.
  */
 @Composable
 fun FriendRequestsSection(
@@ -665,13 +664,39 @@ fun FriendRequestsSection(
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.spacedBy(8.dp)
             ) {
-                Text("👥", fontSize = 36.sp)
-                Text("لا توجد طلبات صداقة واردة", fontWeight = FontWeight.Bold, fontSize = 14.sp)
+                Box(
+                    modifier = Modifier.size(84.dp),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Canvas(modifier = Modifier.matchParentSize()) {
+                        drawCircle(
+                            brush = Brush.radialGradient(
+                                colors = listOf(
+                                    TeamGlowPurple.copy(alpha = 0.30f),
+                                    Color.Transparent
+                                )
+                            )
+                        )
+                    }
+                    Icon(
+                        imageVector = Icons.Default.Group,
+                        contentDescription = null,
+                        tint = TeamGlowPurple,
+                        modifier = Modifier.size(56.dp)
+                    )
+                }
                 Text(
-                    "عندما يرسل لك مستخدم آخر طلب صداقة، سيظهر هنا لتتمكن من قبوله أو رفضه.",
-                    fontSize = 11.sp,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    textAlign = TextAlign.Center
+                    text = "لا توجد طلبات صداقة واردة",
+                    color = Color.White,
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 17.sp
+                )
+                Text(
+                    text = "عندما يرسل لك مستخدم آخر طلب صداقة، سيظهر هنا لتتمكن من قبوله أو رفضه.",
+                    fontSize = 15.sp,
+                    color = Color(0xFFBDBEC0),
+                    textAlign = TextAlign.Center,
+                    lineHeight = 23.sp
                 )
             }
         }
@@ -679,16 +704,17 @@ fun FriendRequestsSection(
         LazyColumn(
             modifier = modifier.fillMaxSize(),
             contentPadding = PaddingValues(horizontal = 14.dp, vertical = 10.dp),
-            verticalArrangement = Arrangement.spacedBy(10.dp)
+            verticalArrangement = Arrangement.spacedBy(14.dp)
         ) {
             items(requests, key = { it.id }) { req ->
-                Surface(
-                    shape = RoundedCornerShape(14.dp),
-                    color = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.35f),
-                    border = androidx.compose.foundation.BorderStroke(
-                        1.dp,
-                        MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.30f)
-                    ),
+                NeonGlowBox(
+                    glowColor = TeamGlowPurple,
+                    shape = RoundedCornerShape(16.dp),
+                    fill = Color(0xFF1F1E2E),
+                    outerReach = 10.dp,
+                    outerAlpha = 0.18f,
+                    innerReach = 12.dp,
+                    innerAlpha = 0.28f,
                     modifier = Modifier
                         .fillMaxWidth()
                         .testTag("friend_request_${req.id}")
@@ -696,61 +722,95 @@ fun FriendRequestsSection(
                     Row(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .padding(12.dp),
+                            .padding(14.dp),
                         verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.spacedBy(10.dp)
+                        horizontalArrangement = Arrangement.spacedBy(12.dp)
                     ) {
                         Surface(
                             shape = CircleShape,
-                            color = MujtamaPrimary.copy(alpha = 0.15f),
-                            modifier = Modifier.size(40.dp)
+                            color = TeamGlowPurple.copy(alpha = 0.20f),
+                            border = androidx.compose.foundation.BorderStroke(
+                                1.dp,
+                                TeamGlowPurple.copy(alpha = 0.6f)
+                            ),
+                            modifier = Modifier.size(42.dp)
                         ) {
                             Box(contentAlignment = Alignment.Center, modifier = Modifier.fillMaxSize()) {
-                                Text(req.senderAvatar, fontSize = 16.sp)
+                                Text(req.senderAvatar, fontSize = 18.sp)
                             }
                         }
 
                         Column(modifier = Modifier.weight(1f)) {
-                            Text(req.senderName, fontWeight = FontWeight.Bold, fontSize = 13.sp)
                             Text(
-                                "ID: ${req.senderHandle} • ${req.timeAgo}",
-                                fontSize = 10.sp,
-                                color = MaterialTheme.colorScheme.onSurfaceVariant
-                            )
-                        }
-
-                        // زر قبول شفاف زجاجي
-                        Surface(
-                            onClick = { onAccept(req.id) },
-                            shape = RoundedCornerShape(8.dp),
-                            color = MujtamaOnlineGreen.copy(alpha = 0.20f),
-                            border = androidx.compose.foundation.BorderStroke(1.dp, MujtamaOnlineGreen.copy(alpha = 0.5f))
-                        ) {
-                            Text(
-                                text = "قبول",
-                                color = MujtamaOnlineGreen,
-                                fontSize = 11.sp,
+                                text = req.senderName,
+                                color = Color.White,
                                 fontWeight = FontWeight.Bold,
-                                modifier = Modifier.padding(horizontal = 10.dp, vertical = 6.dp)
+                                fontSize = 15.sp,
+                                maxLines = 1,
+                                overflow = TextOverflow.Ellipsis
+                            )
+                            Text(
+                                text = "ID: ${req.senderHandle} • ${req.timeAgo}",
+                                fontSize = 12.sp,
+                                color = Color(0xFFBCBDC2),
+                                maxLines = 1,
+                                overflow = TextOverflow.Ellipsis
                             )
                         }
 
-                        // زر رفض شفاف
-                        Surface(
-                            onClick = { onReject(req.id) },
-                            shape = RoundedCornerShape(8.dp),
-                            color = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.45f),
-                            border = androidx.compose.foundation.BorderStroke(
-                                0.6.dp,
-                                MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.3f)
-                            )
+                        // زر قبول
+                        NeonGlowBox(
+                            glowColor = MujtamaOnlineGreen,
+                            shape = RoundedCornerShape(10.dp),
+                            fill = MujtamaOnlineGreen.copy(alpha = 0.18f),
+                            outerReach = 6.dp,
+                            outerAlpha = 0.15f,
+                            innerReach = 6.dp,
+                            innerAlpha = 0.12f,
+                            onClick = { onAccept(req.id) },
+                            modifier = Modifier.height(34.dp)
                         ) {
-                            Text(
-                                text = "رفض",
-                                color = MaterialTheme.colorScheme.onSurfaceVariant,
-                                fontSize = 11.sp,
-                                modifier = Modifier.padding(horizontal = 10.dp, vertical = 6.dp)
-                            )
+                            Row(
+                                modifier = Modifier
+                                    .fillMaxHeight()
+                                    .padding(horizontal = 14.dp),
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                Text(
+                                    text = "قبول",
+                                    color = MujtamaOnlineGreen,
+                                    fontSize = 13.sp,
+                                    fontWeight = FontWeight.Bold
+                                )
+                            }
+                        }
+
+                        // زر رفض
+                        NeonGlowBox(
+                            glowColor = Color(0xFF8A8D99),
+                            shape = RoundedCornerShape(10.dp),
+                            fill = Color(0xFF14151B),
+                            borderColor = Color(0xFF3A3D47),
+                            outerReach = 4.dp,
+                            outerAlpha = 0.08f,
+                            innerReach = 4.dp,
+                            innerAlpha = 0.06f,
+                            onClick = { onReject(req.id) },
+                            modifier = Modifier.height(34.dp)
+                        ) {
+                            Row(
+                                modifier = Modifier
+                                    .fillMaxHeight()
+                                    .padding(horizontal = 14.dp),
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                Text(
+                                    text = "رفض",
+                                    color = Color(0xFFBCBDC2),
+                                    fontSize = 13.sp,
+                                    fontWeight = FontWeight.Medium
+                                )
+                            }
                         }
                     }
                 }
@@ -774,42 +834,47 @@ fun AddFriendSection(
     Column(
         modifier = modifier
             .fillMaxSize()
-            .padding(16.dp),
-        verticalArrangement = Arrangement.spacedBy(16.dp)
+            .padding(16.dp)
     ) {
-        Card(
-            modifier = Modifier.fillMaxWidth(),
+        NeonGlowBox(
+            glowColor = TeamGlowCyan,
             shape = RoundedCornerShape(18.dp),
-            colors = CardDefaults.cardColors(
-                containerColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.35f)
-            ),
-            border = androidx.compose.foundation.BorderStroke(
-                1.dp,
-                MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.35f)
-            )
+            fill = Color(0xFF1A2428),
+            outerReach = 10.dp,
+            outerAlpha = 0.18f,
+            innerReach = 14.dp,
+            innerAlpha = 0.28f,
+            modifier = Modifier.fillMaxWidth()
         ) {
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(16.dp),
+                    .padding(18.dp),
                 verticalArrangement = Arrangement.spacedBy(12.dp)
             ) {
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
-                    Text("➕", fontSize = 18.sp)
+                    Icon(
+                        imageVector = Icons.Default.Add,
+                        contentDescription = null,
+                        tint = TeamGlowCyan,
+                        modifier = Modifier.size(22.dp)
+                    )
                     Text(
                         text = "إرسال طلب صداقة مباشر",
+                        color = Color.White,
                         fontWeight = FontWeight.Bold,
-                        fontSize = 14.sp
+                        fontSize = 17.sp
                     )
                 }
 
                 Text(
                     text = "اكتب معرف المستخدم الرقمي (User ID) أو اسمه لإرسال طلب صداقة فوري:",
-                    fontSize = 11.sp,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                    fontSize = 14.sp,
+                    color = Color(0xFFBCBDC2),
+                    lineHeight = 22.sp
                 )
 
                 OutlinedTextField(
@@ -818,16 +883,34 @@ fun AddFriendSection(
                         friendQuery = it
                         submitted = false
                     },
-                    placeholder = { Text("مثال: 84920153 أو أحمد", fontSize = 12.sp) },
+                    placeholder = {
+                        Text(
+                            text = "مثال: 84920153 أو أحمد",
+                            fontSize = 13.sp,
+                            color = Color(0xFF8A8B93)
+                        )
+                    },
                     singleLine = true,
                     shape = RoundedCornerShape(12.dp),
+                    colors = OutlinedTextFieldDefaults.colors(
+                        focusedTextColor = Color.White,
+                        unfocusedTextColor = Color.White,
+                        cursorColor = TeamGlowCyan,
+                        focusedBorderColor = TeamGlowCyan,
+                        unfocusedBorderColor = Color(0xFF3A3D47),
+                        focusedContainerColor = Color(0xFF0B0C12),
+                        unfocusedContainerColor = Color(0xFF0B0C12)
+                    ),
                     modifier = Modifier
                         .fillMaxWidth()
                         .testTag("add_friend_input_field")
                 )
 
-                // زر شفاف زجاجي للإرسال
-                Surface(
+                // زر الإرسال (نيون سماوي)
+                NeonGlowBox(
+                    glowColor = TeamGlowCyan,
+                    shape = RoundedCornerShape(12.dp),
+                    fill = TeamGlowCyan.copy(alpha = 0.18f),
                     onClick = {
                         if (friendQuery.isNotBlank()) {
                             onSendRequest(friendQuery)
@@ -835,12 +918,6 @@ fun AddFriendSection(
                             friendQuery = ""
                         }
                     },
-                    shape = RoundedCornerShape(12.dp),
-                    color = MujtamaPrimary.copy(alpha = 0.20f),
-                    border = androidx.compose.foundation.BorderStroke(
-                        1.dp,
-                        MujtamaPrimary.copy(alpha = 0.60f)
-                    ),
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(44.dp)
@@ -854,35 +931,44 @@ fun AddFriendSection(
                         Icon(
                             imageVector = Icons.Default.PersonAdd,
                             contentDescription = null,
-                            tint = MujtamaPrimary,
-                            modifier = Modifier.size(16.dp)
+                            tint = TeamGlowCyan,
+                            modifier = Modifier.size(18.dp)
                         )
                         Spacer(modifier = Modifier.width(6.dp))
                         Text(
                             text = "إرسال طلب الصداقة",
                             fontWeight = FontWeight.Bold,
-                            fontSize = 12.sp,
-                            color = MujtamaPrimary
+                            fontSize = 14.sp,
+                            color = TeamGlowCyan
                         )
                     }
                 }
 
                 if (submitted) {
                     Surface(
-                        shape = RoundedCornerShape(8.dp),
+                        shape = RoundedCornerShape(10.dp),
                         color = MujtamaOnlineGreen.copy(alpha = 0.15f),
+                        border = androidx.compose.foundation.BorderStroke(
+                            1.dp,
+                            MujtamaOnlineGreen.copy(alpha = 0.5f)
+                        ),
                         modifier = Modifier.fillMaxWidth()
                     ) {
                         Row(
-                            modifier = Modifier.padding(10.dp),
+                            modifier = Modifier.padding(12.dp),
                             verticalAlignment = Alignment.CenterVertically,
-                            horizontalArrangement = Arrangement.spacedBy(6.dp)
+                            horizontalArrangement = Arrangement.spacedBy(8.dp)
                         ) {
-                            Text("✅", fontSize = 12.sp)
+                            Icon(
+                                imageVector = Icons.Default.Check,
+                                contentDescription = null,
+                                tint = MujtamaOnlineGreen,
+                                modifier = Modifier.size(16.dp)
+                            )
                             Text(
                                 text = "تم إرسال طلب الصداقة بنجاح إلى المستخدم!",
                                 color = MujtamaOnlineGreen,
-                                fontSize = 11.sp,
+                                fontSize = 13.sp,
                                 fontWeight = FontWeight.Medium
                             )
                         }
