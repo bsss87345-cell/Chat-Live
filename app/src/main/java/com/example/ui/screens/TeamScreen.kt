@@ -132,7 +132,7 @@ fun NeonGlowBox(
         Box(
             modifier = Modifier
                 .clip(shape)
-                .then(if (onClick != null) Modifier.clickable(onClick = onClick) else Modifier),
+                .then(if (onClick != null) Modifier.clickable(role = Role.Button, onClick = onClick) else Modifier),
             content = content
         )
     }
