@@ -494,11 +494,8 @@ fun AccountSettingsScreen(
                 // Page: منشوراتي
                 // -------------------------------------------------------------
                 if (openPage == 1) {
-                    val myCommentName = "أنت (أنا)"
-                    val likedPosts = posts.filter { it.isLiked }
-                    val commentedPosts = posts.filter { p ->
-                        p.commentsList.any { it.authorName == myCommentName }
-                    }
+                    val likedPosts = activityLikedPosts
+                    val commentedPosts = activityCommentedPosts
                     val joinedRooms = chatRooms.filter { it.isJoined }
 
                     // الأيقونة + العنوان + عدد العناصر لكل تصنيف
