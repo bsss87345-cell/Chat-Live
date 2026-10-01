@@ -1422,11 +1422,12 @@ Box(modifier = Modifier.fillMaxSize()) {
                     enabled = !isMuted,
                     modifier = Modifier.testTag("room_gift_box_button")
                 ) {
-                    Image(
-                        painter = painterResource(id = R.drawable.gift_box_icon),
-                        contentDescription = "صندوق الهدايا",
-                        modifier = Modifier.size(26.dp)
-                    )
+                    Icon(
+    imageVector = Icons.Default.CardGiftcard,
+    contentDescription = "صندوق الهدايا",
+    tint = Color(0xFF8E9399),
+    modifier = Modifier.size(26.dp)
+)
                 }
                 if (showGiftBoxDialog) {
                     GiftBoxDialog(
