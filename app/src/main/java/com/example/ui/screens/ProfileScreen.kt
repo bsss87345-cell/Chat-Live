@@ -249,7 +249,25 @@ fun ProfileScreen(
     } else {
         onLoadPostsFor(userProfile.id)
     }
-    val totalPostsCount = userPosts.size
+        val totalPostsCount = userPosts.size
+
+    // نفس منطق الرئيسية: الفيديو الأقرب لمنتصف الشاشة هو اللي يشتغل
+    val profileListState = rememberLazyListState()
+    val profileVideoIds = userPosts
+        .filter { it.mediaType == PostMediaType.SHORT_VIDEO }
+        .map { it.id }
+        .toSet()
+    val activeProfileVideoId by remember(profileVideoIds) {
+        derivedStateOf {
+            val layout = profileListState.layoutInfo
+            val center = (layout.viewportStartOffset + layout.viewportEndOffset) / 2
+            layout.visibleItemsInfo
+                .filter { info -> (info.key as? String) in profileVideoIds }
+                .minByOrNull { info -> kotlin.math.abs(info.offset + info.size / 2 - center) }
+                ?.key as? String
+        }
+    }
+    val isProfileScrolling by remember { derivedStateOf { profileListState.isScrollInProgress } }
 
     Box(
         modifier = Modifier
