@@ -476,8 +476,22 @@ Column(
         }
 
         when (selectedProfileTab) {
-            0 -> {
-                                items(userPosts, key = { it.id }) { post ->
+                        0, 3 -> {
+                if (displayedPosts.isEmpty()) {
+                    item {
+                        Text(
+                            text = if (selectedProfileTab == 0) "ما نشرت شي بعد"
+                            else "ما أعجبت بأي منشور بعد",
+                            fontSize = 13.sp,
+                            color = TextSecondary,
+                            textAlign = TextAlign.Center,
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(vertical = 24.dp)
+                        )
+                    }
+                }
+                items(displayedPosts, key = { it.id }) { post ->
                     val hasRealMedia = remember(post.mediaType, post.mediaUri) {
                         post.mediaType != PostMediaType.NONE &&
                             post.mediaUri.isNotBlank() &&
