@@ -2730,7 +2730,7 @@ private fun OwnerVoiceSeat(
             isMuted = isOwnerMuted,
             avatarUrl = occupantAvatarUrl,
             contentDesc = "مايك المالك",
-            circleSize = 70.dp
+            circleSize = 60.dp
         )
 
         Row(
