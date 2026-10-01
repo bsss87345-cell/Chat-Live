@@ -371,9 +371,10 @@ class SocialAppViewModel : ViewModel() {
                     val newLiked = !post.isLiked
                     val newCount = if (newLiked) post.likesCount + 1 else post.likesCount - 1
                     post.copy(isLiked = newLiked, likesCount = newCount)
-                } else post
+                                } else post
             }
         }
+        persistMyPosts()
     }
 
     fun openComments(postId: String) {
