@@ -2025,122 +2025,119 @@ val offsetY = slotY.dp
 
 // Room Settings & Actions Dialog
     if (showSettingsDialog) {
-        AlertDialog(
-            onDismissRequest = { showSettingsDialog = false },
-            title = { Text("إعدادات وإدارة الغرفة ⚙️") },
-            text = {
-                Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
-                    OutlinedButton(
+        val neonCyan = Color(0xFF19F0F0)
+            val neonMagenta = Color(0xFFE63BFF)
+            val neonRed = Color(0xFFFF3D5A)
+            NeonSettingsPanel(
+                title = "إعدادات وإدارة الغرفة",
+                onDismiss = { showSettingsDialog = false }
+            ) {
+                NeonSettingsRow(
+                    label = "الأعضاء",
+                    accent = neonCyan,
+                    onClick = {
+                        showSettingsDialog = false
+                        showMembersListDialog = true
+                    }
+                ) {
+                    Icon(Icons.Default.Group, contentDescription = null, tint = neonCyan, modifier = Modifier.size(26.dp))
+                }
+
+                NeonSettingsRow(
+                    label = "المشرفون",
+                    accent = neonMagenta,
+                    onClick = {
+                        showSettingsDialog = false
+                        showAdminsListDialog = true
+                    }
+                ) {
+                    Icon(Icons.Default.Security, contentDescription = null, tint = neonMagenta, modifier = Modifier.size(26.dp))
+                }
+
+                NeonSettingsRow(
+                    label = "المحظورون",
+                    accent = neonCyan,
+                    onClick = {
+                        showSettingsDialog = false
+                        showBannedListDialog = true
+                    }
+                ) {
+                    Icon(Icons.Default.Block, contentDescription = null, tint = neonCyan, modifier = Modifier.size(26.dp))
+                }
+
+                NeonSettingsRow(
+                    label = "تغيير خلفية الدردشة",
+                    accent = neonMagenta,
+                    onClick = {
+                        showSettingsDialog = false
+                        showBackgroundPickerDialog = true
+                    }
+                ) {
+                    Icon(Icons.Default.Wallpaper, contentDescription = null, tint = neonMagenta, modifier = Modifier.size(26.dp))
+                }
+
+                NeonSettingsRow(
+                    label = "تغيير صورة الغرفة",
+                    accent = neonCyan,
+                    onClick = {
+                        showSettingsDialog = false
+                        roomImagePickerLauncher.launch(
+                            PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly)
+                        )
+                    }
+                ) {
+                    Icon(Icons.Default.Image, contentDescription = null, tint = neonCyan, modifier = Modifier.size(26.dp))
+                }
+
+                if (isOwner) {
+                    NeonSettingsRow(
+                        label = if (room.pinnedMessage != null) "تعديل الرسالة المثبتة" else "تثبيت رسالة",
+                        accent = neonMagenta,
                         onClick = {
                             showSettingsDialog = false
-                            showMembersListDialog = true
-                        },
-                        modifier = Modifier.fillMaxWidth()
+                            showPinDialog = true
+                        }
                     ) {
-                        Icon(Icons.Default.Group, contentDescription = null, modifier = Modifier.size(16.dp))
-                        Spacer(modifier = Modifier.width(6.dp))
-                        Text("الأعضاء")
+                        Icon(Icons.Default.PushPin, contentDescription = null, tint = neonMagenta, modifier = Modifier.size(26.dp))
                     }
 
-                    OutlinedButton(
-                        onClick = {
-                            showSettingsDialog = false
-                            showAdminsListDialog = true
-                        },
-                        modifier = Modifier.fillMaxWidth()
-                    ) {
-                        Icon(Icons.Default.Security, contentDescription = null, modifier = Modifier.size(16.dp))
-                        Spacer(modifier = Modifier.width(6.dp))
-                        Text("المشرفون")
-                    }
-
-                    OutlinedButton(
-                        onClick = {
-                            showSettingsDialog = false
-                            showBannedListDialog = true
-                        },
-                        modifier = Modifier.fillMaxWidth()
-                    ) {
-                        Icon(Icons.Default.Block, contentDescription = null, modifier = Modifier.size(16.dp))
-                        Spacer(modifier = Modifier.width(6.dp))
-                        Text("المحظورون")
-                    }
-
-                    OutlinedButton(
-                        onClick = {
-                            showSettingsDialog = false
-                            showBackgroundPickerDialog = true
-                        },
-                        modifier = Modifier.fillMaxWidth()
-                    ) {
-                        Icon(Icons.Default.Wallpaper, contentDescription = null, modifier = Modifier.size(16.dp))
-                        Spacer(modifier = Modifier.width(6.dp))
-                        Text("تغيير خلفية الدردشة")
-                    }
-
-                    OutlinedButton(
-                        onClick = {
-                            showSettingsDialog = false
-                            roomImagePickerLauncher.launch(
-                                PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly)
-                            )
-                        },
-                        modifier = Modifier.fillMaxWidth()
-                    ) {
-                        Icon(Icons.Default.Image, contentDescription = null, modifier = Modifier.size(16.dp))
-                        Spacer(modifier = Modifier.width(6.dp))
-                        Text("تغيير صورة الغرفة")
-                    }
-
-                    if (isOwner) {
-                        OutlinedButton(
+                    if (room.pinnedMessage != null) {
+                        NeonSettingsRow(
+                            label = "إلغاء تثبيت الرسالة",
+                            accent = neonMagenta,
                             onClick = {
                                 showSettingsDialog = false
-                                showPinDialog = true
-                            },
-                            modifier = Modifier.fillMaxWidth()
-                        ) {
-                            Icon(Icons.Default.PushPin, contentDescription = null, modifier = Modifier.size(16.dp))
-                            Spacer(modifier = Modifier.width(6.dp))
-                            Text(if (room.pinnedMessage != null) "تعديل الرسالة المثبتة" else "تثبيت رسالة")
-                        }
-
-                        if (room.pinnedMessage != null) {
-                            OutlinedButton(
-                                onClick = {
-                                    showSettingsDialog = false
-                                    onUnpinMessage()
-                                },
-                                modifier = Modifier.fillMaxWidth()
-                            ) {
-                                Icon(Icons.Default.Close, contentDescription = null, modifier = Modifier.size(16.dp))
-                                Spacer(modifier = Modifier.width(6.dp))
-                                Text("إلغاء تثبيت الرسالة")
+                                onUnpinMessage()
                             }
+                        ) {
+                            Icon(Icons.Default.Close, contentDescription = null, tint = neonMagenta, modifier = Modifier.size(26.dp))
                         }
                     }
-
-OutlinedButton(
-                        onClick = { onToggleLock() },
-                        modifier = Modifier.fillMaxWidth()
-                    ) {
-                        Icon(
-                            imageVector = if (room.isLocked) Icons.Default.Lock else Icons.Default.LockOpen,
-                            contentDescription = null,
-                            modifier = Modifier.size(16.dp)
-                        )
-                        Spacer(modifier = Modifier.width(6.dp))
-                        Text(if (room.isLocked) "الغرفة مقفلة 🔒" else "قفل الغرفة")
-}
                 }
-            },
-            confirmButton = {},
-            dismissButton = {
-                TextButton(onClick = { showSettingsDialog = false }) {
-                    Text("إغلاق")
+
+                NeonSettingsRow(
+                    label = if (room.isLocked) "الغرفة مقفلة 🔒" else "قفل الغرفة",
+                    accent = neonCyan,
+                    onClick = { onToggleLock() }
+                ) {
+                    Icon(
+                        imageVector = if (room.isLocked) Icons.Default.Lock else Icons.Default.LockOpen,
+                        contentDescription = null,
+                        tint = neonCyan,
+                        modifier = Modifier.size(26.dp)
+                    )
+                }
+
+                NeonSettingsRow(
+                    label = "إغلاق",
+                    accent = neonRed,
+                    labelColor = neonRed,
+                    chevronColor = neonRed,
+                    onClick = { showSettingsDialog = false }
+                ) {
+                    Icon(Icons.Default.ExitToApp, contentDescription = null, tint = neonRed, modifier = Modifier.size(26.dp))
                 }
             }
-        )
     }
 
     // Members List Dialog
