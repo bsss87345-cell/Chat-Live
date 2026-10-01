@@ -555,75 +555,49 @@ fun ReferralsSection(
         // قائمة بأسماء المستخدمين الذين انضموا عبر رابط الدعوة (حقيقية بدون بيانات وهمية)
         if (referrals.isEmpty()) {
             item {
-                Surface(
+                Column(
                     modifier = Modifier
                         .fillMaxWidth()
+                        .padding(vertical = 8.dp)
                         .testTag("referrals_empty_state"),
-                    shape = RoundedCornerShape(16.dp),
-                    color = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.25f),
-                    border = androidx.compose.foundation.BorderStroke(
-                        1.dp,
-                        MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.25f)
-                    )
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
-                    Column(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(24.dp),
-                        horizontalAlignment = Alignment.CenterHorizontally,
-                        verticalArrangement = Arrangement.spacedBy(8.dp)
+                    // أيقونة نيون مع توهج دائري ناعم خلفها
+                    Box(
+                        modifier = Modifier.size(84.dp),
+                        contentAlignment = Alignment.Center
                     ) {
-                        Text("📭", fontSize = 32.sp)
-                        Text(
-                            text = "لا توجد إحالات مسجلة حتى الآن",
-                            fontWeight = FontWeight.Bold,
-                            fontSize = 13.sp
-                        )
-                        Text(
-                            text = "شارك رابطك في الأعلى مع معارفك وأصدقائك وستظهر أسماؤهم هنا فور انضمامهم.",
-                            fontSize = 11.sp,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant,
-                            textAlign = TextAlign.Center,
-                            lineHeight = 16.sp
-                        )
-
-                        // زر عملي لتجربة انضمام صديق فعلي
-                        Spacer(modifier = Modifier.height(4.dp))
-                        Row(
-                            modifier = Modifier.fillMaxWidth(),
-                            horizontalArrangement = Arrangement.spacedBy(8.dp),
-                            verticalAlignment = Alignment.CenterVertically
-                        ) {
-                            OutlinedTextField(
-                                value = testFriendName,
-                                onValueChange = { testFriendName = it },
-                                placeholder = { Text("اكتب اسم صديق للتجربة...", fontSize = 11.sp) },
-                                singleLine = true,
-                                modifier = Modifier
-                                    .weight(1f)
-                                    .testTag("test_referral_input"),
-                                shape = RoundedCornerShape(10.dp)
-                            )
-                            Surface(
-                                onClick = {
-                                    onSimulateReferralJoined(testFriendName)
-                                    testFriendName = ""
-                                },
-                                shape = RoundedCornerShape(10.dp),
-                                color = MujtamaTeal.copy(alpha = 0.25f),
-                                border = androidx.compose.foundation.BorderStroke(1.dp, MujtamaTeal),
-                                modifier = Modifier.testTag("simulate_referral_btn")
-                            ) {
-                                Text(
-                                    text = "تسجيل تجريبي",
-                                    fontSize = 11.sp,
-                                    fontWeight = FontWeight.Bold,
-                                    color = MujtamaTeal,
-                                    modifier = Modifier.padding(horizontal = 10.dp, vertical = 10.dp)
+                        Canvas(modifier = Modifier.matchParentSize()) {
+                            drawCircle(
+                                brush = Brush.radialGradient(
+                                    colors = listOf(
+                                        Color(0xFF4AD7E9).copy(alpha = 0.30f),
+                                        Color.Transparent
+                                    )
                                 )
-                            }
+                            )
                         }
+                        Icon(
+                            imageVector = Icons.Outlined.Inbox,
+                            contentDescription = null,
+                            tint = Color(0xFF4AD7E9),
+                            modifier = Modifier.size(68.dp)
+                        )
                     }
+                    Text(
+                        text = "لا توجد إحالات مسجلة حتى الآن",
+                        color = Color.White,
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 17.sp
+                    )
+                    Text(
+                        text = "شارك رابطك في الأعلى مع معارفك وأصدقائك وستظهر أسماؤهم هنا فور انضمامهم.",
+                        fontSize = 15.sp,
+                        color = Color(0xFFBDBEC0),
+                        textAlign = TextAlign.Center,
+                        lineHeight = 23.sp
+                    )
                 }
             }
         } else {
