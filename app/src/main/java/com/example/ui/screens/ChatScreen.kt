@@ -2899,7 +2899,35 @@ private fun VoiceSeatItem(
         )
     }
 }
-
+@Composable
+private fun WheelGlyph(
+    tint: Color,
+    modifier: Modifier = Modifier
+) {
+    Canvas(modifier = modifier) {
+        val w = size.minDimension * 0.09f
+        val r = size.minDimension / 2f - w / 2f
+        val c = center
+        drawCircle(color = tint, radius = r, center = c, style = Stroke(width = w))
+        drawCircle(color = tint, radius = r * 0.68f, center = c, style = Stroke(width = w * 0.7f))
+        for (i in 0 until 8) {
+            val a = Math.toRadians(i * 45.0 + 22.5).toFloat()
+            drawLine(
+                color = tint,
+                start = Offset(
+                    c.x + r * 0.2f * kotlin.math.cos(a),
+                    c.y + r * 0.2f * kotlin.math.sin(a)
+                ),
+                end = Offset(
+                    c.x + r * 0.68f * kotlin.math.cos(a),
+                    c.y + r * 0.68f * kotlin.math.sin(a)
+                ),
+                strokeWidth = w * 0.7f
+            )
+        }
+        drawCircle(color = tint, radius = r * 0.16f, center = c)
+    }
+}
 @Composable
 private fun NeonMicCircle(
     isOccupied: Boolean,
