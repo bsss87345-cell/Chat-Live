@@ -41,6 +41,12 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.model.*
 import com.example.ui.theme.MujtamaOnlineGreen
+import androidx.compose.ui.draw.drawBehind
+import androidx.compose.ui.graphics.Path
+import androidx.compose.ui.graphics.drawscope.DrawScope
+import com.example.ui.theme.DarkBackground
+import com.example.ui.theme.NeonCyan
+import com.example.ui.theme.TextSecondary
 import com.example.ui.theme.MujtamaPrimary
 
 /**
