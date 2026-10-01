@@ -184,7 +184,7 @@ fun AccountSettingsScreen(
             val pageTitle = when (openPage) {
                 3 -> "تعديل الملف الشخصي"
                 2 -> "إعدادات الحساب"
-                1 -> "النشاط"
+                1 -> activityDetail ?: "النشاط"
                 4 -> "الإشعارات"
                 5 -> "الخصوصية والحظر"
                 6 -> "عام"
