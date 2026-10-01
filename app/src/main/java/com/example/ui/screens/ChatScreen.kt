@@ -1176,104 +1176,22 @@ Box(modifier = Modifier.fillMaxSize()) {
             tonalElevation = 0.dp,
             color = Color.Transparent
         ) {
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 6.dp, vertical = 2.dp)
-                    .heightIn(min = 0.dp),
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(6.dp)
-            ) {
-                IconButton(
-                    onClick = onBack,
-                    modifier = Modifier.size(30.dp)
-                ) {
-                    Icon(Icons.Default.ArrowForward, contentDescription = "رجوع", tint = Color.White)
-                }
-
-// Room Image (or first letter of room name if none was set)
-                Box(
-                    modifier = Modifier
-                        .size(38.dp)
-                        .clip(CircleShape)
-                        .background(if (room.imageUrl.isNullOrBlank()) MujtamaPrimary else Color.Transparent),
-                    contentAlignment = Alignment.Center
-                ) {
-                    if (!room.imageUrl.isNullOrBlank()) {
-                        AsyncImage(
-                            model = room.imageUrl,
-                            contentDescription = room.name,
-                            contentScale = ContentScale.Crop,
-                            modifier = Modifier.fillMaxSize()
-                        )
-                    } else {
-                        Text(
-                            text = room.name.take(1),
-                            color = Color.White,
-                            fontWeight = FontWeight.Bold,
-                            fontSize = 13.sp
-                        )
-                    }
-                }
-                Column(modifier = Modifier.weight(1f)) {
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.spacedBy(4.dp)
-                    ) {
-                        if (!room.isJoined && !room.isOwner) {
-                            Text(
-                                text = "انضمام",
-                                fontWeight = FontWeight.Bold,
-                                fontSize = 12.sp,
-                                color = MaterialTheme.colorScheme.primary,
-                                modifier = Modifier.clickable { onJoinRoom() }
-                            )
-                        }
-                        Text(
-                            text = room.name,
-                            fontWeight = FontWeight.Bold,
-                            fontSize = 13.sp,
-                            color = Color.White,
-                            maxLines = 1
-                        )
-                    }
-                    // معرّف الغرفة (Room ID) المكوّن من 8 أرقام
-                    val displayId = if (room.id.filter { it.isDigit() }.length == 8) {
-                        room.id.filter { it.isDigit() }
-                    } else {
-                        String.format("%08d", kotlin.math.abs(room.id.hashCode()) % 90000000 + 10000000)
-                    }
-                    Text(
-                        text = "ID: $displayId",
-                        fontSize = 12.sp,
-                        fontWeight = FontWeight.Bold,
-                        color = MaterialTheme.colorScheme.primary,
-                        modifier = Modifier.testTag("room_topbar_id")
-                    )
-                }
-
-// Members List Button
-                IconButton(
-                    onClick = { showMembersSheet = true },
-                    modifier = Modifier
-                        .size(33.dp)
-                        .testTag("room_members_button")
-                ) {
-                    Icon(Icons.Default.Group, contentDescription = "الأعضاء", tint = MaterialTheme.colorScheme.primary)
-                }
-
-// Room Settings / More Menu (Owner only)
-                if (room.isOwner) {
-                    IconButton(
-                        onClick = { showSettingsDialog = true },
-                        modifier = Modifier
-                            .size(33.dp)
-                            .testTag("room_settings_button")
-                    ) {
-                        Icon(Icons.Default.MoreVert, contentDescription = "خيارات الغرفة", tint = Color.White)
-                    }
-                }
+            val displayId = if (room.id.filter { it.isDigit() }.length == 8) {
+                room.id.filter { it.isDigit() }
+            } else {
+                String.format("%08d", kotlin.math.abs(room.id.hashCode()) % 90000000 + 10000000)
             }
+            NeonRoomHeader(
+                roomName = room.name,
+                roomImageUrl = room.imageUrl,
+                displayId = displayId,
+                showJoin = !room.isJoined && !room.isOwner,
+                showSettings = room.isOwner,
+                onBack = onBack,
+                onJoin = { onJoinRoom() },
+                onMembers = { showMembersSheet = true },
+                onSettings = { showSettingsDialog = true }
+            )
         }
 
         // Voice Mics Section: مايك المالك في المنتصف وتحته 8 مايكات مرقمة (1-8)
