@@ -3345,6 +3345,7 @@ fun RoomMessageBubble(
         }
     }
 }
+
 private fun Modifier.neonBubbleGlow(shape: Shape): Modifier = this.drawBehind {
     val outline = shape.createOutline(size, layoutDirection, this)
     val cyan = Color(0xFF19F0F0)
@@ -3356,6 +3357,7 @@ private fun Modifier.neonBubbleGlow(shape: Shape): Modifier = this.drawBehind {
         )
     }
 }
+
 @Composable
 private fun SystemMessageCard(text: String) {
     val neonCyan = Color(0xFF19F0F0)
