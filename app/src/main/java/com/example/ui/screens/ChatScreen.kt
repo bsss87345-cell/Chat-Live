@@ -2055,7 +2055,7 @@ val offsetY = slotY.dp
                 }
 
                 NeonSettingsRow(
-                    label = "المحظورون",
+                    label = "المحظورين",
                     accent = neonCyan,
                     onClick = {
                         showSettingsDialog = false
