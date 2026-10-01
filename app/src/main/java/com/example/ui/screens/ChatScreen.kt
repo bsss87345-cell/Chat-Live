@@ -1674,7 +1674,7 @@ Box(modifier = Modifier.fillMaxSize()) {
                     Icon(
                         imageVector = if (isRoomAudioMuted) Icons.Default.VolumeOff else Icons.Default.VolumeUp,
                         contentDescription = if (isRoomAudioMuted) "الصوت مكتوم" else "الصوت مفعل",
-                        tint = if (isRoomAudioMuted) MaterialTheme.colorScheme.error else Color.White
+                        tint = if (isRoomAudioMuted) MaterialTheme.colorScheme.error else Color(0xFF8E9399)
                     )
                 }
                 }
