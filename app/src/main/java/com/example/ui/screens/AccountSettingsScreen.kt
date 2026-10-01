@@ -47,6 +47,7 @@ fun AccountSettingsScreen(
     onUpdateProfile: (String, String, String) -> Unit,
     onUpdateBio: (String) -> Unit,
     onTogglePrivacy: () -> Unit = {},
+    chatRooms: List<ChatRoom> = emptyList(),
     onBack: () -> Unit
 ) {
     // null = showing the main vertical menu list; 0/1/2 = which full page is open
