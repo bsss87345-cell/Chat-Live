@@ -74,7 +74,7 @@ val ALL_CATALOG_GAMES = listOf(
         waitingDrawableRes = R.drawable.img_domino_waiting,
         playersLabel = "لاعبان",
         requiredPlayers = 2,
-        isAvailable = true // مفعلة حالياً ومطابقة للتصميم المطلوب
+        isAvailable = true
     ),
     GameCatalogItem(
         gameType = GameType.LUDO,
@@ -86,7 +86,7 @@ val ALL_CATALOG_GAMES = listOf(
         waitingDrawableRes = R.drawable.img_domino_waiting,
         playersLabel = "4 لاعبين",
         requiredPlayers = 4,
-        isAvailable = false // قابلة للإضافة لاحقاً
+        isAvailable = true
     ),
     GameCatalogItem(
         gameType = GameType.JACKAROO,
@@ -98,7 +98,7 @@ val ALL_CATALOG_GAMES = listOf(
         waitingDrawableRes = R.drawable.img_domino_waiting,
         playersLabel = "4 لاعبين",
         requiredPlayers = 4,
-        isAvailable = false // قابلة للإضافة لاحقاً
+        isAvailable = true
     ),
     GameCatalogItem(
         gameType = GameType.SNAKES_AND_LADDERS,
@@ -110,7 +110,7 @@ val ALL_CATALOG_GAMES = listOf(
         waitingDrawableRes = R.drawable.img_domino_waiting,
         playersLabel = "لاعبان",
         requiredPlayers = 2,
-        isAvailable = false // قابلة للإضافة لاحقاً
+        isAvailable = true
     ),
     GameCatalogItem(
         gameType = GameType.CHESS,
@@ -122,7 +122,7 @@ val ALL_CATALOG_GAMES = listOf(
         waitingDrawableRes = R.drawable.img_domino_waiting,
         playersLabel = "لاعبان",
         requiredPlayers = 2,
-        isAvailable = false // قابلة للإضافة لاحقاً
+        isAvailable = true
     )
 )
 
