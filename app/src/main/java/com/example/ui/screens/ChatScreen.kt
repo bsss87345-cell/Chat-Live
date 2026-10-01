@@ -2127,7 +2127,7 @@ val offsetY = slotY.dp
                         modifier = Modifier.size(26.dp)
                     )
                 }
-            }
+            
                 NeonSettingsRow(
                     label = "إغلاق",
                     accent = neonRed,
