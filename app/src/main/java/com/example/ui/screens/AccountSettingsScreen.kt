@@ -655,17 +655,32 @@ fun AccountSettingsScreen(
                                         post.mediaUri.isNotBlank() &&
                                         java.io.File(post.mediaUri).exists()
                                 }
-                                if (hasRealMedia) {
-                                                                        MediaPostItem(
-                                        post = post,
-                                        onLikeClick = { onLikePost(post.id) },
-                                        onCommentClick = { onCommentPost(post.id) },
-                                        onShareClick = { onSharePost(post) },
-                                        isActiveVideo = post.mediaType == PostMediaType.SHORT_VIDEO &&
-                                            post.id == activeActivityVideoId,
-                                        canMountVideo = post.mediaType != PostMediaType.SHORT_VIDEO ||
-                                            !isSettingsScrolling
-                                    )
+                                                                if (hasRealMedia) {
+                                    // نفس حل البروفايل: القائمة فيها هامش جانبي 12dp،
+                                    // فنوسّع العنصر 24dp ونزيحه 12dp ليصير حافة لحافة
+                                    Box(
+                                        modifier = Modifier.layout { measurable, constraints ->
+                                            val extraPx = 24.dp.roundToPx()
+                                            val widened = constraints.maxWidth + extraPx
+                                            val placeable = measurable.measure(
+                                                constraints.copy(minWidth = widened, maxWidth = widened)
+                                            )
+                                            layout(placeable.width, placeable.height) {
+                                                placeable.place(-extraPx / 2, 0)
+                                            }
+                                        }
+                                    ) {
+                                        MediaPostItem(
+                                            post = post,
+                                            onLikeClick = { onLikePost(post.id) },
+                                            onCommentClick = { onCommentPost(post.id) },
+                                            onShareClick = { onSharePost(post) },
+                                            isActiveVideo = post.mediaType == PostMediaType.SHORT_VIDEO &&
+                                                post.id == activeActivityVideoId,
+                                            canMountVideo = post.mediaType != PostMediaType.SHORT_VIDEO ||
+                                                !isSettingsScrolling
+                                        )
+                                    }
                                 } else {
                                     PostCard(
                                         post = post,
