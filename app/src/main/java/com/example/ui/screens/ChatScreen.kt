@@ -2826,6 +2826,29 @@ private fun VoiceSeatItem(
     }
 }
 @Composable
+private fun NeonGridBackground(modifier: Modifier = Modifier) {
+    Canvas(modifier = modifier) {
+        drawRect(
+            brush = Brush.verticalGradient(
+                listOf(Color(0xFF070B14), Color(0xFF04060C))
+            )
+        )
+        val gap = 28.dp.toPx()
+        val lineColor = Color(0xFF19F0F0).copy(alpha = 0.07f)
+        var x = 0f
+        while (x <= size.width) {
+            drawLine(lineColor, Offset(x, 0f), Offset(x, size.height), strokeWidth = 1f)
+            x += gap
+        }
+        var y = 0f
+        while (y <= size.height) {
+            drawLine(lineColor, Offset(0f, y), Offset(size.width, y), strokeWidth = 1f)
+            y += gap
+        }
+    }
+}
+
+@Composable
 private fun NeonRoomHeader(
     roomName: String,
     roomImageUrl: String?,
