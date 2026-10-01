@@ -407,12 +407,7 @@ fun PlinkoGameView(
                         }
                     }
 
-                                        AnimatedVisibility(
-                        visible = showJackpot,
-                        modifier = Modifier.align(Alignment.Center),
-                        enter = fadeIn(),
-                        exit = fadeOut()
-                    ) {
+                                        if (showJackpot) {
                         Box(
                             modifier = Modifier
     .align(Alignment.Center)
