@@ -3218,14 +3218,19 @@ fun RoomMessageBubble(
                 }
             }
 
+            val bubbleShape = RoundedCornerShape(
+                topStart = 16.dp,
+                topEnd = 16.dp,
+                bottomStart = if (message.isFromMe) 16.dp else 4.dp,
+                bottomEnd = if (message.isFromMe) 4.dp else 16.dp
+            )
             Surface(
-                shape = RoundedCornerShape(
-                    topStart = 16.dp,
-                    topEnd = 16.dp,
-                    bottomStart = if (message.isFromMe) 16.dp else 4.dp,
-                    bottomEnd = if (message.isFromMe) 4.dp else 16.dp
-                ),
-                color = bubbleColor.copy(alpha = 0.6f)
+                modifier = Modifier
+                    .padding(3.dp)
+                    .neonBubbleGlow(bubbleShape),
+                shape = bubbleShape,
+                color = Color(0xFF0B1D22).copy(alpha = 0.75f),
+                border = androidx.compose.foundation.BorderStroke(1.5.dp, Color(0xFF19F0F0))
             ) {
                 Column(modifier = Modifier.padding(horizontal = 12.dp, vertical = 8.dp)) {
                     when (message.type) {
