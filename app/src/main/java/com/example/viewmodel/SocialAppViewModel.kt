@@ -1653,6 +1653,37 @@ fun toggleOwnerVoiceMute(roomId: String) {
         _transactions.update { listOf(newGiftTx) + it }
             return true
         }
+    fun spendOnGame(amount: Int): Boolean {
+        if (amount <= 0 || _walletBalance.value < amount) {
+            _userMessage.value = "رصيدك غير كافٍ للعب!"
+            return false
+        }
+        _walletBalance.update { it - amount }
+        val spendTx = WalletTransaction(
+            id = "tx_${System.currentTimeMillis()}",
+            title = "لعبة بلينكو",
+            type = TransactionType.SPEND,
+            points = amount,
+            date = "اليوم",
+            note = "تكلفة إسقاط كرة"
+        )
+        _transactions.update { listOf(spendTx) + it }
+        return true
+    }
+
+    fun earnFromGame(amount: Int) {
+        if (amount <= 0) return
+        _walletBalance.update { it + amount }
+        val earnTx = WalletTransaction(
+            id = "tx_${System.currentTimeMillis()}",
+            title = "ربح بلينكو",
+            type = TransactionType.EARN,
+            points = amount,
+            date = "اليوم",
+            note = "جائزة لعبة بلينكو"
+        )
+        _transactions.update { listOf(earnTx) + it }
+    }
 
         // TODO: تجريبي فقط - يُحذف قبل أي إطلاق فعلي للتطبيق
         fun addTestBalance() {
