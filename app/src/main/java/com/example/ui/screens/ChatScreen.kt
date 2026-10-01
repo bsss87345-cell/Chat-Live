@@ -1638,7 +1638,7 @@ Box(modifier = Modifier.fillMaxSize()) {
                         Icon(
                             imageVector = Icons.Default.Mic,
                             contentDescription = "طلب مايك",
-                            tint = MujtamaTeal
+                            tint = Color(0xFF8E9399)
                         )
                     }
                     if (room.voiceSeatRequests.isNotEmpty()) {
