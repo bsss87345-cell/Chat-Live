@@ -33,6 +33,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.platform.LocalHapticFeedback
@@ -3344,7 +3345,17 @@ fun RoomMessageBubble(
         }
     }
 }
-
+private fun Modifier.neonBubbleGlow(shape: Shape): Modifier = this.drawBehind {
+    val outline = shape.createOutline(size, layoutDirection, this)
+    val cyan = Color(0xFF19F0F0)
+    for (i in 2 downTo 1) {
+        drawOutline(
+            outline = outline,
+            color = cyan.copy(alpha = 0.16f / i),
+            style = Stroke(width = 1.5.dp.toPx() + i * 2.dp.toPx())
+        )
+    }
+}
 @Composable
 private fun SystemMessageCard(text: String) {
     val neonCyan = Color(0xFF19F0F0)
