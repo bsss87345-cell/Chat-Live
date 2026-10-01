@@ -129,7 +129,9 @@ fun ProfileScreen(
     onBackFromOtherProfile: () -> Unit = {},
     onLoadPostsFor: (String) -> List<Post> = { emptyList() },
     isUserFollowing: (String) -> Boolean = { false },
-    onToggleFollow: (String) -> Unit = {}
+    onToggleFollow: (String) -> Unit = {},
+    chatRooms: List<ChatRoom> = emptyList(),
+    onOpenRoom: (String) -> Unit = {}
 ) {
     var showEditBioDialog by remember { mutableStateOf(false) }
     var showFollowersDialog by remember { mutableStateOf(false) }
