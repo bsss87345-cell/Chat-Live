@@ -2908,6 +2908,222 @@ private fun VoiceSeatItem(
     }
 }
 @Composable
+private fun NeonRoomHeader(
+    roomName: String,
+    roomImageUrl: String?,
+    displayId: String,
+    showJoin: Boolean,
+    showSettings: Boolean,
+    onBack: () -> Unit,
+    onJoin: () -> Unit,
+    onMembers: () -> Unit,
+    onSettings: () -> Unit
+) {
+    val neonCyan = Color(0xFF19F0F0)
+    val neonMagenta = Color(0xFFE63BFF)
+    val context = androidx.compose.ui.platform.LocalContext.current
+    val clipboard = androidx.compose.ui.platform.LocalClipboardManager.current
+
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 6.dp, vertical = 2.dp),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.spacedBy(6.dp)
+    ) {
+        // رجوع: سهم < سيان
+        IconButton(onClick = onBack, modifier = Modifier.size(30.dp)) {
+            Canvas(modifier = Modifier.size(22.dp)) {
+                val sw = 2.5.dp.toPx()
+                val top = Offset(size.width * 0.65f, size.height * 0.18f)
+                val mid = Offset(size.width * 0.32f, size.height * 0.5f)
+                val bot = Offset(size.width * 0.65f, size.height * 0.82f)
+                drawLine(
+                    color = neonCyan, start = top, end = mid,
+                    strokeWidth = sw, cap = androidx.compose.ui.graphics.StrokeCap.Round
+                )
+                drawLine(
+                    color = neonCyan, start = mid, end = bot,
+                    strokeWidth = sw, cap = androidx.compose.ui.graphics.StrokeCap.Round
+                )
+            }
+        }
+
+        // صورة الغرفة: حلقة بنفسجية متوهجة
+        Box(modifier = Modifier.size(50.dp), contentAlignment = Alignment.Center) {
+            Canvas(modifier = Modifier.fillMaxSize()) {
+                val baseR = 21.dp.toPx()
+                val step = 1.2.dp.toPx()
+                for (i in 1..3) {
+                    drawCircle(
+                        color = neonMagenta.copy(alpha = 0.35f / i),
+                        radius = baseR + step * i,
+                        style = Stroke(width = step)
+                    )
+                }
+            }
+            Box(
+                modifier = Modifier
+                    .size(42.dp)
+                    .clip(CircleShape)
+                    .background(
+                        if (roomImageUrl.isNullOrBlank()) MujtamaPrimary else Color(0xFF1A1030)
+                    )
+                    .border(2.dp, neonMagenta, CircleShape),
+                contentAlignment = Alignment.Center
+            ) {
+                if (!roomImageUrl.isNullOrBlank()) {
+                    AsyncImage(
+                        model = roomImageUrl,
+                        contentDescription = roomName,
+                        contentScale = ContentScale.Crop,
+                        modifier = Modifier.fillMaxSize()
+                    )
+                } else {
+                    Text(
+                        text = roomName.take(1),
+                        color = Color.White,
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 16.sp
+                    )
+                }
+            }
+        }
+
+        // زر انضمام: بين الصورة والاسم (لغير المنضمين فقط)
+        if (showJoin) {
+            Box(
+                modifier = Modifier
+                    .clip(RoundedCornerShape(14.dp))
+                    .background(neonCyan)
+                    .clickable(onClick = onJoin)
+                    .padding(horizontal = 12.dp, vertical = 6.dp),
+                contentAlignment = Alignment.Center
+            ) {
+                Text(
+                    text = "انضمام",
+                    color = Color(0xFF04161A),
+                    fontSize = 12.sp,
+                    fontWeight = FontWeight.Bold
+                )
+            }
+        }
+
+        // الاسم + الخط المتوهج + الايدي مع النسخ
+        Column(
+            modifier = Modifier.weight(1f),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.spacedBy(2.dp)
+        ) {
+            Text(
+                text = roomName,
+                color = Color.White,
+                fontSize = 18.sp,
+                fontWeight = FontWeight.Bold,
+                maxLines = 1,
+                overflow = androidx.compose.ui.text.style.TextOverflow.Ellipsis
+            )
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth(0.8f)
+                    .height(8.dp),
+                contentAlignment = Alignment.Center
+            ) {
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(8.dp)
+                        .background(
+                            Brush.horizontalGradient(
+                                listOf(
+                                    Color.Transparent,
+                                    neonCyan.copy(alpha = 0.30f),
+                                    Color.Transparent
+                                )
+                            )
+                        )
+                )
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(2.dp)
+                        .clip(RoundedCornerShape(1.dp))
+                        .background(neonCyan)
+                )
+            }
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(4.dp),
+                modifier = Modifier
+                    .clip(RoundedCornerShape(8.dp))
+                    .clickable {
+                        clipboard.setText(androidx.compose.ui.text.AnnotatedString(displayId))
+                        android.widget.Toast
+                            .makeText(context, "تم نسخ الايدي", android.widget.Toast.LENGTH_SHORT)
+                            .show()
+                    }
+                    .padding(horizontal = 4.dp, vertical = 2.dp)
+            ) {
+                Text(
+                    text = displayId,
+                    color = neonMagenta,
+                    fontSize = 13.sp,
+                    fontWeight = FontWeight.Bold,
+                    modifier = Modifier.testTag("room_topbar_id")
+                )
+                Icon(
+                    imageVector = Icons.Outlined.ContentCopy,
+                    contentDescription = "نسخ الايدي",
+                    tint = neonMagenta,
+                    modifier = Modifier.size(15.dp)
+                )
+            }
+        }
+
+        // الأعضاء
+        IconButton(
+            onClick = onMembers,
+            modifier = Modifier
+                .size(33.dp)
+                .testTag("room_members_button")
+        ) {
+            Icon(
+                imageVector = Icons.Outlined.Group,
+                contentDescription = "الاعضاء",
+                tint = neonCyan,
+                modifier = Modifier.size(26.dp)
+            )
+        }
+
+        // الإعدادات (المالك فقط): ثلاث خطوط سيان
+        if (showSettings) {
+            IconButton(
+                onClick = onSettings,
+                modifier = Modifier
+                    .size(33.dp)
+                    .testTag("room_settings_button")
+            ) {
+                Canvas(modifier = Modifier.size(24.dp)) {
+                    val sw = 2.8.dp.toPx()
+                    val x0 = sw / 2f
+                    val x1 = size.width - sw / 2f
+                    for (i in 0..2) {
+                        val y = size.height * (0.2f + 0.3f * i)
+                        drawLine(
+                            color = neonCyan,
+                            start = Offset(x0, y),
+                            end = Offset(x1, y),
+                            strokeWidth = sw,
+                            cap = androidx.compose.ui.graphics.StrokeCap.Round
+                        )
+                    }
+                }
+            }
+        }
+    }
+}
+
+@Composable
 private fun WheelGlyph(
     tint: Color,
     modifier: Modifier = Modifier
