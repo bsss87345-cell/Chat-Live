@@ -154,9 +154,33 @@ class SocialAppViewModel : ViewModel() {
         if (savedPosts.isNotEmpty()) {
             _posts.update { savedPosts + it }
         }
-                LocalStore.cleanupOrphanMedia(
+             LocalStore.cleanupOrphanMedia(
             _posts.value.map { it.mediaUri }.filter { it.isNotBlank() }.toSet()
         )
+    }
+
+    /**
+     * يستعيد الملف الشخصي والمحفظة، ثم يراقبهما ويحفظهما تلقائياً عند أي تغيير.
+     * المراقبة أفضل من إضافة حفظ بكل دالة تعديل: أي دالة جديدة تُضاف مستقبلاً
+     * تنحفظ تلقائياً بلا ما نتذكر شي.
+     */
+    private fun restoreProfileAndWallet() {
+        LocalStore.loadProfile()?.let { _userProfile.value = it }
+        LocalStore.loadWallet()?.let { snapshot ->
+            _walletBalance.value = snapshot.balance
+            _transactions.value = snapshot.transactions
+        }
+
+        viewModelScope.launch {
+            _userProfile.collect { LocalStore.saveProfile(it) }
+        }
+        viewModelScope.launch {
+            combine(_walletBalance, _transactions) { balance, transactions ->
+                balance to transactions
+            }.collect { (balance, transactions) ->
+                LocalStore.saveWallet(balance, transactions)
+            }
+        }
     }
 
     /**
