@@ -545,23 +545,16 @@ fun ReferralsSection(
 
         // عنوان قائمة المنضمين
         item {
-            Row(
+            Text(
+                text = "قائمة المنضمين عبر رابط الدعوة (${referrals.size})",
+                color = Color.White,
+                fontSize = 19.sp,
+                fontWeight = FontWeight.Bold,
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(top = 4.dp),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Text(
-                    text = "قائمة المنضمين عبر رابط الدعوة (${referrals.size})",
-                    style = MaterialTheme.typography.titleSmall.copy(
-                        fontWeight = FontWeight.Bold,
-                        fontSize = 13.sp
-                    )
-                )
-            }
+                    .padding(top = 12.dp)
+            )
         }
-
         // قائمة بأسماء المستخدمين الذين انضموا عبر رابط الدعوة (حقيقية بدون بيانات وهمية)
         if (referrals.isEmpty()) {
             item {
