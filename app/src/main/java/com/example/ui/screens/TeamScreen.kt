@@ -156,8 +156,8 @@ fun TeamScreen(
         modifier = modifier
             .fillMaxSize()
             .background(DarkBackground)
-.drawBehind { drawTeamNeonBackground() }
-.testTag("team_screen_container")
+            .drawBehind { drawTeamNeonBackground() }
+            .testTag("team_screen_container")
     ) {
         // --- 1. الهيدر: زر الرجوع (نيون) ثم العنوان ثم الوصف ---
         Column(
