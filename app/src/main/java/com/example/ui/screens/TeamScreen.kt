@@ -344,7 +344,6 @@ fun ReferralsSection(
 ) {
     val context = LocalContext.current
     var isCopied by remember { mutableStateOf(false) }
-    var testFriendName by remember { mutableStateOf("") }
 
     // رابط الإحالة مع ID المستخدم الحقيقي
     val referralLink = remember(userProfile.id) {
