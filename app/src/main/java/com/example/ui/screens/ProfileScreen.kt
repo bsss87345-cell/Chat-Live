@@ -161,11 +161,18 @@ fun ProfileScreen(
     } else {
         onLoadPostsFor(userProfile.id)
     }
-        val totalPostsCount = userPosts.size
+                val totalPostsCount = userPosts.size
+
+    // المنشورات المعروضة حسب التبويب: 0 = منشوراتي · 3 = اللي أعجبت بها
+    val displayedPosts = when (selectedProfileTab) {
+        0 -> userPosts
+        3 -> posts.filter { it.isLiked }
+        else -> emptyList()
+    }
 
     // نفس منطق الرئيسية: الفيديو الأقرب لمنتصف الشاشة هو اللي يشتغل
     val profileListState = rememberLazyListState()
-    val profileVideoIds = userPosts
+    val profileVideoIds = displayedPosts
         .filter { it.mediaType == PostMediaType.SHORT_VIDEO }
         .map { it.id }
         .toSet()
