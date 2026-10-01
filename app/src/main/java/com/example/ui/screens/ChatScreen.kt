@@ -3220,7 +3220,7 @@ fun RoomMessageBubble(
                     bottomStart = if (message.isFromMe) 16.dp else 4.dp,
                     bottomEnd = if (message.isFromMe) 4.dp else 16.dp
                 ),
-                color = bubbleColor
+                color = bubbleColor.copy(alpha = 0.6f)
             ) {
                 Column(modifier = Modifier.padding(horizontal = 12.dp, vertical = 8.dp)) {
                     when (message.type) {
