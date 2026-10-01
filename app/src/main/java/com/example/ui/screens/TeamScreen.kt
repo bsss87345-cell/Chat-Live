@@ -364,6 +364,12 @@ fun ReferralsSection(
 ) {
     val context = LocalContext.current
     var isCopied by remember { mutableStateOf(false) }
+    LaunchedEffect(isCopied) {
+        if (isCopied) {
+            kotlinx.coroutines.delay(2000)
+            isCopied = false
+        }
+    }
 
     // رابط الإحالة مع ID المستخدم الحقيقي
     val referralLink = remember(userProfile.id) {
