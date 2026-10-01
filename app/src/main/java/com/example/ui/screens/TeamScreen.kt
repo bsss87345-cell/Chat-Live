@@ -635,6 +635,7 @@ fun ReferralsSection(
                         Column(modifier = Modifier.weight(1f)) {
                             Text(
                                 text = user.name,
+                                color = Color.White,
                                 fontWeight = FontWeight.Bold,
                                 fontSize = 13.sp
                             )
