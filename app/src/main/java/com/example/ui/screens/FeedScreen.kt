@@ -686,7 +686,19 @@ private val PostCardGlowColor = NeonPurple.copy(alpha = 0.3f)
 private val PostCardBorderBrush = Brush.linearGradient(
     listOf(Color.White.copy(alpha = 0.2f), NeonPurple.copy(alpha = 0.6f))
 )
-
+/**
+ * محمّل صور مخصص يعرف يفك ترميز أول لقطة من ملفات الفيديو.
+ * محمّل Coil الافتراضي ما يدعم الفيديو إلا بتسجيل VideoFrameDecoder.
+ */
+@Composable
+private fun rememberVideoFrameLoader(): coil.ImageLoader {
+    val ctx = androidx.compose.ui.platform.LocalContext.current
+    return remember(ctx) {
+        coil.ImageLoader.Builder(ctx)
+            .components { add(coil.decode.VideoFrameDecoder.Factory()) }
+            .build()
+    }
+}
 private fun readMediaAspectRatio(path: String, isVideo: Boolean): Float {
     var w = 0
     var h = 0
