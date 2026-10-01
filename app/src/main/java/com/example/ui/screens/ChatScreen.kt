@@ -3364,6 +3364,166 @@ private fun Modifier.neonBubbleGlow(shape: Shape): Modifier = this.drawBehind {
     }
 }
 
+private fun Modifier.neonRowGlow(shape: Shape, color: Color): Modifier = this.drawBehind {
+    val outline = shape.createOutline(size, layoutDirection, this)
+    for (i in 3 downTo 1) {
+        drawOutline(
+            outline = outline,
+            color = color.copy(alpha = 0.16f / i),
+            style = Stroke(width = 1.5.dp.toPx() + i * 2.dp.toPx())
+        )
+    }
+}
+
+@Composable
+private fun NeonSettingsRow(
+    label: String,
+    accent: Color,
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier,
+    labelColor: Color = Color.White,
+    chevronColor: Color = Color(0xFF19F0F0),
+    icon: @Composable () -> Unit
+) {
+    val rowShape = RoundedCornerShape(20.dp)
+    val tabShape = androidx.compose.foundation.shape.CutCornerShape(12.dp)
+    Row(
+        modifier = modifier
+            .fillMaxWidth()
+            .padding(horizontal = 3.dp)
+            .neonRowGlow(rowShape, accent)
+            .clip(rowShape)
+            .background(Color(0xFF060B14).copy(alpha = 0.85f))
+            .border(1.5.dp, accent, rowShape)
+            .clickable(onClick = onClick)
+            .padding(horizontal = 6.dp, vertical = 6.dp),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.spacedBy(10.dp)
+    ) {
+        Box(
+            modifier = Modifier
+                .size(44.dp)
+                .clip(tabShape)
+                .background(accent.copy(alpha = 0.12f))
+                .border(1.dp, accent.copy(alpha = 0.55f), tabShape),
+            contentAlignment = Alignment.Center
+        ) {
+            icon()
+        }
+        Text(
+            text = label,
+            color = labelColor,
+            fontSize = 16.sp,
+            fontWeight = FontWeight.Bold,
+            modifier = Modifier.weight(1f)
+        )
+        Canvas(modifier = Modifier.padding(horizontal = 10.dp).size(18.dp)) {
+            val sw = 2.2.dp.toPx()
+            drawLine(
+                color = chevronColor,
+                start = Offset(size.width * 0.68f, size.height * 0.15f),
+                end = Offset(size.width * 0.30f, size.height * 0.5f),
+                strokeWidth = sw,
+                cap = androidx.compose.ui.graphics.StrokeCap.Round
+            )
+            drawLine(
+                color = chevronColor,
+                start = Offset(size.width * 0.30f, size.height * 0.5f),
+                end = Offset(size.width * 0.68f, size.height * 0.85f),
+                strokeWidth = sw,
+                cap = androidx.compose.ui.graphics.StrokeCap.Round
+            )
+        }
+    }
+}
+
+@Composable
+private fun NeonSettingsPanel(
+    title: String,
+    onDismiss: () -> Unit,
+    content: @Composable ColumnScope.() -> Unit
+) {
+    val cyan = Color(0xFF19F0F0)
+    val magenta = Color(0xFFE63BFF)
+    Dialog(
+        onDismissRequest = onDismiss,
+        properties = DialogProperties(usePlatformDefaultWidth = false)
+    ) {
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 14.dp, vertical = 24.dp)
+        ) {
+            Canvas(modifier = Modifier.matchParentSize()) {
+                val w = size.width
+                val h = size.height
+                val cut = 22.dp.toPx()
+                fun frame(inset: Float): Path = Path().apply {
+                    moveTo(inset + cut, inset)
+                    lineTo(w - inset - cut, inset)
+                    lineTo(w - inset, inset + cut)
+                    lineTo(w - inset, h - inset - cut)
+                    lineTo(w - inset - cut, h - inset)
+                    lineTo(inset + cut, h - inset)
+                    lineTo(inset, h - inset - cut)
+                    lineTo(inset, inset + cut)
+                    close()
+                }
+                val outer = frame(4.dp.toPx())
+                drawPath(path = outer, color = Color(0xFF050A12).copy(alpha = 0.75f))
+                for (i in 3 downTo 1) {
+                    drawPath(
+                        path = outer,
+                        color = cyan.copy(alpha = 0.18f / i),
+                        style = Stroke(width = 1.5.dp.toPx() + i * 2.dp.toPx())
+                    )
+                }
+                drawPath(path = outer, color = cyan, style = Stroke(width = 1.5.dp.toPx()))
+                drawPath(
+                    path = frame(10.dp.toPx()),
+                    color = cyan.copy(alpha = 0.30f),
+                    style = Stroke(width = 1.dp.toPx())
+                )
+                drawLine(
+                    color = magenta.copy(alpha = 0.85f),
+                    start = Offset(w - 4.dp.toPx(), h * 0.15f),
+                    end = Offset(w - 4.dp.toPx(), h * 0.60f),
+                    strokeWidth = 2.dp.toPx()
+                )
+            }
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .verticalScroll(rememberScrollState())
+                    .padding(horizontal = 20.dp, vertical = 22.dp),
+                verticalArrangement = Arrangement.spacedBy(10.dp)
+            ) {
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(bottom = 4.dp),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(10.dp)
+                ) {
+                    Text(
+                        text = title,
+                        color = Color.White,
+                        fontSize = 20.sp,
+                        fontWeight = FontWeight.Bold
+                    )
+                    Icon(
+                        imageVector = Icons.Outlined.Settings,
+                        contentDescription = null,
+                        tint = cyan,
+                        modifier = Modifier.size(30.dp)
+                    )
+                }
+                content()
+            }
+        }
+    }
+}
+
 @Composable
 private fun SystemMessageCard(text: String) {
     val neonCyan = Color(0xFF19F0F0)
