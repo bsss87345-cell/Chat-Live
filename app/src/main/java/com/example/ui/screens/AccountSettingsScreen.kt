@@ -1707,11 +1707,26 @@ fun AccountSettingsScreen(
                 }
             },
             confirmButton = {
-                Button(onClick = { showPolicyDialog = false }) {
+                    Button(onClick = { showPolicyDialog = false }) {
                     Text("فهمت وموافق")
                 }
             }
         )
+    }
+
+    // ورقة التعليقات تُرسم هنا حتى تفتح داخل صفحة النشاط نفسها
+    // بدل ما تنفتح بالبروفايل أو الرئيسية (الحالة بالـViewModel مشتركة بين الشاشات)
+    if (activeCommentPostId != null) {
+        val currentPost = posts.find { it.id == activeCommentPostId }
+        if (currentPost != null) {
+            CommentsBottomSheet(
+                post = currentPost,
+                onDismiss = onCloseComments,
+                onAddComment = { commentText ->
+                    onAddComment(currentPost.id, commentText)
+                }
+            )
+        }
     }
 }
 
