@@ -276,21 +276,17 @@ onSendImage = { convId, uri -> viewModel.sendMessage(convId, "", ChatMessageType
                         }
 
                         AppTab.GAMES -> {
-                            Box(
-                                modifier = Modifier.fillMaxSize(),
-                                contentAlignment = Alignment.Center
-                            ) {
-                                Column(
-                                    horizontalAlignment = Alignment.CenterHorizontally,
-                                    verticalArrangement = Arrangement.spacedBy(12.dp)
-                                ) {
-                                    Text(text = "🎮", fontSize = 48.sp)
-                                    Text(
-                                        text = "سوف يتم إضافة محتوى لاحقاً",
-                                        style = MaterialTheme.typography.titleMedium
-                                    )
-                                }
-                            }
+    val activeGameMode by viewModel.activeGameMode.collectAsStateWithLifecycle()
+    val activeGameOpponent by viewModel.activeGameOpponent.collectAsStateWithLifecycle()
+
+    com.example.ui.screens.GamesScreen(
+        activeGame = activeGameType,
+        activeMode = activeGameMode,
+        activeOpponent = activeGameOpponent,
+        onLaunchGame = { type, mode, opponent -> viewModel.launchGame(type, mode, opponent) },
+        onExitGame = { viewModel.exitGame() },
+        onWinReward = { points, name -> viewModel.rewardGameWin(points, name) }
+    )
                         }
 
                         AppTab.TEAM -> {
