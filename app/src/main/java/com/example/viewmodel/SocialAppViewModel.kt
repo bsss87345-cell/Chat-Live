@@ -271,6 +271,12 @@ class SocialAppViewModel : ViewModel() {
     private val lastVoiceSeatRequestTime = mutableMapOf<String, Long>()
     val userProfile: StateFlow<UserProfile> = _userProfile.asStateFlow()
 
+    // كتلة تهيئة ثانية: لازم تكون هنا تحديداً وليس مع init الأولى بالسطر 143،
+    // لأن _walletBalance و_transactions و_userProfile معرّفة بعدها وما تكون جاهزة هناك.
+    init {
+        restoreProfileAndWallet()
+    }
+
     // Follow System (نظام مشابه لإنستغرام/تيك توك) — بالذاكرة مؤقتاً، جاهز للربط بـ Firestore لاحقاً
     // بيانات تجريبية مؤقتة لاختبار التنقل بين البروفايلات (mock_1 يتابع mock_2 و mock_3، mock_2 يتابع mock_3 و mock_4، mock_3 يتابع mock_4)
     private val _follows = MutableStateFlow<List<com.example.model.Follow>>(
