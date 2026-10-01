@@ -481,61 +481,58 @@ fun ReferralsSection(
 
         // بطاقة عدد الإحالات الحالي (رقم بارز وواضح)
         item {
-            Card(
+            NeonGlowBox(
+                glowColor = TeamGlowGold,
+                shape = RoundedCornerShape(16.dp),
+                fill = Color(0xFF2D2E28),
+                outerReach = 10.dp,
+                outerAlpha = 0.14f,
+                innerReach = 12.dp,
+                innerAlpha = 0.22f,
                 modifier = Modifier
                     .fillMaxWidth()
-                    .testTag("referrals_count_card"),
-                shape = RoundedCornerShape(16.dp),
-                colors = CardDefaults.cardColors(
-                    containerColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.35f)
-                ),
-                border = androidx.compose.foundation.BorderStroke(
-                    1.dp,
-                    MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.35f)
-                )
+                    .testTag("referrals_count_card")
             ) {
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(horizontal = 16.dp, vertical = 14.dp),
+                        .padding(horizontal = 18.dp, vertical = 17.dp),
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.SpaceBetween
                 ) {
-                    Column(verticalArrangement = Arrangement.spacedBy(2.dp)) {
-                        Text(
-                            text = "عدد الإحالات الناجحة",
-                            fontSize = 13.sp,
-                            fontWeight = FontWeight.Bold,
-                            color = MaterialTheme.colorScheme.onSurface
-                        )
-                        Text(
-                            text = "الأصدقاء الذين انضموا بالفعل عبر كودك",
-                            fontSize = 11.sp,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant
-                        )
-                    }
+                    Text(
+                        text = "عدد الإحالات الناجحة",
+                        fontSize = 17.sp,
+                        fontWeight = FontWeight.Bold,
+                        color = Color.White
+                    )
 
-                    Surface(
+                    NeonGlowBox(
+                        glowColor = TeamGlowGold,
                         shape = RoundedCornerShape(12.dp),
-                        color = MujtamaGold.copy(alpha = 0.15f),
-                        border = androidx.compose.foundation.BorderStroke(1.dp, MujtamaGold.copy(alpha = 0.45f))
+                        fill = Color(0xFF54472C),
+                        borderColor = Color(0xFFF7DC99),
+                        outerReach = 5.dp,
+                        outerAlpha = 0.14f,
+                        innerReach = 6.dp,
+                        innerAlpha = 0.16f
                     ) {
                         Row(
-                            modifier = Modifier.padding(horizontal = 14.dp, vertical = 8.dp),
+                            modifier = Modifier.padding(horizontal = 14.dp, vertical = 6.dp),
                             verticalAlignment = Alignment.CenterVertically,
-                            horizontalArrangement = Arrangement.spacedBy(6.dp)
+                            horizontalArrangement = Arrangement.spacedBy(8.dp)
                         ) {
                             Icon(
                                 imageVector = Icons.Default.Group,
                                 contentDescription = null,
-                                tint = MujtamaGold,
-                                modifier = Modifier.size(18.dp)
+                                tint = Color(0xFFFFE6AD),
+                                modifier = Modifier.size(22.dp)
                             )
                             Text(
                                 text = "${referrals.size}",
-                                fontSize = 18.sp,
-                                fontWeight = FontWeight.Black,
-                                color = MujtamaGold
+                                fontSize = 24.sp,
+                                fontWeight = FontWeight.Bold,
+                                color = Color(0xFFFFFDDB)
                             )
                         }
                     }
