@@ -49,7 +49,14 @@ class MainActivity : ComponentActivity() {
                 } else {
                     MainScreen(viewModel = viewModel)
                 }
-            }
+                        }
         }
+    }
+
+    override fun onStop() {
+        super.onStop()
+        // كتابة فورية لآخر التغييرات بدل انتظار التجميع (300ms)،
+        // حتى لا تضيع آخر عملية لو أغلق المستخدم التطبيق مباشرة بعدها.
+        LocalStore.flush()
     }
 }
