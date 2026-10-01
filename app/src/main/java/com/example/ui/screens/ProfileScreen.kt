@@ -572,22 +572,37 @@ Column(
                             post.mediaUri.isNotBlank() &&
                             File(post.mediaUri).exists()
                     }
-                    if (hasRealMedia) {
-                        MediaPostItem(
-                            post = post,
-                            isFollowing = isUserFollowing(post.authorId),
-                            onLikeClick = { onLikeClick(post.id) },
-                            onCommentClick = { onCommentClick(post.id) },
-                            onShareClick = { onShareClick(post) },
-                            onFollowClick = { onToggleFollow(post.authorId) },
-                            onEditClick = { editingPost = post },
-                            onDeleteClick = { deletingPost = post },
-                            onReportClick = { reportingPost = post },
-                            isActiveVideo = post.mediaType == PostMediaType.SHORT_VIDEO &&
-                                post.id == activeProfileVideoId,
-                            canMountVideo = post.mediaType != PostMediaType.SHORT_VIDEO ||
-                                !isProfileScrolling
-                        )
+                                        if (hasRealMedia) {
+                        // القائمة فيها هامش جانبي 12dp، ومنشور الوسائط لازم يكون حافة لحافة.
+                        // الهامش السالب ممنوع بـCompose، فنوسّع العنصر 24dp ونزيحه 12dp يساراً.
+                        Box(
+                            modifier = Modifier.layout { measurable, constraints ->
+                                val extraPx = 24.dp.roundToPx()
+                                val widened = constraints.maxWidth + extraPx
+                                val placeable = measurable.measure(
+                                    constraints.copy(minWidth = widened, maxWidth = widened)
+                                )
+                                layout(placeable.width, placeable.height) {
+                                    placeable.place(-extraPx / 2, 0)
+                                }
+                            }
+                        ) {
+                            MediaPostItem(
+                                post = post,
+                                isFollowing = isUserFollowing(post.authorId),
+                                onLikeClick = { onLikeClick(post.id) },
+                                onCommentClick = { onCommentClick(post.id) },
+                                onShareClick = { onShareClick(post) },
+                                onFollowClick = { onToggleFollow(post.authorId) },
+                                onEditClick = { editingPost = post },
+                                onDeleteClick = { deletingPost = post },
+                                onReportClick = { reportingPost = post },
+                                isActiveVideo = post.mediaType == PostMediaType.SHORT_VIDEO &&
+                                    post.id == activeProfileVideoId,
+                                canMountVideo = post.mediaType != PostMediaType.SHORT_VIDEO ||
+                                    !isProfileScrolling
+                            )
+                        }
                     } else {
                         PostCard(
                             post = post,
