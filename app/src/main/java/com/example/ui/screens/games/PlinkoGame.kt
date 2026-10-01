@@ -415,6 +415,7 @@ fun PlinkoGameView(
                     ) {
                         Box(
                             modifier = Modifier
+    .align(Alignment.Center)
                                 .clip(RoundedCornerShape(16.dp))
                                 .background(Color(0xCC000000))
                                 .border(2.dp, NeonGold, RoundedCornerShape(16.dp))
