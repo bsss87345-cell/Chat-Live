@@ -257,7 +257,8 @@ fun ProfileScreen(
             .background(DarkBackground)
     ) {
     ProfileNeonBackground()
-    LazyColumn(
+        LazyColumn(
+        state = profileListState,
         modifier = Modifier
             .fillMaxSize()
             .testTag("profile_screen"),
