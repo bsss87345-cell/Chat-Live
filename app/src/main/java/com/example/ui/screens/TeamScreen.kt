@@ -360,137 +360,120 @@ fun ReferralsSection(
     ) {
         // بطاقة رابط الدعوة مع ID المستخدم وزر النسخ
         item {
-            Card(
+            NeonGlowBox(
+                glowColor = Color(0xFFB44DF0),
+                shape = RoundedCornerShape(18.dp),
+                fill = Color(0xFF201E2B),
+                borderColor = Color(0xFFD392F5),
+                outerReach = 10.dp,
+                outerAlpha = 0.20f,
+                innerReach = 14.dp,
+                innerAlpha = 0.35f,
                 modifier = Modifier
                     .fillMaxWidth()
-                    .testTag("referral_link_card"),
-                shape = RoundedCornerShape(18.dp),
-                colors = CardDefaults.cardColors(
-                    containerColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.40f)
-                ),
-                border = androidx.compose.foundation.BorderStroke(
-                    1.dp,
-                    MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.40f)
-                )
+                    .testTag("referral_link_card")
             ) {
                 Column(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(16.dp),
-                    verticalArrangement = Arrangement.spacedBy(10.dp)
+                        .padding(18.dp),
+                    verticalArrangement = Arrangement.spacedBy(12.dp)
                 ) {
                     Row(
                         modifier = Modifier.fillMaxWidth(),
                         horizontalArrangement = Arrangement.SpaceBetween,
                         verticalAlignment = Alignment.CenterVertically
                     ) {
-                        Row(
-                            verticalAlignment = Alignment.CenterVertically,
-                            horizontalArrangement = Arrangement.spacedBy(6.dp)
-                        ) {
-                            Text("🔗", fontSize = 16.sp)
-                            Text(
-                                text = "رابط الدعوة الخاص بك",
-                                fontWeight = FontWeight.Bold,
-                                fontSize = 14.sp
-                            )
-                        }
-
-                        // إظهار ID المستخدم بوضوح
-                        Surface(
-                            shape = RoundedCornerShape(8.dp),
-                            color = MaterialTheme.colorScheme.surface.copy(alpha = 0.70f),
-                            border = androidx.compose.foundation.BorderStroke(
-                                0.6.dp,
-                                MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f)
-                            )
-                        ) {
-                            Text(
-                                text = "ID: ${userProfile.id}",
-                                modifier = Modifier.padding(horizontal = 8.dp, vertical = 2.dp),
-                                fontSize = 11.sp,
-                                fontWeight = FontWeight.Bold,
-                                color = MaterialTheme.colorScheme.primary
-                            )
-                        }
+                        Text(
+                            text = "رابط الدعوة الخاص بك",
+                            color = Color.White,
+                            fontWeight = FontWeight.Bold,
+                            fontSize = 17.sp
+                        )
+                        Text(
+                            text = "ID: ${userProfile.id}",
+                            color = Color(0xFF25EEF5),
+                            fontWeight = FontWeight.Bold,
+                            fontSize = 13.sp
+                        )
                     }
 
-                    // حقل الرابط الشفاف مع زر النسخ الشفاف
+                    // حقل الرابط: زر النسخ يمين والرابط يسار
                     Surface(
                         shape = RoundedCornerShape(12.dp),
-                        color = MaterialTheme.colorScheme.surface.copy(alpha = 0.55f),
+                        color = Color(0xFF0B0C12),
                         border = androidx.compose.foundation.BorderStroke(
                             1.dp,
-                            if (isCopied) MujtamaOnlineGreen else MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.35f)
+                            if (isCopied) MujtamaOnlineGreen else Color(0xFF3A3D47)
                         ),
                         modifier = Modifier.fillMaxWidth()
                     ) {
                         Row(
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .padding(horizontal = 12.dp, vertical = 8.dp),
-                            verticalAlignment = Alignment.CenterVertically,
-                            horizontalArrangement = Arrangement.spacedBy(8.dp)
+                                .padding(horizontal = 6.dp, vertical = 5.dp),
+                            verticalAlignment = Alignment.CenterVertically
                         ) {
-                            Icon(
-                                imageVector = Icons.Default.Link,
-                                contentDescription = null,
-                                tint = MujtamaTeal,
-                                modifier = Modifier.size(18.dp)
-                            )
-
-                            Text(
-                                text = referralLink,
-                                fontSize = 12.sp,
-                                color = MaterialTheme.colorScheme.onSurface,
-                                modifier = Modifier.weight(1f),
-                                maxLines = 1,
-                                overflow = TextOverflow.Ellipsis
-                            )
-
-                            // زر نسخ شفاف زجاجي
-                            Surface(
+                            NeonGlowBox(
+                                glowColor = if (isCopied) MujtamaOnlineGreen else Color(0xFF3FC7DD),
+                                shape = RoundedCornerShape(10.dp),
+                                fill = if (isCopied) MujtamaOnlineGreen.copy(alpha = 0.18f) else Color(0xFF1A2B38),
+                                outerReach = 6.dp,
+                                outerAlpha = 0.15f,
+                                innerReach = 6.dp,
+                                innerAlpha = 0.12f,
                                 onClick = {
                                     val clipboard = context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
                                     val clip = ClipData.newPlainText("Mujtamana Referral Link", referralLink)
                                     clipboard.setPrimaryClip(clip)
                                     isCopied = true
                                 },
-                                shape = RoundedCornerShape(10.dp),
-                                color = if (isCopied) MujtamaOnlineGreen.copy(alpha = 0.20f) else MujtamaPrimary.copy(alpha = 0.15f),
-                                border = androidx.compose.foundation.BorderStroke(
-                                    1.dp,
-                                    if (isCopied) MujtamaOnlineGreen else MujtamaPrimary.copy(alpha = 0.40f)
-                                ),
-                                modifier = Modifier.testTag("copy_referral_link_btn")
+                                modifier = Modifier
+                                    .height(34.dp)
+                                    .testTag("copy_referral_link_btn")
                             ) {
                                 Row(
-                                    modifier = Modifier.padding(horizontal = 10.dp, vertical = 6.dp),
+                                    modifier = Modifier
+                                        .fillMaxHeight()
+                                        .padding(horizontal = 14.dp),
                                     verticalAlignment = Alignment.CenterVertically,
                                     horizontalArrangement = Arrangement.spacedBy(4.dp)
                                 ) {
-                                    Icon(
-                                        imageVector = if (isCopied) Icons.Default.Check else Icons.Default.ContentCopy,
-                                        contentDescription = "نسخ",
-                                        tint = if (isCopied) MujtamaOnlineGreen else MujtamaPrimary,
-                                        modifier = Modifier.size(14.dp)
-                                    )
+                                    if (isCopied) {
+                                        Icon(
+                                            imageVector = Icons.Default.Check,
+                                            contentDescription = null,
+                                            tint = MujtamaOnlineGreen,
+                                            modifier = Modifier.size(14.dp)
+                                        )
+                                    }
                                     Text(
                                         text = if (isCopied) "تم النسخ" else "نسخ",
-                                        fontSize = 11.sp,
+                                        fontSize = 14.sp,
                                         fontWeight = FontWeight.Bold,
-                                        color = if (isCopied) MujtamaOnlineGreen else MujtamaPrimary
+                                        color = if (isCopied) MujtamaOnlineGreen else Color(0xFF3FC7DD)
                                     )
                                 }
                             }
+
+                            Text(
+                                text = referralLink,
+                                fontSize = 12.sp,
+                                color = Color(0xFFB8B9BE),
+                                modifier = Modifier
+                                    .weight(1f)
+                                    .padding(horizontal = 10.dp),
+                                maxLines = 1,
+                                overflow = TextOverflow.Ellipsis
+                            )
                         }
                     }
 
                     Text(
                         text = "شارك هذا الرابط مع أصدقائك؛ عند تسجيلهم ستحصل أنت وصديقك على مكافآت ونقاط محفظة فورية.",
-                        fontSize = 11.sp,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
-                        lineHeight = 16.sp
+                        fontSize = 14.sp,
+                        color = Color(0xFFBCBDC2),
+                        lineHeight = 22.sp
                     )
                 }
             }
