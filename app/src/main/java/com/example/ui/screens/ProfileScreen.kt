@@ -544,6 +544,29 @@ Column(
                     Spacer(modifier = Modifier.height(8.dp))
                                 }
             }
+                        1 -> {
+                val joinedRooms = chatRooms.filter { it.isJoined }
+                if (joinedRooms.isEmpty()) {
+                    item {
+                        Text(
+                            text = "ما انضممت لأي غرفة بعد",
+                            fontSize = 13.sp,
+                            color = TextSecondary,
+                            textAlign = TextAlign.Center,
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(vertical = 24.dp)
+                        )
+                    }
+                } else {
+                    items(joinedRooms, key = { it.id }) { room ->
+                        RoomGridCard(
+                            room = room,
+                            onEnterClick = { onOpenRoom(room.id) }
+                        )
+                    }
+                }
+            }
             else -> {
     item {
         Text(
