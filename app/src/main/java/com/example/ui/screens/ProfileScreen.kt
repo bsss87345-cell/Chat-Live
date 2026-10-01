@@ -546,20 +546,43 @@ Column(
 
         when (selectedProfileTab) {
             0 -> {
-                items(userPosts) { post ->
-                    PostCard(
-                        post = post,
-                        isFollowing = isUserFollowing(post.authorId),
-                        onLikeClick = { onLikeClick(post.id) },
-                        onCommentClick = { onCommentClick(post.id) },
-                        onShareClick = { onShareClick(post) },
-                        onFollowClick = { onToggleFollow(post.authorId) },
-                        onEditClick = { editingPost = post },
-                        onDeleteClick = { deletingPost = post },
-                        onReportClick = { reportingPost = post }
-                    )
+                                items(userPosts, key = { it.id }) { post ->
+                    val hasRealMedia = remember(post.mediaType, post.mediaUri) {
+                        post.mediaType != PostMediaType.NONE &&
+                            post.mediaUri.isNotBlank() &&
+                            File(post.mediaUri).exists()
+                    }
+                    if (hasRealMedia) {
+                        MediaPostItem(
+                            post = post,
+                            isFollowing = isUserFollowing(post.authorId),
+                            onLikeClick = { onLikeClick(post.id) },
+                            onCommentClick = { onCommentClick(post.id) },
+                            onShareClick = { onShareClick(post) },
+                            onFollowClick = { onToggleFollow(post.authorId) },
+                            onEditClick = { editingPost = post },
+                            onDeleteClick = { deletingPost = post },
+                            onReportClick = { reportingPost = post },
+                            isActiveVideo = post.mediaType == PostMediaType.SHORT_VIDEO &&
+                                post.id == activeProfileVideoId,
+                            canMountVideo = post.mediaType != PostMediaType.SHORT_VIDEO ||
+                                !isProfileScrolling
+                        )
+                    } else {
+                        PostCard(
+                            post = post,
+                            isFollowing = isUserFollowing(post.authorId),
+                            onLikeClick = { onLikeClick(post.id) },
+                            onCommentClick = { onCommentClick(post.id) },
+                            onShareClick = { onShareClick(post) },
+                            onFollowClick = { onToggleFollow(post.authorId) },
+                            onEditClick = { editingPost = post },
+                            onDeleteClick = { deletingPost = post },
+                            onReportClick = { reportingPost = post }
+                        )
+                    }
                     Spacer(modifier = Modifier.height(8.dp))
-                }
+                                }
             }
             else -> {
     item {
