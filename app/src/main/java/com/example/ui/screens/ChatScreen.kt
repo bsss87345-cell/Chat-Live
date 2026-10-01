@@ -2137,6 +2137,7 @@ val offsetY = slotY.dp
                 ) {
                     Icon(Icons.Default.ExitToApp, contentDescription = null, tint = neonRed, modifier = Modifier.size(26.dp))
                 }
+                }
             }
     }
 
