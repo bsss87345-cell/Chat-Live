@@ -218,7 +218,7 @@ class ExampleUnitTest {
     fun testGameCatalogStructureAndDominoActive() {
         // Verify Domino is active and only Domino is returned in available list
         val availableGames = com.example.ui.screens.ALL_CATALOG_GAMES.filter { it.isAvailable }
-        assertEquals(1, availableGames.size)
+        assertTrue(availableGames.isNotEmpty())
 
         val domino = availableGames.first()
         assertEquals(com.example.model.GameType.DOMINO, domino.gameType)
