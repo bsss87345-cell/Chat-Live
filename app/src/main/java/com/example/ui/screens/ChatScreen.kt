@@ -1626,7 +1626,7 @@ Box(modifier = Modifier.fillMaxSize()) {
                     enabled = !isMuted,
                     modifier = Modifier.testTag("room_open_input_button")
                 ) {
-                    Icon(Icons.Default.Chat, contentDescription = "كتابة رسالة", tint = Color.White)
+                    Icon(Icons.Default.Chat, contentDescription = "كتابة رسالة", tint = Color(0xFF8E9399))
                 }
 
                 // Voice mic request button (Badge = عدد الطلبات المعلّقة)
