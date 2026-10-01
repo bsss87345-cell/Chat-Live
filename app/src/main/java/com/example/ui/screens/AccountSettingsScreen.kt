@@ -199,8 +199,15 @@ fun AccountSettingsScreen(
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.spacedBy(8.dp)
             ) {
-                IconButton(
-                    onClick = { openPage = null },
+                   IconButton(
+                    onClick = {
+                        // داخل صفحة نشاط تفصيلية؟ ارجع لقائمة النشاط أولاً، مو للقائمة الرئيسية
+                        if (openPage == 1 && activityDetail != null) {
+                            activityDetail = null
+                        } else {
+                            openPage = null
+                        }
+                    },
                     modifier = Modifier.testTag("account_settings_page_back_button")
                 ) {
                     Icon(
