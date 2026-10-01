@@ -3342,6 +3342,64 @@ fun RoomMessageBubble(
     }
 }
 
+@Composable
+private fun SystemMessageCard(text: String) {
+    val neonCyan = Color(0xFF19F0F0)
+    val neonMagenta = Color(0xFFE63BFF)
+    Box(modifier = Modifier.fillMaxWidth()) {
+        Canvas(modifier = Modifier.matchParentSize()) {
+            val corner = 16.dp.toPx()
+            val base = 4.dp.toPx()
+            // خلفية زجاجية داكنة شبه شفافة
+            drawRoundRect(
+                color = Color(0xFF0B1D22).copy(alpha = 0.75f),
+                topLeft = Offset(base, base),
+                size = Size(size.width - base * 2, size.height - base * 2),
+                cornerRadius = androidx.compose.ui.geometry.CornerRadius(corner, corner)
+            )
+            // توهج سيان خارجي (حلقات متدرجة)
+            for (i in 1..3) {
+                val o = base - i * 1.2.dp.toPx()
+                val c = corner + (base - o)
+                drawRoundRect(
+                    color = neonCyan.copy(alpha = 0.18f / i),
+                    topLeft = Offset(o, o),
+                    size = Size(size.width - o * 2, size.height - o * 2),
+                    cornerRadius = androidx.compose.ui.geometry.CornerRadius(c, c),
+                    style = Stroke(width = 1.2.dp.toPx())
+                )
+            }
+            // الحد الرئيسي
+            drawRoundRect(
+                color = neonCyan,
+                topLeft = Offset(base, base),
+                size = Size(size.width - base * 2, size.height - base * 2),
+                cornerRadius = androidx.compose.ui.geometry.CornerRadius(corner, corner),
+                style = Stroke(width = 1.5.dp.toPx())
+            )
+        }
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 18.dp, vertical = 14.dp),
+            verticalArrangement = Arrangement.spacedBy(4.dp)
+        ) {
+            Text(
+                text = "النظام",
+                color = neonMagenta,
+                fontSize = 15.sp,
+                fontWeight = FontWeight.Bold
+            )
+            Text(
+                text = text,
+                color = Color.White,
+                fontSize = 15.sp,
+                lineHeight = 22.sp
+            )
+        }
+    }
+}
+
 // -------------------------------------------------------------
 // DIRECT / GROUP CHAT LIST (المحادثات الفردية والجماعية)
 // -------------------------------------------------------------
