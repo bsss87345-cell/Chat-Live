@@ -40,10 +40,8 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.model.*
-import com.example.ui.theme.MujtamaGold
 import com.example.ui.theme.MujtamaOnlineGreen
 import com.example.ui.theme.MujtamaPrimary
-import com.example.ui.theme.MujtamaTeal
 
 /**
  * الأقسام الرئيسية لقسم الفريق:
