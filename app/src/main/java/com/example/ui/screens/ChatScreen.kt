@@ -1,6 +1,6 @@
 package com.example.ui.screens
 
-import androidx.compose.ui.graphics.drawscope.drawOutline
+import androidx.compose.ui.graphics.drawOutline
 import androidx.compose.material.icons.automirrored.filled.Chat
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedVisibility
