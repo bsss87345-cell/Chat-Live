@@ -1367,7 +1367,15 @@ Box(modifier = Modifier.fillMaxSize()) {
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(horizontal = 8.dp, vertical = 6.dp),
+                    .padding(horizontal = 8.dp, vertical = 6.dp)
+                .then(
+                    if (!isInputExpanded) {
+                        Modifier
+                            .clip(RoundedCornerShape(28.dp))
+                            .background(Color(0xFF1B1B20))
+                            .border(1.dp, Color.White.copy(alpha = 0.08f), RoundedCornerShape(28.dp))
+                    } else Modifier
+                ),
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = if (isInputExpanded) Arrangement.spacedBy(6.dp) else Arrangement.SpaceEvenly
             ) {
