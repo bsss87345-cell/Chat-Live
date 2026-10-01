@@ -3186,7 +3186,7 @@ fun RoomMessageBubble(
     myAvatarUrl: String = ""
 ) {
     val bubbleColor = if (message.isFromMe) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.surfaceVariant
-    val textColor = if (message.isFromMe) Color.White else MaterialTheme.colorScheme.onSurface
+    val textColor = Color.White
     if (message.senderName == "النظام" && message.type == ChatMessageType.TEXT) {
         SystemMessageCard(text = message.text)
         return
