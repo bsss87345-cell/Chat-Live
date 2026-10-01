@@ -1153,19 +1153,7 @@ Box(modifier = Modifier.fillMaxSize()) {
             modifier = Modifier.fillMaxSize()
         )
     } else {
-        Box(
-            modifier = Modifier
-                .fillMaxSize()
-                .background(
-                    Brush.linearGradient(
-                        colors = listOf(
-                            Color(0xFF0A0818),
-                            Color(0xFF1A1330),
-                            Color(0xFF120B22)
-                        )
-                    )
-                )
-        )
+        NeonGridBackground(modifier = Modifier.fillMaxSize())
     }
     Column(
         modifier = Modifier
