@@ -3185,7 +3185,10 @@ fun RoomMessageBubble(
 ) {
     val bubbleColor = if (message.isFromMe) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.surfaceVariant
     val textColor = if (message.isFromMe) Color.White else MaterialTheme.colorScheme.onSurface
-
+    if (message.senderName == "النظام" && message.type == ChatMessageType.TEXT) {
+        SystemMessageCard(text = message.text)
+        return
+    }
     Box(
         modifier = Modifier.fillMaxWidth(),
         contentAlignment = Alignment.CenterStart
