@@ -123,6 +123,8 @@ fun MainScreen(viewModel: SocialAppViewModel) {
                     val walletFilter by viewModel.walletFilter.collectAsStateWithLifecycle()
                     val transactions by viewModel.transactions.collectAsStateWithLifecycle()
                     val storeItems by viewModel.storeItems.collectAsStateWithLifecycle()
+                    val chatRooms by viewModel.chatRooms.collectAsStateWithLifecycle()
+                    val activeCommentPostId by viewModel.activeCommentPostId.collectAsStateWithLifecycle()
 
                     AccountSettingsScreen(
                         userProfile = userProfile,
