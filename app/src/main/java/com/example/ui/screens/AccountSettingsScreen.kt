@@ -498,43 +498,17 @@ fun AccountSettingsScreen(
                     }
                     val joinedRooms = chatRooms.filter { it.isJoined }
 
-                    // كل تصنيف = الأيقونة + العنوان + عناصره (سطر رئيسي، سطر وصف)
+                    // الأيقونة + العنوان + عدد العناصر لكل تصنيف
                     val activityCategories = listOf(
-                        Triple(
-                            Icons.Default.Favorite,
-                            "الإعجابات",
-                            likedPosts.map { p ->
-                                p.authorName to (if (p.content.isBlank()) "منشور وسائط" else p.content)
-                            }
-                        ),
-                        Triple(
-                            Icons.Default.ChatBubbleOutline,
-                            "التعليقات",
-                            commentedPosts.map { p ->
-                                val myComment = p.commentsList.firstOrNull { it.authorName == myCommentName }
-                                p.authorName to (myComment?.text ?: "")
-                            }
-                        ),
-                        Triple(
-                            Icons.Default.Share,
-                            "المشاركات",
-                            emptyList<Pair<String, String>>()
-                        ),
-                        Triple(
-                            Icons.Default.DeleteOutline,
-                            "المحتوى المحذوف",
-                            emptyList<Pair<String, String>>()
-                        ),
-                        Triple(
-                            Icons.Default.MeetingRoom,
-                            "الغرف المنضم إليها",
-                            joinedRooms.map { r -> r.name to "${r.memberCount} عضو · ${r.category}" }
-                        )
+                        Triple(Icons.Default.Favorite, "الإعجابات", likedPosts.size),
+                        Triple(Icons.Default.ChatBubbleOutline, "التعليقات", commentedPosts.size),
+                        Triple(Icons.Default.Share, "المشاركات", 0),
+                        Triple(Icons.Default.DeleteOutline, "المحتوى المحذوف", 0),
+                        Triple(Icons.Default.MeetingRoom, "الغرف المنضم إليها", joinedRooms.size)
                     )
 
-                    val selected = activityCategories.firstOrNull { it.second == activityDetail }
-
-                    if (selected == null) {
+                    if (activityDetail == null) {
+                        // ----------- قائمة التصنيفات -----------
                         item {
                             Text(
                                 text = "النشاط 📋",
@@ -542,7 +516,7 @@ fun AccountSettingsScreen(
                             )
                         }
 
-                        items(activityCategories) { (icon, title, entries) ->
+                        items(activityCategories) { (icon, title, count) ->
                             Card(
                                 modifier = Modifier
                                     .fillMaxWidth()
@@ -575,8 +549,7 @@ fun AccountSettingsScreen(
                                     Column(modifier = Modifier.weight(1f)) {
                                         Text(text = title, fontWeight = FontWeight.Bold, fontSize = 13.sp)
                                         Text(
-                                            text = if (entries.isEmpty()) "لا يوجد نشاط بعد"
-                                            else "${entries.size} عنصر",
+                                            text = if (count == 0) "لا يوجد نشاط بعد" else "$count عنصر",
                                             fontSize = 11.sp,
                                             color = MaterialTheme.colorScheme.onSurfaceVariant
                                         )
@@ -589,77 +562,83 @@ fun AccountSettingsScreen(
                                 }
                             }
                         }
-                    } else if (selected.third.isEmpty()) {
-                        item {
-                            Card(
-                                modifier = Modifier.fillMaxWidth(),
-                                shape = RoundedCornerShape(14.dp),
-                                colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface)
-                            ) {
-                                Column(
-                                    modifier = Modifier
-                                        .fillMaxWidth()
-                                        .padding(24.dp),
-                                    horizontalAlignment = Alignment.CenterHorizontally,
-                                    verticalArrangement = Arrangement.spacedBy(8.dp)
-                                ) {
-                                    Icon(
-                                        imageVector = selected.first,
-                                        contentDescription = null,
-                                        tint = MaterialTheme.colorScheme.onSurfaceVariant,
-                                        modifier = Modifier.size(40.dp)
-                                    )
-                                    Text(
-                                        text = "لا يوجد نشاط بعد",
-                                        fontWeight = FontWeight.Bold,
-                                        fontSize = 13.sp
-                                    )
+                    } else {
+                        // ----------- صفحة التصنيف المفتوح -----------
+                        val detailPosts = when (activityDetail) {
+                            "الإعجابات" -> likedPosts
+                            "التعليقات" -> commentedPosts
+                            else -> emptyList()
+                        }
+
+                        if (activityDetail == "الغرف المنضم إليها") {
+                            if (joinedRooms.isEmpty()) {
+                                item { ActivityEmptyState() }
+                            } else {
+                                items(joinedRooms, key = { it.id }) { room ->
+                                    Card(
+                                        modifier = Modifier.fillMaxWidth(),
+                                        shape = RoundedCornerShape(14.dp),
+                                        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
+                                        elevation = CardDefaults.cardElevation(defaultElevation = 1.dp)
+                                    ) {
+                                        Row(
+                                            modifier = Modifier
+                                                .fillMaxWidth()
+                                                .padding(horizontal = 14.dp, vertical = 12.dp),
+                                            verticalAlignment = Alignment.CenterVertically,
+                                            horizontalArrangement = Arrangement.spacedBy(10.dp)
+                                        ) {
+                                            Box(
+                                                modifier = Modifier
+                                                    .size(36.dp)
+                                                    .clip(CircleShape)
+                                                    .background(MujtamaPrimary.copy(alpha = 0.15f)),
+                                                contentAlignment = Alignment.Center
+                                            ) {
+                                                Text(text = room.iconEmoji, fontSize = 16.sp)
+                                            }
+                                            Column(modifier = Modifier.weight(1f)) {
+                                                Text(
+                                                    text = room.name,
+                                                    fontWeight = FontWeight.Bold,
+                                                    fontSize = 13.sp,
+                                                    maxLines = 1
+                                                )
+                                                Text(
+                                                    text = "${room.memberCount} عضو · ${room.category}",
+                                                    fontSize = 11.sp,
+                                                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                                    maxLines = 1
+                                                )
+                                            }
+                                        }
+                                    }
                                 }
                             }
-                        }
-                    } else {
-                        items(selected.third) { (lineTitle, lineSubtitle) ->
-                            Card(
-                                modifier = Modifier.fillMaxWidth(),
-                                shape = RoundedCornerShape(14.dp),
-                                colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
-                                elevation = CardDefaults.cardElevation(defaultElevation = 1.dp)
-                            ) {
-                                Row(
-                                    modifier = Modifier
-                                        .fillMaxWidth()
-                                        .padding(horizontal = 14.dp, vertical = 12.dp),
-                                    verticalAlignment = Alignment.CenterVertically,
-                                    horizontalArrangement = Arrangement.spacedBy(10.dp)
-                                ) {
-                                    Box(
-                                        modifier = Modifier
-                                            .size(36.dp)
-                                            .clip(CircleShape)
-                                            .background(MujtamaPrimary.copy(alpha = 0.15f)),
-                                        contentAlignment = Alignment.Center
-                                    ) {
-                                        Icon(
-                                            imageVector = selected.first,
-                                            contentDescription = null,
-                                            tint = MujtamaPrimary,
-                                            modifier = Modifier.size(18.dp)
-                                        )
-                                    }
-                                    Column(modifier = Modifier.weight(1f)) {
-                                        Text(
-                                            text = lineTitle,
-                                            fontWeight = FontWeight.Bold,
-                                            fontSize = 13.sp,
-                                            maxLines = 1
-                                        )
-                                        Text(
-                                            text = lineSubtitle,
-                                            fontSize = 11.sp,
-                                            color = MaterialTheme.colorScheme.onSurfaceVariant,
-                                            maxLines = 2
-                                        )
-                                    }
+                        } else if (detailPosts.isEmpty()) {
+                            item { ActivityEmptyState() }
+                        } else {
+                            // المنشورات تُعرض بنفس شكل الصفحة الرئيسية بالضبط
+                            items(detailPosts, key = { it.id }) { post ->
+                                val hasRealMedia = remember(post.mediaType, post.mediaUri) {
+                                    post.mediaType != PostMediaType.NONE &&
+                                        post.mediaUri.isNotBlank() &&
+                                        java.io.File(post.mediaUri).exists()
+                                }
+                                if (hasRealMedia) {
+                                    MediaPostItem(
+                                        post = post,
+                                        onLikeClick = { onLikePost(post.id) },
+                                        onCommentClick = { onCommentPost(post.id) },
+                                        onShareClick = { onSharePost(post) }
+                                    )
+                                } else {
+                                    PostCard(
+                                        post = post,
+                                        onLikeClick = { onLikePost(post.id) },
+                                        onCommentClick = { onCommentPost(post.id) },
+                                        onShareClick = { onSharePost(post) }
+                                    )
                                 }
                             }
                         }
