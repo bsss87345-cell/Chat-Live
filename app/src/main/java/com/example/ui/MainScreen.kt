@@ -143,6 +143,10 @@ fun MainScreen(viewModel: SocialAppViewModel) {
                         onUpdateProfile = { name, bio, emoji -> viewModel.updateUserProfile(name, bio, emoji) },
                         onUpdateBio = { viewModel.updateUserBio(it) },
                         onTogglePrivacy = { viewModel.toggleProfilePrivacy() },
+                        chatRooms = chatRooms,
+                        activeCommentPostId = activeCommentPostId,
+                        onCloseComments = { viewModel.closeComments() },
+                        onAddComment = { postId, text -> viewModel.addComment(postId, text) },
                         onBack = { viewModel.closeAccountSettings() }
                     )
                 } else {
