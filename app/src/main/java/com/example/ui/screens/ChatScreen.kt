@@ -1477,11 +1477,10 @@ Box(modifier = Modifier.fillMaxSize()) {
                         enabled = !isMuted,
                         modifier = Modifier.testTag("room_lucky_wheel_button")
                     ) {
-                        Image(
-                            painter = painterResource(id = R.drawable.lucky_wheel_icon),
-                            contentDescription = "عجلة الحظ",
-                            modifier = Modifier.size(26.dp)
-                        )
+                        WheelGlyph(
+    tint = Color(0xFF8E9399),
+    modifier = Modifier.size(26.dp)
+)
                     }
                     if (isOwner && room.wheelJoinRequests.isNotEmpty()) {
                         Box(
