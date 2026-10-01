@@ -2796,7 +2796,7 @@ private fun VoiceSeatItem(
             isOwner = false,
             avatarUrl = occupantAvatarUrl,
             contentDesc = occupantName ?: "مايك $seatNumber",
-            circleSize = 62.dp
+            circleSize = 54.dp
         )
         Text(
             text = if (isOccupied && !occupantName.isNullOrBlank()) occupantName else "$seatNumber",
