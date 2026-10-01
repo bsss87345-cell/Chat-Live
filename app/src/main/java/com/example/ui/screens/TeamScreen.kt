@@ -816,7 +816,7 @@ fun FriendRequestsSection(
                             innerReach = 6.dp,
                             innerAlpha = 0.12f,
                             onClick = { onAccept(req.id) },
-                            modifier = Modifier.height(34.dp)
+                            modifier = Modifier.height(44.dp)
                         ) {
                             Row(
                                 modifier = Modifier
@@ -844,7 +844,7 @@ fun FriendRequestsSection(
                             innerReach = 4.dp,
                             innerAlpha = 0.06f,
                             onClick = { onReject(req.id) },
-                            modifier = Modifier.height(34.dp)
+                            modifier = Modifier.height(44.dp)
                         ) {
                             Row(
                                 modifier = Modifier
