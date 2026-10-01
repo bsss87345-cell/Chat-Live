@@ -50,7 +50,10 @@ fun AccountSettingsScreen(
     onBack: () -> Unit
 ) {
     // null = showing the main vertical menu list; 0/1/2 = which full page is open
-    var openPage by remember { mutableStateOf<Int?>(null) }
+        var openPage by remember { mutableStateOf<Int?>(null) }
+
+    // null = قائمة تصنيفات النشاط، أو عنوان التصنيف المفتوح حالياً
+    var activityDetail by remember { mutableStateOf<String?>(null) }
 
     var showLogoutDialog by remember { mutableStateOf(false) }
     var showRechargeDialog by remember { mutableStateOf(false) }
