@@ -79,8 +79,36 @@ fun AccountSettingsScreen(
         it.authorHandle == "ID: ${userProfile.id}" ||
         it.authorHandle == "@user_me" ||
         it.id.startsWith("post_") ||
-        it.id.startsWith("p_")
+                it.id.startsWith("p_")
     }.take(6)
+
+    // --- منشورات النشاط ومنطق الفيديو النشط (نفس منطق الرئيسية) ---
+    val activityLikedPosts = posts.filter { it.isLiked }
+    val activityCommentedPosts = posts.filter { p ->
+        p.commentsList.any { it.authorName == "أنت (أنا)" }
+    }
+
+    val settingsListState = rememberLazyListState()
+    val activityDetailPosts = when (activityDetail) {
+        "الإعجابات" -> activityLikedPosts
+        "التعليقات" -> activityCommentedPosts
+        else -> emptyList()
+    }
+    val activityVideoIds = activityDetailPosts
+        .filter { it.mediaType == PostMediaType.SHORT_VIDEO }
+        .map { it.id }
+        .toSet()
+    val activeActivityVideoId by remember(activityVideoIds) {
+        derivedStateOf {
+            val layout = settingsListState.layoutInfo
+            val center = (layout.viewportStartOffset + layout.viewportEndOffset) / 2
+            layout.visibleItemsInfo
+                .filter { info -> (info.key as? String) in activityVideoIds }
+                .minByOrNull { info -> kotlin.math.abs(info.offset + info.size / 2 - center) }
+                ?.key as? String
+        }
+    }
+    val isSettingsScrolling by remember { derivedStateOf { settingsListState.isScrollInProgress } }
 
     val filteredTransactions = transactions.filter { tx ->
         when (walletFilter) {
