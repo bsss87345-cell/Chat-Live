@@ -629,11 +629,15 @@ fun AccountSettingsScreen(
                                         java.io.File(post.mediaUri).exists()
                                 }
                                 if (hasRealMedia) {
-                                    MediaPostItem(
+                                                                        MediaPostItem(
                                         post = post,
                                         onLikeClick = { onLikePost(post.id) },
                                         onCommentClick = { onCommentPost(post.id) },
-                                        onShareClick = { onSharePost(post) }
+                                        onShareClick = { onSharePost(post) },
+                                        isActiveVideo = post.mediaType == PostMediaType.SHORT_VIDEO &&
+                                            post.id == activeActivityVideoId,
+                                        canMountVideo = post.mediaType != PostMediaType.SHORT_VIDEO ||
+                                            !isSettingsScrolling
                                     )
                                 } else {
                                     PostCard(
