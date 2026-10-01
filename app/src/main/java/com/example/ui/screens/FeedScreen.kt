@@ -1216,7 +1216,16 @@ fun MediaPostItem(
                 .clipToBounds()
                 .background(Color.Black)
         ) {
-            if (isVideo) {
+                if (isVideo) {
+                // أول لقطة من الفيديو تبقى ظاهرة دائماً خلف المشغّل،
+                // فما تظهر شاشة سوداء أثناء التمرير ولا أثناء تجهيز المشغّل
+                AsyncImage(
+                    model = File(post.mediaUri),
+                    imageLoader = rememberVideoFrameLoader(),
+                    contentDescription = "لقطة الفيديو",
+                    modifier = Modifier.fillMaxSize(),
+                    contentScale = ContentScale.Crop
+                )
                 if (canMountVideo) {
                     PostVideoPlayer(
                         filePath = post.mediaUri,
