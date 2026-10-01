@@ -480,57 +480,181 @@ fun AccountSettingsScreen(
                 // Page: منشوراتي
                 // -------------------------------------------------------------
                 if (openPage == 1) {
-                    item {
-                        Text(
-                            text = "النشاط 📋",
-                            style = MaterialTheme.typography.titleSmall.copy(fontWeight = FontWeight.Bold)
-                        )
+                    val myCommentName = "أنت (أنا)"
+                    val likedPosts = posts.filter { it.isLiked }
+                    val commentedPosts = posts.filter { p ->
+                        p.commentsList.any { it.authorName == myCommentName }
                     }
+                    val joinedRooms = chatRooms.filter { it.isJoined }
 
+                    // كل تصنيف = الأيقونة + العنوان + عناصره (سطر رئيسي، سطر وصف)
                     val activityCategories = listOf(
-                        Triple(Icons.Default.Favorite, "الإعجابات", "لا يوجد نشاط بعد"),
-                        Triple(Icons.Default.ChatBubbleOutline, "التعليقات", "لا يوجد نشاط بعد"),
-                        Triple(Icons.Default.Share, "المشاركات", "لا يوجد نشاط بعد"),
-                        Triple(Icons.Default.DeleteOutline, "المحتوى المحذوف", "لا يوجد نشاط بعد"),
-                        Triple(Icons.Default.MeetingRoom, "الغرف المنضم إليها", "لا يوجد نشاط بعد")
+                        Triple(
+                            Icons.Default.Favorite,
+                            "الإعجابات",
+                            likedPosts.map { p ->
+                                p.authorName to (if (p.content.isBlank()) "منشور وسائط" else p.content)
+                            }
+                        ),
+                        Triple(
+                            Icons.Default.ChatBubbleOutline,
+                            "التعليقات",
+                            commentedPosts.map { p ->
+                                val myComment = p.commentsList.firstOrNull { it.authorName == myCommentName }
+                                p.authorName to (myComment?.text ?: "")
+                            }
+                        ),
+                        Triple(
+                            Icons.Default.Share,
+                            "المشاركات",
+                            emptyList<Pair<String, String>>()
+                        ),
+                        Triple(
+                            Icons.Default.DeleteOutline,
+                            "المحتوى المحذوف",
+                            emptyList<Pair<String, String>>()
+                        ),
+                        Triple(
+                            Icons.Default.MeetingRoom,
+                            "الغرف المنضم إليها",
+                            joinedRooms.map { r -> r.name to "${r.memberCount} عضو · ${r.category}" }
+                        )
                     )
 
-                    items(activityCategories) { (icon, title, subtitle) ->
-                        Card(
-                            modifier = Modifier.fillMaxWidth(),
-                            shape = RoundedCornerShape(14.dp),
-                            colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
-                            elevation = CardDefaults.cardElevation(defaultElevation = 1.dp)
-                        ) {
-                            Row(
+                    val selected = activityCategories.firstOrNull { it.second == activityDetail }
+
+                    if (selected == null) {
+                        item {
+                            Text(
+                                text = "النشاط 📋",
+                                style = MaterialTheme.typography.titleSmall.copy(fontWeight = FontWeight.Bold)
+                            )
+                        }
+
+                        items(activityCategories) { (icon, title, entries) ->
+                            Card(
                                 modifier = Modifier
                                     .fillMaxWidth()
-                                    .padding(horizontal = 14.dp, vertical = 12.dp),
-                                verticalAlignment = Alignment.CenterVertically,
-                                horizontalArrangement = Arrangement.spacedBy(10.dp)
+                                    .clickable { activityDetail = title },
+                                shape = RoundedCornerShape(14.dp),
+                                colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
+                                elevation = CardDefaults.cardElevation(defaultElevation = 1.dp)
                             ) {
-                                Box(
+                                Row(
                                     modifier = Modifier
-                                        .size(36.dp)
-                                        .clip(CircleShape)
-                                        .background(MujtamaPrimary.copy(alpha = 0.15f)),
-                                    contentAlignment = Alignment.Center
+                                        .fillMaxWidth()
+                                        .padding(horizontal = 14.dp, vertical = 12.dp),
+                                    verticalAlignment = Alignment.CenterVertically,
+                                    horizontalArrangement = Arrangement.spacedBy(10.dp)
                                 ) {
+                                    Box(
+                                        modifier = Modifier
+                                            .size(36.dp)
+                                            .clip(CircleShape)
+                                            .background(MujtamaPrimary.copy(alpha = 0.15f)),
+                                        contentAlignment = Alignment.Center
+                                    ) {
+                                        Icon(
+                                            imageVector = icon,
+                                            contentDescription = null,
+                                            tint = MujtamaPrimary,
+                                            modifier = Modifier.size(18.dp)
+                                        )
+                                    }
+                                    Column(modifier = Modifier.weight(1f)) {
+                                        Text(text = title, fontWeight = FontWeight.Bold, fontSize = 13.sp)
+                                        Text(
+                                            text = if (entries.isEmpty()) "لا يوجد نشاط بعد"
+                                            else "${entries.size} عنصر",
+                                            fontSize = 11.sp,
+                                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                                        )
+                                    }
                                     Icon(
-                                        imageVector = icon,
+                                        imageVector = Icons.Default.ChevronLeft,
                                         contentDescription = null,
-                                        tint = MujtamaPrimary,
-                                        modifier = Modifier.size(18.dp)
+                                        tint = MaterialTheme.colorScheme.onSurfaceVariant
                                     )
                                 }
-                                Column(modifier = Modifier.weight(1f)) {
-                                    Text(text = title, fontWeight = FontWeight.Bold, fontSize = 13.sp)
-                                    Text(text = subtitle, fontSize = 11.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                            }
+                        }
+                    } else if (selected.third.isEmpty()) {
+                        item {
+                            Card(
+                                modifier = Modifier.fillMaxWidth(),
+                                shape = RoundedCornerShape(14.dp),
+                                colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface)
+                            ) {
+                                Column(
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .padding(24.dp),
+                                    horizontalAlignment = Alignment.CenterHorizontally,
+                                    verticalArrangement = Arrangement.spacedBy(8.dp)
+                                ) {
+                                    Icon(
+                                        imageVector = selected.first,
+                                        contentDescription = null,
+                                        tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                                        modifier = Modifier.size(40.dp)
+                                    )
+                                    Text(
+                                        text = "لا يوجد نشاط بعد",
+                                        fontWeight = FontWeight.Bold,
+                                        fontSize = 13.sp
+                                    )
+                                }
+                            }
+                        }
+                    } else {
+                        items(selected.third) { (lineTitle, lineSubtitle) ->
+                            Card(
+                                modifier = Modifier.fillMaxWidth(),
+                                shape = RoundedCornerShape(14.dp),
+                                colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
+                                elevation = CardDefaults.cardElevation(defaultElevation = 1.dp)
+                            ) {
+                                Row(
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .padding(horizontal = 14.dp, vertical = 12.dp),
+                                    verticalAlignment = Alignment.CenterVertically,
+                                    horizontalArrangement = Arrangement.spacedBy(10.dp)
+                                ) {
+                                    Box(
+                                        modifier = Modifier
+                                            .size(36.dp)
+                                            .clip(CircleShape)
+                                            .background(MujtamaPrimary.copy(alpha = 0.15f)),
+                                        contentAlignment = Alignment.Center
+                                    ) {
+                                        Icon(
+                                            imageVector = selected.first,
+                                            contentDescription = null,
+                                            tint = MujtamaPrimary,
+                                            modifier = Modifier.size(18.dp)
+                                        )
+                                    }
+                                    Column(modifier = Modifier.weight(1f)) {
+                                        Text(
+                                            text = lineTitle,
+                                            fontWeight = FontWeight.Bold,
+                                            fontSize = 13.sp,
+                                            maxLines = 1
+                                        )
+                                        Text(
+                                            text = lineSubtitle,
+                                            fontSize = 11.sp,
+                                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                            maxLines = 2
+                                        )
+                                    }
                                 }
                             }
                         }
                     }
                 }
+
      
                 // -------------------------------------------------------------
                 // Page: الإشعارات
