@@ -71,15 +71,6 @@ fun GiftVideoOverlay(
                 drawContent()
                 val f = fadeFraction
                 drawRect(
-                    brush = Brush.horizontalGradient(
-                        0f to Color.Transparent,
-                        f to Color.Black,
-                        1f - f to Color.Black,
-                        1f to Color.Transparent
-                    ),
-                    blendMode = BlendMode.DstIn
-                )
-                drawRect(
                     brush = Brush.verticalGradient(
                         0f to Color.Transparent,
                         f to Color.Black,
