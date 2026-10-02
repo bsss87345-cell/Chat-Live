@@ -29,7 +29,8 @@ import kotlinx.coroutines.launch
 fun MainScreen(viewModel: SocialAppViewModel) {
     // Force full RTL layout for Arabic user experience
     CompositionLocalProvider(LocalLayoutDirection provides LayoutDirection.Rtl) {
-        val isLoggedIn by viewModel.isLoggedIn.collectAsStateWithLifecycle()
+            val shareContext = LocalContext.current
+            val isLoggedIn by viewModel.isLoggedIn.collectAsStateWithLifecycle()
 
         if (!isLoggedIn) {
             AuthScreen(
