@@ -1644,9 +1644,10 @@ giftVideoRes?.let { res ->
             GiftVideoOverlay(
                 videoRes = res,
                 modifier = Modifier
-                    .align(Alignment.Center)
+                    .align(Alignment.BottomCenter)
                     .fillMaxWidth()
-                    .aspectRatio(9f / 13f),
+                    .aspectRatio(9f / 11f),
+                fadeFraction = 0.25f,
                 onFinished = { giftVideoRes = null }
             )
         }
