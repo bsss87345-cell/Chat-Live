@@ -290,7 +290,6 @@ onSendImage = { convId, uri -> viewModel.sendMessage(convId, "", ChatMessageType
                         }
 
                         AppTab.TEAM -> {
-                            val myTeam by viewModel.myTeam.collectAsStateWithLifecycle()
                             val userProfile by viewModel.userProfile.collectAsStateWithLifecycle()
                             val referrals by viewModel.referrals.collectAsStateWithLifecycle()
                             val friendRequests by viewModel.friendRequests.collectAsStateWithLifecycle()
