@@ -297,14 +297,13 @@ onSendImage = { convId, uri -> viewModel.sendMessage(convId, "", ChatMessageType
 
                             TeamScreen(
                                 userProfile = userProfile,
-                                team = myTeam,
                                 referrals = referrals,
                                 friendRequests = friendRequests,
                                 onBackClick = { viewModel.setTab(AppTab.FEED) },
                                 onSendFriendRequest = { viewModel.sendFriendRequest(it) },
                                 onAcceptFriendRequest = { viewModel.acceptFriendRequest(it) },
-                                onRejectFriendRequest = { viewModel.rejectFriendRequest(it) },
-                                onSimulateReferralJoined = { viewModel.simulateNewReferralJoined(it) }
+                                onRejectFriendRequest = { viewModel.rejectFriendRequest(it) }
+                                
                             )
                         }
 
