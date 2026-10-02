@@ -4550,7 +4550,8 @@ data class GiftItem(
     val name: String,
     val emoji: String,
     val colorHex: Long,
-    val price: Int = 10
+    val price: Int = 10,
+    val videoRes: Int? = null
 )
 
 private val roomGiftCatalog = listOf(
