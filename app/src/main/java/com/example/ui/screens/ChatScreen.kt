@@ -904,6 +904,8 @@ fun ChatRoomView(
     val inputFocusRequester = remember { FocusRequester() }
     val keyboardController = LocalSoftwareKeyboardController.current
     val activeGiftEvents = remember { androidx.compose.runtime.mutableStateListOf<GiftSentEvent>() }
+    var giftVideoRes by remember { mutableStateOf<Int?>(null) }
+    var giftVideoKey by remember { mutableStateOf(0) }
     val photoPickerLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.PickVisualMedia(),
         onResult = { uri: Uri? ->
