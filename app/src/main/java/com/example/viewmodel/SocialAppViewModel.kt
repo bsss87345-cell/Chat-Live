@@ -166,7 +166,14 @@ class SocialAppViewModel : ViewModel() {
      * تنحفظ تلقائياً بلا ما نتذكر شي.
      */
     private fun restoreProfileAndWallet() {
-        LocalStore.loadProfile()?.let { _userProfile.value = it }
+                LocalStore.loadProfile()?.let { saved ->
+            _userProfile.value = saved
+            // ترحيل: الحسابات القديمة كان اليوزر فيها نفس الرقم — نولّد لها يوزراً حقيقياً
+            val h = saved.handle.removePrefix("@")
+            if (h.isBlank() || h.all { c -> c.isDigit() }) {
+                _userProfile.update { it.copy(handle = generateUniqueHandle(it.name, it.email)) }
+            }
+        }
         LocalStore.loadWallet()?.let { snapshot ->
             _walletBalance.value = snapshot.balance
             _transactions.value = snapshot.transactions
