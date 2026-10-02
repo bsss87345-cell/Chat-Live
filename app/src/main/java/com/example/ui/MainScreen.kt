@@ -323,7 +323,10 @@ onSendImage = { convId, uri -> viewModel.sendMessage(convId, "", ChatMessageType
                                 onOpenAccountSettings = { viewModel.openAccountSettings() },
                                 onUpdateAvatarImage = { viewModel.updateUserAvatarUrl(it) },
                                 onLikeClick = { viewModel.toggleLike(it) },
-                                onShareClick = { viewModel.sharePost(it) },
+                                onShareClick = { post ->
+                                sharePostExternally(shareContext, post)
+                                viewModel.sharePost(post)
+                                },
                                 activeCommentPostId = activeCommentPostId,
                                 onCommentClick = { viewModel.openComments(it) },
                                 onCloseComments = { viewModel.closeComments() },
