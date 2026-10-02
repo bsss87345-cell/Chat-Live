@@ -180,14 +180,12 @@ private val TeamGlowGold = Color(0xFFF4D899)
 @Composable
 fun TeamScreen(
     userProfile: UserProfile,
-    team: Team? = null,
     referrals: List<ReferredUser>,
     friendRequests: List<FriendRequest>,
     onBackClick: () -> Unit,
     onSendFriendRequest: (String) -> Unit,
     onAcceptFriendRequest: (String) -> Unit,
     onRejectFriendRequest: (String) -> Unit,
-    onSimulateReferralJoined: (String) -> Unit = {},
     modifier: Modifier = Modifier
 ) {
     var activeSubSection by remember { mutableStateOf(TeamSubSection.REFERRALS) }
@@ -326,7 +324,6 @@ fun TeamScreen(
                         ReferralsSection(
                             userProfile = userProfile,
                             referrals = referrals,
-                            onSimulateReferralJoined = onSimulateReferralJoined
                         )
                     }
                     TeamSubSection.FRIEND_REQUESTS -> {
@@ -358,7 +355,6 @@ fun TeamScreen(
 fun ReferralsSection(
     userProfile: UserProfile,
     referrals: List<ReferredUser>,
-    onSimulateReferralJoined: (String) -> Unit = {},
     modifier: Modifier = Modifier
 ) {
     val context = LocalContext.current
