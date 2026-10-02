@@ -337,7 +337,9 @@ onSendImage = { convId, uri -> viewModel.sendMessage(convId, "", ChatMessageType
                                 onLoadFollowingFor = { userId -> viewModel.getFollowingOf(userId) },
                                 onLoadPostsFor = { userId -> viewModel.getPostsByUserId(userId) },
                                 isUserFollowing = { userId -> viewModel.isFollowing(userId) },
-                                onToggleFollow = { userId -> viewModel.toggleFollow(userId) }
+                                onToggleFollow = { userId -> viewModel.toggleFollow(userId) },
+                                chatRooms = profileChatRooms,
+                                onOpenRoom = { roomId -> viewModel.openRoom(roomId) }
                                 )
                         }
                     }
