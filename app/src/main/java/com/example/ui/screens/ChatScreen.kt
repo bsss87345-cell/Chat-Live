@@ -4598,7 +4598,7 @@ private fun GiftVideoThumbPlayer(
     val ctx = androidx.compose.ui.platform.LocalContext.current
     var finished by remember { mutableStateOf(!play) }
     if (finished) {
-        GiftVideoThumb(videoRes = videoRes, emoji = emoji, modifier = modifier)
+        GiftLastFrameThumb(videoRes = videoRes, emoji = emoji, modifier = modifier)
     } else {
         val player = remember(videoRes) {
             androidx.media3.exoplayer.ExoPlayer.Builder(ctx).build().apply {
