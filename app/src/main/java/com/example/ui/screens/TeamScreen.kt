@@ -358,7 +358,7 @@ fun TeamScreen(
 fun ReferralsSection(
     userProfile: UserProfile,
     referrals: List<ReferredUser>,
-    onSimulateReferralJoined: (String) -> Unit,
+    onSimulateReferralJoined: (String) -> Unit = {},
     modifier: Modifier = Modifier
 ) {
     val context = LocalContext.current
