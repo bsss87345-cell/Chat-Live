@@ -454,7 +454,7 @@ class SocialAppViewModel : ViewModel() {
             id = "p_${System.currentTimeMillis()}",
             authorId = profile.id,
             authorName = profile.name,
-            authorHandle = "ID: ${profile.id}",
+            authorHandle = profile.handle.ifBlank { "ID: ${profile.id}" },
             authorAvatarUrl = profile.avatarUrl,
             authorRole = "مشرف فريق فرسان الضاد",
             timeAgo = "الآن",
