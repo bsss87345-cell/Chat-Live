@@ -33,8 +33,8 @@ import com.example.R
 fun GiftVideoOverlay(
     @RawRes videoRes: Int,
     modifier: Modifier = Modifier,
-    fadeFraction: Float = 0.18f,
-    volume: Float = 0f,
+    fadeFraction: Float = 0.10f,
+    volume: Float = 1f,
     onFinished: () -> Unit = {}
 ) {
     val context = LocalContext.current
