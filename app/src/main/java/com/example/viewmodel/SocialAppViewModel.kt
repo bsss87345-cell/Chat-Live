@@ -434,6 +434,9 @@ class SocialAppViewModel : ViewModel() {
                        } else post
             }
         }
+                        } else post
+            }
+        }
         persistMyPosts()
         _userMessage.value = "تمت إضافة تعليقك بنجاح!"
     }
