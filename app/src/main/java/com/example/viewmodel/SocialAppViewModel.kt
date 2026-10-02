@@ -431,7 +431,7 @@ class SocialAppViewModel : ViewModel() {
                         commentsCount = post.commentsCount + 1,
                         commentsList = listOf(newComment) + post.commentsList
                     )
-                                              } else post
+                        } else post
             }
         }
         persistMyPosts()
