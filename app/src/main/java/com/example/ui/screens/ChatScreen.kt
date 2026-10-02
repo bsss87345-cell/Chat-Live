@@ -2064,7 +2064,7 @@ val offsetY = slotY.dp
                 ) {
                     Icon(Icons.Default.Block, contentDescription = null, tint = neonCyan, modifier = Modifier.size(26.dp))
                 }
-
+                if (isOwner) {
                 NeonSettingsRow(
                     label = "تغيير خلفية الدردشة",
                     accent = neonMagenta,
