@@ -1775,7 +1775,7 @@ fun toggleOwnerVoiceMute(roomId: String) {
             )
         }
         _isLoggedIn.value = true
-        _userMessage.value = "مرحباً بك ${account.name}! تم تعيين معرّفك الرقمي الفريد: $generatedId"
+        _userMessage.value = "مرحباً بك ${account.name}! اسم المستخدم الخاص بك: $newHandle"
     }
 
     fun logoutUser() {
