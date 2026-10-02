@@ -1950,6 +1950,7 @@ val offsetY = slotY.dp
 
                                 // Moderation controls (if I am Owner/Admin and target is not myself)
                                 if (isOwnerOrAdmin && !isTargetSelf) {
+                                if (room.isOwner || (member.role != RoomMemberRole.OWNER && member.role != RoomMemberRole.ADMIN)) {
                                     // Mute toggle
                                     IconButton(
                                         onClick = { onMuteMember(member.id) },
