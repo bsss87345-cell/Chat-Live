@@ -4638,6 +4638,68 @@ private fun GiftVideoThumbPlayer(
     }
 }
 
+private val giftLastFrameCache = java.util.concurrent.ConcurrentHashMap<Int, android.graphics.Bitmap>()
+
+private fun loadGiftLastFrame(ctx: android.content.Context, videoRes: Int): android.graphics.Bitmap? {
+    giftLastFrameCache[videoRes]?.let { return it }
+    val r = android.media.MediaMetadataRetriever()
+    return try {
+        ctx.resources.openRawResourceFd(videoRes).use { afd ->
+            r.setDataSource(afd.fileDescriptor, afd.startOffset, afd.length)
+        }
+        val durMs = r.extractMetadata(android.media.MediaMetadataRetriever.METADATA_KEY_DURATION)?.toLongOrNull() ?: 0L
+        val timeUs = (durMs - 100L).coerceAtLeast(0L) * 1000L
+        val raw = r.getFrameAtTime(timeUs, android.media.MediaMetadataRetriever.OPTION_CLOSEST)
+            ?: r.getFrameAtTime(timeUs, android.media.MediaMetadataRetriever.OPTION_CLOSEST_SYNC)
+        raw?.let { b ->
+            val scale = 160f / maxOf(b.width, b.height).coerceAtLeast(1)
+            val out = if (scale < 1f) {
+                android.graphics.Bitmap.createScaledBitmap(
+                    b,
+                    (b.width * scale).toInt().coerceAtLeast(1),
+                    (b.height * scale).toInt().coerceAtLeast(1),
+                    true
+                )
+            } else b
+            if (out !== b) b.recycle()
+            giftLastFrameCache[videoRes] = out
+            out
+        }
+    } catch (e: Exception) {
+        null
+    } finally {
+        r.release()
+    }
+}
+
+@Composable
+private fun GiftLastFrameThumb(videoRes: Int, emoji: String, modifier: Modifier = Modifier) {
+    val ctx = androidx.compose.ui.platform.LocalContext.current
+    var frame by remember(videoRes) { mutableStateOf<android.graphics.Bitmap?>(giftLastFrameCache[videoRes]) }
+    var tried by remember(videoRes) { mutableStateOf(frame != null) }
+    LaunchedEffect(videoRes) {
+        if (frame == null) {
+            frame = kotlinx.coroutines.withContext(kotlinx.coroutines.Dispatchers.IO) {
+                loadGiftLastFrame(ctx, videoRes)
+            }
+            tried = true
+        }
+    }
+    Box(modifier = modifier, contentAlignment = Alignment.Center) {
+        val b = frame
+        if (b != null) {
+            AsyncImage(
+                model = b,
+                contentDescription = null,
+                modifier = Modifier.fillMaxSize().clip(RoundedCornerShape(10.dp)),
+                contentScale = ContentScale.Crop
+            )
+        } else if (tried) {
+            Text(text = emoji, fontSize = 26.sp)
+        }
+    }
+}
+
 data class GiftItem(
     val id: String,
     val name: String,
