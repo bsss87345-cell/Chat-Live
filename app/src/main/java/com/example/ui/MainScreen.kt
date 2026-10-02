@@ -23,6 +23,7 @@ import com.example.ui.components.MujtamaBottomNav
 import com.example.ui.components.MujtamaTopBar
 import com.example.ui.screens.*
 import com.example.ui.screens.auth.AuthScreen
+import com.example.ui.share.sharePostExternally
 import com.example.viewmodel.SocialAppViewModel
 import kotlinx.coroutines.launch
 
