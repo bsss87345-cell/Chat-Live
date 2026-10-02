@@ -2344,7 +2344,7 @@ fun CameraPreviewView(
     var camera by remember(lensFacing) { mutableStateOf<Camera?>(null) }
     
     var tapOffset by remember { mutableStateOf<Offset?>(null) }
-    val previewView = remember { PreviewView(context) }
+    val previewView = remember(lensFacing) { PreviewView(context) }
 
     LaunchedEffect(torchEnabled, camera) {
         val cam = camera ?: return@LaunchedEffect
