@@ -139,7 +139,10 @@ fun MainScreen(viewModel: SocialAppViewModel) {
                         onBuyItem = { viewModel.buyStoreItem(it) },
                         onLikePost = { viewModel.toggleLike(it) },
                         onCommentPost = { viewModel.openComments(it) },
-                        onSharePost = { viewModel.sharePost(it) },
+                        onSharePost = { post ->
+                        sharePostExternally(shareContext, post)
+                        viewModel.sharePost(post)
+                        },
                         // TODO: تجريبي فقط - يُحذف قبل أي إطلاق فعلي (زر شحن حقيقي لاحقاً)
                         onNavigateToRecharge = { viewModel.addTestBalance() },
                         onUpdateProfile = { name, bio, emoji -> viewModel.updateUserProfile(name, bio, emoji) },
