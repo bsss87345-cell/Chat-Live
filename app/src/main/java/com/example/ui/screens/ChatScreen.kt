@@ -908,6 +908,7 @@ fun ChatRoomView(
     val activeGiftEvents = remember { androidx.compose.runtime.mutableStateListOf<GiftSentEvent>() }
     var giftVideoRes by remember { mutableStateOf<Int?>(null) }
     var giftVideoKey by remember { mutableStateOf(0) }
+    var giftThumbPlayed by remember { mutableStateOf(false) }
     val photoPickerLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.PickVisualMedia(),
         onResult = { uri: Uri? ->
