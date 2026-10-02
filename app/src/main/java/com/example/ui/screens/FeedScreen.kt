@@ -2175,25 +2175,20 @@ fun StoryCreationDialog(
                     }
                 }
 
-                                StoryTopBar(
-                    currentMode = currentMode,
-                    isRecording = isRecording,
-                    recordDuration = recordDuration,
-                    flashMode = flashMode,
-                    onToggleFlash = {
-                        flashMode = when (flashMode) {
-                            FlashMode.OFF -> FlashMode.ON
-                            FlashMode.ON -> FlashMode.AUTO
-                            FlashMode.AUTO -> FlashMode.OFF
-                        }
-                    },
-                    onClose = onDismiss
-                )
-
-                // Bottom Shutter Controls
-                StoryBottomShutterBar(
-                    currentMode = currentMode,
-                    isRecording = isRecording,
+                               StoryCameraControlsOverlay(
+    currentMode = currentMode,
+    isRecording = isRecording,
+    recordDuration = recordDuration,
+    flashMode = flashMode,
+    onToggleFlash = {
+        flashMode = when (flashMode) {
+            FlashMode.OFF -> FlashMode.ON
+            FlashMode.ON -> FlashMode.AUTO
+            FlashMode.AUTO -> FlashMode.OFF
+        }
+    },
+    onClose = onDismiss,
+    onSelectMode = { currentMode = it }, 
                     onFlipCamera = {
                         lensFacing = if (lensFacing == CameraSelector.LENS_FACING_BACK)
                             CameraSelector.LENS_FACING_FRONT
