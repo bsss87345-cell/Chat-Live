@@ -312,6 +312,7 @@ onSendImage = { convId, uri -> viewModel.sendMessage(convId, "", ChatMessageType
                             val followersList by viewModel.followersList.collectAsStateWithLifecycle()
             val followingList by viewModel.followingList.collectAsStateWithLifecycle()
             val activeCommentPostId by viewModel.activeCommentPostId.collectAsStateWithLifecycle()
+            val profileChatRooms by viewModel.chatRooms.collectAsStateWithLifecycle()
             ProfileScreen(
                                 userProfile = userProfile,
                                 posts = posts,
