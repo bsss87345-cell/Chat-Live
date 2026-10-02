@@ -4648,7 +4648,7 @@ data class GiftItem(
 )
 
 private val roomGiftCatalog = listOf(
-    GiftItem(id = "golden_lions", name = "الأسد الذهبي والأنثى", emoji = "👑", colorHex = 0xFFFFD700, price = 10, videoRes = R.raw.gift_golden_lions),
+    GiftItem(id = "golden_lions", name = "الأسد الذهبي والأنثى", emoji = "👑", colorHex = 0xFFFFD700, price = 10, videoRes = R.raw.gift_golden_lion
     GiftItem(id = "lion", name = "أسد", emoji = "🦁", colorHex = 0xFFFF6F00, price = 10, videoRes = R.raw.gift_dragon),
     GiftItem(id = "rose", name = "وردة", emoji = "🌹", colorHex = 0xFFE0245E, price = 10),
     GiftItem(id = "teddy_bear", name = "دبدوب", emoji = "🧸", colorHex = 0xFFB5651D, price = 10),
