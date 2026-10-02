@@ -180,7 +180,7 @@ private val TeamGlowGold = Color(0xFFF4D899)
 @Composable
 fun TeamScreen(
     userProfile: UserProfile,
-    team: Team,
+    team: Team? = null,
     referrals: List<ReferredUser>,
     friendRequests: List<FriendRequest>,
     onBackClick: () -> Unit,
