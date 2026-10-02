@@ -1177,7 +1177,7 @@ Box(modifier = Modifier.fillMaxSize()) {
                 roomImageUrl = room.imageUrl,
                 displayId = displayId,
                 showJoin = !room.isJoined && !room.isOwner,
-                showSettings = room.isOwner,
+                showSettings = isOwnerOrAdmin,
                 onBack = onBack,
                 onJoin = { onJoinRoom() },
                 onMembers = { showMembersSheet = true },
