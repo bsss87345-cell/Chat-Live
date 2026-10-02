@@ -4563,6 +4563,26 @@ fun GamePickerDialog(
         }
     }
 }
+@Composable
+private fun GiftVideoThumb(videoRes: Int, emoji: String, modifier: Modifier = Modifier) {
+    val ctx = androidx.compose.ui.platform.LocalContext.current
+    val loader = remember(ctx) {
+        coil.ImageLoader.Builder(ctx)
+            .components { add(coil.decode.VideoFrameDecoder.Factory()) }
+            .build()
+    }
+    Box(modifier = modifier, contentAlignment = Alignment.Center) {
+        Text(text = emoji, fontSize = 26.sp)
+        AsyncImage(
+            model = "android.resource://${ctx.packageName}/$videoRes",
+            imageLoader = loader,
+            contentDescription = null,
+            modifier = Modifier.fillMaxSize().clip(RoundedCornerShape(10.dp)),
+            contentScale = ContentScale.Crop
+        )
+    }
+}
+
 data class GiftItem(
     val id: String,
     val name: String,
