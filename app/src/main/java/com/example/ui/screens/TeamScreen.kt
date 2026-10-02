@@ -187,7 +187,7 @@ fun TeamScreen(
     onSendFriendRequest: (String) -> Unit,
     onAcceptFriendRequest: (String) -> Unit,
     onRejectFriendRequest: (String) -> Unit,
-    onSimulateReferralJoined: (String) -> Unit,
+    onSimulateReferralJoined: (String) -> Unit = {},
     modifier: Modifier = Modifier
 ) {
     var activeSubSection by remember { mutableStateOf(TeamSubSection.REFERRALS) }
