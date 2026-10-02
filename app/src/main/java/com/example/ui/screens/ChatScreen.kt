@@ -4755,11 +4755,16 @@ fun GiftBoxDialog(
                             .padding(vertical = 10.dp),
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {
-             if (gift.videoRes != null) {
-             GiftVideoThumb(videoRes = gift.videoRes, emoji = gift.emoji, modifier = Modifier.size(34.dp))
-             } else {
-             Text(text = gift.emoji, fontSize = 26.sp)
-                        }
+            if (gift.videoRes != null) {
+    GiftVideoThumbPlayer(
+        videoRes = gift.videoRes,
+        emoji = gift.emoji,
+        play = playThumbsOnce,
+        modifier = Modifier.size(34.dp)
+    )
+} else {
+    Text(text = gift.emoji, fontSize = 26.sp)
+            } 
                         Spacer(modifier = Modifier.height(6.dp))
                         Text(
                             text = gift.name,
