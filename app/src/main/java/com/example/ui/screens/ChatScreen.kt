@@ -4584,6 +4584,57 @@ private fun GiftVideoThumb(videoRes: Int, emoji: String, modifier: Modifier = Mo
     }
 }
 
+@OptIn(androidx.media3.common.util.UnstableApi::class)
+@Composable
+private fun GiftVideoThumbPlayer(
+    videoRes: Int,
+    emoji: String,
+    play: Boolean,
+    modifier: Modifier = Modifier
+) {
+    val ctx = androidx.compose.ui.platform.LocalContext.current
+    var finished by remember { mutableStateOf(!play) }
+    if (finished) {
+        GiftVideoThumb(videoRes = videoRes, emoji = emoji, modifier = modifier)
+    } else {
+        val player = remember(videoRes) {
+            androidx.media3.exoplayer.ExoPlayer.Builder(ctx).build().apply {
+                setMediaItem(
+                    androidx.media3.common.MediaItem.fromUri(
+                        androidx.media3.datasource.RawResourceDataSource.buildRawResourceUri(videoRes)
+                    )
+                )
+                repeatMode = androidx.media3.common.Player.REPEAT_MODE_OFF
+                volume = 0f
+                playWhenReady = true
+                prepare()
+            }
+        }
+        androidx.compose.runtime.DisposableEffect(player) {
+            val l = object : androidx.media3.common.Player.Listener {
+                override fun onPlaybackStateChanged(state: Int) {
+                    if (state == androidx.media3.common.Player.STATE_ENDED) finished = true
+                }
+            }
+            player.addListener(l)
+            onDispose {
+                player.removeListener(l)
+                player.release()
+            }
+        }
+        Box(modifier = modifier.clip(RoundedCornerShape(10.dp))) {
+            androidx.compose.ui.viewinterop.AndroidView(
+                modifier = Modifier.fillMaxSize(),
+                factory = { c ->
+                    (android.view.LayoutInflater.from(c)
+                        .inflate(R.layout.view_post_player, null) as androidx.media3.ui.PlayerView)
+                        .also { it.player = player }
+                }
+            )
+        }
+    }
+}
+
 data class GiftItem(
     val id: String,
     val name: String,
