@@ -1645,7 +1645,7 @@ giftVideoRes?.let { res ->
                 videoRes = res,
                 modifier = Modifier
                     .align(Alignment.Center)
-                    .fillMaxWidth(0.8f)
+                    .fillMaxWidth()
                     .aspectRatio(9f / 16f),
                 onFinished = { giftVideoRes = null }
             )
