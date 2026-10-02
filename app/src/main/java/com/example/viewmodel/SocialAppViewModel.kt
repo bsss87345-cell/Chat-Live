@@ -441,11 +441,10 @@ class SocialAppViewModel : ViewModel() {
         _userMessage.value = "تمت إضافة تعليقك بنجاح!"
     }
 
-    fun sharePost(post: Post) {
+        fun sharePost(post: Post) {
             _posts.update { list ->
             list.map { if (it.id == post.id) it.copy(sharesCount = it.sharesCount + 1) else it }
         }
-        persistMyPosts()
         persistMyPosts()
         _userMessage.value = "تم نسخ رابط المنشور ومشاركته مع الأصدقاء!"
     }
