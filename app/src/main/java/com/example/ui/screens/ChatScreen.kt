@@ -4863,9 +4863,9 @@ data class GiftSentEvent(
     val senderAvatarUrl: String?,
     val receiverName: String,
     val giftCount: Int,
-    val giftEmoji: String = ""
+    val giftEmoji: String = "",
+    val videoRes: Int? = null
 )
-
 @Composable
 fun GiftSentBanner(
     senderName: String,
