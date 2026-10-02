@@ -1383,7 +1383,9 @@ Box(modifier = Modifier.fillMaxSize()) {
                             true
                         },
                         members = room.members,
-                        walletBalance = walletBalance
+                        walletBalance = walletBalance,
+                            playThumbs = !giftThumbPlayed,
+                            onThumbsPlayed = { giftThumbPlayed = true }
                     )
                 }
 
