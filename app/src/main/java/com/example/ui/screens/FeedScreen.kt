@@ -2107,6 +2107,14 @@ fun StoryCreationDialog(
             decorFitsSystemWindows = false
         )
     ) {
+        val dialogView = LocalView.current
+        SideEffect {
+            val dialogWindow = (dialogView.parent as? DialogWindowProvider)?.window
+            dialogWindow?.setLayout(
+                WindowManager.LayoutParams.MATCH_PARENT,
+                WindowManager.LayoutParams.MATCH_PARENT
+            )
+        }
         Box(
             modifier = Modifier
                 .fillMaxSize()
