@@ -443,6 +443,7 @@ class SocialAppViewModel : ViewModel() {
             list.map { if (it.id == post.id) it.copy(sharesCount = it.sharesCount + 1) else it }
         }
         persistMyPosts()
+        persistMyPosts()
         _userMessage.value = "تم نسخ رابط المنشور ومشاركته مع الأصدقاء!"
     }
 
