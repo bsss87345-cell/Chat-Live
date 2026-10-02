@@ -4657,7 +4657,9 @@ fun GiftBoxDialog(
     onDismiss: () -> Unit,
     onSendGift: (GiftItem, RoomMember?) -> Boolean,
     members: List<RoomMember> = emptyList(),
-    walletBalance: Int = 0
+    walletBalance: Int = 0,
+    playThumbs: Boolean = false,
+    onThumbsPlayed: () -> Unit = {}
 ) {
     var selectedMember by remember { mutableStateOf<RoomMember?>(null) }
     var showMemberPicker by remember { mutableStateOf(false) }
