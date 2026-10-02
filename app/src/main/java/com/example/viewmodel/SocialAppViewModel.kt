@@ -1736,11 +1736,37 @@ fun toggleOwnerVoiceMute(roomId: String) {
         _userMessage.value = "تم تحديث خصوصية الحساب إلى (${_userProfile.value.privacyLevel})"
     }
 
+        /**
+     * يولّد اسم مستخدم إنجليزي من البريد (أو الاسم إن تعذّر)، بأحرف a-z وأرقام و_ فقط.
+     * ملاحظة: التفرّد الحقيقي يحتاج خادماً — حالياً نفحص مقابل المعروف محلياً فقط.
+     */
+    fun generateUniqueHandle(name: String, email: String): String {
+        val source = email.substringBefore("@").ifBlank { name }
+        val base = source
+            .lowercase()
+            .map { if (it in 'a'..'z' || it in '0'..'9') it else '_' }
+            .joinToString("")
+            .replace(Regex("_+"), "_")
+            .trim('_')
+            .take(15)
+            .ifBlank { "user" }
+
+        val taken = _posts.value.map { it.authorHandle }.toSet() + _userProfile.value.handle
+        var candidate = "@$base"
+        var attempts = 0
+        while (taken.contains(candidate) && attempts < 50) {
+            candidate = "@$base${(100..9999).random()}"
+            attempts++
+        }
+        return candidate
+    }
+
     fun onAuthSuccess(account: AuthUserAccount, generatedId: String) {
+        val newHandle = generateUniqueHandle(account.name, account.email)
         _userProfile.update { current ->
             current.copy(
                 id = generatedId,
-                handle = generatedId,
+                handle = newHandle,
                 name = account.name,
                 email = account.email,
                 authProvider = "بريد إلكتروني",
