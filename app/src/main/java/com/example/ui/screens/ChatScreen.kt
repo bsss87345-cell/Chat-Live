@@ -1975,7 +1975,7 @@ val offsetY = slotY.dp
                                             modifier = Modifier.size(16.dp)
                                         )
                                     }
-
+                                }
                                     // Block member (Owner only)
                                     if (isOwnerOrAdmin && member.id != "me" && (room.isOwner || (member.role != RoomMemberRole.OWNER && member.role != RoomMemberRole.ADMIN))) {
                                         IconButton(
