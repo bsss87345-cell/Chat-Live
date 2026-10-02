@@ -4668,7 +4668,9 @@ fun GiftBoxDialog(
     var giftErrorTrigger by remember { mutableStateOf(0) }
     val balanceShakeAnim = remember { androidx.compose.animation.core.Animatable(0f) }
     val sheetState = androidx.compose.material3.rememberModalBottomSheetState(skipPartiallyExpanded = true)
-
+    val playThumbsOnce = remember { playThumbs }
+    
+    LaunchedEffect(Unit) { onThumbsPlayed() }
     LaunchedEffect(giftErrorTrigger) {
         if (giftErrorTrigger > 0) {
             balanceShakeAnim.snapTo(0f)
