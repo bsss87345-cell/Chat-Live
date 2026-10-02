@@ -1767,6 +1767,30 @@ giftVideoRes?.let { res ->
                     modifier = Modifier.size(300.dp),
                     contentAlignment = Alignment.Center
                 ) {
+                   val glowPulse = remember { Animatable(0.35f) }
+LaunchedEffect(room.isWheelSpinning) {
+    if (room.isWheelSpinning) {
+        while (true) {
+            glowPulse.animateTo(0.9f, tween(700))
+            glowPulse.animateTo(0.35f, tween(700))
+        }
+    }
+}
+if (room.isWheelSpinning) {
+    Canvas(modifier = Modifier.fillMaxSize()) {
+        val glowRadius = size.minDimension / 2f * 1.18f
+        drawCircle(
+            brush = androidx.compose.ui.graphics.Brush.radialGradient(
+                0f to MujtamaGold.copy(alpha = glowPulse.value),
+                0.8f to MujtamaGold.copy(alpha = glowPulse.value),
+                1f to Color.Transparent,
+                center = center,
+                radius = glowRadius
+            ),
+            radius = glowRadius
+        )
+    }
+} 
                     Box(
                         modifier = Modifier
                             .fillMaxSize()
