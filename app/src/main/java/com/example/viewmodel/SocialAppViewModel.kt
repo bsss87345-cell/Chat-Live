@@ -1544,22 +1544,6 @@ fun toggleOwnerVoiceMute(roomId: String) {
         return newId
     }
 
-    fun simulateNewReferralJoined(newUserName: String = "مستخدم جديد") {
-        val trimmed = newUserName.trim()
-        val randomNum = (100..999).random()
-        val uniqueNumericId = generateUniqueNumericUserId()
-        val newUser = ReferredUser(
-            id = "ref_${System.currentTimeMillis()}",
-            name = if (trimmed.isNotBlank()) trimmed else "عضو جديد #$randomNum",
-            handle = uniqueNumericId,
-            joinedDate = "اليوم",
-            avatarEmoji = listOf("🌟", "🚀", "👤", "🎯", "👑").random()
-        )
-        _referrals.update { it + newUser }
-        addSystemPoints(50, "مكافأة دعوة صديق جديد (${newUser.name})")
-        _userMessage.value = "انضم ${newUser.name} (ID: $uniqueNumericId) عبر رابط دعوتك! أضيفت +50 نقطة لرصيدك."
-    }
-
     fun sendFriendRequest(friendInput: String) {
         val trimmed = friendInput.trim()
         if (trimmed.isBlank()) {
