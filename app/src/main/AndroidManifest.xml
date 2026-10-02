@@ -23,17 +23,28 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.MyApplication">
-        <activity
-            android:name=".MainActivity"
-            android:exported="true"
-            android:label="@string/app_name"
-            android:theme="@style/Theme.App.Starting">
-            <intent-filter>
+       <activity
+         android:name=".MainActivity"
+         android:exported="true"
+         android:label="@string/app_name"
+         android:launchMode="singleTop"
+         android:theme="@style/Theme.App.Starting">
+         <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-                </activity>
+
+            <!-- روابط المنشورات: chatlive://post/<postId> -->
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data
+                    android:host="post"
+                    android:scheme="chatlive" />
+            </intent-filter>
+        </activity>
 
         <!-- يسمح بمشاركة ملفات الصور والفيديو مع التطبيقات الأخرى بأمان.
              أندرويد يمنع تمرير مسارات الملفات مباشرة منذ API 24. -->
