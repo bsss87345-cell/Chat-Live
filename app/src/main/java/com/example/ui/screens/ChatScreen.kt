@@ -1356,6 +1356,7 @@ Box(modifier = Modifier.fillMaxSize()) {
                                 return@GiftBoxDialog false
                             }
                             showGiftBoxDialog = false
+                            gift.videoRes?.let { giftVideoRes = it; giftVideoKey += 1 }
                             val receiverLabel = receiver?.name ?: "الجميع"
                             val existingIndex = activeGiftEvents.indexOfFirst {
                                 it.senderName == (myName.ifBlank { "أنا" }) &&
