@@ -71,8 +71,32 @@ class SocialAppViewModel : ViewModel() {
     )
     val posts: StateFlow<List<Post>> = _posts.asStateFlow()
 
-    private val _activeCommentPostId = MutableStateFlow<String?>(null)
+        private val _activeCommentPostId = MutableStateFlow<String?>(null)
     val activeCommentPostId: StateFlow<String?> = _activeCommentPostId.asStateFlow()
+
+    // --- Deep Link: منشور مطلوب فتحه من رابط خارجي (chatlive://post/<id>) ---
+    private val _pendingPostId = MutableStateFlow<String?>(null)
+    val pendingPostId: StateFlow<String?> = _pendingPostId.asStateFlow()
+
+    /**
+     * يُستدعى عند فتح التطبيق من رابط منشور.
+     * ينقل المستخدم لتبويب الرئيسية ويعلّم المنشور المطلوب حتى تمرر له الخلاصة.
+     */
+    fun openPostFromLink(postId: String) {
+        if (postId.isBlank()) return
+        if (_posts.value.none { it.id == postId }) {
+            _userMessage.value = "المنشور غير متاح على هذا الجهاز"
+            return
+        }
+        _showAccountSettings.value = false
+        _currentTab.value = AppTab.FEED
+        _pendingPostId.value = postId
+    }
+
+    /** تُستدعى بعد ما تخلص الخلاصة من التمرير للمنشور. */
+    fun clearPendingPost() {
+        _pendingPostId.value = null
+    }
 
     // --- Chat State ---
     private val _conversations = MutableStateFlow<List<ChatConversation>>(
