@@ -1637,7 +1637,20 @@ Box(modifier = Modifier.fillMaxSize()) {
         }
     }
 
-if ((room.isWheelSpinning || room.wheelWinnerId != null) && !wheelHidden) {
+giftVideoRes?.let { res ->
+        androidx.compose.runtime.key(giftVideoKey) {
+            GiftVideoOverlay(
+                videoRes = res,
+                modifier = Modifier
+                    .align(Alignment.Center)
+                    .fillMaxWidth(0.8f)
+                    .aspectRatio(9f / 16f),
+                onFinished = { giftVideoRes = null }
+            )
+        }
+    }
+
+    if ((room.isWheelSpinning || room.wheelWinnerId != null) && !wheelHidden) {
         val wheelColors = listOf(
             Color(0xFFFFD700), Color(0xFF2ECC71), Color(0xFF9B59B6), Color(0xFF3498DB),
             Color(0xFFE91E8C), Color(0xFFF39C12), Color(0xFF29ABE2), Color(0xFFFF6B9D)
