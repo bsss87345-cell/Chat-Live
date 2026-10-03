@@ -870,7 +870,7 @@ fun FriendRequestsSection(
  */
 @Composable
 fun AddFriendSection(
-    onSendRequest: (String) -> Unit,
+    onSendRequest: (String) -> Boolean,
     modifier: Modifier = Modifier
 ) {
     var friendQuery by remember { mutableStateOf("") }
