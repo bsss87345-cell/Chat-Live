@@ -764,21 +764,7 @@ fun RoomNeonCard(
                         .weight(1f),
                     contentAlignment = Alignment.Center
                 ) {
-                    if (!room.imageUrl.isNullOrBlank()) {
-                        Box(
-                            modifier = Modifier
-                                .size(width = 72.dp, height = 64.dp)
-                                .clip(RoundedCornerShape(14.dp))
-                                .border(1.5.dp, iconBrush, RoundedCornerShape(14.dp))
-                        ) {
-                            AsyncImage(
-                                model = room.imageUrl,
-                                contentDescription = room.name,
-                                contentScale = ContentScale.Crop,
-                                modifier = Modifier.fillMaxSize()
-                            )
-                        }
-                    } else {
+                    if (room.imageUrl.isNullOrBlank()) {
                         Canvas(modifier = Modifier.size(width = 64.dp, height = 58.dp)) {
                             val w = size.width
                             val h = size.height
