@@ -1,5 +1,7 @@
 package com.example.ui.screens
 
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.foundation.layout.aspectRatio
 import com.example.ui.GiftVideoOverlay
 import androidx.compose.ui.graphics.drawOutline
