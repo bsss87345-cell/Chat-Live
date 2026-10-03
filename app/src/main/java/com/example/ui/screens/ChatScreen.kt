@@ -1,7 +1,6 @@
 package com.example.ui.screens
 
 import androidx.compose.foundation.layout.aspectRatio
-import androidx.compose.ui.zIndex
 import com.example.ui.GiftVideoOverlay
 import androidx.compose.ui.graphics.drawOutline
 import androidx.compose.material.icons.automirrored.filled.Chat
