@@ -53,6 +53,7 @@ import androidx.core.view.WindowCompat
 import android.view.WindowManager
 import androidx.core.view.ViewCompat
 import com.example.model.*
+import com.example.ui.share.shareProfileExternally
 import com.example.ui.theme.*
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.fadeIn
