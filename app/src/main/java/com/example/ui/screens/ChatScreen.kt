@@ -5074,7 +5074,6 @@ fun GiftSentBanner(
     giftCount: Int,
     giftEmoji: String = "",
     videoRes: Int? = null,
-    videoRes: Int? = null,
     modifier: Modifier = Modifier
 ) {
     Box(
