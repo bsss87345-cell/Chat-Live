@@ -2114,6 +2114,7 @@ fun StoryCreationDialog(
                 WindowManager.LayoutParams.MATCH_PARENT,
                 WindowManager.LayoutParams.MATCH_PARENT
             )
+            dialogWindow?.setBackgroundDrawable(android.graphics.drawable.ColorDrawable(android.graphics.Color.MAGENTA))
         }
         Box(
             modifier = Modifier
