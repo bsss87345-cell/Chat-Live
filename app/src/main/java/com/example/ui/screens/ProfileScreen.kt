@@ -687,7 +687,13 @@ Column(
                 Spacer(modifier = Modifier.height(8.dp))
                 OutlinedTextField(
                     value = handleText,
-                    onValueChange = { if (it.length <= 50 && !it.contains(" ")) handleText = it },
+                                        onValueChange = { input ->
+                        // إنجليزي وأرقام وشرطة سفلية فقط، بحد أقصى 20 حرفاً
+                        handleText = input
+                            .lowercase()
+                            .filter { c -> c in 'a'..'z' || c in '0'..'9' || c == '_' }
+                            .take(20)
+                    },
                     modifier = Modifier.fillMaxWidth(),
                     leadingIcon = { Text("@", fontSize = 16.sp) },
                     singleLine = true,
