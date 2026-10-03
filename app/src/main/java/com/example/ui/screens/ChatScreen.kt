@@ -2258,13 +2258,14 @@ val offsetY = slotY.dp
     }
 
 // Banned List Dialog
-    if (showBannedListDialog) {
-        AlertDialog(
-            onDismissRequest = { showBannedListDialog = false },
-            title = { Text("المستخدمون المحظورون") },
-            text = {
+   if (showBannedListDialog) {
+            NeonSettingsPanel(
+                title = "المستخدمون المحظورون",
+                onDismiss = { showBannedListDialog = false },
+                icon = Icons.Default.Block
+            ) {
                 if (room.blockedMembers.isEmpty()) {
-                    Text("لا يوجد مستخدمون محظورون حالياً.", fontSize = 13.sp)
+                    Text("لا يوجد مستخدمون محظورون حالياً.", color = Color.White, fontSize = 14.sp)
                 } else {
                     Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
                         room.blockedMembers.forEach { member ->
@@ -2273,23 +2274,19 @@ val offsetY = slotY.dp
                                 horizontalArrangement = Arrangement.SpaceBetween,
                                 verticalAlignment = Alignment.CenterVertically
                             ) {
-                                Text(member.name, fontSize = 13.sp)
+                                Text(member.name, color = Color.White, fontSize = 14.sp)
                                 TextButton(onClick = { onUnblockMember(member.id) }) {
-                                    Text("إلغاء الحظر", fontSize = 12.sp)
+                                    Text("إلغاء الحظر", color = NeonCyan, fontSize = 12.sp)
                                 }
                             }
                         }
                     }
                 }
-            },
-            confirmButton = {},
-            dismissButton = {
                 TextButton(onClick = { showBannedListDialog = false }) {
-                    Text("إغلاق")
+                    Text("إغلاق", color = NeonCyan)
                 }
             }
-        )
-    }
+   } 
 
 // Chat Background Picker Dialog
     if (showBackgroundPickerDialog) {
