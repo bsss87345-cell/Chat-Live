@@ -299,7 +299,7 @@ class SocialAppViewModel : ViewModel() {
 
         val followingList: StateFlow<List<FollowUser>> = MutableStateFlow(
             listOf(
-            FollowUser(id = "10000001", name = "سارة أحمد", handle = "@sara_a", avatarUrl = "")
+               FollowUser(id = "10000001", name = "سارة أحمد", handle = "@sara_a", avatarUrl = "")
             )
         ).asStateFlow()
 
