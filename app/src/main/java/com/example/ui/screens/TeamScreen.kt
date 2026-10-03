@@ -915,7 +915,7 @@ fun AddFriendSection(
                 }
 
                 Text(
-                    text = "اكتب معرف المستخدم الرقمي (User ID) أو اسمه لإرسال طلب صداقة فوري:",
+                                        text = "اكتب معرّف المستخدم الرقمي (ID) المكوّن من 8 أرقام لإرسال طلب صداقة فوري:",
                     fontSize = 14.sp,
                     color = Color(0xFFBCBDC2),
                     lineHeight = 22.sp
