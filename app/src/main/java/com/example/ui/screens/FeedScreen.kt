@@ -2323,53 +2323,6 @@ if (screen == 0) {
 }
 
 @Composable
-fun StorySideToolButton(
-    icon: ImageVector,
-    label: String,
-    isSelected: Boolean,
-    onClick: () -> Unit,
-    testTag: String
-) {
-    Column(
-        horizontalAlignment = Alignment.CenterHorizontally,
-        modifier = Modifier
-            .clip(RoundedCornerShape(14.dp))
-            .clickable(onClick = onClick)
-            .padding(horizontal = 4.dp, vertical = 4.dp)
-            .testTag(testTag)
-    ) {
-        Box(
-            modifier = Modifier
-                .size(38.dp)
-                .clip(CircleShape)
-                .background(
-                    if (isSelected) MujtamaPrimary else Color.Black.copy(alpha = 0.5f)
-                )
-                .border(
-                    width = if (isSelected) 2.dp else 1.dp,
-                    color = if (isSelected) MujtamaGold else Color.White.copy(alpha = 0.3f),
-                    shape = CircleShape
-                ),
-            contentAlignment = Alignment.Center
-        ) {
-            Icon(
-                imageVector = icon,
-                contentDescription = label,
-                tint = if (isSelected) Color.White else Color.White.copy(alpha = 0.9f),
-                modifier = Modifier.size(20.dp)
-            )
-        }
-        Spacer(modifier = Modifier.height(3.dp))
-        Text(
-            text = label,
-            fontSize = 10.sp,
-            fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Medium,
-            color = if (isSelected) MujtamaGold else Color.White
-        )
-    }
-}
-
-@Composable
 fun CameraPreviewView(
     modifier: Modifier = Modifier,
     lensFacing: Int = CameraSelector.LENS_FACING_BACK,
