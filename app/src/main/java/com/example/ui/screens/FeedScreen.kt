@@ -2123,6 +2123,8 @@ fun StoryCreationDialog(
                 )
                 w.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
                 w.navigationBarColor = android.graphics.Color.BLACK
+                w.addFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND)
+                w.setDimAmount(1f)
             }
         }
         Box(
