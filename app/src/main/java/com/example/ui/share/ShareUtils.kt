@@ -22,7 +22,7 @@ private const val FILE_PROVIDER_SUFFIX = ".fileprovider"
  * لو تعذّر تجهيز الملف لأي سبب، يرجع تلقائياً لمشاركة النص فقط بدل ما يفشل.
  */
 fun sharePostExternally(context: Context, post: Post) {
-    val shareText = buildString {
+        val shareText = buildString {
         if (post.content.isNotBlank()) {
             appendLine(post.content)
         }
@@ -30,8 +30,11 @@ fun sharePostExternally(context: Context, post: Post) {
             appendLine(post.tag)
         }
         if (isNotEmpty()) appendLine()
-        append("منشور من ${post.authorName} على تطبيق Chat Live")
-    }
+        appendLine("منشور من ${post.authorName} على تطبيق Chat Live")
+        appendLine()
+        appendLine("افتح المنشور داخل التطبيق:")
+        append("chatlive://post/${post.id}")
+        }
 
     val mediaFile = if (post.mediaType != PostMediaType.NONE && post.mediaUri.isNotBlank()) {
         File(post.mediaUri).takeIf { it.exists() && it.length() > 0L }
