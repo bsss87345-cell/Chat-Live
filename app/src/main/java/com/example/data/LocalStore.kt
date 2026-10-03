@@ -280,7 +280,6 @@ object LocalStore {
             authorId = o.optString("authorId", ""),
             authorName = o.optString("authorName", ""),
             authorHandle = o.optString("authorHandle", ""),
-            authorRole = o.optString("authorRole", "عضو نشط"),
             timeAgo = o.optString("timeAgo", ""),
             content = o.optString("content", ""),
             mediaType = mediaTypeOf(o.optString("mediaType", PostMediaType.NONE.name)),
