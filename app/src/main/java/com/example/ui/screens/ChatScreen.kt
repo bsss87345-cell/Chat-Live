@@ -182,6 +182,7 @@ fun ChatScreen(
                 onUpdateSettings = { name, desc, max -> onUpdateRoomSettings(activeRoom.id, name, desc, max) },
                 onLeaveRoom = { onLeaveRoom(activeRoom.id) },
                 onToggleLock = { onToggleLock(activeRoom.id) },
+                onRequestLock = { showLockBox = true },
                 onUpdateBackground = { uri -> onUpdateBackground(activeRoom.id, uri) },
                 onUpdateRoomImage = { uri -> onUpdateRoomImage(activeRoom.id, uri) },
                 onBlockMember = { memId -> onBlockMember(activeRoom.id, memId) },
