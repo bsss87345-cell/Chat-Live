@@ -2053,7 +2053,14 @@ fun StoryCreationDialog(
             listOf(0xFFFF5722, 0xFFFFB300), // Sunset Orange
             listOf(0xFF00796B, 0xFF43A047), // Emerald Forest
             listOf(0xFF880E4F, 0xFFFF4081), // Magenta Rose
-            listOf(0xFF1A237E, 0xFF00B0FF)  // Midnight Cyan
+            listOf(0xFF1A237E, 0xFF00B0FF), // Midnight Cyan
+            listOf(0xFFFF512F, 0xFFDD2476), // Sunset Pink
+            listOf(0xFF00C6FF, 0xFF0072FF), // Ocean Blue
+            listOf(0xFF11998E, 0xFF38EF7D), // Mint Fresh
+            listOf(0xFFF7971E, 0xFFFFD200), // Golden Hour
+            listOf(0xFF8E2DE2, 0xFF4A00E0), // Royal Violet
+            listOf(0xFFEB3349, 0xFFF45C43), // Crimson Fire
+            listOf(0xFF0F2027, 0xFF2C5364)  // Deep Night
         )
     }
     var selectedGradientIndex by remember { mutableIntStateOf(0) }
