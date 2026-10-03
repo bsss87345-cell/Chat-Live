@@ -180,6 +180,7 @@ data class ChatRoom(
     val isJoined: Boolean = false,
     val isOwner: Boolean = false,
     val isLocked: Boolean = false,
+    val lockCode: String? = null,
     val pinnedMessage: String? = null,
     val members: List<RoomMember> = emptyList(),
     val messages: List<ChatMessage> = emptyList(),
