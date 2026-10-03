@@ -878,8 +878,8 @@ private fun FollowListFullScreen(
                                         fontWeight = FontWeight.SemiBold,
                                         fontSize = 15.sp
                                     )
-                                    Text(
-                                        "ID: ${user.id}",
+                                           Text(
+                                        user.handle.ifBlank { "@${user.id}" },
                                         fontSize = 12.sp,
                                         color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.5f)
                                     )
