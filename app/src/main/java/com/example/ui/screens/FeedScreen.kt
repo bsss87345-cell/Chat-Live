@@ -123,7 +123,9 @@ fun FeedScreen(
     onToggleFollow: (String) -> Unit = {},
     onEditPost: (String, String) -> Unit = { _, _ -> },
     onDeletePost: (String) -> Unit = {},
-    onReportPost: (String) -> Unit = {}
+    onReportPost: (String) -> Unit = {},
+    pendingPostId: String? = null,
+    onPendingPostHandled: () -> Unit = {}
 ) {
     val context = LocalContext.current
     val mediaSaveScope = rememberCoroutineScope()
