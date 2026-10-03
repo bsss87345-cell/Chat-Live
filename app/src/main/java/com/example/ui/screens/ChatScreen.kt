@@ -207,6 +207,19 @@ fun ChatScreen(
                 onStartWheelSpin = onStartWheelSpin,
                 onResetWheel = onResetWheel
             )
+            RoomCodeBox(
+                visible = showLockBox,
+                isSetMode = true,
+                roomName = activeRoom.name,
+                errorMessage = null,
+                onConfirm = { code ->
+                    onLockRoom(activeRoom.id, code)
+                    showLockBox = false
+                },
+                onDismiss = { showLockBox = false },
+                modifier = Modifier.fillMaxSize()
+            )
+        }
             return
         }
     }
