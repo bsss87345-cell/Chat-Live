@@ -191,7 +191,9 @@ fun MainScreen(viewModel: SocialAppViewModel) {
                                 onToggleFollow = { userId -> viewModel.toggleFollow(userId) },
                                 onEditPost = { postId, newText -> viewModel.editPost(postId, newText) },
                                 onDeletePost = { viewModel.deletePost(it) },
-                                onReportPost = { viewModel.reportPost(it) }
+                                onReportPost = { viewModel.reportPost(it) },
+                                pendingPostId = pendingPostId,
+                                onPendingPostHandled = { viewModel.clearPendingPost() }
                             )
                         }
 
