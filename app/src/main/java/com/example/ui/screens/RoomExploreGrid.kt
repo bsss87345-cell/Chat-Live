@@ -670,7 +670,7 @@ fun RoomNeonCard(
     Box(
         modifier = modifier
             .fillMaxWidth()
-            .height(224.dp)
+            .height(196.dp)
             .testTag("room_item_${room.id}")
     ) {
         // البطاقة الخلفية المزاحة
