@@ -22,7 +22,14 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
                 val splashScreen = installSplashScreen()
         super.onCreate(savedInstanceState)
-        LocalStore.initialize(this)
+                LocalStore.initialize(this)
+
+        // الفتح البارد: الرابط يجي مع نية الإطلاق
+        pendingDeepLinkPostId = extractPostId(intent)
+        // التطبيق شغّال أصلاً: يصل الرابط كنية جديدة
+        addOnNewIntentListener { newIntent ->
+            pendingDeepLinkPostId = extractPostId(newIntent)
+        }
         splashScreen.setOnExitAnimationListener { provider ->
             val fadeOut = android.animation.ObjectAnimator.ofFloat(
                 provider.view,
