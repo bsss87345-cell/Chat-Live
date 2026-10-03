@@ -923,13 +923,14 @@ fun AddFriendSection(
 
                 OutlinedTextField(
                     value = friendQuery,
-                    onValueChange = {
-                        friendQuery = it
+                                        onValueChange = { input ->
+                        // أرقام فقط، 8 خانات — المعرّف هو الوسيلة الوحيدة للإضافة هنا
+                        friendQuery = input.filter { c -> c.isDigit() }.take(8)
                         submitted = false
                     },
                     placeholder = {
                         Text(
-                            text = "مثال: 84920153 أو أحمد",
+                            text = "مثال: 84920153",
                             fontSize = 13.sp,
                             color = Color(0xFF8A8B93)
                         )
