@@ -2232,28 +2232,29 @@ val offsetY = slotY.dp
 
     // Admins List Dialog
     if (showAdminsListDialog) {
-        val admins = room.members.filter { it.role == RoomMemberRole.ADMIN || it.role == RoomMemberRole.OWNER }
-        AlertDialog(
-            onDismissRequest = { showAdminsListDialog = false },
-            title = { Text("مشرفو الغرفة (${admins.size})") },
-            text = {
+            val admins = room.members.filter { it.role == RoomMemberRole.ADMIN || it.role == RoomMemberRole.OWNER }
+            NeonSettingsPanel(
+                title = "مشرفو الغرفة (${admins.size})",
+                onDismiss = { showAdminsListDialog = false },
+                icon = Icons.Default.Security
+            ) {
                 if (admins.isEmpty()) {
-                    Text("لا يوجد مشرفون حالياً.", fontSize = 13.sp)
+                    Text("لا يوجد مشرفون حالياً.", color = Color.White, fontSize = 14.sp)
                 } else {
-                    LazyColumn(verticalArrangement = Arrangement.spacedBy(6.dp)) {
-                        items(admins) { member ->
-                            Text(text = "${member.name} (${member.role.labelAr})", fontSize = 13.sp)
+                    Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                        admins.forEach { member ->
+                            Text(
+                                text = "${member.name} (${member.role.labelAr})",
+                                color = Color.White,
+                                fontSize = 14.sp
+                            )
                         }
                     }
                 }
-            },
-            confirmButton = {},
-            dismissButton = {
                 TextButton(onClick = { showAdminsListDialog = false }) {
-                    Text("إغلاق")
+                    Text("إغلاق", color = NeonCyan)
                 }
             }
-        )
     }
 
 // Banned List Dialog
