@@ -2170,7 +2170,10 @@ val offsetY = slotY.dp
                 NeonSettingsRow(
                     label = if (room.isLocked) "الغرفة مقفلة 🔒" else "قفل الغرفة",
                     accent = neonCyan,
-                    onClick = { onToggleLock() }
+                    onClick = {
+                    showSettingsDialog = false
+                    if (room.isLocked) onToggleLock() else onRequestLock()
+                    }
                 ) {
                     Icon(
                         imageVector = if (room.isLocked) Icons.Default.Lock else Icons.Default.LockOpen,
