@@ -336,11 +336,11 @@ class SocialAppViewModel : ViewModel() {
     // بيانات تجريبية مؤقتة لاختبار التنقل بين البروفايلات (mock_1 يتابع mock_2 و mock_3، mock_2 يتابع mock_3 و mock_4، mock_3 يتابع mock_4)
     private val _follows = MutableStateFlow<List<com.example.model.Follow>>(
         listOf(
-            com.example.model.Follow(id = "f1", followerId = "mock_1", followingId = "mock_2"),
-            com.example.model.Follow(id = "f2", followerId = "mock_1", followingId = "mock_3"),
-            com.example.model.Follow(id = "f3", followerId = "mock_2", followingId = "mock_3"),
-            com.example.model.Follow(id = "f4", followerId = "mock_2", followingId = "mock_4"),
-            com.example.model.Follow(id = "f5", followerId = "mock_3", followingId = "mock_4")
+            com.example.model.Follow(id = "f1", followerId = "10000001", followingId = "10000002"),
+            com.example.model.Follow(id = "f2", followerId = "10000001", followingId = "10000003"),
+            com.example.model.Follow(id = "f3", followerId = "10000002", followingId = "10000003"),
+            com.example.model.Follow(id = "f4", followerId = "10000002", followingId = "10000004"),
+            com.example.model.Follow(id = "f5", followerId = "10000003", followingId = "10000004")
         )
     )
     val follows: StateFlow<List<com.example.model.Follow>> = _follows.asStateFlow()
