@@ -2464,38 +2464,52 @@ val offsetY = slotY.dp
     // Pin Message Dialog
     if (showPinDialog) {
         var pinInput by remember { mutableStateOf("") }
-        AlertDialog(
-            onDismissRequest = { showPinDialog = false },
-            title = { Text("تثبيت إعلان في الغرفة 📌") },
-            text = {
-                Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                    Text("اكتب الإعلان الذي ترغب في ظهوره لجميع أعضاء الغرفة في الأعلى:", fontSize = 12.sp)
-                    OutlinedTextField(
-                        value = pinInput,
-                        onValueChange = { pinInput = it },
-                        placeholder = { Text("مثال: التحدي سيبدأ الساعة 9 مساءً") },
-                        modifier = Modifier.fillMaxWidth(),
-                        maxLines = 3
+        NeonSettingsPanel(
+                title = "تثبيت إعلان في الغرفة 📌",
+                onDismiss = { showPinDialog = false },
+                icon = Icons.Default.PushPin
+            ) {
+                Text(
+                    "اكتب الإعلان الذي ترغب في ظهوره لجميع أعضاء الغرفة في الأعلى:",
+                    color = Color.White.copy(alpha = 0.75f),
+                    fontSize = 12.sp
+                )
+                OutlinedTextField(
+                    value = pinInput,
+                    onValueChange = { pinInput = it },
+                    placeholder = {
+                        Text("مثال: التحدي سيبدأ الساعة 9 مساء", color = Color.White.copy(alpha = 0.4f))
+                    },
+                    modifier = Modifier.fillMaxWidth(),
+                    maxLines = 3,
+                    colors = OutlinedTextFieldDefaults.colors(
+                        focusedTextColor = Color.White,
+                        unfocusedTextColor = Color.White,
+                        focusedBorderColor = NeonCyan,
+                        unfocusedBorderColor = NeonCyan.copy(alpha = 0.5f),
+                        cursorColor = NeonCyan
                     )
-                }
-            },
-            confirmButton = {
+                )
                 Button(
                     onClick = {
                         onPinMessage(pinInput)
                         showPinDialog = false
                     },
-                    enabled = pinInput.isNotBlank()
+                    enabled = pinInput.isNotBlank(),
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = Color(0xFFFF00FF),
+                        contentColor = Color.Black,
+                        disabledContainerColor = Color(0xFFFF00FF).copy(alpha = 0.35f),
+                        disabledContentColor = Color.Black.copy(alpha = 0.6f)
+                    ),
+                    modifier = Modifier.fillMaxWidth()
                 ) {
-                    Text("تثبيت الإعلان")
+                    Text("تثبيت الإعلان", fontWeight = FontWeight.Bold)
                 }
-            },
-            dismissButton = {
                 TextButton(onClick = { showPinDialog = false }) {
-                    Text("إلغاء")
+                    Text("إلغاء", color = NeonCyan)
                 }
-            }
-        )
+        }
 // Game Picker Dialog
         if (showGamePicker) {
             GamePickerDialog(
