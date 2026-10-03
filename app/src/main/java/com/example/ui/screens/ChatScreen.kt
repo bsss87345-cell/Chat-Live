@@ -168,6 +168,7 @@ fun ChatScreen(
     if (activeRoomId != null) {
         val activeRoom = chatRooms.find { it.id == activeRoomId }
         if (activeRoom != null) {
+            Box(modifier = Modifier.fillMaxSize()) {
             ChatRoomView(
                 room = activeRoom,
                 walletBalance = walletBalance,
