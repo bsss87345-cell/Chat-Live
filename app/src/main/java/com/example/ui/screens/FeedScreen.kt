@@ -3329,7 +3329,7 @@ fun StoryCameraControlsOverlayV2(
                 modifier = Modifier
                     .align(Alignment.BottomCenter)
                     .fillMaxWidth()
-                    .background(Color.Black)
+                    .background(Color.Magenta)
                     .navigationBarsPadding()
                     .height(stripHeight),
                 contentAlignment = Alignment.Center
