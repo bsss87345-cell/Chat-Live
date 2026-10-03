@@ -1,5 +1,7 @@
 package com.example.ui.screens
 
+import androidx.compose.ui.geometry.CornerRadius
+
 import android.net.Uri
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.PickVisualMediaRequest
