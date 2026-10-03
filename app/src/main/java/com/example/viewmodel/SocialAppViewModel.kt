@@ -756,8 +756,13 @@ fun joinChatRoom(roomId: String, passwordInput: String = ""): Boolean {
         }
 
         if (room.isLocked && !room.isOwner) {
-            _userMessage.value = "هذه الغرفة مقفلة حاليًا ولا تقبل أعضاء جدد."
-            return false
+            if (room.lockCode.isNullOrBlank()) {
+                _userMessage.value = "هذه الغرفة مقفلة حاليا ولا تقبل أعضاء جدد."
+                return false
+            }
+            if (room.lockCode != passwordInput.trim()) {
+                return false
+            }
         }
 
         if (room.accessType == RoomAccessType.PASSWORD && room.password != passwordInput.trim()) {
