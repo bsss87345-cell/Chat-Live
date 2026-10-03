@@ -357,7 +357,7 @@ val sortedRooms = remember(rooms, searchQuery, roomViewFilter) {
 
         // قائمة بطاقات الغرف (مربعات شبكية بنمط أنيق وعصري)
         items(sortedRooms, key = { it.id }) { room ->
-            RoomGridCard(
+            RoomNeonCard(
                 room = room,
                 onEnterClick = {
                     if (room.isJoined) {
