@@ -2132,6 +2132,7 @@ fun StoryCreationDialog(
                 w.navigationBarColor = android.graphics.Color.BLACK
                 w.addFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND)
                 w.setDimAmount(1f)
+                android.widget.Toast.makeText(context, "SIDE", android.widget.Toast.LENGTH_SHORT).show()
             }
         }
         Box(
