@@ -23,25 +23,6 @@ class MainActivity : ComponentActivity() {
                 val splashScreen = installSplashScreen()
         super.onCreate(savedInstanceState)
         LocalStore.initialize(this)
-        // [تشخيص مؤقت] تسجيل سبب الانهيار وعرضه عند الفتح التالي
-        val crashFile = java.io.File(filesDir, "last_crash.txt")
-        val previousHandler = Thread.getDefaultUncaughtExceptionHandler()
-        Thread.setDefaultUncaughtExceptionHandler { thread, throwable ->
-            try {
-                crashFile.writeText(android.util.Log.getStackTraceString(throwable))
-            } catch (e: Exception) {
-            }
-            previousHandler?.uncaughtException(thread, throwable)
-        }
-        if (crashFile.exists()) {
-            val report = crashFile.readText().take(2500)
-            crashFile.delete()
-            android.app.AlertDialog.Builder(this)
-                .setTitle("سبب آخر انهيار")
-                .setMessage(report)
-                .setPositiveButton("إغلاق", null)
-                .show()
-        }
         splashScreen.setOnExitAnimationListener { provider ->
             val fadeOut = android.animation.ObjectAnimator.ofFloat(
                 provider.view,
