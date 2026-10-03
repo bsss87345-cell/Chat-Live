@@ -3511,6 +3511,7 @@ private fun NeonSettingsRow(
 private fun NeonSettingsPanel(
     title: String,
     onDismiss: () -> Unit,
+    icon: androidx.compose.ui.graphics.vector.ImageVector = Icons.Outlined.Settings,
     content: @Composable ColumnScope.() -> Unit
 ) {
     val cyan = Color(0xFF19F0F0)
@@ -3582,7 +3583,7 @@ private fun NeonSettingsPanel(
                         fontWeight = FontWeight.Bold
                     )
                     Icon(
-                        imageVector = Icons.Outlined.Settings,
+                        imageVector = icon,
                         contentDescription = null,
                         tint = cyan,
                         modifier = Modifier.size(30.dp)
