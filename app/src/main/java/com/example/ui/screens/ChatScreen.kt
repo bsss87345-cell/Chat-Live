@@ -5151,12 +5151,18 @@ fun GiftSentBanner(
                     )
                 }
             }
-            if (giftEmoji.isNotEmpty()) {
-                Text(
-                    text = giftEmoji,
-                    fontSize = 30.sp,
-                    modifier = Modifier.padding(end = 6.dp)
-                )
+            if (videoRes != null) {
+    GiftLastFrameThumb(
+        videoRes = videoRes,
+        emoji = giftEmoji,
+        modifier = Modifier.size(40.dp).padding(end = 6.dp)
+    )
+} else if (giftEmoji.isNotEmpty()) {
+    Text(
+        text = giftEmoji,
+        fontSize = 30.sp,
+        modifier = Modifier.padding(end = 6.dp)
+    )
             }
             val giftCountScale = remember { Animatable(1f) }
                         LaunchedEffect(giftCount) {
