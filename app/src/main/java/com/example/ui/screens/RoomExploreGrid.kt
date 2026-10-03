@@ -647,6 +647,233 @@ fun RoomGridCard(
         }
     }
 }
+/**
+ * بطاقة غرفة بتصميم النيون الجديد (غير مستخدمة بعد).
+ */
+@Composable
+fun RoomNeonCard(
+    room: ChatRoom,
+    onEnterClick: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    val cardShape = RoundedCornerShape(18.dp)
+    val borderBrush = Brush.verticalGradient(
+        listOf(NeonCyan, NeonPurple, Color(0xFFFF2BFF))
+    )
+    val iconBrush = Brush.linearGradient(listOf(NeonCyan, NeonPurple))
+
+    Box(
+        modifier = modifier
+            .fillMaxWidth()
+            .height(224.dp)
+            .testTag("room_item_${room.id}")
+    ) {
+        // البطاقة الخلفية المزاحة
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(top = 6.dp, bottom = 6.dp)
+                .clip(cardShape)
+                .background(Color(0xFF0A0D10))
+                .border(1.dp, NeonCyan.copy(alpha = 0.35f), cardShape)
+        )
+
+        // البطاقة الأمامية
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(end = 8.dp)
+                .shadow(
+                    elevation = 12.dp,
+                    shape = cardShape,
+                    ambientColor = NeonCyan,
+                    spotColor = NeonPurple
+                )
+                .clip(cardShape)
+                .background(Color(0xFF0B0F12))
+                .border(1.5.dp, borderBrush, cardShape)
+                .clickable(onClick = onEnterClick)
+        ) {
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(10.dp),
+                horizontalAlignment = Alignment.Start
+            ) {
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    // كبسولة النوع
+                    Row(
+                        modifier = Modifier
+                            .background(NeonCyan.copy(alpha = 0.08f), RoundedCornerShape(10.dp))
+                            .border(1.5.dp, NeonCyan, RoundedCornerShape(10.dp))
+                            .padding(horizontal = 7.dp, vertical = 4.dp),
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(4.dp)
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.Sms,
+                            contentDescription = null,
+                            tint = NeonCyan,
+                            modifier = Modifier.size(14.dp)
+                        )
+                        Text(
+                            text = room.category,
+                            color = NeonCyan,
+                            fontSize = 11.sp,
+                            fontWeight = FontWeight.Bold,
+                            maxLines = 1
+                        )
+                        if (room.accessType == RoomAccessType.PASSWORD) {
+                            Text("🔒", fontSize = 10.sp)
+                        }
+                    }
+
+                    // عدد المتصلين + النقطة الخضراء
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(5.dp)
+                    ) {
+                        Box(
+                            modifier = Modifier
+                                .size(8.dp)
+                                .clip(CircleShape)
+                                .background(MujtamaOnlineGreen)
+                        )
+                        Text(
+                            text = "${room.memberCount}",
+                            color = Color.White,
+                            fontSize = 13.sp,
+                            fontWeight = FontWeight.Bold
+                        )
+                    }
+                }
+
+                // الوسط: صورة الغرفة إن وجدت، وإلا أيقونة الفقاعة
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .weight(1f),
+                    contentAlignment = Alignment.Center
+                ) {
+                    if (!room.imageUrl.isNullOrBlank()) {
+                        Box(
+                            modifier = Modifier
+                                .size(width = 72.dp, height = 64.dp)
+                                .clip(RoundedCornerShape(14.dp))
+                                .border(1.5.dp, iconBrush, RoundedCornerShape(14.dp))
+                        ) {
+                            AsyncImage(
+                                model = room.imageUrl,
+                                contentDescription = room.name,
+                                contentScale = ContentScale.Crop,
+                                modifier = Modifier.fillMaxSize()
+                            )
+                        }
+                    } else {
+                        Canvas(modifier = Modifier.size(width = 64.dp, height = 58.dp)) {
+                            val w = size.width
+                            val h = size.height
+                            val p = 4.dp.toPx()
+                            val bodyH = h * 0.78f
+                            val thin = 2.dp.toPx()
+                            val outerSize = Size(w - 2 * p, bodyH - p)
+
+                            drawRoundRect(
+                                color = NeonCyan.copy(alpha = 0.18f),
+                                topLeft = Offset(p, p),
+                                size = outerSize,
+                                cornerRadius = CornerRadius(12.dp.toPx()),
+                                style = Stroke(width = 7.dp.toPx())
+                            )
+                            drawRoundRect(
+                                brush = iconBrush,
+                                topLeft = Offset(p, p),
+                                size = outerSize,
+                                cornerRadius = CornerRadius(12.dp.toPx()),
+                                style = Stroke(width = thin)
+                            )
+                            val gap = 5.dp.toPx()
+                            drawRoundRect(
+                                brush = iconBrush,
+                                topLeft = Offset(p + gap, p + gap),
+                                size = Size(outerSize.width - 2 * gap, outerSize.height - 2 * gap),
+                                cornerRadius = CornerRadius(8.dp.toPx()),
+                                style = Stroke(width = thin * 0.75f)
+                            )
+                            val tail = Path().apply {
+                                moveTo(w * 0.18f, bodyH)
+                                lineTo(w * 0.10f, h - p)
+                                lineTo(w * 0.34f, bodyH)
+                            }
+                            drawPath(path = tail, brush = iconBrush, style = Stroke(width = thin))
+                            drawLine(
+                                brush = iconBrush,
+                                start = Offset(w * 0.28f, bodyH * 0.40f),
+                                end = Offset(w * 0.72f, bodyH * 0.40f),
+                                strokeWidth = thin,
+                                cap = StrokeCap.Round
+                            )
+                            drawLine(
+                                brush = iconBrush,
+                                start = Offset(w * 0.28f, bodyH * 0.60f),
+                                end = Offset(w * 0.56f, bodyH * 0.60f),
+                                strokeWidth = thin,
+                                cap = StrokeCap.Round
+                            )
+                        }
+                    }
+                }
+
+                // اسم الغرفة
+                Text(
+                    text = room.name,
+                    color = Color.White,
+                    fontSize = 20.sp,
+                    fontWeight = FontWeight.Bold,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis
+                )
+
+                Spacer(modifier = Modifier.height(8.dp))
+
+                // زر الدخول
+                Surface(
+                    onClick = onEnterClick,
+                    modifier = Modifier
+                        .fillMaxWidth(0.8f)
+                        .height(32.dp)
+                        .testTag("room_enter_btn_${room.id}"),
+                    shape = RoundedCornerShape(10.dp),
+                    color = Color(0xFFFF00FF)
+                ) {
+                    Row(
+                        modifier = Modifier.fillMaxSize(),
+                        horizontalArrangement = Arrangement.Center,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Text(
+                            text = if (room.isJoined) "دخول" else "انضم للغرفة",
+                            color = Color.Black,
+                            fontSize = 12.sp,
+                            fontWeight = FontWeight.Bold
+                        )
+                        Spacer(modifier = Modifier.width(6.dp))
+                        Icon(
+                            imageVector = Icons.Default.ArrowForward,
+                            contentDescription = null,
+                            tint = Color.Black,
+                            modifier = Modifier.size(14.dp)
+                        )
+                    }
+                }
+            }
+        }
+    }
+}
 
 /**
  * نافذة إنشاء الغرفة تتيح لمالك الغرفة اختيار ورفع صورة الغرفة
