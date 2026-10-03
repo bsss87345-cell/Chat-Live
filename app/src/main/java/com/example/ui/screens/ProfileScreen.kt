@@ -421,12 +421,13 @@ Column(
     horizontalArrangement = Arrangement.spacedBy(10.dp)
 ) {
     if (isOnOwnProfile) {
-        ProfileNeonActionButton(
+                ProfileNeonActionButton(
             text = "مشاركة",
             icon = Icons.Default.Share,
             accent = NeonPurple,
             filled = false,
-            modifier = Modifier.weight(1f)
+            modifier = Modifier.weight(1f),
+            onClick = { shareProfileExternally(profileShareContext, userProfile) }
         )
         ProfileNeonActionButton(
                 text = "تعديل الملف",
