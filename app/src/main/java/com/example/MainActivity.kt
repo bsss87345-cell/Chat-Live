@@ -53,10 +53,17 @@ class MainActivity : ComponentActivity() {
         }
     }
 
-    override fun onStop() {
+        override fun onStop() {
         super.onStop()
         // كتابة فورية لآخر التغييرات بدل انتظار التجميع (300ms)،
         // حتى لا تضيع آخر عملية لو أغلق المستخدم التطبيق مباشرة بعدها.
         LocalStore.flush()
+    }
+
+    /** يستخرج معرّف المنشور من رابط بصيغة chatlive://post/<postId> */
+    private fun extractPostId(intent: Intent?): String? {
+        val data = intent?.data ?: return null
+        if (data.scheme != "chatlive" || data.host != "post") return null
+        return data.lastPathSegment?.takeIf { it.isNotBlank() }
     }
 }
