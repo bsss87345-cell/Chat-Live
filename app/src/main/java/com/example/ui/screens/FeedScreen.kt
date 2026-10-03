@@ -2184,7 +2184,7 @@ fun StoryCreationDialog(
                     }
                 }
 
-                               StoryCameraControlsOverlay(
+                               StoryCameraControlsOverlayV2(
     currentMode = currentMode,
     isRecording = isRecording,
     recordDuration = recordDuration,
