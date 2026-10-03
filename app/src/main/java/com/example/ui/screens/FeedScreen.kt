@@ -2428,6 +2428,7 @@ fun CameraPreviewView(
             key(lensFacing) {
                 AndroidView(
                     factory = { ctx ->
+                        android.widget.Toast.makeText(ctx, "CAM REBIND", android.widget.Toast.LENGTH_SHORT).show()
                         previewView.apply {
                             scaleType = PreviewView.ScaleType.FILL_CENTER
                         }
