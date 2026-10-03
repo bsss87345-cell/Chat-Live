@@ -232,7 +232,6 @@ object LocalStore {
         put("authorId", p.authorId)
         put("authorName", p.authorName)
         put("authorHandle", p.authorHandle)
-        put("authorRole", p.authorRole)
         put("timeAgo", p.timeAgo)
         put("content", p.content)
         put("mediaType", p.mediaType.name)
