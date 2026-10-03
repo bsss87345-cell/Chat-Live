@@ -2856,21 +2856,6 @@ fun StoryCameraControlsOverlay(
                                         .padding(horizontal = 14.dp, vertical = 10.dp),
                                     contentAlignment = Alignment.Center
                                 ) {
-                                    Text(
-                                        text = label,
-                                        color = if (selected) Color.Black else Color.White.copy(alpha = 0.6f),
-                                        fontSize = 15.sp,
-                                        fontWeight = if (selected) FontWeight.Bold else FontWeight.Normal
-                                    )
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        }
-    }
-}
 
 @Composable
 fun StoryCameraControlsOverlayV2(
