@@ -957,11 +957,12 @@ fun AddFriendSection(
                     glowColor = TeamGlowCyan,
                     shape = RoundedCornerShape(12.dp),
                     fill = TeamGlowCyan.copy(alpha = 0.18f),
-                    onClick = {
-                                                if (friendQuery.length == 8) {
-                            onSendRequest(friendQuery)
-                            submitted = true
-                            friendQuery = ""
+                                        onClick = {
+                        if (friendQuery.length == 8) {
+                            val sent = onSendRequest(friendQuery)
+                            submitted = sent
+                            // نُبقي الرقم مكتوباً عند الفشل حتى يقدر يصححه
+                            if (sent) friendQuery = ""
                         }
                     },
                     modifier = Modifier
