@@ -251,6 +251,7 @@ onSendImage = { convId, uri -> viewModel.sendMessage(convId, "", ChatMessageType
                                 onJoinRoom = { roomId, pass -> viewModel.joinChatRoom(roomId, pass) },
                                 onLeaveRoom = { viewModel.leaveChatRoom(it) },
                                 onToggleLock = { viewModel.toggleRoomLock(it) },
+                                onLockRoom = { roomId, code -> viewModel.lockRoomWithCode(roomId, code) },
                                 onUpdateBackground = { roomId, uri -> viewModel.updateRoomBackground(roomId, uri) },
                                 onUpdateRoomImage = { roomId, uri -> viewModel.updateRoomImage(roomId, uri) },
                                 onBlockMember = { roomId, memId -> viewModel.blockRoomMember(roomId, memId) },
