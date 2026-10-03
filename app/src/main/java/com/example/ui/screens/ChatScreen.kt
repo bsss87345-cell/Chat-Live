@@ -1612,6 +1612,7 @@ Box(modifier = Modifier.fillMaxSize()) {
         modifier = Modifier
             .align(Alignment.BottomCenter)
             .padding(bottom = 90.dp, start = 12.dp, end = 12.dp)
+                .zIndex(1f)
             .fillMaxWidth()
     ) {
         Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
