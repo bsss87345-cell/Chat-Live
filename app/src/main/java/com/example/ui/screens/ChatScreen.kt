@@ -1377,7 +1377,8 @@ Box(modifier = Modifier.fillMaxSize()) {
                                         senderAvatarUrl = myAvatarUrl.ifBlank { null },
                                         receiverName = receiverLabel,
                                         giftCount = 1,
-                                        giftEmoji = gift.emoji
+                                        giftEmoji = gift.emoji,
+                                        videoRes = gift.videoRes
                                     )
                                 )
                             }
