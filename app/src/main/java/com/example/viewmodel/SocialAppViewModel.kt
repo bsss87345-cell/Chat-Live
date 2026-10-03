@@ -1574,13 +1574,24 @@ fun toggleOwnerVoiceMute(roomId: String) {
         return newId
     }
 
-    fun sendFriendRequest(friendInput: String) {
-        val trimmed = friendInput.trim()
-        if (trimmed.isBlank()) {
-            _userMessage.value = "يرجى كتابة رقم الـ ID أو اسم المستخدم!"
-            return
+        /** يرجّع true فقط لو وُجد المستخدم فعلاً وأُرسل الطلب. */
+    fun sendFriendRequest(friendInput: String): Boolean {
+        val id = friendInput.trim()
+        if (id.isBlank()) {
+            _userMessage.value = "يرجى كتابة معرّف المستخدم الرقمي!"
+            return false
         }
-        _userMessage.value = "تم إرسال طلب الصداقة إلى $trimmed بنجاح!"
+        if (id == _userProfile.value.id) {
+            _userMessage.value = "لا يمكنك إرسال طلب صداقة لنفسك"
+            return false
+        }
+        val target = getUserProfileById(id)
+        if (target == null) {
+            _userMessage.value = "لا يوجد مستخدم بهذا المعرّف"
+            return false
+        }
+        _userMessage.value = "تم إرسال طلب الصداقة إلى ${target.name} بنجاح!"
+        return true
     }
 
     fun acceptFriendRequest(requestId: String) {
