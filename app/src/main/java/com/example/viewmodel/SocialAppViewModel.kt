@@ -1721,9 +1721,16 @@ fun toggleOwnerVoiceMute(roomId: String) {
         _userMessage.value = "تم تحديث النبذة التعريفية بنجاح!"
     }
 
-    fun updateUserHandle(newHandle: String) {
-        val cleaned = newHandle.trim().removePrefix("@").take(50)
-        if (cleaned.isBlank()) return
+        fun updateUserHandle(newHandle: String) {
+        val cleaned = newHandle.trim()
+            .removePrefix("@")
+            .lowercase()
+            .filter { c -> c in 'a'..'z' || c in '0'..'9' || c == '_' }
+            .take(20)
+        if (cleaned.isBlank()) {
+            _userMessage.value = "اسم المستخدم يجب أن يحتوي أحرفاً إنجليزية أو أرقاماً"
+            return
+        }
         _userProfile.update { it.copy(handle = "@$cleaned") }
         syncUserProfile()
         _userMessage.value = "تم تحديث اسم المستخدم بنجاح!"
