@@ -39,9 +39,17 @@ class MainActivity : ComponentActivity() {
                 android.graphics.Color.TRANSPARENT
             )
         )
-        setContent {
+                setContent {
             val viewModel: SocialAppViewModel = viewModel()
             val isDarkMode by viewModel.isDarkMode.collectAsStateWithLifecycle()
+
+            // الرابط يُقرأ بالنشاط، ويُمرَّر للـViewModel هنا حيث يكون جاهزاً
+            LaunchedEffect(pendingDeepLinkPostId) {
+                pendingDeepLinkPostId?.let { postId ->
+                    viewModel.openPostFromLink(postId)
+                    pendingDeepLinkPostId = null
+                }
+            }
             var showSplash by remember { mutableStateOf(true) }
             MyApplicationTheme(darkTheme = isDarkMode) {
                 if (showSplash) {
