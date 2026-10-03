@@ -21,6 +21,10 @@ import com.example.ui.theme.MyApplicationTheme
 import com.example.viewmodel.SocialAppViewModel
 
 class MainActivity : ComponentActivity() {
+
+    // معرّف المنشور القادم من رابط خارجي، بانتظار جاهزية الـViewModel
+    private var pendingDeepLinkPostId by mutableStateOf<String?>(null)
+
     override fun onCreate(savedInstanceState: Bundle?) {
                 val splashScreen = installSplashScreen()
         super.onCreate(savedInstanceState)
