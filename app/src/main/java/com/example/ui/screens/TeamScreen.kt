@@ -183,7 +183,7 @@ fun TeamScreen(
     referrals: List<ReferredUser>,
     friendRequests: List<FriendRequest>,
     onBackClick: () -> Unit,
-    onSendFriendRequest: (String) -> Unit,
+    onSendFriendRequest: (String) -> Boolean,
     onAcceptFriendRequest: (String) -> Unit,
     onRejectFriendRequest: (String) -> Unit,
     modifier: Modifier = Modifier
