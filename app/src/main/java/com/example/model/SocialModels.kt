@@ -65,7 +65,6 @@ data class Post(
     val authorId: String = "",
     val authorName: String,
     val authorHandle: String,
-    val authorRole: String = "عضو نشط",
     val timeAgo: String,
     val content: String,
     val mediaType: PostMediaType = PostMediaType.NONE,
