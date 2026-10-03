@@ -3721,6 +3721,25 @@ fun TextStoryView(
                 )
             }
         }
+        // Color switch button (shows the NEXT gradient)
+        val nextGradientIndex = (selectedGradientIndex + 1) % gradientPalettes.size
+        Box(
+            modifier = Modifier
+                .align(Alignment.BottomStart)
+                .navigationBarsPadding()
+                .padding(bottom = 8.dp)
+                .size(48.dp)
+                .border(2.5.dp, Color.White, CircleShape)
+                .padding(4.dp)
+                .clip(CircleShape)
+                .background(
+                    Brush.linearGradient(
+                        gradientPalettes[nextGradientIndex].map { Color(it) }
+                    )
+                )
+                .clickable { onSelectGradient(nextGradientIndex) }
+                .testTag("text_story_color_button")
+        )
     }
 }
 @Composable
