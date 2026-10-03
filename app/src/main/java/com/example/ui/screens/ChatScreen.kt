@@ -863,6 +863,7 @@ fun ChatRoomView(
     onUpdateSettings: (String, String, Int) -> Unit,
     onLeaveRoom: () -> Unit,
     onToggleLock: () -> Unit,
+    onRequestLock: () -> Unit = {},
     onUpdateBackground: (String) -> Unit,
     onUpdateRoomImage: (String) -> Unit = {},
     onBlockMember: (String) -> Unit,
