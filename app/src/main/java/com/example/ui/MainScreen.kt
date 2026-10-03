@@ -167,6 +167,7 @@ fun MainScreen(viewModel: SocialAppViewModel) {
                             val activeStory by viewModel.activeStory.collectAsStateWithLifecycle()
                             val activeCommentPostId by viewModel.activeCommentPostId.collectAsStateWithLifecycle()
 
+                            val pendingPostId by viewModel.pendingPostId.collectAsStateWithLifecycle()
                             FeedScreen(
                                 userProfile = userProfile,
                                 stories = stories,
