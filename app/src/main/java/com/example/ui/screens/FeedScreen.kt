@@ -2140,10 +2140,23 @@ fun StoryCreationDialog(
                 .background(Color.Black)
         ) {
             // Screen Body: Review / Text / Live Camera
-            if (isReviewing && capturedMediaUri != null) {
+            val reviewUri = remember { mutableStateOf("") }
+capturedMediaUri?.let { reviewUri.value = it }
+val screenState = when {
+    isReviewing && capturedMediaUri != null -> 0
+    currentMode == StoryCreationMode.TEXT -> 1
+    else -> 2
+}
+androidx.compose.animation.Crossfade(
+    targetState = screenState,
+    modifier = Modifier.fillMaxSize(),
+    animationSpec = androidx.compose.animation.core.tween(220),
+    label = "story_screen_switch"
+) { screen ->
+if (screen == 0) {
                 // Review Captured or Selected Media
                 StoryReviewView(
-                    mediaUri = capturedMediaUri!!,
+                    mediaUri = reviewUri.value,
                     isVideo = isVideoStory,
                     caption = captionText,
                     onCaptionChange = { captionText = it },
@@ -2161,7 +2174,7 @@ fun StoryCreationDialog(
                         )
                     }
                 )
-            } else if (currentMode == StoryCreationMode.TEXT) {
+            } else if (screen == 1) {
                 // Mode 1: Text Story (خلفية ملوّنة + نص)
                 TextStoryView(
                     text = textStoryContent,
