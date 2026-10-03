@@ -2214,23 +2214,20 @@ val offsetY = slotY.dp
 
     // Members List Dialog
     if (showMembersListDialog) {
-        AlertDialog(
-            onDismissRequest = { showMembersListDialog = false },
-            title = { Text("أعضاء الغرفة (${room.members.size})") },
-            text = {
-                LazyColumn(verticalArrangement = Arrangement.spacedBy(6.dp)) {
-                    items(room.members) { member ->
-                        Text(text = member.name, fontSize = 13.sp)
-                    }
-                }
-            },
-            confirmButton = {},
-            dismissButton = {
-                TextButton(onClick = { showMembersListDialog = false }) {
-                    Text("إغلاق")
+        NeonSettingsPanel(
+            title = "أعضاء الغرفة (${room.members.size})",
+            onDismiss = { showMembersListDialog = false },
+            icon = Icons.Default.Group
+        ) {
+            Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                room.members.forEach { member ->
+                    Text(text = member.name, color = Color.White, fontSize = 14.sp)
                 }
             }
-        )
+            TextButton(onClick = { showMembersListDialog = false }) {
+                Text("إغلاق", color = NeonCyan)
+            }
+        }
     }
 
     // Admins List Dialog
