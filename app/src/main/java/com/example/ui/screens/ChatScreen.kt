@@ -5073,6 +5073,7 @@ fun GiftSentBanner(
     receiverName: String,
     giftCount: Int,
     giftEmoji: String = "",
+    videoRes: Int? = null,
     modifier: Modifier = Modifier
 ) {
     Box(
