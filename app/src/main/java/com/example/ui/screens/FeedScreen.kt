@@ -213,7 +213,19 @@ fun FeedScreen(
                 ?.key as? String
                 }
         }
-    val isFeedScrolling by remember { derivedStateOf { feedListState.isScrollInProgress } }
+        val isFeedScrolling by remember { derivedStateOf { feedListState.isScrollInProgress } }
+
+    // فتح منشور من رابط خارجي: نمرر له تلقائياً
+    LaunchedEffect(pendingPostId, posts.size) {
+        val targetId = pendingPostId ?: return@LaunchedEffect
+        val index = posts.indexOfFirst { it.id == targetId }
+        if (index >= 0) {
+            // عنصران ثابتان قبل المنشورات: شريط القصص وبطاقة الإنشاء السريع
+            feedListState.animateScrollToItem(index + 2)
+        }
+        onPendingPostHandled()
+    }
+
     Box(
         modifier = Modifier
             .fillMaxSize()
