@@ -699,6 +699,27 @@ fun RoomNeonCard(
                 .border(1.5.dp, borderBrush, cardShape)
                 .clickable(onClick = onEnterClick)
         ) {
+            if (!room.imageUrl.isNullOrBlank()) {
+                AsyncImage(
+                    model = room.imageUrl,
+                    contentDescription = room.name,
+                    contentScale = ContentScale.Crop,
+                    modifier = Modifier.fillMaxSize()
+                )
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .background(
+                            Brush.verticalGradient(
+                                listOf(
+                                    Color.Black.copy(alpha = 0.55f),
+                                    Color.Black.copy(alpha = 0.25f),
+                                    Color.Black.copy(alpha = 0.85f)
+                                )
+                            )
+                        )
+                )
+            }
             Column(
                 modifier = Modifier
                     .fillMaxSize()
