@@ -49,7 +49,6 @@ class SocialAppViewModel : ViewModel() {
                 authorId = authorId,
                 authorName = authorName,
                 authorHandle = authorHandle,
-                authorRole = "عضو نشط",
                 timeAgo = "${i}س",
                 content = sampleContents[i % sampleContents.size],
                 likesCount = (5..150).random(),
