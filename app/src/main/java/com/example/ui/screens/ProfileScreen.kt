@@ -133,6 +133,7 @@ fun ProfileScreen(
     chatRooms: List<ChatRoom> = emptyList(),
     onOpenRoom: (String) -> Unit = {}
 ) {
+    val profileShareContext = LocalContext.current
     var showEditBioDialog by remember { mutableStateOf(false) }
     var showFollowersDialog by remember { mutableStateOf(false) }
     var showFollowingDialog by remember { mutableStateOf(false) }
