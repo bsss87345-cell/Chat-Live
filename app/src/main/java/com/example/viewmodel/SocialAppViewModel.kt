@@ -63,10 +63,10 @@ class SocialAppViewModel : ViewModel() {
     }
 
     private val _posts = MutableStateFlow<List<Post>>(
-        generateMockPostsFor("mock_1", "سارة أحمد", "@sara_a", 14) +
-        generateMockPostsFor("mock_2", "محمد العلي", "@m_ali", 27) +
-        generateMockPostsFor("mock_3", "نورة سالم", "@noura_s", 6) +
-        generateMockPostsFor("mock_4", "خالد فهد", "@khalid_f", 41)
+        generateMockPostsFor("10000001", "سارة أحمد", "@sara_a", 14) +
+        generateMockPostsFor("10000002", "محمد العلي", "@m_ali", 27) +
+        generateMockPostsFor("10000003", "نورة سالم", "@noura_s", 6) +
+        generateMockPostsFor("10000004", "خالد فهد", "@khalid_f", 41)
     )
     val posts: StateFlow<List<Post>> = _posts.asStateFlow()
 
