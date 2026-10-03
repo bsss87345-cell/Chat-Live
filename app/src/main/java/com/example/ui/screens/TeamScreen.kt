@@ -956,7 +956,7 @@ fun AddFriendSection(
                     shape = RoundedCornerShape(12.dp),
                     fill = TeamGlowCyan.copy(alpha = 0.18f),
                     onClick = {
-                        if (friendQuery.isNotBlank()) {
+                                                if (friendQuery.length == 8) {
                             onSendRequest(friendQuery)
                             submitted = true
                             friendQuery = ""
