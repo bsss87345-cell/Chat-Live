@@ -822,6 +822,23 @@ fun joinChatRoom(roomId: String, passwordInput: String = ""): Boolean {
             }
         }
     }
+    fun lockRoomWithCode(roomId: String, code: String) {
+        val clean = code.trim()
+        if (clean.length != 4 || !clean.all { it.isDigit() }) return
+        _chatRooms.update { list ->
+            list.map {
+                if (it.id == roomId) it.copy(isLocked = true, lockCode = clean) else it
+            }
+        }
+    }
+
+    fun unlockRoom(roomId: String) {
+        _chatRooms.update { list ->
+            list.map {
+                if (it.id == roomId) it.copy(isLocked = false, lockCode = null) else it
+            }
+        }
+    }
 fun updateRoomBackground(roomId: String, imageUrl: String) {
         _chatRooms.update { list ->
             list.map {
