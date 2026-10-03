@@ -487,7 +487,6 @@ class SocialAppViewModel : ViewModel() {
             authorName = profile.name,
             authorHandle = profile.handle.ifBlank { "ID: ${profile.id}" },
             authorAvatarUrl = profile.avatarUrl,
-            authorRole = "مشرف فريق فرسان الضاد",
             timeAgo = "الآن",
             content = content.trim(),
             mediaType = mediaType,
