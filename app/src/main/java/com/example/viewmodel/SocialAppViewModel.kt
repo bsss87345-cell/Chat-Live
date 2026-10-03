@@ -293,7 +293,7 @@ class SocialAppViewModel : ViewModel() {
     // --- Followers/Following State (مبنية من نظام Follow الجديد، حالة "أنا" خاصة: مرتبط تجريبياً بـ mock_1..4) ---
         val followersList: StateFlow<List<FollowUser>> = MutableStateFlow(
             listOf(
-                FollowUser(id = "mock_2", name = "محمد العلي", handle = "@m_ali", avatarUrl = "")
+               FollowUser(id = "10000002", name = "محمد العلي", handle = "@m_ali", avatarUrl = "")
             )
         ).asStateFlow()
 
