@@ -142,6 +142,7 @@ fun ChatScreen(
     myName: String = "",
     walletBalance: Int = 0
 ) {
+    var showLockBox by remember(activeRoomId) { mutableStateOf(false) }
     // 1. If an active direct conversation is open
     if (activeChatId != null) {
         val activeConv = conversations.find { it.id == activeChatId }
