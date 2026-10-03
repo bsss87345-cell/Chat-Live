@@ -1,7 +1,10 @@
 package com.example.ui.screens
 
 import androidx.compose.ui.geometry.CornerRadius
-
+import androidx.compose.ui.geometry.Size
+import androidx.compose.ui.graphics.StrokeCap
+import androidx.compose.material.icons.filled.Sms
+import androidx.compose.material.icons.filled.ArrowForward
 import android.net.Uri
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.PickVisualMediaRequest
