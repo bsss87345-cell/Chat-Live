@@ -376,10 +376,10 @@ class SocialAppViewModel : ViewModel() {
 
     // عدد منشورات وهمي ثابت لكل مستخدم بالدليل الوهمي (اختبار محلي فقط، يُستبدل بعدّ حقيقي عند ربط Firestore)
     private val mockPostsCountByUserId: Map<String, Int> = mapOf(
-        "mock_1" to 14,
-        "mock_2" to 27,
-        "mock_3" to 6,
-        "mock_4" to 41
+        "10000001" to 14,
+        "10000002" to 27,
+        "10000003" to 6,
+        "10000004" to 41
     )
 
     // يرجع عدد منشورات أي مستخدم (أنا: من _posts الحقيقية، غيري: من الدليل الوهمي)
