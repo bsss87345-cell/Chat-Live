@@ -76,6 +76,7 @@ fun AccountSettingsScreen(
     var selectedRechargePackage by remember { mutableStateOf<RechargePackage?>(null) }
     val rechargeClipboard = androidx.compose.ui.platform.LocalClipboardManager.current
     var showSupportChatDialog by remember { mutableStateOf(false) }
+    var showRechargeSupportDialog by remember { mutableStateOf(false) }
     var showLanguageDialog by remember { mutableStateOf(false) }
     var currentLanguage by remember { mutableStateOf("العربية") }
     var showReportProblemDialog by remember { mutableStateOf(false) }
