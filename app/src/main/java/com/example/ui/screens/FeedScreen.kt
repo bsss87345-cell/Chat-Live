@@ -3307,12 +3307,20 @@ fun FullScreenMediaComposer(
         )
     ) {
         val view = LocalView.current
-        SideEffect {
+        DisposableEffect(view) {
             val window = (view.parent as? DialogWindowProvider)?.window
             window?.setLayout(
                 WindowManager.LayoutParams.MATCH_PARENT,
                 WindowManager.LayoutParams.MATCH_PARENT
             )
+            window?.let {
+                androidx.core.view.WindowCompat.setDecorFitsSystemWindows(it, false)
+                it.addFlags(
+                    WindowManager.LayoutParams.FLAG_LAYOUT_IN_SCREEN or
+                        WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS
+                )
+            }
+            onDispose { }
         }
         Surface(
             modifier = Modifier.fillMaxSize(),
