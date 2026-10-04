@@ -1342,12 +1342,26 @@ color = NeonCyan,
                                             fontSize = 10.sp,
                                             color = if (isMe) Color.White.copy(alpha = 0.8f) else MaterialTheme.colorScheme.primary
                                         )
-                                        Spacer(modifier = Modifier.height(2.dp))
-                                        Text(
-                                            text = text,
-                                            fontSize = 12.sp,
-                                            color = if (isMe) Color.White else MaterialTheme.colorScheme.onSurface
-                                        )
+                                                                                Spacer(modifier = Modifier.height(2.dp))
+                                        if (text.isNotBlank()) {
+                                            Text(
+                                                text = text,
+                                                fontSize = 12.sp,
+                                                color = if (isMe) Color.White else MaterialTheme.colorScheme.onSurface
+                                            )
+                                        }
+                                        if (!imageUri.isNullOrBlank()) {
+                                            Spacer(modifier = Modifier.height(6.dp))
+                                            AsyncImage(
+                                                model = imageUri,
+                                                contentDescription = "صورة التحويل",
+                                                modifier = Modifier
+                                                    .fillMaxWidth()
+                                                    .height(150.dp)
+                                                    .clip(RoundedCornerShape(10.dp)),
+                                                contentScale = ContentScale.Crop
+                                            )
+                                        }
                                     }
                                 }
                             }
