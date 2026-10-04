@@ -1467,51 +1467,35 @@ color = NeonCyan,
         )
     }
 
-// Logout Confirmation Dialog (تأكيد تسجيل الخروج)
-    if (showLogoutDialog) {
-        AlertDialog(
-            onDismissRequest = { showLogoutDialog = false },
-            title = {
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.spacedBy(8.dp)
-                ) {
-                    Icon(
-                        imageVector = Icons.Default.Logout,
-                        contentDescription = null,
-                        tint = MaterialTheme.colorScheme.error
-                    )
-                    Text("تسجيل الخروج", fontWeight = FontWeight.Bold, fontSize = 15.sp)
-                }
-            },
-            text = {
-                Text(
-                    text = "هل أنت متأكد من رغبتك بتسجيل الخروج من حسابك؟",
-                    fontSize = 12.sp,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
-                )
-            },
-            confirmButton = {
-                Button(
-                    onClick = {
-                        showLogoutDialog = false
-                        onLogout()
-                    },
-                    colors = ButtonDefaults.buttonColors(
-                        containerColor = MaterialTheme.colorScheme.error,
-                        contentColor = MaterialTheme.colorScheme.onError
-                    )
-                ) {
-                    Text("تسجيل الخروج")
-                }
-            },
-            dismissButton = {
-                TextButton(onClick = { showLogoutDialog = false }) {
-                    Text("إلغاء")
-                }
+if (showLogoutDialog) {
+        NeonSettingsPanel(
+            title = "تسجيل الخروج",
+            onDismiss = { showLogoutDialog = false },
+            icon = Icons.Default.Logout
+        ) {
+            Text(
+                text = "هل أنت متأكد من رغبتك بتسجيل الخروج من حسابك؟",
+                color = Color.White.copy(alpha = 0.8f),
+                fontSize = 13.sp
+            )
+            Button(
+                onClick = {
+                    showLogoutDialog = false
+                    onLogout()
+                },
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = Color(0xFFFF3D5A),
+                    contentColor = Color.White
+                ),
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Text("تسجيل الخروج", fontWeight = FontWeight.Bold)
             }
-        )
-    }
+            TextButton(onClick = { showLogoutDialog = false }) {
+                Text("إلغاء", color = NeonCyan)
+            }
+        }
+}
 
     // Change Language Dialog (تغيير اللغة)
     if (showLanguageDialog) {
