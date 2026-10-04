@@ -177,7 +177,7 @@ fun AccountSettingsScreen(
                         Triple("تسجيل الخروج", Icons.Default.Logout, -1)
                     )
 
-                    menuItems.forEach { (label, icon, index) ->
+                    menuItems.forEachIndexed { pos, (label, icon, index) ->
                         val isLogout = index == -1
                         Row(
                             modifier = Modifier
