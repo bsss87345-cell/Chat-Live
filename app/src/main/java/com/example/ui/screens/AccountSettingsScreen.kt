@@ -1739,113 +1739,92 @@ if (showLogoutDialog) {
         )
     }
 
-    // Blocked Users Dialog (قائمة الحظر)
     if (showBlockedListDialog) {
-        AlertDialog(
-            onDismissRequest = { showBlockedListDialog = false },
-            title = {
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.spacedBy(8.dp)
-                ) {
-                    Icon(
-                        imageVector = Icons.Default.Block,
-                        contentDescription = null,
-                        tint = MaterialTheme.colorScheme.error
-                    )
-                    Text("قائمة الحظر", fontWeight = FontWeight.Bold, fontSize = 15.sp)
-                }
-            },
-            text = {
-                Column(
-                    modifier = Modifier.fillMaxWidth(),
-                    verticalArrangement = Arrangement.spacedBy(10.dp)
+        NeonSettingsPanel(
+            title = "قائمة الحظر",
+            onDismiss = { showBlockedListDialog = false },
+            icon = Icons.Default.Block
+        ) {
+            Text(
+                text = "المستخدمون المحظورون لا يمكنهم مراسلتك أو الانضمام لغرفك الخاصة:",
+                fontSize = 11.sp,
+                color = Color.White.copy(alpha = 0.75f)
+            )
+
+            if (blockedUsersList.isEmpty()) {
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(vertical = 24.dp),
+                    contentAlignment = Alignment.Center
                 ) {
                     Text(
-                        text = "المستخدمون المحظورون لا يمكنهم مراسلتك أو الانضمام لغرفك الخاصة:",
-                        fontSize = 11.sp,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                        text = "لا يوجد أي مستخدم محظور حالياً 👍",
+                        fontSize = 12.sp,
+                        color = Color.White.copy(alpha = 0.7f)
                     )
-
-                    if (blockedUsersList.isEmpty()) {
-                        Box(
+                }
+            } else {
+                Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                    blockedUsersList.forEach { (id, name, date) ->
+                        Row(
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .padding(vertical = 24.dp),
-                            contentAlignment = Alignment.Center
+                                .clip(RoundedCornerShape(10.dp))
+                                .border(1.dp, NeonPurple.copy(alpha = 0.6f), RoundedCornerShape(10.dp))
+                                .padding(10.dp),
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.SpaceBetween
                         ) {
-                            Text(
-                                text = "لا يوجد أي مستخدم محظور حالياً 👍",
-                                fontSize = 12.sp,
-                                color = MaterialTheme.colorScheme.onSurfaceVariant
-                            )
-                        }
-                    } else {
-                        LazyColumn(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .heightIn(max = 240.dp),
-                            verticalArrangement = Arrangement.spacedBy(8.dp)
-                        ) {
-                            items(blockedUsersList) { (id, name, date) ->
-                                Surface(
-                                    shape = RoundedCornerShape(10.dp),
-                                    color = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f),
-                                    modifier = Modifier.fillMaxWidth()
+                            Row(
+                                modifier = Modifier.weight(1f),
+                                verticalAlignment = Alignment.CenterVertically,
+                                horizontalArrangement = Arrangement.spacedBy(8.dp)
+                            ) {
+                                Box(
+                                    modifier = Modifier
+                                        .size(32.dp)
+                                        .clip(CircleShape)
+                                        .background(Color(0xFFFF3D5A).copy(alpha = 0.15f)),
+                                    contentAlignment = Alignment.Center
                                 ) {
-                                    Row(
-                                        modifier = Modifier
-                                            .fillMaxWidth()
-                                            .padding(10.dp),
-                                        verticalAlignment = Alignment.CenterVertically,
-                                        horizontalArrangement = Arrangement.SpaceBetween
-                                    ) {
-                                        Row(
-                                            verticalAlignment = Alignment.CenterVertically,
-                                            horizontalArrangement = Arrangement.spacedBy(8.dp)
-                                        ) {
-                                            Box(
-                                                modifier = Modifier
-                                                    .size(32.dp)
-                                                    .clip(CircleShape)
-                                                    .background(MaterialTheme.colorScheme.error.copy(alpha = 0.15f)),
-                                                contentAlignment = Alignment.Center
-                                            ) {
-                                                Icon(
-                                                    imageVector = Icons.Default.PersonOff,
-                                                    contentDescription = null,
-                                                    tint = MaterialTheme.colorScheme.error,
-                                                    modifier = Modifier.size(16.dp)
-                                                )
-                                            }
-                                            Column {
-                                                Text(text = name, fontWeight = FontWeight.Bold, fontSize = 12.sp)
-                                                Text(text = "$date • ID: $id", fontSize = 10.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
-                                            }
-                                        }
-
-                                        OutlinedButton(
-                                            onClick = {
-                                                blockedUsersList = blockedUsersList.filter { it.first != id }
-                                            },
-                                            shape = RoundedCornerShape(8.dp),
-                                            contentPadding = PaddingValues(horizontal = 8.dp, vertical = 2.dp)
-                                        ) {
-                                            Text("إلغاء الحظر", fontSize = 11.sp)
-                                        }
-                                    }
+                                    Icon(
+                                        imageVector = Icons.Default.PersonOff,
+                                        contentDescription = null,
+                                        tint = Color(0xFFFF3D5A),
+                                        modifier = Modifier.size(16.dp)
+                                    )
                                 }
+                                Column {
+                                    Text(
+                                        text = name,
+                                        color = Color.White,
+                                        fontWeight = FontWeight.Bold,
+                                        fontSize = 12.sp
+                                    )
+                                    Text(
+                                        text = "$date • ID: $id",
+                                        fontSize = 10.sp,
+                                        color = Color.White.copy(alpha = 0.6f)
+                                    )
+                                }
+                            }
+                            TextButton(
+                                onClick = {
+                                    blockedUsersList = blockedUsersList.filter { it.first != id }
+                                }
+                            ) {
+                                Text("إلغاء الحظر", color = NeonCyan, fontSize = 11.sp)
                             }
                         }
                     }
                 }
-            },
-            confirmButton = {
-                TextButton(onClick = { showBlockedListDialog = false }) {
-                    Text("إغلاق")
-                }
             }
-        )
+
+            TextButton(onClick = { showBlockedListDialog = false }) {
+                Text("إغلاق", color = NeonCyan)
+            }
+        }
     }
 
     if (showPolicyDialog) {
