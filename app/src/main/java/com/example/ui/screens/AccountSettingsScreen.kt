@@ -147,7 +147,8 @@ fun AccountSettingsScreen(
                 ) {
                     Icon(
                         imageVector = Icons.Default.ArrowBack,
-                        contentDescription = "رجوع"
+                        contentDescription = "رجوع",
+tint = NeonCyan
                     )
                 }
                 Text(
