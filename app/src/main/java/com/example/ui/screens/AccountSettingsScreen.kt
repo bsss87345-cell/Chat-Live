@@ -1,5 +1,6 @@
 package com.example.ui.screens
 
+import androidx.compose.foundation.border
 import android.graphics.BitmapFactory
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.Image
