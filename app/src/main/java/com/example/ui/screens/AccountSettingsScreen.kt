@@ -266,7 +266,8 @@ color = NeonCyan,
                 ) {
                     Icon(
                         imageVector = Icons.Default.ArrowBack,
-                        contentDescription = "رجوع"
+                        contentDescription = "رجوع",
+tint = NeonCyan
                     )
                 }
                 Text(
