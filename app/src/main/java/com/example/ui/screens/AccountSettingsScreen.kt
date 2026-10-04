@@ -330,6 +330,12 @@ color = NeonCyan,
                                         openPage = null
                                     },
                                     enabled = nameInput.isNotBlank(),
+                                    colors = ButtonDefaults.buttonColors(
+                                        containerColor = Color(0xFFFF00FF),
+                                        contentColor = Color.Black,
+                                        disabledContainerColor = Color(0xFFFF00FF).copy(alpha = 0.35f),
+                                        disabledContentColor = Color.Black.copy(alpha = 0.6f)
+                                    ),
                                     shape = RoundedCornerShape(12.dp),
                                     modifier = Modifier.fillMaxWidth()
                                 ) {
