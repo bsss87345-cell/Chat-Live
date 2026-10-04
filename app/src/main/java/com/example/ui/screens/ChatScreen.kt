@@ -3519,7 +3519,7 @@ private fun NeonSettingsRow(
 }
 
 @Composable
-private fun NeonSettingsPanel(
+fun NeonSettingsPanel(
     title: String,
     onDismiss: () -> Unit,
     icon: androidx.compose.ui.graphics.vector.ImageVector = Icons.Outlined.Settings,
