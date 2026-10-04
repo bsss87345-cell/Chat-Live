@@ -417,10 +417,7 @@ color = NeonCyan,
                                 }
 
                                 Button(
-                                    onClick = {
-                                        onNavigateToRecharge()
-                                        showRechargeDialog = true
-                                    },
+                                                                        onClick = { showRechargeDialog = true },
                                     shape = RoundedCornerShape(20.dp),
                                     colors = ButtonDefaults.buttonColors(
                                         containerColor = MujtamaGold,
