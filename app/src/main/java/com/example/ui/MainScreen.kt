@@ -118,7 +118,10 @@ fun MainScreen(viewModel: SocialAppViewModel) {
             Box(
                 modifier = Modifier
                     .fillMaxSize()
-                    .padding(innerPadding)
+                    .padding(
+                    if (hideBars) innerPadding
+                    else androidx.compose.foundation.layout.PaddingValues(top = innerPadding.calculateTopPadding())
+                )
             ) {
                 if (showAccountSettings) {
                     val posts by viewModel.posts.collectAsStateWithLifecycle()
