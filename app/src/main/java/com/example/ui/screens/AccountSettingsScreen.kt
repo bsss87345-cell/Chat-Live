@@ -1212,11 +1212,24 @@ color = NeonCyan,
     }
 
     if (showSupportChatDialog) {
-        var supportMessages by remember {
+        val rechargePack = selectedRechargePackage
+        var supportMessages by remember(rechargePack) {
             mutableStateOf(
-                listOf(
-                    Pair("فريق الدعم الفني 🎧", "مرحباً بك في مركز الدعم الفني! كيف يمكننا مساعدتك اليوم؟")
-                )
+                if (rechargePack != null) {
+                    listOf(
+                        Pair(
+                            "فريق الدعم الفني 🎧",
+                            "طلب شحن ${formatThousands(rechargePack.points)} نقطة بمبلغ ${formatThousands(rechargePack.iqd)} دينار عراقي.\n\n" +
+                                "١) حوّل المبلغ إلى الرقم: 07861890780 من أي محفظة إلكترونية (زين كاش · آسيا حوالة · فاست باي · محفظة الناس).\n\n" +
+                                "٢) أرفق هنا رقم البطاقة أو المحفظة التي حوّلت منها، مع صورة إشعار التحويل.\n\n" +
+                                "سيتم إضافة الرصيد إلى حسابك خلال مدة لا تتجاوز ساعة ⏱️\nوفي حال تجاوز المدة يُرجى التواصل مع الدعم."
+                        )
+                    )
+                } else {
+                    listOf(
+                        Pair("فريق الدعم الفني 🎧", "مرحباً بك في مركز الدعم الفني! كيف يمكننا مساعدتك اليوم؟")
+                    )
+                }
             )
         }
         var messageInput by remember { mutableStateOf("") }
