@@ -470,6 +470,7 @@ color = NeonCyan,
                         ) {
                             Text(
                                 text = "سجل عمليات النقاط (كسب / إنفاق) 📜",
+                                color = Color.White,
                                 style = MaterialTheme.typography.titleSmall.copy(fontWeight = FontWeight.Bold)
                             )
 
