@@ -270,6 +270,7 @@ color = NeonCyan,
                 }
                 Text(
                     text = pageTitle,
+                    color = NeonCyan,
                     style = MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.Bold)
                 )
             }
