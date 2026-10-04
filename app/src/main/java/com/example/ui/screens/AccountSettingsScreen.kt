@@ -1497,7 +1497,6 @@ if (showLogoutDialog) {
         }
 }
 
-    // Change Language Dialog (تغيير اللغة)
     if (showLanguageDialog) {
         var tempSelectedLang by remember { mutableStateOf(currentLanguage) }
         val languages = listOf(
@@ -1506,94 +1505,79 @@ if (showLogoutDialog) {
             Pair("Français", "Français (France)")
         )
 
-        AlertDialog(
-            onDismissRequest = { showLanguageDialog = false },
-            title = {
+        NeonSettingsPanel(
+            title = "تغيير لغة التطبيق 🌐",
+            onDismiss = { showLanguageDialog = false },
+            icon = Icons.Default.Translate
+        ) {
+            Text(
+                text = "اختر اللغة المفضلة لواجهة التطبيق:",
+                fontSize = 12.sp,
+                color = Color.White.copy(alpha = 0.75f)
+            )
+
+            languages.forEach { (code, label) ->
+                val isSelected = tempSelectedLang == code
                 Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.spacedBy(8.dp)
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .clip(RoundedCornerShape(12.dp))
+                        .background(
+                            if (isSelected) NeonCyan.copy(alpha = 0.12f) else Color.Transparent
+                        )
+                        .border(
+                            1.dp,
+                            if (isSelected) NeonCyan else NeonPurple.copy(alpha = 0.6f),
+                            RoundedCornerShape(12.dp)
+                        )
+                        .clickable { tempSelectedLang = code }
+                        .padding(horizontal = 14.dp, vertical = 12.dp),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
                 ) {
-                    Icon(
-                        imageVector = Icons.Default.Translate,
-                        contentDescription = null,
-                        tint = MujtamaPrimary
-                    )
-                    Text("تغيير لغة التطبيق 🌐", fontWeight = FontWeight.Bold, fontSize = 15.sp)
-                }
-            },
-            text = {
-                Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                    Text(
-                        text = "اختر اللغة المفضلة لواجهة التطبيق:",
-                        fontSize = 12.sp,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant
-                    )
-
-                    languages.forEach { (code, label) ->
-                        val isSelected = tempSelectedLang == code
-                        Surface(
-                            shape = RoundedCornerShape(12.dp),
-                            color = if (isSelected) MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.3f)
-                                    else MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.3f),
-                            border = androidx.compose.foundation.BorderStroke(
-                                1.dp,
-                                if (isSelected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.4f)
-                            ),
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .clickable { tempSelectedLang = code }
-                        ) {
-                            Row(
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .padding(horizontal = 14.dp, vertical = 12.dp),
-                                horizontalArrangement = Arrangement.SpaceBetween,
-                                verticalAlignment = Alignment.CenterVertically
-                            ) {
-                                Column {
-                                    Text(
-                                        text = label,
-                                        fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Normal,
-                                        fontSize = 13.sp
-                                    )
-                                    if (code == "العربية") {
-                                        Text(
-                                            text = "اللغة الأساسية للمنصة",
-                                            fontSize = 10.sp,
-                                            color = MaterialTheme.colorScheme.onSurfaceVariant
-                                        )
-                                    }
-                                }
-
-                                if (isSelected) {
-                                    Icon(
-                                        imageVector = Icons.Default.CheckCircle,
-                                        contentDescription = null,
-                                        tint = MaterialTheme.colorScheme.primary,
-                                        modifier = Modifier.size(20.dp)
-                                    )
-                                }
-                            }
+                    Column {
+                        Text(
+                            text = label,
+                            color = Color.White,
+                            fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Normal,
+                            fontSize = 13.sp
+                        )
+                        if (code == "العربية") {
+                            Text(
+                                text = "اللغة الأساسية للمنصة",
+                                fontSize = 10.sp,
+                                color = Color.White.copy(alpha = 0.6f)
+                            )
                         }
                     }
-                }
-            },
-            confirmButton = {
-                Button(
-                    onClick = {
-                        currentLanguage = tempSelectedLang
-                        showLanguageDialog = false
+                    if (isSelected) {
+                        Icon(
+                            imageVector = Icons.Default.CheckCircle,
+                            contentDescription = null,
+                            tint = NeonCyan,
+                            modifier = Modifier.size(20.dp)
+                        )
                     }
-                ) {
-                    Text("تطبيق اللغة")
-                }
-            },
-            dismissButton = {
-                TextButton(onClick = { showLanguageDialog = false }) {
-                    Text("إلغاء")
                 }
             }
-        )
+
+            Button(
+                onClick = {
+                    currentLanguage = tempSelectedLang
+                    showLanguageDialog = false
+                },
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = Color(0xFFFF00FF),
+                    contentColor = Color.Black
+                ),
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Text("تطبيق اللغة", fontWeight = FontWeight.Bold)
+            }
+            TextButton(onClick = { showLanguageDialog = false }) {
+                Text("إلغاء", color = NeonCyan)
+            }
+        }
     }
 
     // Report Problem Dialog (إبلاغ عن مشكلة)
