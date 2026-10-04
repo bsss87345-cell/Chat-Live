@@ -183,6 +183,13 @@ fun AccountSettingsScreen(
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .clip(RoundedCornerShape(14.dp))
+.border(
+    1.dp,
+    if (isLogout) MaterialTheme.colorScheme.error.copy(alpha = 0.7f)
+    else if (pos % 2 == 0) NeonCyan.copy(alpha = 0.7f)
+    else NeonPurple.copy(alpha = 0.7f),
+    RoundedCornerShape(14.dp)
+)
                                 .clickable {
                                     if (isLogout) showLogoutDialog = true else openPage = index
                                 }
