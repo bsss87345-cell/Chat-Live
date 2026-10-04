@@ -1103,22 +1103,6 @@ color = NeonCyan,
                 // Page: الدعم والمساعدة
                 // -------------------------------------------------------------
                                 if (openPage == 7) {
-                    selectedRechargePackage?.let { pack ->
-                        item {
-                            Card(
-                                modifier = Modifier.fillMaxWidth(),
-                                shape = RoundedCornerShape(18.dp),
-                                border = androidx.compose.foundation.BorderStroke(
-                                    1.dp,
-                                    MujtamaGold.copy(alpha = 0.6f)
-                                ),
-                                colors = CardDefaults.cardColors(
-                                    containerColor = MujtamaGold.copy(alpha = 0.08f)
-                                )
-                            ) {
-                                Column(
-                                    modifier = Modifier
-                                    
                     item {
                         Card(
                             modifier = Modifier
