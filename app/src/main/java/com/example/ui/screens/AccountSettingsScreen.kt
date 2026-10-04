@@ -1214,7 +1214,7 @@ color = NeonCyan,
                         onSelectPackage = { pack ->
                 selectedRechargePackage = pack
                 showRechargeDialog = false
-                showSupportChatDialog = true
+                showRechargeSupportDialog = true
                         }
         )
     }
