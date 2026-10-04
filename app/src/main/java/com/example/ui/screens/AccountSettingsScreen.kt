@@ -1218,6 +1218,232 @@ color = NeonCyan,
                         }
         )
     }
+        if (showRechargeSupportDialog) {
+        val rechargePack = selectedRechargePackage
+        var supportMessages by remember(rechargePack) {
+            mutableStateOf<List<Triple<String, String, String?>>>(
+                if (rechargePack != null) {
+                    listOf(
+                        Triple(
+                            "فريق الدعم الفني 🎧",
+                            "طلب شحن ${formatThousands(rechargePack.points)} نقطة بمبلغ ${formatThousands(rechargePack.iqd)} دينار عراقي.\n\n" +
+                                "١) حوّل المبلغ إلى الرقم: 07861890780 من أي محفظة إلكترونية (زين كاش · آسيا حوالة · فاست باي · محفظة الناس).\n\n" +
+                                "٢) أرفق هنا رقم البطاقة أو المحفظة التي حوّلت منها، مع صورة إشعار التحويل.\n\n" +
+                                "سيتم إضافة الرصيد إلى حسابك خلال مدة لا تتجاوز ساعة ⏱️\nوفي حال تجاوز المدة يُرجى التواصل مع الدعم.",
+                            null
+                        )
+                    )
+                } else {
+                    listOf(
+                        Triple("فريق الدعم الفني 🎧", "مرحباً بك في دعم الشحن! اختر باقة من قسم النقاط والرصيد لبدء طلب الشحن.", null)
+                    )
+                }
+            )
+        }
+        var messageInput by remember { mutableStateOf("") }
+        var pendingImageUri by remember(rechargePack) { mutableStateOf<String?>(null) }
+        val supportImagePicker = rememberLauncherForActivityResult(
+            contract = ActivityResultContracts.PickVisualMedia()
+        ) { uri -> if (uri != null) pendingImageUri = uri.toString() }
+
+        AlertDialog(
+            onDismissRequest = { showRechargeSupportDialog = false },
+            title = {
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(8.dp)
+                ) {
+                    Box(
+                        modifier = Modifier
+                            .size(32.dp)
+                            .clip(CircleShape)
+                            .background(MujtamaTeal.copy(alpha = 0.2f)),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.SupportAgent,
+                            contentDescription = null,
+                            tint = MujtamaTeal,
+                            modifier = Modifier.size(20.dp)
+                        )
+                    }
+                    Column {
+                        Text(
+                            text = "دعم الشحن",
+                            fontWeight = FontWeight.Bold,
+                            fontSize = 15.sp
+                        )
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.spacedBy(4.dp)
+                        ) {
+                            Box(
+                                modifier = Modifier
+                                    .size(8.dp)
+                                    .clip(CircleShape)
+                                    .background(MujtamaOnlineGreen)
+                            )
+                            Text(
+                                text = "الفريق متصل الآن (24/7)",
+                                fontSize = 10.sp,
+                                color = MujtamaOnlineGreen
+                            )
+                        }
+                    }
+                }
+            },
+            text = {
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .heightIn(min = 200.dp, max = 320.dp),
+                    verticalArrangement = Arrangement.spacedBy(8.dp)
+                ) {
+                    HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.3f))
+
+                    LazyColumn(
+                        modifier = Modifier
+                            .weight(1f)
+                            .fillMaxWidth(),
+                        verticalArrangement = Arrangement.spacedBy(8.dp)
+                    ) {
+                        items(supportMessages) { (sender, text, imageUri) ->
+                            val isMe = sender == "أنا"
+                            Column(
+                                modifier = Modifier.fillMaxWidth(),
+                                horizontalAlignment = if (isMe) Alignment.End else Alignment.Start
+                            ) {
+                                Surface(
+                                    shape = RoundedCornerShape(
+                                        topStart = 12.dp,
+                                        topEnd = 12.dp,
+                                        bottomStart = if (isMe) 12.dp else 2.dp,
+                                        bottomEnd = if (isMe) 2.dp else 12.dp
+                                    ),
+                                    color = if (isMe) MujtamaPrimary else MaterialTheme.colorScheme.surfaceVariant
+                                ) {
+                                    Column(modifier = Modifier.padding(10.dp)) {
+                                        Text(
+                                            text = sender,
+                                            fontWeight = FontWeight.Bold,
+                                            fontSize = 10.sp,
+                                            color = if (isMe) Color.White.copy(alpha = 0.8f) else MaterialTheme.colorScheme.primary
+                                        )
+                                        Spacer(modifier = Modifier.height(2.dp))
+                                        if (text.isNotBlank()) {
+                                            Text(
+                                                text = text,
+                                                fontSize = 12.sp,
+                                                color = if (isMe) Color.White else MaterialTheme.colorScheme.onSurface
+                                            )
+                                        }
+                                        if (!imageUri.isNullOrBlank()) {
+                                            Spacer(modifier = Modifier.height(6.dp))
+                                            AsyncImage(
+                                                model = imageUri,
+                                                contentDescription = "صورة التحويل",
+                                                modifier = Modifier
+                                                    .fillMaxWidth()
+                                                    .height(150.dp)
+                                                    .clip(RoundedCornerShape(10.dp)),
+                                                contentScale = ContentScale.Crop
+                                            )
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+
+                    pendingImageUri?.let { previewUri ->
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(bottom = 6.dp),
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.spacedBy(8.dp)
+                        ) {
+                            AsyncImage(
+                                model = previewUri,
+                                contentDescription = "صورة التحويل المرفقة",
+                                modifier = Modifier
+                                    .size(46.dp)
+                                    .clip(RoundedCornerShape(8.dp)),
+                                contentScale = ContentScale.Crop
+                            )
+                            Text(
+                                text = "صورة التحويل مرفقة",
+                                fontSize = 12.sp,
+                                modifier = Modifier.weight(1f)
+                            )
+                            TextButton(onClick = { pendingImageUri = null }) {
+                                Text("إزالة", fontSize = 12.sp)
+                            }
+                        }
+                    }
+
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(6.dp)
+                    ) {
+                        IconButton(
+                            onClick = {
+                                supportImagePicker.launch(
+                                    PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly)
+                                )
+                            }
+                        ) {
+                            Icon(
+                                imageVector = Icons.Default.AttachFile,
+                                contentDescription = "إرفاق صورة التحويل",
+                                tint = MujtamaTeal
+                            )
+                        }
+                        OutlinedTextField(
+                            value = messageInput,
+                            onValueChange = { messageInput = it },
+                            placeholder = { Text("رقم البطاقة المحوّل منها...", fontSize = 12.sp) },
+                            modifier = Modifier.weight(1f),
+                            singleLine = true,
+                            shape = RoundedCornerShape(12.dp)
+                        )
+                        val canSend = messageInput.isNotBlank() || pendingImageUri != null
+                        IconButton(
+                            onClick = {
+                                if (canSend) {
+                                    supportMessages = supportMessages + Triple(
+                                        "أنا",
+                                        messageInput.trim(),
+                                        pendingImageUri
+                                    )
+                                    messageInput = ""
+                                    pendingImageUri = null
+                                    supportMessages = supportMessages + Triple(
+                                        "فريق الدعم الفني 🎧",
+                                        "تم استلام طلبك ✅ سيُضاف الرصيد خلال مدة لا تتجاوز ساعة. وفي حال تجاوز المدة تواصل معنا هنا.",
+                                        null
+                                    )
+                                }
+                            },
+                            enabled = canSend
+                        ) {
+                            Icon(
+                                imageVector = Icons.Default.Send,
+                                contentDescription = "إرسال",
+                                tint = if (canSend) MujtamaPrimary else MaterialTheme.colorScheme.onSurfaceVariant
+                            )
+                        }
+                    }
+                }
+            },
+            confirmButton = {
+                TextButton(onClick = { showRechargeSupportDialog = false }) {
+                    Text("إغلاق")
+                }
+            }
+        )
+        }
 
     if (showSupportChatDialog) {
         val rechargePack = selectedRechargePackage
