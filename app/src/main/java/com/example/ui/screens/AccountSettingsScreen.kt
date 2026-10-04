@@ -152,6 +152,7 @@ fun AccountSettingsScreen(
                 }
                 Text(
                     text = "القائمة",
+color = NeonCyan,
                     style = MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.Bold)
                 )
             }
