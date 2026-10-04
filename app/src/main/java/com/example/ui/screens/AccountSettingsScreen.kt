@@ -30,6 +30,10 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.model.*
 import com.example.ui.theme.*
+private val neonCardBorder = androidx.compose.foundation.BorderStroke(
+    1.dp,
+    androidx.compose.ui.graphics.Brush.verticalGradient(listOf(NeonCyan, NeonPurple))
+)
 
 @Composable
 fun AccountSettingsScreen(
