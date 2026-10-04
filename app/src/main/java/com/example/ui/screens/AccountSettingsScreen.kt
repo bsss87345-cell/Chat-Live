@@ -1179,7 +1179,10 @@ color = NeonCyan,
                                     icon = Icons.Default.SupportAgent,
                                     title = "تواصل مباشر مع الدعم",
                                     subtitle = "محادثة فورية مع فريق الدعم الفني وخدمة العملاء",
-                                    onClick = { showSupportChatDialog = true }
+                                                                        onClick = {
+                                        selectedRechargePackage = null
+                                        showSupportChatDialog = true
+                                                                        }
                                 )
 
                                 HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.3f))
