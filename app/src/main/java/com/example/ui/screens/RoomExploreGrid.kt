@@ -112,6 +112,8 @@ fun ExploreRoomsGridView(
     var showCreateDialog by remember { mutableStateOf(false) }
     var showJoinByCodeDialog by remember { mutableStateOf(false) }
     var passwordPromptRoom by remember { mutableStateOf<ChatRoom?>(null) }
+    var lockedPromptRoom by remember { mutableStateOf<ChatRoom?>(null) }
+    var lockCodeError by remember { mutableStateOf<String?>(null) }
     var roomViewFilter by remember { mutableStateOf("العامة") } // "العامة" أو "الخاص بي"
     var showSearchBar by remember { mutableStateOf(false) }
     
