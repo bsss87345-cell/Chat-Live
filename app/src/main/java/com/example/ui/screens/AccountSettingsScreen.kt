@@ -155,7 +155,10 @@ fun AccountSettingsScreen(
             Surface(
                 shape = RoundedCornerShape(18.dp),
                 color = MaterialTheme.colorScheme.surface,
-                tonalElevation = 1.dp,
+                border = androidx.compose.foundation.BorderStroke(
+    1.5.dp,
+    androidx.compose.ui.graphics.Brush.verticalGradient(listOf(NeonCyan, NeonPurple))
+),
                 modifier = Modifier
                     .padding(horizontal = 12.dp)
                     .fillMaxWidth()
