@@ -564,6 +564,7 @@ color = NeonCyan,
                         item {
                             Text(
                                 text = "النشاط 📋",
+                                color = Color.White,
                                 style = MaterialTheme.typography.titleSmall.copy(fontWeight = FontWeight.Bold)
                             )
                         }
