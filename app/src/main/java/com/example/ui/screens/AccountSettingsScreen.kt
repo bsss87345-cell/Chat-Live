@@ -1071,7 +1071,7 @@ fun AccountSettingsScreen(
                         Card(
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .testTag("support_card"),
+                                border = neonCardBorder,
                             shape = RoundedCornerShape(18.dp),
                             colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface)
                         ) {
