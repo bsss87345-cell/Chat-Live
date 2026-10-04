@@ -28,6 +28,7 @@ import com.example.ui.theme.GlowingMagenta
 import com.example.ui.theme.DarkSurface
 import com.example.ui.theme.NeonCyan
 import com.example.ui.theme.NeonPurple
+import androidx.compose.foundation.layout.navigationBarsPadding
 import com.example.ui.theme.TextSecondary
 
 data class BottomNavItem(
