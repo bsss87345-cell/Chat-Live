@@ -372,6 +372,30 @@ val sortedRooms = remember(rooms, searchQuery, roomViewFilter) {
             )
         }
         }
+        RoomCodeBox(
+            visible = lockedPromptRoom != null,
+            isSetMode = false,
+            roomName = lockedPromptRoom?.name ?: "",
+            errorMessage = lockCodeError,
+            onConfirm = { code ->
+                val target = lockedPromptRoom
+                if (target != null) {
+                    val ok = onJoinRoom(target.id, code)
+                    if (ok) {
+                        lockedPromptRoom = null
+                        lockCodeError = null
+                        onOpenRoom(target.id)
+                    } else {
+                        lockCodeError = "الرمز غير صحيح!"
+                    }
+                }
+            },
+            onDismiss = {
+                lockedPromptRoom = null
+                lockCodeError = null
+            },
+            modifier = Modifier.fillMaxSize()
+        )
     }
 
     // نافذة إدخال كلمة المرور للغرف المغلقة
