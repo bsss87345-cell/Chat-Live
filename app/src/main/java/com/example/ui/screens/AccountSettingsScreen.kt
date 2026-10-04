@@ -834,7 +834,8 @@ fun AccountSettingsScreen(
                         Card(
                             modifier = Modifier
                                 .fillMaxWidth()
-                                border = neonCardBorder,
+                                .testTag("privacy_card"),
+                            border = neonCardBorder,
                             shape = RoundedCornerShape(18.dp),
                             colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface)
                         ) {
