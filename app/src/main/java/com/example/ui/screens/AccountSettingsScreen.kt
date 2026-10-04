@@ -311,6 +311,12 @@ color = NeonCyan,
                                     value = nameInput,
                                     onValueChange = { nameInput = it },
                                     label = { Text("الاسم المعروض") },
+                                    colors = OutlinedTextFieldDefaults.colors(
+                                        focusedBorderColor = NeonCyan,
+                                        unfocusedBorderColor = NeonCyan.copy(alpha = 0.5f),
+                                        focusedLabelColor = NeonCyan,
+                                        cursorColor = NeonCyan
+                                    ),
                                     modifier = Modifier.fillMaxWidth(),
                                     singleLine = true
                                 )
