@@ -362,7 +362,10 @@ val sortedRooms = remember(rooms, searchQuery, roomViewFilter) {
                 onEnterClick = {
                     if (room.isJoined) {
                         onOpenRoom(room.id)
-                    } else if (room.accessType == RoomAccessType.PASSWORD) {
+                   } else if (room.isLocked && !room.isOwner) {
+                            lockedPromptRoom = room
+                            lockCodeError = null
+                        } else if (room.accessType == RoomAccessType.PASSWORD) { 
                         passwordPromptRoom = room
                     } else {
                         onJoinRoom(room.id, "")
