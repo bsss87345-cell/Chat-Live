@@ -51,6 +51,7 @@ fun MujtamaBottomNav(
     Box(
         modifier = Modifier
             .fillMaxWidth()
+            .navigationBarsPadding()
             .padding(horizontal = 18.dp, vertical = 14.dp)
     ) {
         Surface(
