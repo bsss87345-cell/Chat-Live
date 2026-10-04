@@ -1203,11 +1203,11 @@ color = NeonCyan,
         if (showRechargeDialog) {
         RechargeDialog(
             onDismiss = { showRechargeDialog = false },
-            onSelectPackage = { pack ->
+                        onSelectPackage = { pack ->
                 selectedRechargePackage = pack
                 showRechargeDialog = false
-                openPage = 7
-            }
+                showSupportChatDialog = true
+                        }
         )
     }
 
