@@ -1848,93 +1848,62 @@ if (showLogoutDialog) {
         )
     }
 
-    // App Policy Dialog (سياسة البرنامج)
     if (showPolicyDialog) {
-        AlertDialog(
-            onDismissRequest = { showPolicyDialog = false },
-            title = {
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.spacedBy(8.dp)
-                ) {
-                    Icon(
-                        imageVector = Icons.Default.Policy,
-                        contentDescription = null,
-                        tint = MujtamaTeal
+        val policySections = listOf(
+            Pair(
+                "1. قواعد السلوك والاحترام المتبادل",
+                "يُمنع منعاً باتاً نشر أي محتوى مسيء، ترويجي مزعج (سبام)، أو التعدي على خصوصية الأعضاء الآخرين في الغرف الصوتية والدردشات."
+            ),
+            Pair(
+                "2. حماية الخصوصية والبيانات",
+                "نحن نحافظ على سرية بياناتك الشخصية ولا نشارك معرّف حسابك أو بريدك الإلكتروني مع أي أطراف ثالثة دون إذنك المسبق."
+            ),
+            Pair(
+                "3. نزاهة الألعاب والتحديات",
+                "النقاط والمكافآت داخل التطبيق مخصصة للترفيه والمنافسة الشريفة. يُحظر استخدام أي برامج خارجية أو محاولات تلاعب بالنتائج."
+            ),
+            Pair(
+                "4. حقوق الأمان والإبلاغ",
+                "يحق لكل مستخدم الإبلاغ عن أي انتهاك أو حظر أي حساب مسيء فوراً عبر أدوات الحظر المتاحة داخل التطبيق."
+            )
+        )
+
+        NeonSettingsPanel(
+            title = "سياسة البرنامج والخصوصية 📜",
+            onDismiss = { showPolicyDialog = false },
+            icon = Icons.Default.Policy
+        ) {
+            Text(
+                text = "مرحباً بك في Chat Live! تسري هذه السياسة على جميع مستخدمي المنصة.",
+                fontSize = 11.sp,
+                color = Color.White.copy(alpha = 0.75f)
+            )
+            policySections.forEach { (sectionTitle, body) ->
+                Column(verticalArrangement = Arrangement.spacedBy(2.dp)) {
+                    Text(
+                        text = sectionTitle,
+                        color = NeonCyan,
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 12.sp
                     )
-                    Text("سياسة البرنامج والخصوصية 📜", fontWeight = FontWeight.Bold, fontSize = 15.sp)
-                }
-            },
-            text = {
-                LazyColumn(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .heightIn(max = 300.dp),
-                    verticalArrangement = Arrangement.spacedBy(10.dp)
-                ) {
-                    item {
-                        Text(
-                            text = "مرحباً بك في Chat Live! تسري هذه السياسة على جميع مستخدمي المنصة.",
-                            fontSize = 11.sp,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant
-                        )
-                    }
-                    item {
-                        Text(
-                            text = "1. قواعد السلوك والاحترام المتبادل",
-                            fontWeight = FontWeight.Bold,
-                            fontSize = 12.sp
-                        )
-                        Text(
-                            text = "يُمنع منعاً باتاً نشر أي محتوى مسيء، ترويجي مزعج (سبام)، أو التعدي على خصوصية الأعضاء الآخرين في الغرف الصوتية والدردشات.",
-                            fontSize = 11.sp,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant
-                        )
-                    }
-                    item {
-                        Text(
-                            text = "2. حماية الخصوصية والبيانات",
-                            fontWeight = FontWeight.Bold,
-                            fontSize = 12.sp
-                        )
-                        Text(
-                            text = "نحن نحافظ على سرية بياناتك الشخصية ولا نشارك معرّف حسابك أو بريدك الإلكتروني مع أي أطراف ثالثة دون إذنك المسبق.",
-                            fontSize = 11.sp,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant
-                        )
-                    }
-                    item {
-                        Text(
-                            text = "3. نزاهة الألعاب والتحديات",
-                            fontWeight = FontWeight.Bold,
-                            fontSize = 12.sp
-                        )
-                        Text(
-                            text = "النقاط والمكافآت داخل التطبيق مخصصة للترفيه والمنافسة الشريفة. يُحظر استخدام أي برامج خارجية أو محاولات تلاعب بالنتائج.",
-                            fontSize = 11.sp,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant
-                        )
-                    }
-                    item {
-                        Text(
-                            text = "4. حقوق الأمان والإبلاغ",
-                            fontWeight = FontWeight.Bold,
-                            fontSize = 12.sp
-                        )
-                        Text(
-                            text = "يحق لكل مستخدم الإبلاغ عن أي انتهاك أو حظر أي حساب مسيء فوراً عبر أدوات الحظر المتاحة داخل التطبيق.",
-                            fontSize = 11.sp,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant
-                        )
-                    }
-                }
-            },
-            confirmButton = {
-                    Button(onClick = { showPolicyDialog = false }) {
-                    Text("فهمت وموافق")
+                    Text(
+                        text = body,
+                        color = Color.White.copy(alpha = 0.8f),
+                        fontSize = 11.sp
+                    )
                 }
             }
-        )
+            Button(
+                onClick = { showPolicyDialog = false },
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = Color(0xFFFF00FF),
+                    contentColor = Color.Black
+                ),
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Text("فهمت وموافق", fontWeight = FontWeight.Bold)
+            }
+        }
     }
 
     // ورقة التعليقات تُرسم هنا حتى تفتح داخل صفحة النشاط نفسها
