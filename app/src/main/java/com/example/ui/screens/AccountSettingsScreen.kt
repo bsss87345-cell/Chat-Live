@@ -1320,7 +1320,7 @@ color = NeonCyan,
                             .fillMaxWidth(),
                         verticalArrangement = Arrangement.spacedBy(8.dp)
                     ) {
-                        items(supportMessages) { (sender, text) ->
+                                                items(supportMessages) { (sender, text, imageUri) ->
                             val isMe = sender == "أنا"
                             Column(
                                 modifier = Modifier.fillMaxWidth(),
