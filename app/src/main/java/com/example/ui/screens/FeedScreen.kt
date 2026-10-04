@@ -2572,6 +2572,10 @@ fun StoryCameraControlsOverlayV2(
     }
     val stripHeight = 64.dp
     val navBottom = WindowInsets.navigationBars.asPaddingValues().calculateBottomPadding()
+    val statTop = WindowInsets.statusBars.asPaddingValues().calculateTopPadding()
+        LaunchedEffect(Unit) {
+            android.widget.Toast.makeText(context, "TOP=${statTop.value} BOT=${navBottom.value}", android.widget.Toast.LENGTH_LONG).show()
+        }
 
     CompositionLocalProvider(
         androidx.compose.ui.platform.LocalLayoutDirection provides androidx.compose.ui.unit.LayoutDirection.Ltr
