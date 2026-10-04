@@ -1095,7 +1095,71 @@ color = NeonCyan,
                 // -------------------------------------------------------------
                 // Page: الدعم والمساعدة
                 // -------------------------------------------------------------
-                if (openPage == 7) {
+                                if (openPage == 7) {
+                    selectedRechargePackage?.let { pack ->
+                        item {
+                            Card(
+                                modifier = Modifier.fillMaxWidth(),
+                                shape = RoundedCornerShape(18.dp),
+                                border = androidx.compose.foundation.BorderStroke(
+                                    1.dp,
+                                    MujtamaGold.copy(alpha = 0.6f)
+                                ),
+                                colors = CardDefaults.cardColors(
+                                    containerColor = MujtamaGold.copy(alpha = 0.08f)
+                                )
+                            ) {
+                                Column(
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .padding(16.dp),
+                                    verticalArrangement = Arrangement.spacedBy(10.dp)
+                                ) {
+                                    Text(
+                                        text = "طلب شحن ${formatThousands(pack.points)} نقطة",
+                                        fontWeight = FontWeight.Bold,
+                                        fontSize = 15.sp,
+                                        color = MujtamaGold
+                                    )
+                                    Text(
+                                        text = "حوّل مبلغ ${formatThousands(pack.iqd)} دينار عراقي إلى الرقم التالي من أي محفظة إلكترونية (زين كاش · آسيا حوالة · فاست باي · محفظة الناس)، ثم راسل الدعم برقم العملية ليتم شحن رصيدك.",
+                                        fontSize = 12.sp,
+                                        lineHeight = 20.sp,
+                                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                                    )
+                                    Row(
+                                        modifier = Modifier.fillMaxWidth(),
+                                        verticalAlignment = Alignment.CenterVertically,
+                                        horizontalArrangement = Arrangement.spacedBy(10.dp)
+                                    ) {
+                                        Text(
+                                            text = "07861890780",
+                                            fontWeight = FontWeight.Black,
+                                            fontSize = 20.sp,
+                                            color = MaterialTheme.colorScheme.onSurface,
+                                            modifier = Modifier.weight(1f)
+                                        )
+                                        TextButton(
+                                            onClick = {
+                                                rechargeClipboard.setText(
+                                                    androidx.compose.ui.text.AnnotatedString("07861890780")
+                                                )
+                                            }
+                                        ) {
+                                            Icon(
+                                                imageVector = Icons.Default.ContentCopy,
+                                                contentDescription = "نسخ الرقم",
+                                                modifier = Modifier.size(16.dp)
+                                            )
+                                            Spacer(modifier = Modifier.width(4.dp))
+                                            Text("نسخ", fontSize = 12.sp)
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+
                     item {
                         Card(
                             modifier = Modifier
