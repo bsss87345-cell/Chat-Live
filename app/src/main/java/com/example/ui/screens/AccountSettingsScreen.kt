@@ -201,7 +201,7 @@ fun AccountSettingsScreen(
                             Icon(
                                 imageVector = icon,
                                 contentDescription = null,
-                                tint = if (isLogout) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.onSurface,
+                                tint = if (isLogout) MaterialTheme.colorScheme.error else if (pos % 2 == 0) NeonCyan else NeonPurple,
                                 modifier = Modifier.size(18.dp)
                             )
                             Text(
