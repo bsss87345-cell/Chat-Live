@@ -1446,252 +1446,168 @@ color = NeonCyan,
         }
 
     if (showSupportChatDialog) {
-        val rechargePack = selectedRechargePackage
-                var supportMessages by remember(rechargePack) {
-            mutableStateOf<List<Triple<String, String, String?>>>(
-                if (rechargePack != null) {
-                    listOf(
-                                                Triple(
-                            "فريق الدعم الفني 🎧",
-                            "طلب شحن ${formatThousands(rechargePack.points)} نقطة بمبلغ ${formatThousands(rechargePack.iqd)} دينار عراقي.\n\n" +
-                                "١) حوّل المبلغ إلى الرقم: 07861890780 من أي محفظة إلكترونية (زين كاش · آسيا حوالة · فاست باي · محفظة الناس).\n\n" +
-                                "٢) أرفق هنا رقم البطاقة أو المحفظة التي حوّلت منها، مع صورة إشعار التحويل.\n\n" +
-                                "سيتم إضافة الرصيد إلى حسابك خلال مدة لا تتجاوز ساعة ⏱️\nوفي حال تجاوز المدة يُرجى التواصل مع الدعم.",
-                            null
-                        )
-                    )
-                } else {
-                    listOf(
-                                                Triple("فريق الدعم الفني 🎧", "مرحباً بك في مركز الدعم الفني! كيف يمكننا مساعدتك اليوم؟", null)
-                    )
-                }
+        var supportMessages by remember {
+            mutableStateOf(
+                listOf(
+                    Pair("فريق الدعم الفني 🎧", "مرحباً بك في مركز الدعم الفني! كيف يمكننا مساعدتك اليوم؟")
+                )
             )
         }
         var messageInput by remember { mutableStateOf("") }
-        var pendingImageUri by remember(rechargePack) { mutableStateOf<String?>(null) }
-        val supportImagePicker = rememberLauncherForActivityResult(
-            contract = ActivityResultContracts.PickVisualMedia()
-        ) { uri -> if (uri != null) pendingImageUri = uri.toString() }
+        val chatScrollState = rememberScrollState()
+        LaunchedEffect(supportMessages.size) {
+            chatScrollState.animateScrollTo(chatScrollState.maxValue)
+        }
 
-        AlertDialog(
-            onDismissRequest = { showSupportChatDialog = false },
-            title = {
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.spacedBy(8.dp)
-                ) {
+        NeonSettingsPanel(
+            title = "تواصل مباشر مع الدعم",
+            onDismiss = { showSupportChatDialog = false },
+            icon = Icons.Default.SupportAgent
+        ) {
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(4.dp)
+            ) {
+                Box(
+                    modifier = Modifier
+                        .size(8.dp)
+                        .clip(CircleShape)
+                        .background(MujtamaOnlineGreen)
+                )
+                Text(
+                    text = "الفريق متصل الآن (24/7)",
+                    fontSize = 10.sp,
+                    color = MujtamaOnlineGreen
+                )
+            }
+
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(6.dp)
+            ) {
+                listOf("مشكلة في لعبة 🎲", "توثيق الحساب 🛡️", "استفسار عام 💬").forEach { topic ->
                     Box(
                         modifier = Modifier
-                            .size(32.dp)
-                            .clip(CircleShape)
-                            .background(MujtamaTeal.copy(alpha = 0.2f)),
+                            .weight(1f)
+                            .clip(RoundedCornerShape(12.dp))
+                            .border(1.dp, NeonPurple.copy(alpha = 0.6f), RoundedCornerShape(12.dp))
+                            .clickable { messageInput = topic }
+                            .padding(horizontal = 4.dp, vertical = 6.dp),
                         contentAlignment = Alignment.Center
                     ) {
-                        Icon(
-                            imageVector = Icons.Default.SupportAgent,
-                            contentDescription = null,
-                            tint = MujtamaTeal,
-                            modifier = Modifier.size(20.dp)
-                        )
-                    }
-                    Column {
                         Text(
-                            text = "تواصل مباشر مع الدعم",
-                            fontWeight = FontWeight.Bold,
-                            fontSize = 15.sp
+                            text = topic,
+                            fontSize = 10.sp,
+                            color = NeonCyan,
+                            textAlign = TextAlign.Center
                         )
-                        Row(
-                            verticalAlignment = Alignment.CenterVertically,
-                            horizontalArrangement = Arrangement.spacedBy(4.dp)
-                        ) {
-                            Box(
-                                modifier = Modifier
-                                    .size(8.dp)
-                                    .clip(CircleShape)
-                                    .background(MujtamaOnlineGreen)
-                            )
-                            Text(
-                                text = "الفريق متصل الآن (24/7)",
-                                fontSize = 10.sp,
-                                color = MujtamaOnlineGreen
-                            )
-                        }
                     }
-                }
-            },
-            text = {
-                Column(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .heightIn(min = 200.dp, max = 320.dp),
-                    verticalArrangement = Arrangement.spacedBy(8.dp)
-                ) {
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.spacedBy(6.dp)
-                    ) {
-                        listOf("شحن الرصيد ⚡", "مشكلة في لعبة 🎲", "توثيق الحساب 🛡️").forEach { topic ->
-                            Surface(
-                                shape = RoundedCornerShape(12.dp),
-                                color = MaterialTheme.colorScheme.primary.copy(alpha = 0.08f),
-                                modifier = Modifier.clickable {
-                                    messageInput = topic
-                                }
-                            ) {
-                                Text(
-                                    text = topic,
-                                    fontSize = 10.sp,
-                                    modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp),
-                                    color = MaterialTheme.colorScheme.primary
-                                )
-                            }
-                        }
-                    }
-
-                    HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.3f))
-
-                    LazyColumn(
-                        modifier = Modifier
-                            .weight(1f)
-                            .fillMaxWidth(),
-                        verticalArrangement = Arrangement.spacedBy(8.dp)
-                    ) {
-                                                items(supportMessages) { (sender, text, imageUri) ->
-                            val isMe = sender == "أنا"
-                            Column(
-                                modifier = Modifier.fillMaxWidth(),
-                                horizontalAlignment = if (isMe) Alignment.End else Alignment.Start
-                            ) {
-                                Surface(
-                                    shape = RoundedCornerShape(
-                                        topStart = 12.dp,
-                                        topEnd = 12.dp,
-                                        bottomStart = if (isMe) 12.dp else 2.dp,
-                                        bottomEnd = if (isMe) 2.dp else 12.dp
-                                    ),
-                                    color = if (isMe) MujtamaPrimary else MaterialTheme.colorScheme.surfaceVariant
-                                ) {
-                                    Column(modifier = Modifier.padding(10.dp)) {
-                                        Text(
-                                            text = sender,
-                                            fontWeight = FontWeight.Bold,
-                                            fontSize = 10.sp,
-                                            color = if (isMe) Color.White.copy(alpha = 0.8f) else MaterialTheme.colorScheme.primary
-                                        )
-                                                                                Spacer(modifier = Modifier.height(2.dp))
-                                        if (text.isNotBlank()) {
-                                            Text(
-                                                text = text,
-                                                fontSize = 12.sp,
-                                                color = if (isMe) Color.White else MaterialTheme.colorScheme.onSurface
-                                            )
-                                        }
-                                        if (!imageUri.isNullOrBlank()) {
-                                            Spacer(modifier = Modifier.height(6.dp))
-                                            AsyncImage(
-                                                model = imageUri,
-                                                contentDescription = "صورة التحويل",
-                                                modifier = Modifier
-                                                    .fillMaxWidth()
-                                                    .height(150.dp)
-                                                    .clip(RoundedCornerShape(10.dp)),
-                                                contentScale = ContentScale.Crop
-                                            )
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
-
-                                        pendingImageUri?.let { previewUri ->
-                        Row(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(bottom = 6.dp),
-                            verticalAlignment = Alignment.CenterVertically,
-                            horizontalArrangement = Arrangement.spacedBy(8.dp)
-                        ) {
-                            AsyncImage(
-                                model = previewUri,
-                                contentDescription = "صورة التحويل المرفقة",
-                                modifier = Modifier
-                                    .size(46.dp)
-                                    .clip(RoundedCornerShape(8.dp)),
-                                contentScale = ContentScale.Crop
-                            )
-                            Text(
-                                text = "صورة التحويل مرفقة",
-                                fontSize = 12.sp,
-                                modifier = Modifier.weight(1f)
-                            )
-                            TextButton(onClick = { pendingImageUri = null }) {
-                                Text("إزالة", fontSize = 12.sp)
-                            }
-                        }
-                    }
-
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.spacedBy(6.dp)
-                    ) {
-                        IconButton(
-                            onClick = {
-                                supportImagePicker.launch(
-                                    PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly)
-                                )
-                            }
-                        ) {
-                            Icon(
-                                imageVector = Icons.Default.AttachFile,
-                                contentDescription = "إرفاق صورة التحويل",
-                                tint = MujtamaTeal
-                            )
-                        }
-                        OutlinedTextField(
-                            value = messageInput,
-                            onValueChange = { messageInput = it },
-                            placeholder = { Text("رقم البطاقة المحوّل منها...", fontSize = 12.sp) },
-                            modifier = Modifier.weight(1f),
-                            singleLine = true,
-                            shape = RoundedCornerShape(12.dp)
-                        )
-                        val canSend = messageInput.isNotBlank() || pendingImageUri != null
-                        IconButton(
-                            onClick = {
-                                if (canSend) {
-                                    supportMessages = supportMessages + Triple(
-                                        "أنا",
-                                        messageInput.trim(),
-                                        pendingImageUri
-                                    )
-                                    messageInput = ""
-                                    pendingImageUri = null
-                                    supportMessages = supportMessages + Triple(
-                                        "فريق الدعم الفني 🎧",
-                                        "تم استلام طلبك ✅ سيُضاف الرصيد خلال مدة لا تتجاوز ساعة. وفي حال تجاوز المدة تواصل معنا هنا.",
-                                        null
-                                    )
-                                }
-                            },
-                            enabled = canSend
-                        ) {
-                            Icon(
-                                imageVector = Icons.Default.Send,
-                                contentDescription = "إرسال",
-                                tint = if (canSend) MujtamaPrimary else MaterialTheme.colorScheme.onSurfaceVariant
-                            )
-                        }
-                    }
-                }
-            },
-            confirmButton = {
-                TextButton(onClick = { showSupportChatDialog = false }) {
-                    Text("إغلاق")
                 }
             }
-        )
+
+            HorizontalDivider(color = NeonCyan.copy(alpha = 0.3f))
+
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .heightIn(min = 160.dp, max = 240.dp)
+                    .verticalScroll(chatScrollState),
+                verticalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                supportMessages.forEach { (sender, text) ->
+                    val isMe = sender == "أنا"
+                    val bubbleShape = RoundedCornerShape(
+                        topStart = 12.dp,
+                        topEnd = 12.dp,
+                        bottomStart = if (isMe) 12.dp else 2.dp,
+                        bottomEnd = if (isMe) 2.dp else 12.dp
+                    )
+                    Column(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalAlignment = if (isMe) Alignment.End else Alignment.Start
+                    ) {
+                        Column(
+                            modifier = Modifier
+                                .clip(bubbleShape)
+                                .background(
+                                    if (isMe) NeonPurple.copy(alpha = 0.85f) else Color(0xFF0B0F12)
+                                )
+                                .border(
+                                    1.dp,
+                                    if (isMe) NeonPurple else NeonCyan.copy(alpha = 0.6f),
+                                    bubbleShape
+                                )
+                                .padding(10.dp)
+                        ) {
+                            Text(
+                                text = sender,
+                                fontWeight = FontWeight.Bold,
+                                fontSize = 10.sp,
+                                color = if (isMe) Color.White.copy(alpha = 0.8f) else NeonCyan
+                            )
+                            Spacer(modifier = Modifier.height(2.dp))
+                            Text(
+                                text = text,
+                                fontSize = 12.sp,
+                                color = Color.White
+                            )
+                        }
+                    }
+                }
+            }
+
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(6.dp)
+            ) {
+                OutlinedTextField(
+                    value = messageInput,
+                    onValueChange = { messageInput = it },
+                    placeholder = {
+                        Text(
+                            "اكتب رسالتك للدعم...",
+                            fontSize = 12.sp,
+                            color = Color.White.copy(alpha = 0.4f)
+                        )
+                    },
+                    modifier = Modifier.weight(1f),
+                    singleLine = true,
+                    shape = RoundedCornerShape(12.dp),
+                    colors = OutlinedTextFieldDefaults.colors(
+                        focusedTextColor = Color.White,
+                        unfocusedTextColor = Color.White,
+                        focusedBorderColor = NeonCyan,
+                        unfocusedBorderColor = NeonCyan.copy(alpha = 0.5f),
+                        cursorColor = NeonCyan
+                    )
+                )
+                IconButton(
+                    onClick = {
+                        if (messageInput.isNotBlank()) {
+                            val newMsg = messageInput.trim()
+                            supportMessages = supportMessages + Pair("أنا", newMsg)
+                            messageInput = ""
+                            supportMessages = supportMessages + Pair(
+                                "فريق الدعم الفني 🎧",
+                                "شكراً لتواصلك! تم استلام رسالتك وسيتولى أحد ممثلي الدعم الرد عليك في غضون لحظات."
+                            )
+                        }
+                    },
+                    enabled = messageInput.isNotBlank()
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.Send,
+                        contentDescription = "إرسال",
+                        tint = if (messageInput.isNotBlank()) NeonCyan else Color.White.copy(alpha = 0.3f)
+                    )
+                }
+            }
+
+            TextButton(onClick = { showSupportChatDialog = false }) {
+                Text("إغلاق", color = NeonCyan)
+            }
+        }
     }
 
 if (showLogoutDialog) {
