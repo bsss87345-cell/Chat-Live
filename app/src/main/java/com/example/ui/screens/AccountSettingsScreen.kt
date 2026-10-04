@@ -343,7 +343,7 @@ fun AccountSettingsScreen(
                         Card(
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .testTag("profile_points_balance_card"),
+                                border = neonCardBorder,
                             shape = RoundedCornerShape(16.dp),
                             colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
                             elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
