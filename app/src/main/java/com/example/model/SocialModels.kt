@@ -245,6 +245,26 @@ data class WalletTransaction(
     val note: String
 )
 
+/** حالة طلب شحن الرصيد اليدوي */
+enum class RechargeStatus(val labelAr: String) {
+    PENDING("قيد المراجعة"),
+    APPROVED("تمت الموافقة"),
+    REJECTED("مرفوض")
+}
+
+/**
+ * طلب شحن يدوي: المستخدم يحوّل بنفسه من محفظته الإلكترونية
+ * ثم يرسل رقم العملية هنا لتراجعه الإدارة وتشحن الرصيد.
+ */
+data class RechargeRequest(
+    val id: String,
+    val amountIqd: Int,
+    val walletName: String,
+    val txReference: String,
+    val status: RechargeStatus = RechargeStatus.PENDING,
+    val date: String = ""
+)
+
 data class StoreItem(
     val id: String,
     val title: String,
