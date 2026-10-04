@@ -1696,7 +1696,7 @@ if (showLogoutDialog) {
         var issueDescription by remember { mutableStateOf("") }
         var isSubmitted by remember { mutableStateOf(false) }
 
-        val categories = listOf("مشكلة في الصوت 🎙️", "خطأ في الألعاب 🎲", "شحن ونقاط ⚡", "مشكلة تقنية عامة ⚠️")
+        val categories = listOf("مشكلة في الصوت 🎙️", "خطأ في الألعاب 🎲", "مشكلة تقنية عامة ⚠️")
 
         NeonSettingsPanel(
             title = "إبلاغ عن مشكلة تقنية",
