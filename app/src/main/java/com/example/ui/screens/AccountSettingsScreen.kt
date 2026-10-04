@@ -1354,37 +1354,83 @@ color = NeonCyan,
                         }
                     }
 
+                                        pendingImageUri?.let { previewUri ->
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(bottom = 6.dp),
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.spacedBy(8.dp)
+                        ) {
+                            AsyncImage(
+                                model = previewUri,
+                                contentDescription = "صورة التحويل المرفقة",
+                                modifier = Modifier
+                                    .size(46.dp)
+                                    .clip(RoundedCornerShape(8.dp)),
+                                contentScale = ContentScale.Crop
+                            )
+                            Text(
+                                text = "صورة التحويل مرفقة",
+                                fontSize = 12.sp,
+                                modifier = Modifier.weight(1f)
+                            )
+                            TextButton(onClick = { pendingImageUri = null }) {
+                                Text("إزالة", fontSize = 12.sp)
+                            }
+                        }
+                    }
+
                     Row(
                         modifier = Modifier.fillMaxWidth(),
                         verticalAlignment = Alignment.CenterVertically,
                         horizontalArrangement = Arrangement.spacedBy(6.dp)
                     ) {
+                        IconButton(
+                            onClick = {
+                                supportImagePicker.launch(
+                                    PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly)
+                                )
+                            }
+                        ) {
+                            Icon(
+                                imageVector = Icons.Default.AttachFile,
+                                contentDescription = "إرفاق صورة التحويل",
+                                tint = MujtamaTeal
+                            )
+                        }
                         OutlinedTextField(
                             value = messageInput,
                             onValueChange = { messageInput = it },
-                            placeholder = { Text("اكتب رسالتك للدعم...", fontSize = 12.sp) },
+                            placeholder = { Text("رقم البطاقة المحوّل منها...", fontSize = 12.sp) },
                             modifier = Modifier.weight(1f),
                             singleLine = true,
                             shape = RoundedCornerShape(12.dp)
                         )
+                        val canSend = messageInput.isNotBlank() || pendingImageUri != null
                         IconButton(
                             onClick = {
-                                if (messageInput.isNotBlank()) {
-                                    val newMsg = messageInput.trim()
-                                    supportMessages = supportMessages + Pair("أنا", newMsg)
+                                if (canSend) {
+                                    supportMessages = supportMessages + Triple(
+                                        "أنا",
+                                        messageInput.trim(),
+                                        pendingImageUri
+                                    )
                                     messageInput = ""
-                                    supportMessages = supportMessages + Pair(
+                                    pendingImageUri = null
+                                    supportMessages = supportMessages + Triple(
                                         "فريق الدعم الفني 🎧",
-                                        "شكراً لتواصلك! تم استلام رسالتك وسيتولى أحد ممثلي الدعم الرد عليك في غضون لحظات."
+                                        "تم استلام طلبك ✅ سيُضاف الرصيد خلال مدة لا تتجاوز ساعة. وفي حال تجاوز المدة تواصل معنا هنا.",
+                                        null
                                     )
                                 }
                             },
-                            enabled = messageInput.isNotBlank()
+                            enabled = canSend
                         ) {
                             Icon(
                                 imageVector = Icons.Default.Send,
                                 contentDescription = "إرسال",
-                                tint = if (messageInput.isNotBlank()) MujtamaPrimary else MaterialTheme.colorScheme.onSurfaceVariant
+                                tint = if (canSend) MujtamaPrimary else MaterialTheme.colorScheme.onSurfaceVariant
                             )
                         }
                     }
