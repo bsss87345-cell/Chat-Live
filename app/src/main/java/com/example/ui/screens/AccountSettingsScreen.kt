@@ -1236,6 +1236,10 @@ color = NeonCyan,
             )
         }
         var messageInput by remember { mutableStateOf("") }
+        var pendingImageUri by remember(rechargePack) { mutableStateOf<String?>(null) }
+        val supportImagePicker = rememberLauncherForActivityResult(
+            contract = ActivityResultContracts.PickVisualMedia()
+        ) { uri -> if (uri != null) pendingImageUri = uri.toString() }
 
         AlertDialog(
             onDismissRequest = { showSupportChatDialog = false },
