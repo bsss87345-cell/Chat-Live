@@ -319,6 +319,12 @@ color = NeonCyan,
                                     value = bioInput,
                                     onValueChange = { bioInput = it },
                                     label = { Text("النبذة التعريفية") },
+                                    colors = OutlinedTextFieldDefaults.colors(
+                                        focusedBorderColor = NeonCyan,
+                                        unfocusedBorderColor = NeonCyan.copy(alpha = 0.5f),
+                                        focusedLabelColor = NeonCyan,
+                                        cursorColor = NeonCyan
+                                    ),
                                     modifier = Modifier.fillMaxWidth(),
                                     maxLines = 4
                                 )
