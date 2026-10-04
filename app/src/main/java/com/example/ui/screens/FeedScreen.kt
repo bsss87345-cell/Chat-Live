@@ -3318,7 +3318,7 @@ fun FullScreenMediaComposer(
             modifier = Modifier.fillMaxSize(),
             color = MaterialTheme.colorScheme.background
         ) {
-            Box(modifier = Modifier.fillMaxSize()) {
+            Box(modifier = Modifier.fillMaxSize().systemBarsPadding()) {
                 Column(
                     modifier = Modifier
                         .fillMaxSize()
