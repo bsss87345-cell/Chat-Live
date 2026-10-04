@@ -1580,7 +1580,6 @@ if (showLogoutDialog) {
         }
     }
 
-    // Report Problem Dialog (إبلاغ عن مشكلة)
     if (showReportProblemDialog) {
         var issueCategory by remember { mutableStateOf("مشكلة تقنية عامة") }
         var issueDescription by remember { mutableStateOf("") }
@@ -1588,155 +1587,156 @@ if (showLogoutDialog) {
 
         val categories = listOf("مشكلة في الصوت 🎙️", "خطأ في الألعاب 🎲", "شحن ونقاط ⚡", "مشكلة تقنية عامة ⚠️")
 
-        AlertDialog(
-            onDismissRequest = {
+        NeonSettingsPanel(
+            title = "إبلاغ عن مشكلة تقنية",
+            onDismiss = {
                 showReportProblemDialog = false
                 isSubmitted = false
             },
-            title = {
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.spacedBy(8.dp)
+            icon = Icons.Default.ReportProblem
+        ) {
+            if (isSubmitted) {
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(vertical = 8.dp),
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
                     Icon(
-                        imageVector = Icons.Default.ReportProblem,
+                        imageVector = Icons.Default.CheckCircle,
                         contentDescription = null,
-                        tint = MaterialTheme.colorScheme.error
+                        tint = MujtamaOnlineGreen,
+                        modifier = Modifier.size(48.dp)
                     )
-                    Text("إبلاغ عن مشكلة تقنية", fontWeight = FontWeight.Bold, fontSize = 15.sp)
+                    Text(
+                        text = "تم إرسال البلاغ بنجاح! ✓",
+                        color = Color.White,
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 14.sp
+                    )
+                    Text(
+                        text = "رقم التذكرة: #84920\nشكراً لمساعدتك في تحسين تجربتنا. سيقوم الفريق الفني بمراجعة البلاغ وحل المشكلة في أقرب وقت.",
+                        fontSize = 11.sp,
+                        textAlign = TextAlign.Center,
+                        color = Color.White.copy(alpha = 0.75f)
+                    )
                 }
-            },
-            text = {
-                if (isSubmitted) {
-                    Column(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(vertical = 12.dp),
-                        horizontalAlignment = Alignment.CenterHorizontally,
-                        verticalArrangement = Arrangement.spacedBy(8.dp)
-                    ) {
-                        Icon(
-                            imageVector = Icons.Default.CheckCircle,
-                            contentDescription = null,
-                            tint = MujtamaOnlineGreen,
-                            modifier = Modifier.size(48.dp)
-                        )
-                        Text(
-                            text = "تم إرسال البلاغ بنجاح! ✓",
-                            fontWeight = FontWeight.Bold,
-                            fontSize = 14.sp
-                        )
-                        Text(
-                            text = "رقم التذكرة: #84920\nشكراً لمساعدتك في تحسين تجربتنا. سيقوم الفريق الفني بمراجعة البلاغ وحل المشكلة في أقرب وقت.",
-                            fontSize = 11.sp,
-                            textAlign = TextAlign.Center,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant
-                        )
-                    }
-                } else {
-                    Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
-                        Text(
-                            text = "حدد نوع المشكلة التي تواجهك:",
-                            fontSize = 12.sp,
-                            fontWeight = FontWeight.SemiBold
-                        )
-
-                        Row(
-                            modifier = Modifier.fillMaxWidth(),
-                            horizontalArrangement = Arrangement.spacedBy(6.dp)
-                        ) {
-                            categories.take(2).forEach { cat ->
-                                val selected = issueCategory == cat
-                                Surface(
-                                    shape = RoundedCornerShape(10.dp),
-                                    color = if (selected) MaterialTheme.colorScheme.primaryContainer else MaterialTheme.colorScheme.surfaceVariant,
-                                    modifier = Modifier
-                                        .weight(1f)
-                                        .clickable { issueCategory = cat }
-                                ) {
-                                    Text(
-                                        text = cat,
-                                        fontSize = 10.sp,
-                                        fontWeight = if (selected) FontWeight.Bold else FontWeight.Normal,
-                                        modifier = Modifier.padding(vertical = 8.dp, horizontal = 6.dp),
-                                        textAlign = TextAlign.Center
-                                    )
-                                }
-                            }
-                        }
-                        Row(
-                            modifier = Modifier.fillMaxWidth(),
-                            horizontalArrangement = Arrangement.spacedBy(6.dp)
-                        ) {
-                            categories.drop(2).forEach { cat ->
-                                val selected = issueCategory == cat
-                                Surface(
-                                    shape = RoundedCornerShape(10.dp),
-                                    color = if (selected) MaterialTheme.colorScheme.primaryContainer else MaterialTheme.colorScheme.surfaceVariant,
-                                    modifier = Modifier
-                                        .weight(1f)
-                                        .clickable { issueCategory = cat }
-                                ) {
-                                    Text(
-                                        text = cat,
-                                        fontSize = 10.sp,
-                                        fontWeight = if (selected) FontWeight.Bold else FontWeight.Normal,
-                                        modifier = Modifier.padding(vertical = 8.dp, horizontal = 6.dp),
-                                        textAlign = TextAlign.Center
-                                    )
-                                }
-                            }
-                        }
-
-                        Text(
-                            text = "وصف المشكلة بالتفصيل:",
-                            fontSize = 12.sp,
-                            fontWeight = FontWeight.SemiBold
-                        )
-
-                        OutlinedTextField(
-                            value = issueDescription,
-                            onValueChange = { issueDescription = it },
-                            placeholder = { Text("اذكر ما حدث معك بالتحديد...", fontSize = 12.sp) },
-                            modifier = Modifier.fillMaxWidth(),
-                            minLines = 3,
-                            maxLines = 5,
-                            shape = RoundedCornerShape(12.dp)
-                        )
-
-                        Text(
-                            text = "سيتم ربط التقرير بمعرف حسابك (${userProfile.id}) للمتابعة.",
-                            fontSize = 10.sp,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant
-                        )
-                    }
-                }
-            },
-            confirmButton = {
-                if (isSubmitted) {
-                    Button(onClick = {
+                Button(
+                    onClick = {
                         showReportProblemDialog = false
                         isSubmitted = false
-                    }) {
-                        Text("تم")
-                    }
-                } else {
-                    Button(
-                        onClick = { isSubmitted = true },
-                        enabled = issueDescription.isNotBlank()
+                    },
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = Color(0xFFFF00FF),
+                        contentColor = Color.Black
+                    ),
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    Text("تم", fontWeight = FontWeight.Bold)
+                }
+            } else {
+                Text(
+                    text = "حدد نوع المشكلة التي تواجهك:",
+                    color = Color.White,
+                    fontSize = 12.sp,
+                    fontWeight = FontWeight.SemiBold
+                )
+
+                categories.chunked(2).forEach { rowCats ->
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.spacedBy(6.dp)
                     ) {
-                        Text("إرسال البلاغ")
+                        rowCats.forEach { cat ->
+                            val selected = issueCategory == cat
+                            Box(
+                                modifier = Modifier
+                                    .weight(1f)
+                                    .clip(RoundedCornerShape(10.dp))
+                                    .background(
+                                        if (selected) NeonCyan.copy(alpha = 0.15f) else Color.Transparent
+                                    )
+                                    .border(
+                                        1.dp,
+                                        if (selected) NeonCyan else NeonPurple.copy(alpha = 0.6f),
+                                        RoundedCornerShape(10.dp)
+                                    )
+                                    .clickable { issueCategory = cat }
+                                    .padding(vertical = 8.dp, horizontal = 6.dp),
+                                contentAlignment = Alignment.Center
+                            ) {
+                                Text(
+                                    text = cat,
+                                    color = Color.White,
+                                    fontSize = 10.sp,
+                                    fontWeight = if (selected) FontWeight.Bold else FontWeight.Normal,
+                                    textAlign = TextAlign.Center
+                                )
+                            }
+                        }
                     }
                 }
-            },
-            dismissButton = {
-                if (!isSubmitted) {
-                    TextButton(onClick = { showReportProblemDialog = false }) {
-                        Text("إلغاء")
+
+                Text(
+                    text = "وصف المشكلة بالتفصيل:",
+                    color = Color.White,
+                    fontSize = 12.sp,
+                    fontWeight = FontWeight.SemiBold
+                )
+
+                OutlinedTextField(
+                    value = issueDescription,
+                    onValueChange = { issueDescription = it },
+                    placeholder = {
+                        Text(
+                            "اذكر ما حدث معك بالتحديد...",
+                            fontSize = 12.sp,
+                            color = Color.White.copy(alpha = 0.4f)
+                        )
+                    },
+                    modifier = Modifier.fillMaxWidth(),
+                    minLines = 3,
+                    maxLines = 5,
+                    shape = RoundedCornerShape(12.dp),
+                    colors = OutlinedTextFieldDefaults.colors(
+                        focusedTextColor = Color.White,
+                        unfocusedTextColor = Color.White,
+                        focusedBorderColor = NeonCyan,
+                        unfocusedBorderColor = NeonCyan.copy(alpha = 0.5f),
+                        cursorColor = NeonCyan
+                    )
+                )
+
+                Text(
+                    text = "سيتم ربط التقرير بمعرف حسابك (${userProfile.id}) للمتابعة.",
+                    fontSize = 10.sp,
+                    color = Color.White.copy(alpha = 0.6f)
+                )
+
+                Button(
+                    onClick = { isSubmitted = true },
+                    enabled = issueDescription.isNotBlank(),
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = Color(0xFFFF00FF),
+                        contentColor = Color.Black,
+                        disabledContainerColor = Color(0xFFFF00FF).copy(alpha = 0.35f),
+                        disabledContentColor = Color.Black.copy(alpha = 0.6f)
+                    ),
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    Text("إرسال البلاغ", fontWeight = FontWeight.Bold)
+                }
+                TextButton(
+                    onClick = {
+                        showReportProblemDialog = false
+                        isSubmitted = false
                     }
+                ) {
+                    Text("إلغاء", color = NeonCyan)
                 }
             }
-        )
+        }
     }
 
     if (showBlockedListDialog) {
