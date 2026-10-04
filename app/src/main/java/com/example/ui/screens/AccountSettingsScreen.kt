@@ -1131,10 +1131,10 @@ color = NeonCyan,
                                         lineHeight = 20.sp,
                                         color = MaterialTheme.colorScheme.onSurfaceVariant
                                     )
-                                    Row(
+                                                                        Row(
                                         modifier = Modifier.fillMaxWidth(),
                                         verticalAlignment = Alignment.CenterVertically,
-                                        Triple("فريق الدعم الفني 🎧", "مرحباً بك في مركز الدعم الفني! كيف يمكننا مساعدتك اليوم؟", null)
+                                        horizontalArrangement = Arrangement.spacedBy(10.dp)
                                     ) {
                                         Text(
                                             text = "07861890780",
