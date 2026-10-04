@@ -1136,6 +1136,17 @@ color = NeonCyan,
     }
 
     // Direct Support Chat Dialog (تواصل مباشر مع الدعم)
+        if (showRechargeDialog) {
+        RechargeDialog(
+            onDismiss = { showRechargeDialog = false },
+            onSelectPackage = { pack ->
+                selectedRechargePackage = pack
+                showRechargeDialog = false
+                openPage = 7
+            }
+        )
+    }
+
     if (showSupportChatDialog) {
         var supportMessages by remember {
             mutableStateOf(
