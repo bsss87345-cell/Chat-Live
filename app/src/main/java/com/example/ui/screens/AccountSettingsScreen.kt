@@ -1220,8 +1220,8 @@ color = NeonCyan,
 
     if (showSupportChatDialog) {
         val rechargePack = selectedRechargePackage
-        var supportMessages by remember(rechargePack) {
-            mutableStateOf(
+                var supportMessages by remember(rechargePack) {
+            mutableStateOf<List<Triple<String, String, String?>>>(
                 if (rechargePack != null) {
                     listOf(
                                                 Triple(
