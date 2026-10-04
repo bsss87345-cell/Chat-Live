@@ -1134,7 +1134,7 @@ color = NeonCyan,
                                     Row(
                                         modifier = Modifier.fillMaxWidth(),
                                         verticalAlignment = Alignment.CenterVertically,
-                                        horizontalArrangement = Arrangement.spacedBy(10.dp)
+                                        Triple("فريق الدعم الفني 🎧", "مرحباً بك في مركز الدعم الفني! كيف يمكننا مساعدتك اليوم؟", null)
                                     ) {
                                         Text(
                                             text = "07861890780",
