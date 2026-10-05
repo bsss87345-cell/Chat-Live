@@ -60,8 +60,8 @@ data class GameCatalogItem(
 
 /**
  * قائمة كتالوج الألعاب:
- * - تظهر لعبة "الدومينو" حالياً فقط لأنها الوحيدة النشطة (isAvailable = true).
- * - باقي الألعاب مجهزة في الكتالوج ويمكن تفعيلها في أي وقت بتغيير القيمة فقط دون أي تعديل في التصميم أو الهيكلية.
+ * - تظهر لعبة "الدومينو" فقط (بقية الألعاب أُزيلت مع ملفاتها نهائياً).
+ * - لإضافة أي لعبة مستقبلاً: أضف عنصراً هنا + ملف العرض الخاص بها بنفس النمط.
  */
 val ALL_CATALOG_GAMES = listOf(
     GameCatalogItem(
@@ -70,54 +70,6 @@ val ALL_CATALOG_GAMES = listOf(
         subtitle = "طابق النقاط وأغلق الطاولة",
         categoryLabel = "كلاسيكية",
         iconEmoji = "🀄",
-        coverDrawableRes = R.drawable.img_domino_cover,
-        waitingDrawableRes = R.drawable.img_domino_waiting,
-        playersLabel = "لاعبان",
-        requiredPlayers = 2,
-        isAvailable = true
-    ),
-    GameCatalogItem(
-        gameType = GameType.LUDO,
-        title = "لودو",
-        subtitle = "سباق الأحجار والنرد الشهير",
-        categoryLabel = "حماسية",
-        iconEmoji = "🎲",
-        coverDrawableRes = R.drawable.img_domino_cover,
-        waitingDrawableRes = R.drawable.img_domino_waiting,
-        playersLabel = "4 لاعبين",
-        requiredPlayers = 4,
-        isAvailable = true
-    ),
-    GameCatalogItem(
-        gameType = GameType.JACKAROO,
-        title = "جاكارو",
-        subtitle = "تحدي الأوراق والأحجار الجماعي",
-        categoryLabel = "استراتيجية",
-        iconEmoji = "🃏",
-        coverDrawableRes = R.drawable.img_domino_cover,
-        waitingDrawableRes = R.drawable.img_domino_waiting,
-        playersLabel = "4 لاعبين",
-        requiredPlayers = 4,
-        isAvailable = true
-    ),
-    GameCatalogItem(
-        gameType = GameType.SNAKES_AND_LADDERS,
-        title = "لعبة السلم",
-        subtitle = "تسلق السلالم وتفادَ الثعابين",
-        categoryLabel = "عائلية",
-        iconEmoji = "🪜",
-        coverDrawableRes = R.drawable.img_domino_cover,
-        waitingDrawableRes = R.drawable.img_domino_waiting,
-        playersLabel = "لاعبان",
-        requiredPlayers = 2,
-        isAvailable = true
-    ),
-    GameCatalogItem(
-        gameType = GameType.CHESS,
-        title = "الشطرنج",
-        subtitle = "صراع العقول والملوك الخالد",
-        categoryLabel = "ذكاء",
-        iconEmoji = "♟️",
         coverDrawableRes = R.drawable.img_domino_cover,
         waitingDrawableRes = R.drawable.img_domino_waiting,
         playersLabel = "لاعبان",
