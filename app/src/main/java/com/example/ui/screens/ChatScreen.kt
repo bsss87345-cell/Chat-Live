@@ -4493,12 +4493,8 @@ fun GamePickerDialog(
     onDismiss: () -> Unit,
     onSelectGame: (GameType) -> Unit
 ) {
-    val games = listOf(
-        GameType.LUDO,
-        GameType.JACKAROO,
-        GameType.DOMINO,
-        GameType.SNAKES_AND_LADDERS,
-        GameType.CHESS
+        val games = listOf(
+        GameType.DOMINO
     )
 
     Dialog(onDismissRequest = onDismiss) {
