@@ -1,7 +1,9 @@
 package com.example.data
 
 import android.content.Context
+import com.example.model.ChatRoom
 import com.example.model.Post
+import com.example.model.RoomAccessType
 import com.example.model.PostComment
 import com.example.model.PostMediaType
 import com.example.model.TransactionType
