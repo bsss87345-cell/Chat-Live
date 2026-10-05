@@ -2636,7 +2636,7 @@ fun StoryCameraControlsOverlayV2(
                     color = Color.Red.copy(alpha = 0.85f),
                     modifier = Modifier
                         .align(Alignment.TopCenter)
-                        .statusBarsPadding()
+                        .padding(top = statusTop)
                         .padding(top = 64.dp)
                 ) {
                     Row(
