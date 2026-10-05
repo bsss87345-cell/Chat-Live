@@ -2185,14 +2185,28 @@ if (screen == 0) {
                         capturedMediaUri = null
                         captionText = ""
                     },
-                    onPublish = {
+                                        onPublish = {
+                        val sourcePath = capturedMediaUri
+                        val hasEdits = !isVideoStory && sourcePath != null &&
+                            (reviewOverlayText.isNotBlank() || reviewEmojis.isNotEmpty() || reviewFilterIndex > 0)
+                        val finalPath = if (hasEdits) {
+                            renderStoryPhoto(
+                                context,
+                                sourcePath!!,
+                                reviewOverlayText,
+                                reviewEmojis,
+                                reviewFilterIndex
+                            ) ?: sourcePath
+                        } else {
+                            sourcePath
+                        }
                         onPublishStory(
                             captionText,
-                            capturedMediaUri,
+                            finalPath,
                             if (isVideoStory) StoryMediaType.VIDEO else StoryMediaType.PHOTO,
                             gradientPalettes[selectedGradientIndex]
                         )
-                    }
+                                        }
                 )
             } else if (screen == 1) {
                 // Mode 1: Text Story (خلفية ملوّنة + نص)
