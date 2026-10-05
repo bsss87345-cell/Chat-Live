@@ -386,13 +386,6 @@ fun ChatRoomsListView(
                     Text("إنشاء غرفة", color = Color.White, fontSize = 12.sp, fontWeight = FontWeight.Bold)
                 }
 
-                // Join by Invite Code Button
-                IconButton(
-                    onClick = { showJoinByCodeDialog = true },
-                    modifier = Modifier.testTag("join_by_code_button")
-                ) {
-                    Icon(Icons.Default.Link, contentDescription = "رمز دعوة", tint = MujtamaTeal)
-                }
             }
         }
 
