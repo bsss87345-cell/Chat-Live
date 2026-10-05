@@ -2645,6 +2645,99 @@ fun saveStoryMediaToGallery(
     }
 }
 
+/** مصفوفة لون الفلتر (0 = بدون، 1 دافئ، 2 بارد، 3 أبيض وأسود) */
+fun storyFilterFloatArray(index: Int): FloatArray = when (index) {
+    1 -> floatArrayOf(
+        1.15f, 0f, 0f, 0f, 12f,
+        0f, 1.05f, 0f, 0f, 4f,
+        0f, 0f, 0.88f, 0f, -8f,
+        0f, 0f, 0f, 1f, 0f
+    )
+    2 -> floatArrayOf(
+        0.90f, 0f, 0f, 0f, -6f,
+        0f, 1.03f, 0f, 0f, 2f,
+        0f, 0f, 1.20f, 0f, 14f,
+        0f, 0f, 0f, 1f, 0f
+    )
+    3 -> floatArrayOf(
+        0.213f, 0.715f, 0.072f, 0f, 0f,
+        0.213f, 0.715f, 0.072f, 0f, 0f,
+        0.213f, 0.715f, 0.072f, 0f, 0f,
+        0f, 0f, 0f, 1f, 0f
+    )
+    else -> floatArrayOf(
+        1f, 0f, 0f, 0f, 0f,
+        0f, 1f, 0f, 0f, 0f,
+        0f, 0f, 1f, 0f, 0f,
+        0f, 0f, 0f, 1f, 0f
+    )
+}
+
+/** فلتر للمعاينة الحيّة بكومبوز */
+fun storyPhotoFilterColorFilter(index: Int): androidx.compose.ui.graphics.ColorFilter? =
+    if (index <= 0) {
+        null
+    } else {
+        androidx.compose.ui.graphics.ColorFilter.colorMatrix(
+            androidx.compose.ui.graphics.ColorMatrix(storyFilterFloatArray(index))
+        )
+    }
+
+/**
+ * يطبع التعديلات (فلتر + نص + إيموجي) على الصورة فعلياً ويحفظ نسخة جديدة،
+ * ويرجّع مسار الملف الجديد (أو null لو فشل).
+ */
+fun renderStoryPhoto(
+    context: android.content.Context,
+    sourcePath: String,
+    overlayText: String,
+    emojis: List<String>,
+    filterIndex: Int
+): String? {
+    return try {
+        val source = BitmapFactory.decodeFile(sourcePath) ?: return null
+        val output = source.copy(android.graphics.Bitmap.Config.ARGB_8888, true) ?: return null
+        val canvas = android.graphics.Canvas(output)
+
+        if (filterIndex > 0) {
+            val filterPaint = android.graphics.Paint(android.graphics.Paint.ANTI_ALIAS_FLAG)
+            filterPaint.colorFilter = android.graphics.ColorMatrixColorFilter(
+                android.graphics.ColorMatrix(storyFilterFloatArray(filterIndex))
+            )
+            canvas.drawBitmap(source, 0f, 0f, filterPaint)
+        }
+
+        if (overlayText.isNotBlank()) {
+            val textPaint = android.graphics.Paint(android.graphics.Paint.ANTI_ALIAS_FLAG)
+            textPaint.color = android.graphics.Color.WHITE
+            textPaint.textAlign = android.graphics.Paint.Align.CENTER
+            textPaint.textSize = output.width / 12f
+            textPaint.typeface = android.graphics.Typeface.DEFAULT_BOLD
+            textPaint.setShadowLayer(10f, 0f, 3f, android.graphics.Color.BLACK)
+            canvas.drawText(overlayText, output.width / 2f, output.height / 2f, textPaint)
+        }
+
+        if (emojis.isNotEmpty()) {
+            val emojiPaint = android.graphics.Paint(android.graphics.Paint.ANTI_ALIAS_FLAG)
+            emojiPaint.textAlign = android.graphics.Paint.Align.CENTER
+            emojiPaint.textSize = output.width / 9f
+            val gap = output.width / 8f
+            val startX = output.width / 2f - gap * (emojis.size - 1) / 2f
+            emojis.forEachIndexed { index, emoji ->
+                canvas.drawText(emoji, startX + gap * index, output.height - output.height / 8f, emojiPaint)
+            }
+        }
+
+        val outputFile = File(context.filesDir, "story_edit_${System.currentTimeMillis()}.jpg")
+        java.io.FileOutputStream(outputFile).use { stream ->
+            output.compress(android.graphics.Bitmap.CompressFormat.JPEG, 92, stream)
+        }
+        outputFile.absolutePath
+    } catch (e: Exception) {
+        null
+    }
+}
+
 @Composable
 fun StoryCameraControlsOverlayV2(
     currentMode: StoryCreationMode,
