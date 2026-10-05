@@ -2589,7 +2589,7 @@ fun StoryCameraControlsOverlayV2(
                 modifier = Modifier
                     .fillMaxWidth()
                     .align(Alignment.TopCenter)
-                    .statusBarsPadding()
+                    .padding(top = statusTop)
                     .padding(horizontal = 22.dp, vertical = 12.dp),
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
