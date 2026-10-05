@@ -214,13 +214,18 @@ class ExampleUnitTest {
         assertEquals(2, textStory.gradientColors.size)
     }
 
-        @Test
-    fun testGameCatalogContainsDomino() {
-        val dominoItem = com.example.ui.screens.ALL_CATALOG_GAMES.firstOrNull { it.gameType == com.example.model.GameType.DOMINO }
-        assertNotNull(dominoItem)
-        assertTrue(dominoItem!!.isAvailable)
-
+            @Test
+    fun testGameCatalogHasDominoOnly() {
         val availableGames = com.example.ui.screens.ALL_CATALOG_GAMES.filter { it.isAvailable }
-        assertTrue(availableGames.isNotEmpty())
+        assertEquals(1, availableGames.size)
+
+        val domino = availableGames.first()
+        assertEquals(com.example.model.GameType.DOMINO, domino.gameType)
+        assertEquals("الدومينو الكلاسيكية", domino.title)
+        assertTrue(domino.isAvailable)
+
+        // الكتالوج يحتوي لعبة الدومينو فقط بعد إزالة بقية الألعاب
+        val allCatalogTypes = com.example.ui.screens.ALL_CATALOG_GAMES.map { it.gameType }
+        assertEquals(listOf(com.example.model.GameType.DOMINO), allCatalogTypes)
     }
 }
