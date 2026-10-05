@@ -1627,15 +1627,7 @@ fun toggleOwnerVoiceMute(roomId: String) {
      * توليد ID رقمي فريد مكون من 8 أرقام للمستخدمين الجدد
      * لضمان عدم التكرار والاتساق مع نظام معرفات الغرف (Unique 8-digit numeric ID)
      */
-    fun generateUniqueNumericUserId(): String {
-        val existingReferralIds = _referrals.value.map { it.handle }.toSet()
-        val currentProfileId = _userProfile.value.id
-        var newId: String
-        do {
-            newId = (10000000..99999999).random().toString()
-        } while (newId == currentProfileId || existingReferralIds.contains(newId))
-        return newId
-    }
+    undefined
 
         /** يرجّع true فقط لو وُجد المستخدم فعلاً وأُرسل الطلب. */
     fun sendFriendRequest(friendInput: String): Boolean {
