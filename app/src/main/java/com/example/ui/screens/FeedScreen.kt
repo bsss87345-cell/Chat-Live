@@ -2486,6 +2486,20 @@ fun CameraPreviewView(
             }
         }
 
+                // شبكة التكوين (قاعدة الأثلاث)
+        if (showGrid && !bindError) {
+            Canvas(modifier = Modifier.fillMaxSize()) {
+                val gridColor = Color.White.copy(alpha = 0.35f)
+                val strokeWidth = 1.dp.toPx()
+                val thirdW = size.width / 3f
+                val thirdH = size.height / 3f
+                drawLine(gridColor, Offset(thirdW, 0f), Offset(thirdW, size.height), strokeWidth)
+                drawLine(gridColor, Offset(thirdW * 2f, 0f), Offset(thirdW * 2f, size.height), strokeWidth)
+                drawLine(gridColor, Offset(0f, thirdH), Offset(size.width, thirdH), strokeWidth)
+                drawLine(gridColor, Offset(0f, thirdH * 2f), Offset(size.width, thirdH * 2f), strokeWidth)
+            }
+        }
+
         if (bindError || !isBound) {
             CameraSimulationView(modifier = Modifier.fillMaxSize())
         }
