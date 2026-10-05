@@ -2914,11 +2914,13 @@ fun StoryReviewView(
     isVideo: Boolean,
     caption: String,
     onCaptionChange: (String) -> Unit,
-    onRetake: () -> Unit,
+        onRetake: () -> Unit,
+    onSave: () -> Unit = {},
     onPublish: () -> Unit,
     statusTop: androidx.compose.ui.unit.Dp = 0.dp
 ) {
-        var showMoreMenu by remember { mutableStateOf(false) }
+    var showMoreMenu by remember { mutableStateOf(false) }
+    val reviewContext = LocalContext.current
     var showTextDialog by remember { mutableStateOf(false) }
     var textDraft by remember { mutableStateOf(reviewText) }
     var showEmojiPalette by remember { mutableStateOf(false) }
