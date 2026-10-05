@@ -2351,13 +2351,30 @@ if (screen == 0) {
                     }
                                 )
 
-                // Front Camera Screen Flash (White Full-Screen Burst)
+                                // Front Camera Screen Flash (White Full-Screen Burst)
                 if (isScreenFlashing) {
                     Box(
                         modifier = Modifier
                             .fillMaxSize()
                             .background(Color.White)
                     )
+                }
+
+                // عداد مؤقت التصوير
+                if (timerCount > 0) {
+                    Box(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .background(Color.Black.copy(alpha = 0.45f)),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Text(
+                            text = "$timerCount",
+                            color = Color.White,
+                            fontSize = 96.sp,
+                            fontWeight = FontWeight.Black
+                        )
+                    }
                 }
             }
         }
