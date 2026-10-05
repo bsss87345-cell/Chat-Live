@@ -2722,14 +2722,18 @@ fun StoryCameraControlsOverlayV2(
                     Icons.Outlined.Timer to "المدة",
                     Icons.Outlined.GridView to "الشبكة",
                     Icons.Outlined.AutoAwesome to "التجميل"
-                ).forEach { (icon, label) ->
+                                ).forEach { (icon, label) ->
                     val isActive = label == "الشبكة" && showGrid
                     val tintColor = if (isActive) MujtamaGold else Color.White
                     Column(
                         modifier = Modifier
                             .clip(RoundedCornerShape(12.dp))
                             .clickable {
-                                if (label == "الشبكة") onToggleGrid() else soon()
+                                when (label) {
+                                    "الشبكة" -> onToggleGrid()
+                                    "المدة" -> onCycleDuration()
+                                    else -> soon()
+                                }
                             }
                             .padding(4.dp),
                         horizontalAlignment = Alignment.CenterHorizontally
@@ -2742,6 +2746,9 @@ fun StoryCameraControlsOverlayV2(
                         )
                         Spacer(modifier = Modifier.height(4.dp))
                         Text(text = label, color = tintColor, fontSize = 12.sp)
+                        if (label == "المدة") {
+                            Text(text = "${maxRecordDuration}ث", color = tintColor, fontSize = 10.sp)
+                        }
                     }
                                 }
             }
