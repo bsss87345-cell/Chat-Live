@@ -2120,6 +2120,51 @@ fun StoryCreationDialog(
         }
     }
 
+        // التقاط الصورة (يُستدعى مباشرة أو بعد انتهاء مؤقت التصوير)
+    val performCapture: () -> Unit = {
+        val photoFile = File(
+            context.filesDir,
+            "story_${System.currentTimeMillis()}.jpg"
+        )
+        val metadata = ImageCapture.Metadata().apply {
+            isReversedHorizontal = lensFacing == CameraSelector.LENS_FACING_FRONT
+        }
+        val outputOptions = OutputFileOptions.Builder(photoFile)
+            .setMetadata(metadata)
+            .build()
+
+        val doCapture = {
+            imageCapture.takePicture(
+                outputOptions,
+                ContextCompat.getMainExecutor(context),
+                object : ImageCapture.OnImageSavedCallback {
+                    override fun onImageSaved(output: ImageCapture.OutputFileResults) {
+                        isScreenFlashing = false
+                        capturedMediaUri = photoFile.absolutePath
+                        isVideoStory = false
+                        isReviewing = true
+                    }
+
+                    override fun onError(exception: ImageCaptureException) {
+                        isScreenFlashing = false
+                    }
+                }
+            )
+        }
+
+        val needsScreenFlash =
+            lensFacing == CameraSelector.LENS_FACING_FRONT && flashMode != FlashMode.OFF
+        if (needsScreenFlash) {
+            isScreenFlashing = true
+            storyCameraScope.launch {
+                delay(260)
+                doCapture()
+            }
+        } else {
+            doCapture()
+        }
+    }
+
     val fixedStatusTop = WindowInsets.statusBars.asPaddingValues().calculateTopPadding()
     Dialog(
         onDismissRequest = {
