@@ -2635,7 +2635,79 @@ fun StoryCameraControlsOverlayV2(
     CompositionLocalProvider(
         androidx.compose.ui.platform.LocalLayoutDirection provides androidx.compose.ui.unit.LayoutDirection.Ltr
     ) {
-        Box(modifier = modifier.fillMaxSize()) {
+                Box(modifier = modifier.fillMaxSize()) {
+
+            // نافذة إعدادات الكاميرا (مؤقت التصوير + مدة التسجيل)
+            if (showSettings) {
+                Dialog(onDismissRequest = { showSettings = false }) {
+                    Surface(shape = RoundedCornerShape(20.dp), color = Color(0xFF1C1C1E)) {
+                        Column(
+                            modifier = Modifier.padding(18.dp),
+                            verticalArrangement = Arrangement.spacedBy(14.dp)
+                        ) {
+                            Text(
+                                text = "إعدادات الكاميرا ⚙",
+                                color = Color.White,
+                                fontWeight = FontWeight.Black,
+                                fontSize = 16.sp
+                            )
+
+                            Text(text = "مؤقت التصوير", color = Color.White.copy(alpha = 0.75f), fontSize = 12.sp)
+                            Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                                listOf(0 to "بدون", 3 to "3 ثوان", 10 to "10 ثوان").forEach { (seconds, label) ->
+                                    val isSelected = captureTimer == seconds
+                                    Box(
+                                        modifier = Modifier
+                                            .clip(RoundedCornerShape(16.dp))
+                                            .background(if (isSelected) Color.White else Color.White.copy(alpha = 0.12f))
+                                            .clickable { onSetTimer(seconds) }
+                                            .padding(horizontal = 12.dp, vertical = 7.dp)
+                                    ) {
+                                        Text(
+                                            text = label,
+                                            color = if (isSelected) Color.Black else Color.White,
+                                            fontSize = 12.sp,
+                                            fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Normal
+                                        )
+                                    }
+                                }
+                            }
+
+                            Text(text = "مدة تسجيل الفيديو", color = Color.White.copy(alpha = 0.75f), fontSize = 12.sp)
+                            Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                                listOf(15, 30, 60).forEach { seconds ->
+                                    val isSelected = maxRecordDuration == seconds
+                                    Box(
+                                        modifier = Modifier
+                                            .clip(RoundedCornerShape(16.dp))
+                                            .background(if (isSelected) Color.White else Color.White.copy(alpha = 0.12f))
+                                            .clickable { onSetDuration(seconds) }
+                                            .padding(horizontal = 12.dp, vertical = 7.dp)
+                                    ) {
+                                        Text(
+                                            text = "$seconds ثانية",
+                                            color = if (isSelected) Color.Black else Color.White,
+                                            fontSize = 12.sp,
+                                            fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Normal
+                                        )
+                                    }
+                                }
+                            }
+
+                            Box(
+                                modifier = Modifier
+                                    .align(Alignment.End)
+                                    .clip(RoundedCornerShape(14.dp))
+                                    .background(Color(0xFF0A84FF))
+                                    .clickable { showSettings = false }
+                                    .padding(horizontal = 18.dp, vertical = 8.dp)
+                            ) {
+                                Text("تم", color = Color.White, fontWeight = FontWeight.Bold, fontSize = 13.sp)
+                            }
+                        }
+                    }
+                }
+            }
 
             // الشريط العلوي: إغلاق يسار، فلاش وإعدادات يمين
             Row(
