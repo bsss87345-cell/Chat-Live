@@ -2717,29 +2717,33 @@ fun StoryCameraControlsOverlayV2(
                 verticalArrangement = Arrangement.spacedBy(20.dp),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                listOf(
+                                listOf(
                     Icons.Outlined.MusicNote to "الموسيقى",
                     Icons.Outlined.Timer to "المدة",
                     Icons.Outlined.GridView to "الشبكة",
                     Icons.Outlined.AutoAwesome to "التجميل"
                 ).forEach { (icon, label) ->
+                    val isActive = label == "الشبكة" && showGrid
+                    val tintColor = if (isActive) MujtamaGold else Color.White
                     Column(
                         modifier = Modifier
                             .clip(RoundedCornerShape(12.dp))
-                            .clickable { soon() }
+                            .clickable {
+                                if (label == "الشبكة") onToggleGrid() else soon()
+                            }
                             .padding(4.dp),
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {
                         Icon(
                             imageVector = icon,
                             contentDescription = label,
-                            tint = Color.White,
+                            tint = tintColor,
                             modifier = Modifier.size(30.dp)
                         )
                         Spacer(modifier = Modifier.height(4.dp))
-                        Text(text = label, color = Color.White, fontSize = 12.sp)
+                        Text(text = label, color = tintColor, fontSize = 12.sp)
                     }
-                }
+                                }
             }
 
             // الزوم + صف الغالق (فوق الشريط الأسود)
