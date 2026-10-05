@@ -4530,7 +4530,7 @@ fun GamePickerDialog(
                 }
 
                 Text(
-                    text = "حدد إحدى الألعاب الخمس لإرسال دعوة التحدي وبدء اللعب مباشرة:",
+                                        text = "أرسل دعوة تحدّي دومينو وابدأ اللعب مباشرة:",
                     fontSize = 11.sp,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
