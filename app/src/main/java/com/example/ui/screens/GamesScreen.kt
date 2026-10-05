@@ -42,8 +42,7 @@ import com.example.ui.theme.MujtamaTeal
 import kotlinx.coroutines.delay
 
 /**
- * بنية بيانات قابلة للتوسع لإضافة أي لعبة مستقبلاً
- * (الدومينو، لودو، جاكارو، لعبة السلم، الشطرنج) بنفس النمط دون إعادة هيكلة.
+ * بنية بيانات قابلة للتوسع لإضافة أي لعبة مستقبلاً بنفس النمط دون إعادة هيكلة.
  */
 data class GameCatalogItem(
     val gameType: GameType,
