@@ -2246,8 +2246,10 @@ if (screen == 0) {
         }
     },
     onClose = onDismiss,
-    onSelectMode = { currentMode = it },
+        onSelectMode = { currentMode = it },
                  statusTop = fixedStatusTop,
+                    zoomRatio = zoomRatio,
+                    onZoomChange = { zoomRatio = it },
                     onFlipCamera = {
                         lensFacing = if (lensFacing == CameraSelector.LENS_FACING_BACK)
                             CameraSelector.LENS_FACING_FRONT
