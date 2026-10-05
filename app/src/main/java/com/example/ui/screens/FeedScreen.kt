@@ -2169,6 +2169,7 @@ if (screen == 0) {
                 // Review Captured or Selected Media
                 StoryReviewView(
                     mediaUri = reviewUri.value,
+                    statusTop = fixedStatusTop,
                     isVideo = isVideoStory,
                     caption = captionText,
                     onCaptionChange = { captionText = it },
