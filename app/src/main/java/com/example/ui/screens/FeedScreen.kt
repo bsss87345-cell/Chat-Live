@@ -2726,30 +2726,41 @@ fun StoryCameraControlsOverlayV2(
                     .padding(bottom = stripHeight + navBottom + 12.dp),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
+                                val zoomOptions = listOf("0.5" to 0.5f, "1x" to 1f, "2" to 2f)
+                val activeZoomLabel = when {
+                    zoomRatio < 0.75f -> "0.5"
+                    zoomRatio < 1.5f -> "1x"
+                    else -> "2"
+                }
                 Surface(
                     shape = RoundedCornerShape(24.dp),
                     color = Color.Black.copy(alpha = 0.5f)
                 ) {
                     Row(
-                        modifier = Modifier.padding(horizontal = 12.dp, vertical = 4.dp),
-                        horizontalArrangement = Arrangement.spacedBy(8.dp),
+                        modifier = Modifier.padding(horizontal = 6.dp, vertical = 4.dp),
+                        horizontalArrangement = Arrangement.spacedBy(4.dp),
                         verticalAlignment = Alignment.CenterVertically
                     ) {
-                        Box(modifier = Modifier.size(30.dp), contentAlignment = Alignment.Center) {
-                            Text("0.5", color = Color.White, fontSize = 13.sp)
-                        }
-                        Box(
-                            modifier = Modifier.size(30.dp).clip(CircleShape).background(Color.White),
-                            contentAlignment = Alignment.Center
-                        ) {
-                            Text("1x", color = Color.Black, fontSize = 13.sp, fontWeight = FontWeight.Bold)
-                        }
-                        Box(modifier = Modifier.size(30.dp), contentAlignment = Alignment.Center) {
-                            Text("2", color = Color.White, fontSize = 13.sp)
+                        zoomOptions.forEach { (label, value) ->
+                            val isSelected = label == activeZoomLabel
+                            Box(
+                                modifier = Modifier
+                                    .size(32.dp)
+                                    .clip(CircleShape)
+                                    .background(if (isSelected) Color.White else Color.Transparent)
+                                    .clickable { onZoomChange(value) },
+                                contentAlignment = Alignment.Center
+                            ) {
+                                Text(
+                                    text = label,
+                                    color = if (isSelected) Color.Black else Color.White,
+                                    fontSize = 13.sp,
+                                    fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Normal
+                                )
+                            }
                         }
                     }
                 }
-
                 Spacer(modifier = Modifier.height(24.dp))
 
                 Row(
