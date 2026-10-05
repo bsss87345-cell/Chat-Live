@@ -1128,11 +1128,9 @@ Box(modifier = Modifier.fillMaxSize()) {
             tonalElevation = 0.dp,
             color = Color.Transparent
         ) {
-            val displayId = if (room.id.filter { it.isDigit() }.length == 8) {
-                room.id.filter { it.isDigit() }
-            } else {
-                String.format("%08d", kotlin.math.abs(room.id.hashCode()) % 90000000 + 10000000)
-            }
+                        // المعرّف الحقيقي دائماً: كل الغرف تُولَّد بـ8 أرقام،
+            // وأي اشتقاق من hashCode كان يعرض رقماً لا يصلح للبحث
+            val displayId = room.id
             NeonRoomHeader(
                 roomName = room.name,
                 roomImageUrl = room.imageUrl,
