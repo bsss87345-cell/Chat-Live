@@ -662,57 +662,7 @@ fun ChatRoomsListView(
         )
     }
 
-    // Join by Code Dialog
-    if (showJoinByCodeDialog) {
-        var codeInput by remember { mutableStateOf("") }
-        var errorMessage by remember { mutableStateOf<String?>(null) }
-
-        AlertDialog(
-            onDismissRequest = { showJoinByCodeDialog = false },
-            title = { Text("الانضمام عبر رمز دعوة ✉️") },
-            text = {
-                Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                    Text("أدخل رمز الدعوة الخاص بالغرفة:", fontSize = 13.sp)
-                    OutlinedTextField(
-                        value = codeInput,
-                        onValueChange = {
-                            codeInput = it
-                            errorMessage = null
-                        },
-                        placeholder = { Text("مثال: GAME-2026 أو ADAB2026") },
-                        modifier = Modifier.fillMaxWidth(),
-                        singleLine = true
-                    )
-                    if (errorMessage != null) {
-                        Text(errorMessage!!, color = MaterialTheme.colorScheme.error, fontSize = 11.sp)
-                    }
-                }
-            },
-            confirmButton = {
-                Button(
-                    onClick = {
-                        val foundRoom = rooms.find { it.inviteCode.equals(codeInput.trim(), ignoreCase = true) }
-                        if (foundRoom != null) {
-                            onJoinRoom(foundRoom.id, "")
-                            showJoinByCodeDialog = false
-                        } else {
-                            errorMessage = "لم يتم العثور على غرفة بهذا الرمز!"
-                        }
-                    },
-                    enabled = codeInput.isNotBlank()
-                ) {
-                    Text("انضمام")
-                }
-            },
-            dismissButton = {
-                TextButton(onClick = { showJoinByCodeDialog = false }) {
-                    Text("إلغاء")
-                }
-            }
-        )
-    }
-
-    // Create Room Dialog
+        // Create Room Dialog
     if (showCreateDialog) {
         var name by remember { mutableStateOf("") }
         var description by remember { mutableStateOf("") }
