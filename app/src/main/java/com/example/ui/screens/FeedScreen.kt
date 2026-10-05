@@ -2268,48 +2268,20 @@ if (screen == 0) {
                             PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageAndVideo)
                         )
                     },
-                    onCapturePhoto = {
-                                                val photoFile = File(
-                            context.filesDir,
-                            "story_${System.currentTimeMillis()}.jpg"
-                        )
-                        val metadata = ImageCapture.Metadata().apply {
-                            isReversedHorizontal = lensFacing == CameraSelector.LENS_FACING_FRONT
-                        }
-                        val outputOptions = OutputFileOptions.Builder(photoFile)
-                            .setMetadata(metadata)
-                            .build()
-
-                        val doCapture = {
-                            imageCapture.takePicture(
-                                outputOptions,
-                                ContextCompat.getMainExecutor(context),
-                                object : ImageCapture.OnImageSavedCallback {
-                                    override fun onImageSaved(output: ImageCapture.OutputFileResults) {
-                                        isScreenFlashing = false
-                                        capturedMediaUri = photoFile.absolutePath
-                                        isVideoStory = false
-                                        isReviewing = true
+                                        onCapturePhoto = {
+                        if (captureTimer > 0) {
+                            if (timerCount == 0) {
+                                storyCameraScope.launch {
+                                    for (i in captureTimer downTo 1) {
+                                        timerCount = i
+                                        delay(1000)
                                     }
-                                    override fun onError(exception: ImageCaptureException) {
-                                        isScreenFlashing = false
-                                    }
+                                    timerCount = 0
+                                    performCapture()
                                 }
-                            )
-                        }
-
-                        val needsScreenFlash =
-                            lensFacing == CameraSelector.LENS_FACING_FRONT && flashMode != FlashMode.OFF
-                        if (needsScreenFlash) {
-                            // نُضيء الشاشة أولاً وننتظر رسمها فعلياً قبل الالتقاط،
-                            // وإلا تُلتقط الصورة بالإضاءة القديمة ويصير الفلاش بلا فائدة
-                            isScreenFlashing = true
-                            storyCameraScope.launch {
-                                delay(260)
-                                doCapture()
                             }
                         } else {
-                            doCapture()
+                            performCapture()
                         }
                     },
                     onToggleRecordVideo = {
