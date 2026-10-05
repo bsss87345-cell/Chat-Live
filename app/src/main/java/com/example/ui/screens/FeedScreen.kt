@@ -2058,8 +2058,11 @@ fun StoryCreationDialog(
     var isRecording by remember { mutableStateOf(false) }
     var recordDuration by remember { mutableIntStateOf(0) }
 
-    // Zoom state (CameraX) — 0.5 / 1x / 2
+        // Zoom state (CameraX) — 0.5 / 1x / 2
     var zoomRatio by remember { mutableStateOf(1f) }
+
+    // Grid (شبكة التكوين)
+    var showGrid by remember { mutableStateOf(false) }
 
     // Text story state
     var textStoryContent by remember { mutableStateOf("") }
