@@ -2671,7 +2671,7 @@ fun StoryCameraControlsOverlayV2(
                             modifier = Modifier.size(26.dp)
                         )
                     }
-                    IconButton(onClick = { }, modifier = Modifier.size(40.dp)) {
+                       IconButton(onClick = { showSettings = true }, modifier = Modifier.size(40.dp)) {
                         Icon(
                             imageVector = Icons.Outlined.Settings,
                             contentDescription = "الإعدادات",
