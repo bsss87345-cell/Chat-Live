@@ -2844,7 +2844,8 @@ fun StoryReviewView(
     caption: String,
     onCaptionChange: (String) -> Unit,
     onRetake: () -> Unit,
-    onPublish: () -> Unit
+    onPublish: () -> Unit,
+    statusTop: androidx.compose.ui.unit.Dp = 0.dp
 ) {
     var showMoreMenu by remember { mutableStateOf(false) }
 
