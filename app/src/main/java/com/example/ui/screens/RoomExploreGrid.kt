@@ -130,8 +130,7 @@ val sortedRooms = remember(rooms, searchQuery, roomViewFilter) {
             byTab.filter { room ->
                 room.id.contains(query, ignoreCase = true) ||
                         room.id.removePrefix("room_").equals(query, ignoreCase = true) ||
-                        room.inviteCode.contains(query, ignoreCase = true) ||
-                        room.name.contains(query, ignoreCase = true)
+                                                room.name.contains(query, ignoreCase = true)
             }
         }
         filtered.sortedByDescending { it.memberCount }
