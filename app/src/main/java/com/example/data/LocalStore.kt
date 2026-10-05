@@ -227,6 +227,52 @@ object LocalStore {
     // ------------------------------------------------------------- التحويلات
     // ‼️ أي حقل جديد بالموديل لازم يُضاف هنا يدوياً
 
+        /**
+     * نحفظ هوية الغرفة وإعداداتها فقط.
+     * الأعضاء والرسائل والمقاعد الصوتية وحالة العجلة حالة جلسة مؤقتة ولا تُحفظ.
+     */
+    private fun roomToJson(r: ChatRoom): JSONObject = JSONObject().apply {
+        put("id", r.id)
+        put("name", r.name)
+        put("description", r.description)
+        put("category", r.category)
+        put("iconEmoji", r.iconEmoji)
+        put("accessType", r.accessType.name)
+        put("password", r.password ?: JSONObject.NULL)
+        put("memberCount", r.memberCount)
+        put("maxMembers", r.maxMembers)
+        put("isJoined", r.isJoined)
+        put("isOwner", r.isOwner)
+        put("isLocked", r.isLocked)
+        put("lockCode", r.lockCode ?: JSONObject.NULL)
+        put("pinnedMessage", r.pinnedMessage ?: JSONObject.NULL)
+        put("imageUrl", r.imageUrl ?: JSONObject.NULL)
+        put("backgroundImageUrl", r.backgroundImageUrl ?: JSONObject.NULL)
+    }
+
+    private fun roomFromJson(o: JSONObject): ChatRoom = ChatRoom(
+        id = o.optString("id", ""),
+        name = o.optString("name", ""),
+        description = o.optString("description", ""),
+        category = o.optString("category", "عام"),
+        iconEmoji = o.optString("iconEmoji", "💬"),
+        accessType = try {
+            RoomAccessType.valueOf(o.optString("accessType", RoomAccessType.PUBLIC.name))
+        } catch (e: Exception) {
+            RoomAccessType.PUBLIC
+        },
+        password = if (o.isNull("password")) null else o.optString("password", ""),
+        memberCount = o.optInt("memberCount", 1),
+        maxMembers = o.optInt("maxMembers", 100),
+        isJoined = o.optBoolean("isJoined", false),
+        isOwner = o.optBoolean("isOwner", false),
+        isLocked = o.optBoolean("isLocked", false),
+        lockCode = if (o.isNull("lockCode")) null else o.optString("lockCode", ""),
+        pinnedMessage = if (o.isNull("pinnedMessage")) null else o.optString("pinnedMessage", ""),
+        imageUrl = if (o.isNull("imageUrl")) null else o.optString("imageUrl", ""),
+        backgroundImageUrl = if (o.isNull("backgroundImageUrl")) null else o.optString("backgroundImageUrl", "")
+    )
+
     private fun postToJson(p: Post): JSONObject = JSONObject().apply {
         put("id", p.id)
         put("authorId", p.authorId)
