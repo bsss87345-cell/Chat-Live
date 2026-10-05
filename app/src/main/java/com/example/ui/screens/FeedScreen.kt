@@ -2058,6 +2058,16 @@ fun StoryCreationDialog(
     var isRecording by remember { mutableStateOf(false) }
     var recordDuration by remember { mutableIntStateOf(0) }
 
+    // مدة تسجيل الفيديو + مؤقت التصوير
+    var maxRecordDuration by remember { mutableIntStateOf(30) }
+    var captureTimer by remember { mutableIntStateOf(0) }
+    var timerCount by remember { mutableIntStateOf(0) }
+
+    // تعديلات المراجعة: نص فوق الصورة + إيموجي + فلتر
+    var reviewOverlayText by remember { mutableStateOf("") }
+    var reviewEmojis by remember { mutableStateOf(listOf<String>()) }
+    var reviewFilterIndex by remember { mutableIntStateOf(0) }
+
         // Zoom state (CameraX) — 0.5 / 1x / 2
     var zoomRatio by remember { mutableStateOf(1f) }
 
