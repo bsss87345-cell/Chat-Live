@@ -2113,6 +2113,7 @@ fun StoryCreationDialog(
         }
     }
 
+    val fixedStatusTop = WindowInsets.statusBars.asPaddingValues().calculateTopPadding()
     Dialog(
         onDismissRequest = {
             if (isRecording) {
