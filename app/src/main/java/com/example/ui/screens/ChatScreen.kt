@@ -1732,9 +1732,17 @@ giftVideoRes?.let { res ->
                     modifier = Modifier.size(300.dp),
                     contentAlignment = Alignment.Center
                 ) {
-                   val glowPulse = remember { Animatable(0.35f) }
+                                      val glowPulse = remember { Animatable(0.35f) }
+val sparklePhase = remember { Animatable(0f) }
 LaunchedEffect(room.isWheelSpinning) {
     if (room.isWheelSpinning) {
+        // البريق يدور بوتيرة مستقلة عن نبض التوهج
+        launch {
+            while (true) {
+                sparklePhase.snapTo(0f)
+                sparklePhase.animateTo(1f, tween(1600, easing = LinearEasing))
+            }
+        }
         while (true) {
             glowPulse.animateTo(0.9f, tween(700))
             glowPulse.animateTo(0.35f, tween(700))
@@ -1755,7 +1763,26 @@ if (room.isWheelSpinning) {
             radius = glowRadius
         )
     }
-} 
+
+    // بريق خفيف: نقاط بيضاء تتلألأ حول حافة العجلة بأطوار مختلفة
+    Canvas(modifier = Modifier.fillMaxSize()) {
+        val ringRadius = size.minDimension / 2f
+        val sparkleCount = 16
+        for (i in 0 until sparkleCount) {
+            val angleRad = i * (360.0 / sparkleCount) * kotlin.math.PI / 180.0
+            val distance = ringRadius * (1.02f + 0.16f * ((i % 3) / 2f))
+            val cx = center.x + (kotlin.math.cos(angleRad) * distance).toFloat()
+            val cy = center.y + (kotlin.math.sin(angleRad) * distance).toFloat()
+            val phase = (sparklePhase.value + i / sparkleCount.toFloat()) % 1f
+            val twinkle = kotlin.math.sin(phase * kotlin.math.PI).toFloat()
+            drawCircle(
+                color = Color.White.copy(alpha = twinkle * 0.75f),
+                radius = 1.5f + (i % 3) * 1.2f * twinkle,
+                center = Offset(cx, cy)
+            )
+        }
+    }
+}
                     Box(
                         modifier = Modifier
                             .fillMaxSize()
