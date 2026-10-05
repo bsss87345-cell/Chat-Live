@@ -2386,8 +2386,6 @@ fun CameraPreviewView(
     Box(
         modifier = modifier
             .fillMaxSize()
-            .padding(8.dp)
-            .clip(RoundedCornerShape(28.dp))
             .background(Color.Black)
             .pointerInput(camera, previewView) {
                 detectTapGestures(
