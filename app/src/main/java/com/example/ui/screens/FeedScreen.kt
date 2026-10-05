@@ -3024,9 +3024,21 @@ fun StoryReviewView(
                 ) {
                     Text("Aa", color = Color.White, fontSize = 15.sp, fontWeight = FontWeight.Bold)
                 }
-                IconButton(onClick = { }, modifier = Modifier.size(42.dp).background(Color.White.copy(alpha = 0.1f), CircleShape)) {
+                                IconButton(
+                    onClick = {
+                        if (isVideo) {
+                            android.widget.Toast.makeText(reviewContext, "الإيموجي متاح للصور فقط", android.widget.Toast.LENGTH_SHORT).show()
+                        } else {
+                            showEmojiPalette = !showEmojiPalette
+                        }
+                    },
+                    modifier = Modifier
+                        .size(42.dp)
+                        .clip(CircleShape)
+                        .background(if (showEmojiPalette) Color(0xFF0A84FF) else Color.White.copy(alpha = 0.1f))
+                ) {
                     Icon(Icons.Outlined.EmojiEmotions, contentDescription = null, tint = Color.White, modifier = Modifier.size(22.dp))
-                }
+                                }
                                 IconButton(
                     onClick = {
                         if (isVideo) {
