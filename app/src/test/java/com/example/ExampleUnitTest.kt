@@ -1,6 +1,5 @@
 package com.example
 
-import com.example.model.Post
 import com.example.model.RoomAccessType
 import com.example.model.RoomMember
 import com.example.model.RoomMemberRole
