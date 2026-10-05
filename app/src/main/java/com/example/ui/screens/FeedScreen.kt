@@ -2105,8 +2105,28 @@ fun StoryCreationDialog(
     val audioPermissionLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.RequestPermission()
     ) { }
-    LaunchedEffect(Unit) {
+        LaunchedEffect(Unit) {
         audioPermissionLauncher.launch(Manifest.permission.RECORD_AUDIO)
+    }
+
+    // حفظ القصة في معرض الجهاز (يحتاج إذن كتابة على Android 9 وأقدم)
+    var pendingSaveAction by remember { mutableStateOf<(() -> Unit)?>(null) }
+    val storagePermissionLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.RequestPermission()
+    ) { granted: Boolean ->
+        if (granted) pendingSaveAction?.invoke()
+        pendingSaveAction = null
+    }
+    val saveCurrentMedia: () -> Unit = {
+        val pathToSave = capturedMediaUri
+        if (pathToSave != null) {
+            val saved = saveStoryMediaToGallery(context, pathToSave, isVideoStory)
+            android.widget.Toast.makeText(
+                context,
+                if (saved) "تم الحفظ في المعرض ✅" else "تعذّر الحفظ ❌",
+                android.widget.Toast.LENGTH_SHORT
+            ).show()
+        }
     }
 
     // Google Play Policy compliant zero-permission media picker
