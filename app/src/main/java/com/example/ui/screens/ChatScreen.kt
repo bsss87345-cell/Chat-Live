@@ -4478,14 +4478,8 @@ fun ChatMessageBubble(
 // HELPER: FIND GAME TYPE BY TITLE & GAME PICKER DIALOG
 // -------------------------------------------------------------
 fun findGameTypeFromTitle(title: String?): GameType {
-    if (title == null) return GameType.LUDO
-    return when {
-        title.contains("جاكارو") -> GameType.JACKAROO
-        title.contains("دومينو") -> GameType.DOMINO
-        title.contains("سلم") -> GameType.SNAKES_AND_LADDERS
-        title.contains("شطرنج") -> GameType.CHESS
-        else -> GameType.LUDO
-    }
+    // بقي في التطبيق لعبة واحدة (الدومينو)، لذا النتيجة دائماً دومينو
+    return GameType.DOMINO
 }
 
 @Composable
