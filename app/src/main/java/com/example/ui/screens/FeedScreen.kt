@@ -2371,8 +2371,9 @@ fun CameraPreviewView(
     lensFacing: Int = CameraSelector.LENS_FACING_BACK,
     torchEnabled: Boolean = false,
         imageCapture: ImageCapture? = null,
-    videoCapture: VideoCapture<Recorder>? = null,
-    zoomRatio: Float = 1f
+        videoCapture: VideoCapture<Recorder>? = null,
+    zoomRatio: Float = 1f,
+    showGrid: Boolean = false
 ) {
     val context = LocalContext.current
     val lifecycleOwner = LocalLifecycleOwner.current
