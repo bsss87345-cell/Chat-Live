@@ -326,7 +326,6 @@ fun ChatRoomsListView(
 ) {
     var searchQuery by remember { mutableStateOf("") }
     var showCreateDialog by remember { mutableStateOf(false) }
-    var showJoinByCodeDialog by remember { mutableStateOf(false) }
     var passwordPromptRoom by remember { mutableStateOf<ChatRoom?>(null) }
 
     val filteredRooms = rooms.filter { room ->
