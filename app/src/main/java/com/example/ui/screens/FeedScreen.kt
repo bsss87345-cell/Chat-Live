@@ -3027,9 +3027,21 @@ fun StoryReviewView(
                 IconButton(onClick = { }, modifier = Modifier.size(42.dp).background(Color.White.copy(alpha = 0.1f), CircleShape)) {
                     Icon(Icons.Outlined.EmojiEmotions, contentDescription = null, tint = Color.White, modifier = Modifier.size(22.dp))
                 }
-                IconButton(onClick = { }, modifier = Modifier.size(42.dp).background(Color.White.copy(alpha = 0.1f), CircleShape)) {
+                                IconButton(
+                    onClick = {
+                        if (isVideo) {
+                            android.widget.Toast.makeText(reviewContext, "التأثيرات متاحة للصور فقط", android.widget.Toast.LENGTH_SHORT).show()
+                        } else {
+                            showFilterDialog = true
+                        }
+                    },
+                    modifier = Modifier
+                        .size(42.dp)
+                        .clip(CircleShape)
+                        .background(if (filterIndex > 0) Color(0xFF0A84FF) else Color.White.copy(alpha = 0.1f))
+                ) {
                     Icon(Icons.Outlined.AutoAwesome, contentDescription = null, tint = Color.White, modifier = Modifier.size(22.dp))
-                }
+                                }
                 Box {
                     IconButton(
                         onClick = { showMoreMenu = !showMoreMenu },
