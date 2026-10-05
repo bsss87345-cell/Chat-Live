@@ -57,7 +57,6 @@ fun AccountSettingsScreen(
     onLikePost: (String) -> Unit,
     onCommentPost: (String) -> Unit,
     onSharePost: (Post) -> Unit,
-    onNavigateToRecharge: () -> Unit = {},
     onUpdateProfile: (String, String, String) -> Unit,
     onUpdateBio: (String) -> Unit,
     onTogglePrivacy: () -> Unit = {},
