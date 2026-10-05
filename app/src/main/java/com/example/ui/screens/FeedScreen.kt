@@ -2256,6 +2256,18 @@ if (screen == 0) {
                     onZoomChange = { zoomRatio = it },
                     showGrid = showGrid,
                     onToggleGrid = { showGrid = !showGrid },
+                    maxRecordDuration = maxRecordDuration,
+                    captureTimer = captureTimer,
+                    onCycleDuration = {
+                        maxRecordDuration = when (maxRecordDuration) {
+                            15 -> 30
+                            30 -> 60
+                            else -> 15
+                        }
+                        android.widget.Toast.makeText(context, "مدة التسجيل: $maxRecordDuration ثانية", android.widget.Toast.LENGTH_SHORT).show()
+                    },
+                    onSetDuration = { maxRecordDuration = it },
+                    onSetTimer = { captureTimer = it },
                                         onFlipCamera = {
                         lensFacing = if (lensFacing == CameraSelector.LENS_FACING_BACK)
                             CameraSelector.LENS_FACING_FRONT
