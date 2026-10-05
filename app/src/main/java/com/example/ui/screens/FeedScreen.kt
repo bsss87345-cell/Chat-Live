@@ -2254,6 +2254,8 @@ if (screen == 0) {
                  statusTop = fixedStatusTop,
                     zoomRatio = zoomRatio,
                     onZoomChange = { zoomRatio = it },
+                    showGrid = showGrid,
+                    onToggleGrid = { showGrid = !showGrid },
                                         onFlipCamera = {
                         lensFacing = if (lensFacing == CameraSelector.LENS_FACING_BACK)
                             CameraSelector.LENS_FACING_FRONT
