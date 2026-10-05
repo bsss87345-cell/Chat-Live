@@ -1534,7 +1534,7 @@ fun toggleOwnerVoiceMute(roomId: String) {
         _userMessage.value = "تم حفظ تعديلات إعدادات الغرفة."
     }
 
-    fun startInRoomGame(roomId: String, gameType: GameType = GameType.LUDO) {
+        fun startInRoomGame(roomId: String, gameType: GameType = GameType.DOMINO) {
         val gameTitle = gameType.titleAr
         val msg = ChatMessage(
             id = "rm_${System.currentTimeMillis()}",
