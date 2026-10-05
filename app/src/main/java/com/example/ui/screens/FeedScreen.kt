@@ -3067,8 +3067,8 @@ fun StoryReviewView(
             horizontalArrangement = Arrangement.spacedBy(8.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            OutlinedButton(
-                onClick = { },
+                        OutlinedButton(
+                onClick = onSave,
                 modifier = Modifier.height(52.dp).weight(0.85f),
                 shape = RoundedCornerShape(26.dp),
                 border = androidx.compose.foundation.BorderStroke(1.dp, Color.White.copy(alpha = 0.3f)),
