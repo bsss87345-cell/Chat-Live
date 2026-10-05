@@ -2054,9 +2054,12 @@ fun StoryCreationDialog(
     var isVideoStory by remember { mutableStateOf(false) }
     var captionText by remember { mutableStateOf("") }
 
-    // Video recording state
+        // Video recording state
     var isRecording by remember { mutableStateOf(false) }
     var recordDuration by remember { mutableIntStateOf(0) }
+
+    // Zoom state (CameraX) — 0.5 / 1x / 2
+    var zoomRatio by remember { mutableStateOf(1f) }
 
     // Text story state
     var textStoryContent by remember { mutableStateOf("") }
