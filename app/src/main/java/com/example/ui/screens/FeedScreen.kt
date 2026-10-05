@@ -2918,7 +2918,101 @@ fun StoryReviewView(
     onPublish: () -> Unit,
     statusTop: androidx.compose.ui.unit.Dp = 0.dp
 ) {
-    var showMoreMenu by remember { mutableStateOf(false) }
+        var showMoreMenu by remember { mutableStateOf(false) }
+    var showTextDialog by remember { mutableStateOf(false) }
+    var textDraft by remember { mutableStateOf(reviewText) }
+    var showEmojiPalette by remember { mutableStateOf(false) }
+    var showFilterDialog by remember { mutableStateOf(false) }
+
+    // نافذة إضافة نص على الصورة
+    if (showTextDialog) {
+        Dialog(onDismissRequest = { showTextDialog = false }) {
+            Surface(shape = RoundedCornerShape(20.dp), color = Color(0xFF1C1C1E)) {
+                Column(
+                    modifier = Modifier.padding(18.dp),
+                    verticalArrangement = Arrangement.spacedBy(12.dp)
+                ) {
+                    Text(
+                        text = "إضافة نص على الصورة ✏️",
+                        color = Color.White,
+                        fontWeight = FontWeight.Black,
+                        fontSize = 15.sp
+                    )
+                    OutlinedTextField(
+                        value = textDraft,
+                        onValueChange = { textDraft = it },
+                        placeholder = { Text("اكتب النص...") },
+                        modifier = Modifier.fillMaxWidth(),
+                        maxLines = 3,
+                        colors = OutlinedTextFieldDefaults.colors(
+                            focusedTextColor = Color.White,
+                            unfocusedTextColor = Color.White,
+                            cursorColor = Color.White,
+                            focusedBorderColor = Color(0xFF0A84FF),
+                            unfocusedBorderColor = Color.White.copy(alpha = 0.3f)
+                        )
+                    )
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.End
+                    ) {
+                        Box(
+                            modifier = Modifier
+                                .clip(RoundedCornerShape(14.dp))
+                                .background(Color(0xFF0A84FF))
+                                .clickable {
+                                    onReviewTextChange(textDraft)
+                                    showTextDialog = false
+                                }
+                                .padding(horizontal = 18.dp, vertical = 8.dp)
+                        ) {
+                            Text("إضافة", color = Color.White, fontWeight = FontWeight.Bold, fontSize = 13.sp)
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    // نافذة اختيار التأثير
+    if (showFilterDialog) {
+        Dialog(onDismissRequest = { showFilterDialog = false }) {
+            Surface(shape = RoundedCornerShape(20.dp), color = Color(0xFF1C1C1E)) {
+                Column(
+                    modifier = Modifier.padding(18.dp),
+                    verticalArrangement = Arrangement.spacedBy(12.dp)
+                ) {
+                    Text(
+                        text = "تأثيرات الصورة ✨",
+                        color = Color.White,
+                        fontWeight = FontWeight.Black,
+                        fontSize = 15.sp
+                    )
+                    listOf("بدون" to 0, "دافئ" to 1, "بارد" to 2, "أبيض وأسود" to 3).forEach { (label, value) ->
+                        val isSelected = filterIndex == value
+                        Box(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .clip(RoundedCornerShape(14.dp))
+                                .background(if (isSelected) Color(0xFF0A84FF) else Color.White.copy(alpha = 0.10f))
+                                .clickable {
+                                    onFilterChange(value)
+                                    showFilterDialog = false
+                                }
+                                .padding(horizontal = 14.dp, vertical = 10.dp)
+                        ) {
+                            Text(
+                                text = label,
+                                color = Color.White,
+                                fontSize = 13.sp,
+                                fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Normal
+                            )
+                        }
+                    }
+                }
+            }
+        }
+    }
 
     Box(
         modifier = Modifier
