@@ -2225,7 +2225,8 @@ if (screen == 0) {
                     torchEnabled = currentMode == StoryCreationMode.VIDEO && isRecording && flashMode == FlashMode.ON,
                     imageCapture = imageCapture,
                     videoCapture = videoCapture,
-                    zoomRatio = zoomRatio
+                    zoomRatio = zoomRatio,
+                    showGrid = showGrid
                 )
                 // Top Controls: Close, Flash, Flip Camera, and Active Mode Badge
                 LaunchedEffect(flashMode) {
