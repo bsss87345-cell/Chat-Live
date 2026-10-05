@@ -2088,7 +2088,7 @@ fun StoryCreationDialog(
     LaunchedEffect(isRecording) {
         if (isRecording) {
             recordDuration = 0
-            while (isRecording && recordDuration < 30) {
+            while (isRecording && recordDuration < maxRecordDuration) {
                 delay(1000)
                 recordDuration++
             }
