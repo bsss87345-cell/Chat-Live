@@ -2250,11 +2250,12 @@ if (screen == 0) {
                  statusTop = fixedStatusTop,
                     zoomRatio = zoomRatio,
                     onZoomChange = { zoomRatio = it },
-                    onFlipCamera = {
+                                        onFlipCamera = {
                         lensFacing = if (lensFacing == CameraSelector.LENS_FACING_BACK)
                             CameraSelector.LENS_FACING_FRONT
                         else
                             CameraSelector.LENS_FACING_BACK
+                        zoomRatio = 1f
                     },
                     onOpenGallery = {
                         galleryPicker.launch(
