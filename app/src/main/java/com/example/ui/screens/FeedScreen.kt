@@ -2216,12 +2216,13 @@ if (screen == 0) {
             } else {
                 // Camera View (PHOTO or VIDEO mode)
                 // 1. Live Camera Preview
-                CameraPreviewView(
+                                CameraPreviewView(
                     modifier = Modifier.fillMaxSize(),
                     lensFacing = lensFacing,
                     torchEnabled = currentMode == StoryCreationMode.VIDEO && isRecording && flashMode == FlashMode.ON,
                     imageCapture = imageCapture,
-                    videoCapture = videoCapture
+                    videoCapture = videoCapture,
+                    zoomRatio = zoomRatio
                 )
                 // Top Controls: Close, Flash, Flip Camera, and Active Mode Badge
                 LaunchedEffect(flashMode) {
