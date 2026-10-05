@@ -144,31 +144,7 @@ fun GamesScreen(
     // 1. إذا كانت هناك لعبة جارية حالياً، عرض لوحة اللعبة التفاعلية
     if (activeGame != null) {
         when (activeGame) {
-            GameType.DOMINO -> DominoGameView(
-                mode = activeMode,
-                opponentName = activeOpponent,
-                onBack = onExitGame,
-                onWinReward = { onWinReward(it, activeGame.titleAr) }
-            )
-            GameType.LUDO -> LudoGameView(
-                mode = activeMode,
-                opponentName = activeOpponent,
-                onBack = onExitGame,
-                onWinReward = { onWinReward(it, activeGame.titleAr) }
-            )
-            GameType.JACKAROO -> JackarooGameView(
-                mode = activeMode,
-                opponentName = activeOpponent,
-                onBack = onExitGame,
-                onWinReward = { onWinReward(it, activeGame.titleAr) }
-            )
-            GameType.SNAKES_AND_LADDERS -> SnakesLaddersGameView(
-                mode = activeMode,
-                opponentName = activeOpponent,
-                onBack = onExitGame,
-                onWinReward = { onWinReward(it, activeGame.titleAr) }
-            )
-            GameType.CHESS -> ChessGameView(
+                        GameType.DOMINO -> DominoGameView(
                 mode = activeMode,
                 opponentName = activeOpponent,
                 onBack = onExitGame,
