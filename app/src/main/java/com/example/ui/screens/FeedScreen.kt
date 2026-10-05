@@ -2553,6 +2553,7 @@ fun StoryCameraControlsOverlayV2(
     onOpenGallery: () -> Unit,
     onSelectMode: (StoryCreationMode) -> Unit,
     modifier: Modifier = Modifier
+    statusTop: androidx.compose.ui.unit.Dp = 0.dp
 ) {
     val context = LocalContext.current
     val soon: () -> Unit = {
