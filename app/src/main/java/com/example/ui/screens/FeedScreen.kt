@@ -2958,13 +2958,50 @@ fun StoryReviewView(
                         }
                     }
                 )
-            } else {
+                        } else {
                 AsyncImage(
                     model = mediaUri,
                     contentDescription = "معاينة القصة",
                     modifier = Modifier.fillMaxSize(),
-                    contentScale = ContentScale.Crop
+                    contentScale = ContentScale.Crop,
+                    colorFilter = storyPhotoFilterColorFilter(filterIndex)
                 )
+            }
+
+            // معاينة التعديلات (نص + إيموجي) — تُطبع فعلياً على الصورة عند النشر
+            if (!isVideo) {
+                if (reviewText.isNotBlank()) {
+                    Text(
+                        text = reviewText,
+                        color = Color.White,
+                        fontSize = 30.sp,
+                        fontWeight = FontWeight.Bold,
+                        textAlign = TextAlign.Center,
+                        modifier = Modifier
+                            .align(Alignment.Center)
+                            .padding(horizontal = 16.dp)
+                    )
+                }
+                if (reviewEmojis.isNotEmpty()) {
+                    Row(
+                        modifier = Modifier
+                            .align(Alignment.BottomCenter)
+                            .padding(bottom = 18.dp),
+                        horizontalArrangement = Arrangement.spacedBy(10.dp)
+                    ) {
+                        reviewEmojis.forEachIndexed { index, emoji ->
+                            Text(
+                                text = emoji,
+                                fontSize = 34.sp,
+                                modifier = Modifier.clickable {
+                                    onReviewEmojisChange(
+                                        reviewEmojis.toMutableList().also { it.removeAt(index) }
+                                    )
+                                }
+                            )
+                        }
+                    }
+                }
             }
 
             // علامة "قصتك +" داخل الصورة في الأسفل يساراً
