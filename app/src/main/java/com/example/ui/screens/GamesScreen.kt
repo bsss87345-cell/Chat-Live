@@ -242,7 +242,7 @@ fun GamesScreen(
             }
         }
 
-        // عرض بطاقات الألعاب المتاحة حالياً (الدومينو فقط) بنمط مربعات غرف الدردشة
+                // عرض بطاقات الألعاب المتاحة (الدومينو) بنمط مربعات غرف الدردشة
         items(availableGames, key = { it.gameType.id }) { gameItem ->
             GameGridCard(
                 game = gameItem,
