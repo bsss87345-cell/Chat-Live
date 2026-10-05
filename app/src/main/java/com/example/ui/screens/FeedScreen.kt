@@ -2927,7 +2927,7 @@ fun StoryReviewView(
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .statusBarsPadding()
+                .padding(top = statusTop)
                 .padding(horizontal = 12.dp, vertical = 12.dp)
                 .align(Alignment.TopCenter),
             horizontalArrangement = Arrangement.SpaceBetween,
