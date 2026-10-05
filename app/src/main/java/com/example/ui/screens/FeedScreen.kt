@@ -2593,6 +2593,58 @@ fun CameraViewfinderOverlay(modifier: Modifier = Modifier) {
     }
 }
 
+/**
+ * يحفظ وسائط القصة (صورة/فيديو) في معرض الجهاز عبر MediaStore.
+ * على Android 10+ لا يحتاج إذن، وقبلها يعتمد على WRITE_EXTERNAL_STORAGE.
+ */
+fun saveStoryMediaToGallery(
+    context: android.content.Context,
+    sourcePath: String,
+    isVideo: Boolean
+): Boolean {
+    val sourceFile = File(sourcePath)
+    if (!sourceFile.exists()) return false
+
+    val resolver = context.contentResolver
+    val collection = if (isVideo) {
+        android.provider.MediaStore.Video.Media.EXTERNAL_CONTENT_URI
+    } else {
+        android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI
+    }
+    val isModernAndroid = android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.Q
+    val values = android.content.ContentValues().apply {
+        put(android.provider.MediaStore.MediaColumns.DISPLAY_NAME, sourceFile.name)
+        put(
+            android.provider.MediaStore.MediaColumns.MIME_TYPE,
+            if (isVideo) "video/mp4" else "image/jpeg"
+        )
+        if (isModernAndroid) {
+            put(
+                android.provider.MediaStore.MediaColumns.RELATIVE_PATH,
+                if (isVideo) android.os.Environment.DIRECTORY_MOVIES else android.os.Environment.DIRECTORY_PICTURES
+            )
+            put(android.provider.MediaStore.MediaColumns.IS_PENDING, 1)
+        }
+    }
+
+    val targetUri = resolver.insert(collection, values) ?: return false
+    return try {
+        resolver.openOutputStream(targetUri)?.use { output ->
+            sourceFile.inputStream().use { input -> input.copyTo(output) }
+        }
+        if (isModernAndroid) {
+            val doneValues = android.content.ContentValues().apply {
+                put(android.provider.MediaStore.MediaColumns.IS_PENDING, 0)
+            }
+            resolver.update(targetUri, doneValues, null, null)
+        }
+        true
+    } catch (e: Exception) {
+        resolver.delete(targetUri, null, null)
+        false
+    }
+}
+
 @Composable
 fun StoryCameraControlsOverlayV2(
     currentMode: StoryCreationMode,
