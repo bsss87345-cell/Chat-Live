@@ -51,6 +51,7 @@ object LocalStore {
     private const val KEY_PROFILE = "profile"
     private const val KEY_WALLET_BALANCE = "walletBalance"
     private const val KEY_WALLET_TX = "walletTransactions"
+    private const val KEY_ROOMS = "chatRooms"
 
     @Volatile
     private var appContext: Context? = null
