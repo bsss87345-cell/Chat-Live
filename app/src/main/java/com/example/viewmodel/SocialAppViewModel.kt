@@ -681,7 +681,7 @@ class SocialAppViewModel : ViewModel() {
         }
     }
 
-    fun startInChatGame(conversationId: String, gameType: GameType = GameType.LUDO) {
+        fun startInChatGame(conversationId: String, gameType: GameType = GameType.DOMINO) {
         val gameTitle = gameType.titleAr
         val msg = ChatMessage(
             id = "m_${System.currentTimeMillis()}",
