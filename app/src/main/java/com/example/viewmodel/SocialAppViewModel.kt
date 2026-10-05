@@ -1623,10 +1623,7 @@ fun toggleOwnerVoiceMute(roomId: String) {
     }
 
     // --- Referrals & Friends Actions ---
-    /**
-     * توليد ID رقمي فريد مكون من 8 أرقام للمستخدمين الجدد
-     * لضمان عدم التكرار والاتساق مع نظام معرفات الغرف (Unique 8-digit numeric ID)
-     */
+    
     undefined
 
         /** يرجّع true فقط لو وُجد المستخدم فعلاً وأُرسل الطلب. */
