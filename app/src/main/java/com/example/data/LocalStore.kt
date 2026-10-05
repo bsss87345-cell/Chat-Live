@@ -200,6 +200,34 @@ object LocalStore {
         }
     }
 
+        // ------------------------------------------------------------ غرف الدردشة
+
+    fun loadRooms(): List<ChatRoom> {
+        if (!isReady()) return emptyList()
+        return try {
+            val arr = document().optJSONArray(KEY_ROOMS) ?: return emptyList()
+            val out = ArrayList<ChatRoom>(arr.length())
+            for (i in 0 until arr.length()) {
+                arr.optJSONObject(i)?.let { out.add(roomFromJson(it)) }
+            }
+            out
+        } catch (e: Exception) {
+            emptyList()
+        }
+    }
+
+    @Synchronized
+    fun saveRooms(rooms: List<ChatRoom>) {
+        if (!isReady()) return
+        try {
+            val arr = JSONArray()
+            rooms.forEach { arr.put(roomToJson(it)) }
+            document().put(KEY_ROOMS, arr)
+            scheduleWrite()
+        } catch (e: Exception) {
+        }
+    }
+
     // -------------------------------------------------- تنظيف الملفات اليتيمة
 
     /**
