@@ -2553,7 +2553,7 @@ fun StoryCameraControlsOverlayV2(
     onFlipCamera: () -> Unit,
     onOpenGallery: () -> Unit,
     onSelectMode: (StoryCreationMode) -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
     statusTop: androidx.compose.ui.unit.Dp = 0.dp
 ) {
     val context = LocalContext.current
