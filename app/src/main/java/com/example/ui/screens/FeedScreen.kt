@@ -2610,6 +2610,11 @@ fun StoryCameraControlsOverlayV2(
     onZoomChange: (Float) -> Unit = {},
     showGrid: Boolean = false,
     onToggleGrid: () -> Unit = {},
+    maxRecordDuration: Int = 30,
+    captureTimer: Int = 0,
+    onCycleDuration: () -> Unit = {},
+    onSetDuration: (Int) -> Unit = {},
+    onSetTimer: (Int) -> Unit = {},
     modifier: Modifier = Modifier,
     statusTop: androidx.compose.ui.unit.Dp = 0.dp
 ) {
