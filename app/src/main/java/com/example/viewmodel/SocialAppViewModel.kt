@@ -749,7 +749,7 @@ class SocialAppViewModel : ViewModel() {
         val existingIds = _chatRooms.value.map { it.id }.toSet()
         var generatedId: String
         do {
-            generatedId = (10000000..99999999).random().toString()
+                        generatedId = (55000000..99999999).random().toString()
         } while (existingIds.contains(generatedId))
 
         val newRoom = ChatRoom(
