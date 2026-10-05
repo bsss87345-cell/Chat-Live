@@ -2377,11 +2377,20 @@ fun CameraPreviewView(
     var tapOffset by remember { mutableStateOf<Offset?>(null) }
     val previewView = remember(lensFacing) { PreviewView(context) }
 
-    LaunchedEffect(torchEnabled, camera) {
+        LaunchedEffect(torchEnabled, camera) {
         val cam = camera ?: return@LaunchedEffect
         if (cam.cameraInfo.hasFlashUnit()) {
             cam.cameraControl.enableTorch(torchEnabled)
         }
+    }
+
+    // تطبيق الزوم على الكاميرا (يُعاد تلقائياً عند تبديل الكاميرا)
+    LaunchedEffect(zoomRatio, camera) {
+        val cam = camera ?: return@LaunchedEffect
+        val zoomState = cam.cameraInfo.zoomState.value
+        val minZoom = zoomState?.minZoomRatio ?: 1f
+        val maxZoom = zoomState?.maxZoomRatio ?: 1f
+        cam.cameraControl.setZoomRatio(zoomRatio.coerceIn(minZoom, maxZoom))
     }
     
     LaunchedEffect(tapOffset) {
