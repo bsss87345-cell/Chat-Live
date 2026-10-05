@@ -566,12 +566,6 @@ fun ChatRoomsListView(
                                     modifier = Modifier.padding(horizontal = 8.dp, vertical = 3.dp)
                                 )
                             }
-                        } else {
-                            Text(
-                                text = "رمز الدعوة: ${room.inviteCode}",
-                                fontSize = 10.sp,
-                                color = MaterialTheme.colorScheme.onSurfaceVariant
-                            )
                         }
 
                         if (room.isJoined) {
