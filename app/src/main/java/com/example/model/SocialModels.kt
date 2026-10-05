@@ -174,7 +174,6 @@ data class ChatRoom(
     val iconEmoji: String = "💬",
     val accessType: RoomAccessType = RoomAccessType.PUBLIC,
     val password: String? = null,
-    val inviteCode: String = "",
     val memberCount: Int = 1,
     val maxMembers: Int = 100,
     val isJoined: Boolean = false,
