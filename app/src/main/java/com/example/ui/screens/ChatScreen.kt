@@ -346,7 +346,7 @@ fun ChatRoomsListView(
         contentPadding = PaddingValues(start = 12.dp, end = 12.dp, bottom = 80.dp, top = 8.dp),
         verticalArrangement = Arrangement.spacedBy(10.dp)
     ) {
-        // Actions Bar: Search + Create Room & Join via Code
+        // Actions Bar: Search + Create Room
         item {
             Row(
                 modifier = Modifier.fillMaxWidth(),
