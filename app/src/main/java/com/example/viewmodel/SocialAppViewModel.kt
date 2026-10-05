@@ -173,15 +173,55 @@ class SocialAppViewModel : ViewModel() {
      * يستعيد منشورات المستخدم المحفوظة محلياً ويضعها فوق المنشورات التجريبية،
      * ثم يحذف ملفات الوسائط اليتيمة اللي ما عاد لها منشور.
      */
-    private fun restoreLocalData() {
+        private fun restoreLocalData() {
         val savedPosts = LocalStore.loadMyPosts()
         if (savedPosts.isNotEmpty()) {
             _posts.update { savedPosts + it }
         }
+
+        // استعادة الغرف: الأعضاء والرسائل حالة جلسة، فنعيد إضافة "أنا" فقط
+        val savedRooms = LocalStore.loadRooms()
+        if (savedRooms.isNotEmpty()) {
+            _chatRooms.value = savedRooms.map { room ->
+                when {
+                    room.isOwner -> room.copy(
+                        members = listOf(
+                            RoomMember("me", "أنت (المالك)", RoomMemberRole.OWNER, isOnline = true)
+                        )
+                    )
+                    room.isJoined -> room.copy(
+                        members = listOf(
+                            RoomMember("me", "أنت", RoomMemberRole.MEMBER, isOnline = true)
+                        )
+                    )
+                    else -> room
+                }
+            }
+        }
+
+        // حفظ تلقائي عند أي تغيير حقيقي بالغرف.
+        // البصمة تتجاهل memberCount لأنه يتذبذب عشوائياً كل 12 ثانية
+        // ولا نريد كتابة على القرص بلا سبب.
+        viewModelScope.launch {
+            _chatRooms
+                .map { rooms -> rooms.joinToString("||") { roomSignature(it) } }
+                .distinctUntilChanged()
+                .collect { LocalStore.saveRooms(_chatRooms.value) }
+        }
+
              LocalStore.cleanupOrphanMedia(
             _posts.value.map { it.mediaUri }.filter { it.isNotBlank() }.toSet()
         )
     }
+
+    /** بصمة الحقول المحفوظة فقط، بدون memberCount المتغيّر تلقائياً. */
+    private fun roomSignature(r: ChatRoom): String = listOf(
+        r.id, r.name, r.description, r.category, r.iconEmoji,
+        r.accessType.name, r.password ?: "", r.maxMembers.toString(),
+        r.isJoined.toString(), r.isOwner.toString(), r.isLocked.toString(),
+        r.lockCode ?: "", r.pinnedMessage ?: "",
+        r.imageUrl ?: "", r.backgroundImageUrl ?: ""
+    ).joinToString("|")
 
     /**
      * يستعيد الملف الشخصي والمحفظة، ثم يراقبهما ويحفظهما تلقائياً عند أي تغيير.
