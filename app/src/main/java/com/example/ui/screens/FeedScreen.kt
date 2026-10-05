@@ -2180,6 +2180,12 @@ if (screen == 0) {
                     isVideo = isVideoStory,
                     caption = captionText,
                     onCaptionChange = { captionText = it },
+                    reviewText = reviewOverlayText,
+                    onReviewTextChange = { reviewOverlayText = it },
+                    reviewEmojis = reviewEmojis,
+                    onReviewEmojisChange = { reviewEmojis = it },
+                    filterIndex = reviewFilterIndex,
+                    onFilterChange = { reviewFilterIndex = it },
                                         onRetake = {
                         isReviewing = false
                         capturedMediaUri = null
