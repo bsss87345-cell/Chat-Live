@@ -2617,6 +2617,8 @@ fun StoryCameraControlsOverlayV2(
     val soon: () -> Unit = {
         android.widget.Toast.makeText(context, "قريباً", android.widget.Toast.LENGTH_SHORT).show()
     }
+        var showSettings by remember { mutableStateOf(false) }
+
     val isVideoRec = isRecording && currentMode == StoryCreationMode.VIDEO
     val tabs: List<Pair<String, StoryCreationMode?>> = listOf(
         "بث مباشر" to null,
