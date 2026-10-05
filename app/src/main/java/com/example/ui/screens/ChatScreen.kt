@@ -337,8 +337,7 @@ fun ChatRoomsListView(
             // Search primarily by room ID, supporting raw ID (e.g. room_1), numeric portion (e.g. 1), invite code, or name
             room.id.contains(query, ignoreCase = true) ||
                     room.id.removePrefix("room_").equals(query, ignoreCase = true) ||
-                    room.inviteCode.contains(query, ignoreCase = true) ||
-                    room.name.contains(query, ignoreCase = true)
+                                        room.name.contains(query, ignoreCase = true)
         }
     }
 
