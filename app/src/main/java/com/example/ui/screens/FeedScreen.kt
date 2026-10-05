@@ -2240,7 +2240,8 @@ if (screen == 0) {
         }
     },
     onClose = onDismiss,
-    onSelectMode = { currentMode = it }, 
+    onSelectMode = { currentMode = it },
+                 statusTop = fixedStatusTop,
                     onFlipCamera = {
                         lensFacing = if (lensFacing == CameraSelector.LENS_FACING_BACK)
                             CameraSelector.LENS_FACING_FRONT
