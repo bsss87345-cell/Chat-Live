@@ -2608,6 +2608,8 @@ fun StoryCameraControlsOverlayV2(
     onSelectMode: (StoryCreationMode) -> Unit,
     zoomRatio: Float = 1f,
     onZoomChange: (Float) -> Unit = {},
+    showGrid: Boolean = false,
+    onToggleGrid: () -> Unit = {},
     modifier: Modifier = Modifier,
     statusTop: androidx.compose.ui.unit.Dp = 0.dp
 ) {
