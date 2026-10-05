@@ -3057,6 +3057,32 @@ fun StoryReviewView(
             }
         }
 
+                // لوحة الإيموجي (تظهر عند الضغط على 😀)
+        if (showEmojiPalette && !isVideo) {
+            Row(
+                modifier = Modifier
+                    .align(Alignment.BottomCenter)
+                    .navigationBarsPadding()
+                    .padding(bottom = 92.dp)
+                    .clip(RoundedCornerShape(20.dp))
+                    .background(Color(0xFF1C1C1E))
+                    .padding(horizontal = 10.dp, vertical = 8.dp),
+                horizontalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                listOf("😀", "😂", "😍", "🔥", "✨", "💙", "🎉", "👑").forEach { emoji ->
+                    Text(
+                        text = emoji,
+                        fontSize = 26.sp,
+                        modifier = Modifier.clickable {
+                            if (reviewEmojis.size < 6) {
+                                onReviewEmojisChange(reviewEmojis + emoji)
+                            }
+                        }
+                    )
+                }
+            }
+        }
+
         // ── 3. BOTTOM BAR (الشريط السفلي) ──
         Row(
             modifier = Modifier
