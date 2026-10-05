@@ -3044,7 +3044,7 @@ fun StoryReviewView(
                     ) {
                         DropdownMenuItem(
                             text = { Text("حفظ", color = Color.White) }, 
-                            onClick = { showMoreMenu = false }, 
+                            onClick = { showMoreMenu = false; onSave() },
                             leadingIcon = { Icon(Icons.Outlined.SaveAlt, null, tint = Color.White) }
                         )
                         DropdownMenuItem(
