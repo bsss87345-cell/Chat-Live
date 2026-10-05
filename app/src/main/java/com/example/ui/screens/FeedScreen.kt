@@ -2255,7 +2255,7 @@ if (screen == 0) {
                         )
                     },
                     onCapturePhoto = {
-                        val photoFile = File(
+                                                val photoFile = File(
                             context.filesDir,
                             "story_${System.currentTimeMillis()}.jpg"
                         )
@@ -2265,24 +2265,38 @@ if (screen == 0) {
                         val outputOptions = OutputFileOptions.Builder(photoFile)
                             .setMetadata(metadata)
                             .build()
-                        if (lensFacing == CameraSelector.LENS_FACING_FRONT && flashMode != FlashMode.OFF) {
-                            isScreenFlashing = true
+
+                        val doCapture = {
+                            imageCapture.takePicture(
+                                outputOptions,
+                                ContextCompat.getMainExecutor(context),
+                                object : ImageCapture.OnImageSavedCallback {
+                                    override fun onImageSaved(output: ImageCapture.OutputFileResults) {
+                                        isScreenFlashing = false
+                                        capturedMediaUri = photoFile.absolutePath
+                                        isVideoStory = false
+                                        isReviewing = true
+                                    }
+                                    override fun onError(exception: ImageCaptureException) {
+                                        isScreenFlashing = false
+                                    }
+                                }
+                            )
                         }
-                        imageCapture.takePicture(
-                            outputOptions,
-                            ContextCompat.getMainExecutor(context),
-                            object : ImageCapture.OnImageSavedCallback {
-                                override fun onImageSaved(output: ImageCapture.OutputFileResults) {
-                                    isScreenFlashing = false
-                                    capturedMediaUri = photoFile.absolutePath
-                                    isVideoStory = false
-                                    isReviewing = true
-                                }
-                                override fun onError(exception: ImageCaptureException) {
-                                    isScreenFlashing = false
-                                }
+
+                        val needsScreenFlash =
+                            lensFacing == CameraSelector.LENS_FACING_FRONT && flashMode != FlashMode.OFF
+                        if (needsScreenFlash) {
+                            // نُضيء الشاشة أولاً وننتظر رسمها فعلياً قبل الالتقاط،
+                            // وإلا تُلتقط الصورة بالإضاءة القديمة ويصير الفلاش بلا فائدة
+                            isScreenFlashing = true
+                            storyCameraScope.launch {
+                                delay(260)
+                                doCapture()
                             }
-                        )
+                        } else {
+                            doCapture()
+                        }
                     },
                     onToggleRecordVideo = {
                         if (isRecording) {
