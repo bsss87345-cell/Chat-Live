@@ -1624,8 +1624,6 @@ fun toggleOwnerVoiceMute(roomId: String) {
 
     // --- Referrals & Friends Actions ---
     
-    undefined
-
         /** يرجّع true فقط لو وُجد المستخدم فعلاً وأُرسل الطلب. */
     fun sendFriendRequest(friendInput: String): Boolean {
         val id = friendInput.trim()
