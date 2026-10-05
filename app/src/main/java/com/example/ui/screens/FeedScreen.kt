@@ -3016,14 +3016,23 @@ fun StoryReviewView(
 
             // Right Action Buttons
             Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                Box(
+                                Box(
                     modifier = Modifier
                         .size(42.dp)
-                        .background(Color.White.copy(alpha = 0.1f), CircleShape),
+                        .clip(CircleShape)
+                        .background(if (reviewText.isBlank()) Color.White.copy(alpha = 0.1f) else Color(0xFF0A84FF))
+                        .clickable {
+                            if (isVideo) {
+                                android.widget.Toast.makeText(reviewContext, "النص متاح للصور فقط", android.widget.Toast.LENGTH_SHORT).show()
+                            } else {
+                                textDraft = reviewText
+                                showTextDialog = true
+                            }
+                        },
                     contentAlignment = Alignment.Center
                 ) {
                     Text("Aa", color = Color.White, fontSize = 15.sp, fontWeight = FontWeight.Bold)
-                }
+                                }
                                 IconButton(
                     onClick = {
                         if (isVideo) {
