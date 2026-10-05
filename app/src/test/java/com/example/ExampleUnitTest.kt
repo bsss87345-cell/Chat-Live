@@ -104,10 +104,7 @@ class ExampleUnitTest {
         val targetRoom = vm.chatRooms.value.first()
         // Add a mock member
         val newMember = RoomMember(id = "rm_test", name = "عضو تجريبي", role = RoomMemberRole.MEMBER, isMuted = false)
-        val updatedRooms = vm.chatRooms.value.map { room ->
-            if (room.id == targetRoom.id) room.copy(members = room.members + newMember) else room
-        }
-        // Use reflection or standard method to update state
+                // Use reflection or standard method to update state
         var room1 = targetRoom.copy(members = targetRoom.members + newMember)
         assertEquals(2, room1.members.size)
         val targetMember = room1.members.find { it.id == "rm_test" }!!
