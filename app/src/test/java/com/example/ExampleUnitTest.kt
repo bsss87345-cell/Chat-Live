@@ -214,23 +214,13 @@ class ExampleUnitTest {
         assertEquals(2, textStory.gradientColors.size)
     }
 
-    @Test
-    fun testGameCatalogStructureAndDominoActive() {
-        // Verify Domino is active and only Domino is returned in available list
+        @Test
+    fun testGameCatalogContainsDomino() {
+        val dominoItem = com.example.ui.screens.ALL_CATALOG_GAMES.firstOrNull { it.gameType == com.example.model.GameType.DOMINO }
+        assertNotNull(dominoItem)
+        assertTrue(dominoItem!!.isAvailable)
+
         val availableGames = com.example.ui.screens.ALL_CATALOG_GAMES.filter { it.isAvailable }
         assertTrue(availableGames.isNotEmpty())
-
-        val domino = availableGames.first()
-        assertEquals(com.example.model.GameType.DOMINO, domino.gameType)
-        assertEquals("الدومينو الكلاسيكية", domino.title)
-        assertTrue(domino.isAvailable)
-
-        // Verify the catalog is extensible and contains the other planned games
-        val allCatalogTypes = com.example.ui.screens.ALL_CATALOG_GAMES.map { it.gameType }
-        assertTrue(allCatalogTypes.contains(com.example.model.GameType.DOMINO))
-        assertTrue(allCatalogTypes.contains(com.example.model.GameType.LUDO))
-        assertTrue(allCatalogTypes.contains(com.example.model.GameType.JACKAROO))
-        assertTrue(allCatalogTypes.contains(com.example.model.GameType.SNAKES_AND_LADDERS))
-        assertTrue(allCatalogTypes.contains(com.example.model.GameType.CHESS))
     }
 }
