@@ -149,8 +149,6 @@ fun MainScreen(viewModel: SocialAppViewModel) {
                         sharePostExternally(shareContext, post)
                         viewModel.sharePost(post)
                         },
-                        // TODO: تجريبي فقط - يُحذف قبل أي إطلاق فعلي (زر شحن حقيقي لاحقاً)
-                        onNavigateToRecharge = { viewModel.addTestBalance() },
                         onUpdateProfile = { name, bio, emoji -> viewModel.updateUserProfile(name, bio, emoji) },
                         onUpdateBio = { viewModel.updateUserBio(it) },
                         onTogglePrivacy = { viewModel.toggleProfilePrivacy() },
