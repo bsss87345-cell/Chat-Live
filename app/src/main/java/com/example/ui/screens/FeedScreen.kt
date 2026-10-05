@@ -2180,10 +2180,27 @@ if (screen == 0) {
                     isVideo = isVideoStory,
                     caption = captionText,
                     onCaptionChange = { captionText = it },
-                    onRetake = {
+                                        onRetake = {
                         isReviewing = false
                         capturedMediaUri = null
                         captionText = ""
+                        reviewOverlayText = ""
+                        reviewEmojis = emptyList()
+                        reviewFilterIndex = 0
+                    },
+                    onSave = {
+                        val needsLegacyPermission =
+                            android.os.Build.VERSION.SDK_INT < android.os.Build.VERSION_CODES.Q &&
+                                ContextCompat.checkSelfPermission(
+                                    context,
+                                    Manifest.permission.WRITE_EXTERNAL_STORAGE
+                                ) != PackageManager.PERMISSION_GRANTED
+                        if (needsLegacyPermission) {
+                            pendingSaveAction = saveCurrentMedia
+                            storagePermissionLauncher.launch(Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                        } else {
+                            saveCurrentMedia()
+                        }
                     },
                                         onPublish = {
                         val sourcePath = capturedMediaUri
