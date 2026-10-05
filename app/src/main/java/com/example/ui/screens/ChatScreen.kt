@@ -1948,11 +1948,10 @@ val offsetY = slotY.dp
                                             Text("🔇", fontSize = 10.sp)
                                         }
                                     }
-                                    val memberDisplayId = if (member.id.filter { it.isDigit() }.length == 8) {
-                                        member.id.filter { it.isDigit() }
-                                    } else {
-                                        String.format("%08d", kotlin.math.abs(member.id.hashCode()) % 90000000 + 10000000)
-                                    }
+                                                                        // لا نفبرك رقماً من hashCode: معرّف العضو الداخلي
+                                    // (مثل "me" أو "rm_123") ليس معرّف حساب ولا يصلح للبحث
+                                    val memberDisplayId = member.id.filter { it.isDigit() }
+                                        .takeIf { it.length == 8 } ?: "—"
                                     Row(
                                         verticalAlignment = Alignment.CenterVertically,
                                         horizontalArrangement = Arrangement.spacedBy(6.dp)
