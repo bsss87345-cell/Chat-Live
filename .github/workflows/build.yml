@@ -49,6 +49,18 @@ jobs:
 
       # نسخة التعديلات: نفس الكود بمعرّف تطبيق واسم وأيقونة مختلفين
       # ⇒ تُثبَّت جنباً إلى جنب مع نسخة المستخدم (لا تستبدلها ولا تتعارض معها)
+            # نسخة اختبار الأداء: إعدادات الإصدار نفسها (R8 + بلا تنقيح) بتوقيع Debug
+      # ⇒ تُثبَّت جنباً إلى جنب للقياس على الجهاز — **ليست للنشر**
+      - name: Build Perf APK (release-optimized test build)
+        run: ./gradlew assemblePerf --stacktrace
+
+      - name: Upload Perf APK as Artifact
+        uses: actions/upload-artifact@v6
+        with:
+          name: app-perf-apk
+          path: app/build/outputs/apk/perf/*.apk
+          retention-days: 14
+
       - name: Build Edits APK (developer edition)
         run: ./gradlew assembleEdits --stacktrace
 
