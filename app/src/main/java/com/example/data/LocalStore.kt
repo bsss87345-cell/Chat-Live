@@ -296,6 +296,73 @@ object LocalStore {
      * يحذف ملفات الوسائط بـfilesDir اللي ما عاد لها منشور.
      * يشتغل على خيط خلفي ولا يعطل الإقلاع.
      */
+        // ------------------------------------------------- المتابعة
+
+    /** كل المتابعات (من يتابع من) — تبقى بعد إغلاق التطبيق. */
+    fun loadFollows(): List<Follow> {
+        if (!isReady()) return emptyList()
+        return try {
+            val arr = document().optJSONArray(KEY_FOLLOWS) ?: return emptyList()
+            val out = ArrayList<Follow>(arr.length())
+            for (i in 0 until arr.length()) {
+                arr.optJSONObject(i)?.let { o ->
+                    val follower = o.optString("followerId")
+                    val following = o.optString("followingId")
+                    if (follower.isNotBlank() && following.isNotBlank()) {
+                        out.add(
+                            Follow(
+                                id = o.optString("id"),
+                                followerId = follower,
+                                followingId = following
+                            )
+                        )
+                    }
+                }
+            }
+            out
+        } catch (e: Exception) {
+            emptyList()
+        }
+    }
+
+    /** معرّف الحساب الذي زُرعت له بذرة المتابعة (تُزرع مرة واحدة فقط). */
+    fun loadFollowSeedFor(): String {
+        if (!isReady()) return ""
+        return try {
+            document().optString(KEY_FOLLOW_SEED, "")
+        } catch (e: Exception) {
+            ""
+        }
+    }
+
+    @Synchronized
+    fun saveFollowSeedFor(userId: String) {
+        if (!isReady()) return
+        try {
+            document().put(KEY_FOLLOW_SEED, userId)
+            scheduleWrite()
+        } catch (e: Exception) {
+        }
+    }
+
+    @Synchronized
+    fun saveFollows(follows: List<Follow>) {
+        if (!isReady()) return
+        try {
+            val arr = JSONArray()
+            follows.forEach { f ->
+                arr.put(JSONObject().apply {
+                    put("id", f.id)
+                    put("followerId", f.followerId)
+                    put("followingId", f.followingId)
+                })
+            }
+            document().put(KEY_FOLLOWS, arr)
+            scheduleWrite()
+        } catch (e: Exception) {
+        }
+    }
+
     fun cleanupOrphanMedia(keepPaths: Set<String>) {
         val ctx = appContext ?: return
         scope.launch {
