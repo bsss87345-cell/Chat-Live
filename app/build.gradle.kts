@@ -39,8 +39,14 @@ android {
 
   buildTypes {
         release {
-      isCrunchPngs = false
-      isMinifyEnabled = false
+            isCrunchPngs = false
+      // R8: يحذف الكود غير المستخدم ويشوّش الأسماء ⇒ يصعّب الهندسة العكسية
+      // ويقلّل زمن بدء التطبيق. القواعد في proguard-rules.pro.
+      isMinifyEnabled = true
+      // ⚠️ shrinkResources مطفأة عمداً: التطبيق يستخدم موارد بالاسم ديناميكياً
+      // (مثل "android.resource://com.aistudio.mujtamauna.ar8vzp/drawable/default_avatar")
+      // وتقليص الموارد قد يحذف مورداً مستخدماً فينهار الأفاتار بصمت.
+      isShrinkResources = false
       proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
             // ⚠️ أمان: حُذف fallback توقيع الـDebug لنسخة الإصدار.
       // السبب: توقيع Debug مشترك ومعروف ⇒ أي APK معدَّل يُوقَّع بنفس المفتاح
