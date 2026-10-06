@@ -62,8 +62,8 @@ android {
       } else {
         null
       }
-    }
-        debug {
+        }
+    debug {
       // يُترك بدون signingConfig مخصص ليستخدم توقيع Debug التلقائي الخاص بـ Gradle
     }
 
