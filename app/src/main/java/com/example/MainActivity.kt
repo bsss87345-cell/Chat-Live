@@ -30,10 +30,6 @@ class MainActivity : ComponentActivity() {
                super.onCreate(savedInstanceState)
                 LocalStore.initialize(this)
 
-        // 🩺 تشخيص مؤقت: يسجّل سبب أي انهيار ويعرضه بشاشة كاملة عند التشغيل التالي
-        CrashGuard.install(this)
-        if (CrashGuard.showLastCrashScreen(this)) return 
-
         // الفتح البارد: الرابط يجي مع نية الإطلاق
         pendingDeepLinkPostId = extractPostId(intent)
         // التطبيق شغّال أصلاً: يصل الرابط كنية جديدة
