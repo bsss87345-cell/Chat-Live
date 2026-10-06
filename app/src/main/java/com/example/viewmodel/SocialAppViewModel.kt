@@ -548,22 +548,19 @@ class SocialAppViewModel : ViewModel() {
         addNotification(NotificationType.SYSTEM, "تم نشر منشورك بنجاح")
     }
 
-        fun deletePost(postId: String) {
-        val path = _posts.value.find { it.id == postId }?.mediaUri ?: ""
-        if (path.isNotBlank()) {
-            try {
-                val file = java.io.File(path)
-                if (file.exists() && file.name.startsWith("post_")) {
-                    file.delete()
-                }
-            } catch (e: Exception) {
-                // تجاهل فشل الحذف حتى لا يتعطل حذف المنشور نفسه
+                fun deletePost(postId: String) {
+        val target = _posts.value.find { it.id == postId }
+        // ما نحذف ملف الوسائط: المنشور ينتقل لسلة «المحتوى المحذوف» ويبقى ملفه للمعاينة.
+        // الملفات اليتيمة (خارج آخر 50 محذوفاً) تُنظَّف تلقائياً عند الإقلاع.
+        if (target != null) {
+            _deletedPosts.update { list ->
+                (listOf(target) + list.filter { it.id != postId }).take(50)
             }
         }
                 _posts.update { list -> list.filter { it.id != postId } }
         persistMyPosts()
-        _userMessage.value = "تم حذف المنشور بنجاح"
-        }
+        _userMessage.value = "تم حذف المنشور — تجده في «المحتوى المحذوف» 📋"
+                }
 
     fun editPost(postId: String, newContent: String) {
         if (newContent.isBlank()) return
