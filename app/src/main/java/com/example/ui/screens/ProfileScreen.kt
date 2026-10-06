@@ -425,8 +425,14 @@ Column(
         count = "${userProfile.followersCount}",
         icon = Icons.Default.People,
         accent = NeonCyan,
-        modifier = Modifier.weight(1f),
-        onClick = { showFollowersDialog = true }
+                modifier = Modifier.weight(1f),
+        onClick = {
+            if (privateLocked) {
+                android.widget.Toast.makeText(context, "هذا حساب خاص 🔒 — تابعه لعرض القوائم", android.widget.Toast.LENGTH_SHORT).show()
+            } else {
+                showFollowersDialog = true
+            }
+        }
     )
                     }
                     Row(
