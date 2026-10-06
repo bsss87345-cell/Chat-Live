@@ -2241,6 +2241,18 @@ val screenState = when {
     currentMode == StoryCreationMode.TEXT -> 1
     else -> 2
 }
+
+            // الكاميرا تبقى حيّة دائماً أثناء محرر القصة، وطبقات المراجعة/النص المعتمة
+            // تُرسم فوقها ⇒ الرجوع من المراجعة أو النص يصير فورياً بلا إعادة ربط الكاميرا
+            CameraPreviewView(
+                modifier = Modifier.fillMaxSize(),
+                lensFacing = lensFacing,
+                torchEnabled = currentMode == StoryCreationMode.VIDEO && isRecording && flashMode == FlashMode.ON,
+                imageCapture = imageCapture,
+                videoCapture = videoCapture,
+                zoomRatio = zoomRatio,
+                showGrid = showGrid
+            )
 androidx.compose.animation.Crossfade(
     targetState = screenState,
     modifier = Modifier.fillMaxSize(),
