@@ -421,10 +421,15 @@ class SocialAppViewModel : ViewModel() {
     )
 
     // يرجع بروفايل أي مستخدم بالـID (أنا أو من الدليل الوهمي)
-    fun getUserProfileById(userId: String): UserProfile? {
-        if (userId == _userProfile.value.id) return _userProfile.value
-        return mockUsersDirectory.find { it.id == userId }
-    }
+        fun getUserProfileById(userId: String): UserProfile? {
+        val base = if (userId == _userProfile.value.id) _userProfile.value
+            else mockUsersDirectory.find { it.id == userId } ?: return null
+        // الأرقام تُحسب من رسم المتابعة الفعلي ⇒ تطابق القائمة التي تُفتح عند الضغط على البطاقة
+        return base.copy(
+            followersCount = countFollowersOf(userId),
+            followingCount = countFollowingOf(userId)
+        )
+        }
 
     // يرجع منشورات أي مستخدم بالـID (تُستخدم لعرض منشورات أي بروفايل مفتوح + حساب العدد)
     fun getPostsByUserId(userId: String): List<Post> {
