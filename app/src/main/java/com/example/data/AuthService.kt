@@ -72,3 +72,82 @@ object AuthService {
         } catch (e: Exception) {
             Result.Error(humanError(e))
         }
+    }
+
+    /**
+     * يتجدّد رمز الجلسة. الـSDK يدير التجديد بنفسه؛ هذه الدالة تجبره على إصدار رمز جديد.
+     * (الوسيط `refreshToken` من النظام القديم — لم يعد مستخدماً، يُقبل للتوافق.)
+     */
+    fun refreshSession(refreshToken: String): Result {
+        val auth = authOrNull() ?: return Result.NotConfigured
+        val user = auth.currentUser ?: return Result.Error("لا توجد جلسة فعّالة — سجّل الدخول من جديد.")
+        return try {
+            val token = Tasks.await(user.getIdToken(true)).token.orEmpty()
+            if (token.isBlank()) Result.Error("تعذّر تحديث الجلسة — جرّب لاحقاً.")
+            else Result.Ok(user.uid, token, "", TOKEN_LIFETIME_SECONDS)
+        } catch (e: Exception) {
+            Result.Error(humanError(e))
+        }
+    }
+
+    // ────────────────────────── التنفيذ ──────────────────────────
+
+    /** يجلب نسخة FirebaseAuth أو null لو المشروع غير مهيّأ (بلا google-services.json). */
+    private fun authOrNull(): FirebaseAuth? = try {
+        FirebaseAuth.getInstance()
+    } catch (e: Exception) {
+        null
+    }
+
+    /** ينفّذ نداء مصادقة ويعيد [Result] — بلا استثناءات تصل للمستدعي. */
+    private fun authCall(block: () -> com.google.android.gms.tasks.Task<com.google.firebase.auth.AuthResult>): Result =
+        try {
+            val user: FirebaseUser? = Tasks.await(block()).user
+            if (user == null) {
+                Result.Error("لم يرجع الخادم حساباً صالحاً.")
+            } else {
+                val token = Tasks.await(user.getIdToken(false)).token.orEmpty()
+                Result.Ok(user.uid, token, "", TOKEN_LIFETIME_SECONDS)
+            }
+        } catch (e: Exception) {
+            Result.Error(humanError(e))
+        }
+
+    /** يستخرج رمز الخطأ من سلسلة الاستثناءات (Tasks.await يلفّ الاستثناء الأصلي). */
+    private fun errorCodeOf(e: Throwable): String {
+        var current: Throwable? = e
+        while (current != null) {
+            if (current is FirebaseAuthException) return current.errorCode
+            current = current.cause
+        }
+        return e.message.orEmpty()
+    }
+
+    /** يحوّل رموز خطأ Firebase لرسائل عربية مفهومة. */
+    private fun humanError(e: Throwable): String {
+        val code = errorCodeOf(e)
+        return when {
+            code.contains("ERROR_NETWORK_REQUEST_FAILED") ||
+                code.contains("Unable to resolve host") ||
+                code.contains("Unable to resolve host") -> "تعذّر الاتصال بالخدمة — تحقق من الإنترنت."
+            code.contains("ERROR_EMAIL_ALREADY_IN_USE") -> "هذا البريد الإلكتروني مسجّل بالفعل."
+            code.contains("ERROR_USER_NOT_FOUND") -> "لا يوجد حساب بهذا البريد."
+            code.contains("ERROR_WRONG_PASSWORD") ||
+                code.contains("ERROR_INVALID_CREDENTIAL") ||
+                code.contains("ERROR_INVALID_LOGIN_CREDENTIALS") ->
+                "بيانات الدخول غير صحيحة، أو لا يوجد حساب بهذه البيانات بعد."
+            code.contains("ERROR_WEAK_PASSWORD") -> "كلمة السر ضعيفة — اختر كلمة أقوى."
+            code.contains("ERROR_INVALID_EMAIL") -> "يرجى إدخال بريد إلكتروني صحيح."
+            code.contains("ERROR_TOO_MANY_REQUESTS") -> "محاولات كثيرة — جرّب بعد قليل."
+            code.contains("ERROR_OPERATION_NOT_ALLOWED") -> "تسجيل الدخول بالبريد غير مفعّل في إعدادات المشروع."
+            code.contains("ERROR_USER_DISABLED") -> "هذا الحساب معطَّل — راجع الدعم."
+            code.contains("API key not valid") || code.contains("API_KEY_INVALID") -> "مفتاح المشروع غير صالح."
+            code.contains("PERMISSION_DENIED") -> "الخدمة مرفوضة — راجع إعدادات المشروع."
+            else -> "تعذّر إكمال العملية. جرّب مرة أخرى."
+        }
+    }
+
+    /** الرسائل التي تعني «الحساب غير موجود بعد» ⇒ ننتقل لإنشائه. */
+    private fun isMissingAccount(message: String): Boolean =
+        message.contains("لا يوجد حساب") || message.contains("بيانات الدخول غير صحيحة")
+}
