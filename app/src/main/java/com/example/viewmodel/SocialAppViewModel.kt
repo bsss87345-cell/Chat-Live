@@ -3,6 +3,7 @@ package com.example.viewmodel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.data.LocalStore
+import com.example.BuildConfig
 import com.example.data.AuthService
 import com.example.data.PasswordHasher
 import com.example.data.SecureSessionStore
