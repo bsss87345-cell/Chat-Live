@@ -19,6 +19,9 @@ data class AuthUserAccount(
  * الفصل يضمن استحالة أن يحمل مستخدم وغرفة نفس الرقم.
  */
 fun generateUniqueUserId(): String {
-    val randomNum = (10000000..54999999).random()
-    return randomNum.toString()
+    // SecureRandom بدل kotlin.random: المعرّف السابق كان قابلاً للتوقّع تشفيرياً.
+    // النطاق كما هو (8 أرقام: 10000000 – 54999999) فلا يتأثر أي حساب محفوظ.
+    return (10_000_000 + userIdRandom.nextInt(45_000_000)).toString()
 }
+
+private val userIdRandom = java.security.SecureRandom()
