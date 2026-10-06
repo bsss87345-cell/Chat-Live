@@ -2027,7 +2027,9 @@ fun toggleOwnerVoiceMute(roomId: String) {
                 email = account.email,
                 authProvider = "بريد إلكتروني",
                 avatarEmoji = account.avatarEmoji,
-                avatarUrl = current.avatarUrl.ifBlank { "android.resource://com.aistudio.mujtamauna.ar8vzp/drawable/default_avatar" }
+                                // BuildConfig.APPLICATION_ID بدل معرّف ثابت: يشتغل في النسختين
+                // (نسخة التعديلات معرّفها ينتهي بـ.edits — بالثابت كان الأفاتار لا يُحمَّل فيها)
+                avatarUrl = current.avatarUrl.ifBlank { "android.resource://${BuildConfig.APPLICATION_ID}/drawable/default_avatar" }
             )
         }
                 _isLoggedIn.value = true
