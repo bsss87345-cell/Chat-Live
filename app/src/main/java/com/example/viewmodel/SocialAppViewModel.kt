@@ -1931,16 +1931,27 @@ fun toggleOwnerVoiceMute(roomId: String) {
 
     // --- Follow System (نظام مشابه لإنستغرام/تيك توك) ---
     // TODO: عند ربط Firestore، تُستبدل بإضافة مستند جديد لمجموعة "follows"
-    fun followUser(targetUserId: String) {
+        fun followUser(targetUserId: String, forceDirect: Boolean = false) {
         val myId = _userProfile.value.id
         if (myId == targetUserId || myId.isBlank()) return
         val alreadyFollowing = _follows.value.any { it.followerId == myId && it.followingId == targetUserId }
         if (alreadyFollowing) return
 
+        // حساب خاص: المتابعة تحتاج موافقة ⇒ تُسجَّل كطلب بدل متابعة فورية (سلوك إنستغرام)
+        if (!forceDirect && isPrivateAccount(targetUserId)) {
+            if (isFollowRequestPending(targetUserId)) {
+                _userMessage.value = "طلب المتابعة مُرسل مسبقاً — بانتظار الموافقة ⏳"
+                return
+            }
+            _pendingFollowRequests.update { it + targetUserId }
+            _userMessage.value = "تم إرسال طلب المتابعة — بانتظار موافقة صاحب الحساب ⏳"
+            return
+        }
+
         _follows.update { it + com.example.model.Follow(followerId = myId, followingId = targetUserId) }
         _userProfile.update { it.copy(followingCount = it.followingCount + 1) }
         _userMessage.value = "تمت المتابعة بنجاح"
-    }
+        }
 
     // TODO: عند ربط Firestore، تُستبدل بحذف المستند المطابق من مجموعة "follows"
     fun unfollowUser(targetUserId: String) {
