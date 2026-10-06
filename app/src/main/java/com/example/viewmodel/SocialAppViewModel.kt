@@ -516,13 +516,25 @@ class SocialAppViewModel : ViewModel() {
     }
 
     // يرجع قائمة متابعي مستخدم معيّن (بأي id) كـ FollowUser جاهزة للعرض
-    fun getFollowersOf(userId: String): List<FollowUser> {
+        fun getFollowersOf(userId: String): List<FollowUser> {
         return loadFollowers(userId).mapNotNull { follow ->
             getUserProfileById(follow.followerId)?.let { profile ->
-                FollowUser(id = profile.id, name = profile.name, handle = profile.handle, avatarUrl = profile.avatarUrl)
+                profile.toFollowUser()
             }
         }
     }
+
+    /** يحوّل البروفايل لعنصر قائمة متابعة بكل حقوله (لا بيانات ناقصة). */
+    private fun UserProfile.toFollowUser(): FollowUser = FollowUser(
+        id = id,
+        name = name,
+        handle = handle,
+        avatarUrl = avatarUrl,
+        bio = bio,
+        avatarEmoji = avatarEmoji,
+        followersCount = countFollowersOf(id),
+        followingCount = countFollowingOf(id)
+    )
 
     // يرجع قائمة من يتابعهم مستخدم معيّن (بأي id) كـ FollowUser جاهزة للعرض
     fun getFollowingOf(userId: String): List<FollowUser> {
