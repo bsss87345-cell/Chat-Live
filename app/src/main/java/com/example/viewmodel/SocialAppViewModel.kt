@@ -510,14 +510,17 @@ class SocialAppViewModel : ViewModel() {
         _userMessage.value = "تمت إضافة تعليقك بنجاح!"
     }
 
-        fun sharePost(post: Post) {
+                fun sharePost(post: Post) {
             _posts.update { list ->
             list.map { if (it.id == post.id) it.copy(sharesCount = it.sharesCount + 1) else it }
         }
-        persistMyPosts()
+        // نسجّل مشاركتي مرة واحدة فقط (بلا تكرار) والأحدث أولاً، بحد أقصى 50
+        _sharedPostIds.update { ids ->
+            (listOf(post.id) + ids.filter { it != post.id }).take(50)
+        }
         persistMyPosts()
         _userMessage.value = "تم نسخ رابط المنشور ومشاركته مع الأصدقاء!"
-    }
+                }
 
     fun publishPost(content: String, tag: String, mediaType: PostMediaType, mediaUri: String = "") {
         if (content.isBlank() && mediaType == PostMediaType.NONE) return
