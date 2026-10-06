@@ -903,10 +903,12 @@ fun joinChatRoom(roomId: String, passwordInput: String = ""): Boolean {
             }
         }
 
-        if (room.accessType == RoomAccessType.PASSWORD && room.password != passwordInput.trim()) {
+                if (room.accessType == RoomAccessType.PASSWORD &&
+            !PasswordHasher.verifyOrLegacy(passwordInput.trim(), room.password)
+        ) {
             _userMessage.value = "كلمة المرور غير صحيحة للغرفة!"
             return false
-        }
+                }
 
         if (room.memberCount >= room.maxMembers) {
             _userMessage.value = "الغرفة ممتلئة بالكامل (الحد الأقصى ${room.maxMembers} عضو)!"
