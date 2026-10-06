@@ -167,6 +167,8 @@ fun ProfileScreen(
             it.id.startsWith("post_") ||
             it.id.startsWith("p_")
         }.take(6)
+        } else if (privateLocked) {
+        emptyList()
     } else {
         onLoadPostsFor(userProfile.id)
     }
