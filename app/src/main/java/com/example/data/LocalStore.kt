@@ -138,13 +138,70 @@ object LocalStore {
         }
     }
 
-    @Synchronized
+        @Synchronized
     fun saveMyPosts(posts: List<Post>) {
         if (!isReady()) return
         try {
             val arr = JSONArray()
             posts.forEach { arr.put(postToJson(it)) }
             document().put(KEY_POSTS, arr)
+            scheduleWrite()
+        } catch (e: Exception) {
+        }
+    }
+
+    // ------------------------------------------ المحذوفات والمشاركات
+
+    /** المنشورات المحذوفة (سلة النشاط) — آخر 50 محذوفاً. */
+    fun loadDeletedPosts(): List<Post> {
+        if (!isReady()) return emptyList()
+        return try {
+            val arr = document().optJSONArray(KEY_DELETED_POSTS) ?: return emptyList()
+            val out = ArrayList<Post>(arr.length())
+            for (i in 0 until arr.length()) {
+                arr.optJSONObject(i)?.let { out.add(postFromJson(it)) }
+            }
+            out
+        } catch (e: Exception) {
+            emptyList()
+        }
+    }
+
+    @Synchronized
+    fun saveDeletedPosts(posts: List<Post>) {
+        if (!isReady()) return
+        try {
+            val arr = JSONArray()
+            posts.take(50).forEach { arr.put(postToJson(it)) }
+            document().put(KEY_DELETED_POSTS, arr)
+            scheduleWrite()
+        } catch (e: Exception) {
+        }
+    }
+
+    /** معرّفات المنشورات اللي شاركها المستخدم — آخر 50 معرفاً. */
+    fun loadSharedPostIds(): List<String> {
+        if (!isReady()) return emptyList()
+        return try {
+            val arr = document().optJSONArray(KEY_SHARED_POSTS) ?: return emptyList()
+            val out = ArrayList<String>(arr.length())
+            for (i in 0 until arr.length()) {
+                val id = arr.optString(i)
+                if (id.isNotBlank()) out.add(id)
+            }
+            out
+        } catch (e: Exception) {
+            emptyList()
+        }
+    }
+
+    @Synchronized
+    fun saveSharedPostIds(ids: List<String>) {
+        if (!isReady()) return
+        try {
+            val arr = JSONArray()
+            ids.take(50).forEach { arr.put(it) }
+            document().put(KEY_SHARED_POSTS, arr)
             scheduleWrite()
         } catch (e: Exception) {
         }
