@@ -131,7 +131,8 @@ fun MainScreen(viewModel: SocialAppViewModel) {
                     val storeItems by viewModel.storeItems.collectAsStateWithLifecycle()
                     val chatRooms by viewModel.chatRooms.collectAsStateWithLifecycle()
                     val activeCommentPostId by viewModel.activeCommentPostId.collectAsStateWithLifecycle()
-
+                    val deletedPosts by viewModel.deletedPosts.collectAsStateWithLifecycle()
+                    val sharedPostIds by viewModel.sharedPostIds.collectAsStateWithLifecycle()
                     AccountSettingsScreen(
                         userProfile = userProfile,
                         posts = posts,
