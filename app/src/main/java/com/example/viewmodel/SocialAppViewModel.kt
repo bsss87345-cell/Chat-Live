@@ -583,10 +583,18 @@ class SocialAppViewModel : ViewModel() {
         _activeCommentPostId.value = null
     }
 
-    fun addComment(postId: String, commentText: String) {
+        fun addComment(postId: String, commentText: String) {
         if (commentText.isBlank()) return
+        if (commentText.length > Limits.MAX_COMMENT_CHARS) {
+            _userMessage.value = "التعليق طويل جداً — الحد الأقصى ${Limits.MAX_COMMENT_CHARS} حرف"
+            return
+        }
+        if (!allowAction("comment")) {
+            _userMessage.value = "تمهل قليلاً قبل إضافة تعليق آخر ⏳"
+            return
+        }
         val newComment = PostComment(
-            id = "c_${System.currentTimeMillis()}",
+            id = newLocalId("c_"),
             authorName = "أنت (أنا)",
             text = commentText.trim(),
             timeAgo = "الآن"
