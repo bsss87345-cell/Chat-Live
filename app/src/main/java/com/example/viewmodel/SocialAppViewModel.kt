@@ -517,10 +517,15 @@ class SocialAppViewModel : ViewModel() {
      * يربط قوائمي وأعدادي برسم المتابعة لحظياً، ويحفظ أي تغيير محلياً
      * (فتبقى المتابعات بعد إغلاق التطبيق). لا يحتاج أي تعديل من الواجهة.
      */
-    init {
+        init {
         viewModelScope.launch {
-            LocalStore.loadFollows().takeIf { it.isNotEmpty() }?.let { _follows.value = it }
+            // ⚠️ إصلاح انهيار الإقلاع: هذا الـlaunch يُنفَّذ **داخل الباني فوراً**،
+            // وcombine يُصدر قيمته الأولى فوراً ⇒ كان يصل إلى getFollowingOf قبل
+            // تهيئة mockUsersDirectory (المعرَّف لاحقاً بالسطر 563) ⇒ NPE عند كل إعادة فتح.
+            // yield = تأجيل خطوة واحدة ⇒ تنتهي تهيئة كل الحقول أولاً.
+            kotlinx.coroutines.yield()
 
+            LocalStore.loadFollows().takeIf { it.isNotEmpty() }?.let { _follows.value = it }
             launch { _follows.collect { list -> LocalStore.saveFollows(list) } }
 
             launch {
