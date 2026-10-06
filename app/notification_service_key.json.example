@@ -1,0 +1,22 @@
+{
+  "_تعليمات": [
+    "1) Firebase Console ← Project Settings ← Cloud Messaging ← Firebase Cloud Messaging API (V1)",
+    "2) أنشئ مفتاح حساب خدمة (Service Account) من: Project Settings ← Service accounts ← Generate new private key",
+    "3) سمِّ الملف الناتج 'notification_service_key.json' وضعه في: app/notification_service_key.json",
+    "4) ⚠️ هذا الملف سرّ ولا يُرفع للمستودع إطلاقاً (.gitignore يستثنيه)",
+    "5) بالـCI: ضعه في GitHub Secret باسم NOTIFICATION_SERVICE_KEY (base64) ليُنشأ وقت البناء",
+    "",
+    "⚠️ الحقول أدناه **فارغة عمداً** — البروتوكول المستقبلي يقرأها، ولو بقيت فارغة",
+    "فلا يُرسل أي إشعار ولا يظهر أي سلوك زائف في التطبيق."
+  ],
+  "type": "",
+  "project_id": "",
+  "private_key_id": "",
+  "private_key": "",
+  "client_email": "",
+  "client_id": "",
+  "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+  "token_uri": "https://oauth2.googleapis.com/token",
+  "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+  "client_x509_cert_url": ""
+}
