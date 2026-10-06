@@ -1959,7 +1959,8 @@ fun toggleOwnerVoiceMute(roomId: String) {
         val wasFollowing = _follows.value.any { it.followerId == myId && it.followingId == targetUserId }
         if (!wasFollowing) return
 
-        _follows.update { list -> list.filterNot { it.followerId == myId && it.followingId == targetUserId } }
+                _follows.update { list -> list.filterNot { it.followerId == myId && it.followingId == targetUserId } }
+        _pendingFollowRequests.update { list -> list.filterNot { it == targetUserId } }
         _userProfile.update { it.copy(followingCount = (it.followingCount - 1).coerceAtLeast(0)) }
         _userMessage.value = "تم إلغاء المتابعة"
     }
