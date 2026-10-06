@@ -50,6 +50,8 @@ object LocalStore {
 
     private const val KEY_VERSION = "schemaVersion"
     private const val KEY_POSTS = "myPosts"
+    private const val KEY_DELETED_POSTS = "deletedPosts"
+    private const val KEY_SHARED_POSTS = "sharedPostIds"
     private const val KEY_PROFILE = "profile"
     private const val KEY_WALLET_BALANCE = "walletBalance"
     private const val KEY_WALLET_TX = "walletTransactions"
