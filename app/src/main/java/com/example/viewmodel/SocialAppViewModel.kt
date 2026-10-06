@@ -175,11 +175,15 @@ class SocialAppViewModel : ViewModel() {
      * يستعيد منشورات المستخدم المحفوظة محلياً ويضعها فوق المنشورات التجريبية،
      * ثم يحذف ملفات الوسائط اليتيمة اللي ما عاد لها منشور.
      */
-        private fun restoreLocalData() {
+                private fun restoreLocalData() {
         val savedPosts = LocalStore.loadMyPosts()
         if (savedPosts.isNotEmpty()) {
             _posts.update { savedPosts + it }
         }
+
+        // استعادة سلة المحذوفات وقائمة مشاركاتي المحفوظة
+        _deletedPosts.value = LocalStore.loadDeletedPosts()
+        _sharedPostIds.value = LocalStore.loadSharedPostIds()
 
         // استعادة الغرف: الأعضاء والرسائل حالة جلسة، فنعيد إضافة "أنا" فقط
         val savedRooms = LocalStore.loadRooms()
