@@ -537,13 +537,13 @@ class SocialAppViewModel : ViewModel() {
     )
 
     // يرجع قائمة من يتابعهم مستخدم معيّن (بأي id) كـ FollowUser جاهزة للعرض
-    fun getFollowingOf(userId: String): List<FollowUser> {
+        fun getFollowingOf(userId: String): List<FollowUser> {
         return loadFollowing(userId).mapNotNull { follow ->
             getUserProfileById(follow.followingId)?.let { profile ->
-                FollowUser(id = profile.id, name = profile.name, handle = profile.handle, avatarUrl = profile.avatarUrl)
+                profile.toFollowUser()
             }
         }
-    }
+        }
     // Notification toast / snackbar message
     private val _userMessage = MutableStateFlow<String?>(null)
     val userMessage: StateFlow<String?> = _userMessage.asStateFlow()
