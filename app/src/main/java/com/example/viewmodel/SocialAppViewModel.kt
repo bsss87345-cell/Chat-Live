@@ -256,12 +256,14 @@ class SocialAppViewModel : ViewModel() {
         }
     }
 
-    /**
-     * يحفظ منشورات المستخدم فقط (المنشورات التجريبية تُولَّد من جديد بكل إقلاع).
+        /**
+     * يحفظ منشورات المستخدم + سلة المحذوفات + مشاركاتي.
      * الكتابة مجمّعة وغير متزامنة داخل LocalStore فما تعطل الواجهة.
      */
     private fun persistMyPosts() {
         LocalStore.saveMyPosts(_posts.value.filter { it.isAuthor })
+        LocalStore.saveDeletedPosts(_deletedPosts.value)
+        LocalStore.saveSharedPostIds(_sharedPostIds.value)
     }
 
     private fun startLiveRoomUpdates() {
