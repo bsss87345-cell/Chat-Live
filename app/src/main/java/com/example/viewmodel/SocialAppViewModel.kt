@@ -413,11 +413,11 @@ class SocialAppViewModel : ViewModel() {
     }
 
     // دليل مستخدمين وهميين للاختبار المحلي فقط (مؤقت، يُستبدل بـ Firestore لاحقاً)
-    private val mockUsersDirectory: List<UserProfile> = listOf(
-        UserProfile(id = "10000001", name = "سارة أحمد", handle = "@sara_a", bio = "أحب التصوير والسفر", avatarEmoji = "👩", followersCount = 120, followingCount = 80),
-        UserProfile(id = "10000002", name = "محمد العلي", handle = "@m_ali", bio = "مطور تطبيقات", avatarEmoji = "👨", followersCount = 340, followingCount = 90),
-        UserProfile(id = "10000003", name = "نورة سالم", handle = "@noura_s", bio = "طالبة جامعية", avatarEmoji = "👩‍🎓", followersCount = 75, followingCount = 200),
-        UserProfile(id = "10000004", name = "خالد فهد", handle = "@khalid_f", bio = "شغوف بالرياضة", avatarEmoji = "🏃", followersCount = 500, followingCount = 30)
+        private val mockUsersDirectory: List<UserProfile> = listOf(
+        UserProfile(id = "10000001", name = "سارة أحمد", handle = "@sara_a", bio = "أحب التصوير والسفر", avatarEmoji = "👩"),
+        UserProfile(id = "10000002", name = "محمد العلي", handle = "@m_ali", bio = "مطور تطبيقات", avatarEmoji = "👨"),
+        UserProfile(id = "10000003", name = "نورة سالم", handle = "@noura_s", bio = "طالبة جامعية", avatarEmoji = "👩‍🎓"),
+        UserProfile(id = "10000004", name = "خالد فهد", handle = "@khalid_f", bio = "شغوف بالرياضة", avatarEmoji = "🏃")
     )
 
     // يرجع بروفايل أي مستخدم بالـID (أنا أو من الدليل الوهمي)
