@@ -1920,8 +1920,13 @@ fun toggleOwnerVoiceMute(roomId: String) {
                 avatarUrl = current.avatarUrl.ifBlank { "android.resource://com.aistudio.mujtamauna.ar8vzp/drawable/default_avatar" }
             )
         }
-        _isLoggedIn.value = true
+                _isLoggedIn.value = true
+        // الجلسة تُحفظ مشفّرة ⇒ إغلاق التطبيق لا يعني تسجيل دخول من جديد
+        SecureSessionStore.save(userId = generatedId, provider = "بريد إلكتروني")
+        // هوية الخادم: لا تُنفَّذ قبل تفعيل AuthService (بلا مفتاح ⇒ صفر اتصال شبكة)
+        syncIdentityWithServer(account)
         _userMessage.value = "مرحباً بك ${account.name}! اسم المستخدم الخاص بك: $newHandle"
+    
     }
 
         fun logoutUser() {
