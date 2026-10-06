@@ -517,8 +517,9 @@ Column(
                 if (displayedPosts.isEmpty()) {
                     item {
                         Text(
-                            text = if (selectedProfileTab == 0) "ما نشرت شي بعد"
-                            else "ما أعجبت بأي منشور بعد",
+                                                        text = if (selectedProfileTab == 0) {
+                                if (privateLocked) "حساب خاص 🔒 — تابعه لعرض منشوراته" else "ما نشرت شي بعد"
+                            } else "ما أعجبت بأي منشور بعد",
                             fontSize = 13.sp,
                             color = TextSecondary,
                             textAlign = TextAlign.Center,
