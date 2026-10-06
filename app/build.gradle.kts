@@ -42,13 +42,19 @@ android {
       isCrunchPngs = false
       isMinifyEnabled = false
       proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
-      // لو مفتاح الإصدار الحقيقي غير موجود (مثل بيئة GitHub Actions) نستخدم توقيع Debug
-      // حتى نقدر نبني ونثبّت نسخة Release للقياس. عند وجود المفتاح الحقيقي ما يتغير شي.
+            // ⚠️ أمان: حُذف fallback توقيع الـDebug لنسخة الإصدار.
+      // السبب: توقيع Debug مشترك ومعروف ⇒ أي APK معدَّل يُوقَّع بنفس المفتاح
+      // ويُثبَّت كتحديث شرعي فوق التطبيق (والأخطر مع قاعدة البيانات: يشير لنفس مشروع Firebase).
+      //
+      // النسخة الآن:
+      //  - مفتاح إصدار موجود (سرّ KEYSTORE_BASE64 بالـCI أو my-upload-key.jks محلياً) ⇒ نسخة إصدار حقيقية.
+      //  - غير موجود ⇒ البناء يكمل **بلا توقيع** (APK غير قابل للتثبيت) ⇒ لا خطر انتحال،
+      //    والـCI يمنع رفع المخرَج أصلاً في هذه الحالة.
       val releaseKeystore = file(System.getenv("KEYSTORE_PATH") ?: "${rootDir}/my-upload-key.jks")
       signingConfig = if (releaseKeystore.exists()) {
         signingConfigs.getByName("release")
       } else {
-        signingConfigs.getByName("debug")
+        null
       }
     }
     debug {
