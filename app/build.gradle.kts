@@ -80,7 +80,20 @@ android {
       initWith(getByName("debug"))
       applicationIdSuffix = ".edits"
       versionNameSuffix = "-edits"
-      isDebuggable = true
+            isDebuggable = true
+    }
+
+    // ───────────────── نسخة اختبار الأداء (Performance Test) ─────────────────
+    // الغرض: قياس أثر تحسينات الإصدار (R8 + بلا تنقيح) على جهازك **قبل** التوقيع الحقيقي.
+    //   • ترث كل إعدادات release: isMinifyEnabled (R8) + proguard-rules + بلا تنقيح
+    //   • توقيع Debug التلقائي ⇒ **قابلة للتثبيت** — للاختبار فقط، **ليست للنشر**
+    //   • معرّف مختلف (.perf) ⇒ تُثبَّت جنباً إلى جنب ولا تلمس بيانات النسختين الأخريين
+    create("perf") {
+      initWith(getByName("release"))
+      applicationIdSuffix = ".perf"
+      versionNameSuffix = "-perf"
+      signingConfig = signingConfigs.getByName("debug")
+      resValue("string", "app_name", "Chat Live (اختبار سرعة)")
     }
   }
   compileOptions {
