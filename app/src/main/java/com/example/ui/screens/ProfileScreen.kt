@@ -789,7 +789,11 @@ private fun FollowUser.toUserProfile(): UserProfile {
         id = id,
         name = name,
         handle = handle,
-        avatarUrl = avatarUrl
+        avatarUrl = avatarUrl,
+        bio = bio,
+        avatarEmoji = avatarEmoji,
+        followersCount = followersCount,
+        followingCount = followingCount
     )
 }
 
