@@ -455,9 +455,12 @@ class SocialAppViewModel : ViewModel() {
 
     // كتلة تهيئة ثانية: لازم تكون هنا تحديداً وليس مع init الأولى بالسطر 143،
     // لأن _walletBalance و_transactions و_userProfile معرّفة بعدها وما تكون جاهزة هناك.
-    init {
+        init {
         restoreProfileAndWallet()
-    }
+        // استعادة الجلسة **هنا تحديداً**: تعتمد على _userProfile المُعرَّف فوق بالسطر 453،
+        // ولو نُفِّذت في كتلة التهيئة الأولى لانهار التطبيق (وكل الاختبارات) بـNullPointerException.
+        restoreSession()
+        }
 
     // Follow System (نظام مشابه لإنستغرام/تيك توك) — بالذاكرة مؤقتاً، جاهز للربط بـ Firestore لاحقاً
     // بيانات تجريبية مؤقتة لاختبار التنقل بين البروفايلات (mock_1 يتابع mock_2 و mock_3، mock_2 يتابع mock_3 و mock_4، mock_3 يتابع mock_4)
