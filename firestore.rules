@@ -1,0 +1,251 @@
+rules_version = '2';
+// ═══════════════════════════════════════════════════════════════════════════
+// Chat Live — قواعد أمان Firestore
+// المبدأ: **رفض كل شي افتراضياً** ثم السماح بأضيق نطاق ممكن.
+// لا تُنشر أي بيانات قبل نشر هذا الملف (firebase deploy --only firestore:rules)
+// ═══════════════════════════════════════════════════════════════════════════
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // ─────────────────────────── دوال مساعدة ───────────────────────────
+    function signedIn() {
+      return request.auth != null;
+    }
+    function isMe(uid) {
+      return signedIn() && request.auth.uid == uid;
+    }
+    function incoming() {
+      return request.resource.data;
+    }
+    function existing() {
+      return resource.data;
+    }
+    // الحقل موجود بنفس قيمته القديمة (لا يُعدَّل)
+    function unchanged(field) {
+      return incoming()[field] == existing()[field];
+    }
+    // نص بحد أقصى للطول
+    function textUpTo(field, max) {
+      return incoming()[field] is string && incoming()[field].size() <= max;
+    }
+    // التعديل يمس هذه الحقول فقط
+    function onlyChanged(fields) {
+      return incoming().diff(existing()).affectedKeys().hasOnly(fields);
+    }
+    // فرق العدّاد = +1 أو -1 فقط (منع تضخيم الأرقام)
+    function counterStep(field) {
+      return incoming()[field] - existing()[field] == 1
+          || incoming()[field] - existing()[field] == -1;
+    }
+
+    // ═════════════════════════ المستخدمون ═════════════════════════
+    match /users/{userId} {
+      // أي مستخدم مسجّل يقدر يقرأ البروفايلات (بروفايلات عامة)
+      allow read: if signedIn();
+
+      // الإنشاء: لا أحد ينشئ مستنداً بهوية شخص آخر
+      allow create: if isMe(userId)
+        && incoming().id == userId
+        && textUpTo('name', 60)
+        && textUpTo('bio', 300);
+
+      // التعديل: صاحب الحساب فقط، وبلا لمس الهوية أو البريد
+      allow update: if isMe(userId)
+        && unchanged('id')
+        && unchanged('email')
+        && unchanged('authProvider')
+        && unchanged('joinDate')
+        && textUpTo('name', 60)
+        && textUpTo('bio', 300);
+
+      // لا حذف حساب من العميل (يُدار من الخادم/الدعم)
+      allow delete: if false;
+
+      // عدّادات المتابعة تُدار بالخادم فقط — العميل لا يعدّلها
+      match /counters/{docId} {
+        allow read: if signedIn();
+        allow write: if false;
+      }
+
+      // أسرار المستخدم (لا تُقرأ من أي عميل)
+      match /private/{docId} {
+        allow read, write: if false;
+      }
+
+      // سلة المحذوفات ومشاركاتي — خاصة بصاحبها فقط
+      match /deletedPosts/{docId} {
+        allow read, write: if isMe(userId);
+      }
+      match /sharedPostIds/{docId} {
+        allow read, write: if isMe(userId);
+      }
+    }
+
+    // ═════════════════════════ المنشورات ═════════════════════════
+    match /posts/{postId} {
+      allow read: if signedIn();
+
+      allow create: if signedIn()
+        && incoming().authorId == request.auth.uid
+        && textUpTo('content', 2000)
+        && incoming().likesCount == 0
+        && incoming().sharesCount == 0
+        && incoming().commentsCount == 0;
+
+      // صاحب المنشور يعدّل النص فقط — أو أي مستخدم يعدّل **عدّاداً واحداً** بخطوة ±1
+      allow update: if signedIn() && (
+        (isMe(existing().authorId)
+          && unchanged('authorId')
+          && unchanged('id')
+          && textUpTo('content', 2000))
+        ||
+        (onlyChanged(['likesCount']) && counterStep('likesCount'))
+        ||
+        (onlyChanged(['sharesCount']) && counterStep('sharesCount'))
+        ||
+        (onlyChanged(['commentsCount']) && counterStep('commentsCount'))
+      );
+
+      // الحذف لصاحب المنشور فقط
+      allow delete: if signedIn() && isMe(existing().authorId);
+
+      // ── التعليقات (مجموعة فرعية) ──
+      match /comments/{commentId} {
+        allow read: if signedIn();
+
+        allow create: if signedIn()
+          && incoming().authorId == request.auth.uid
+          && textUpTo('text', 500);
+
+        // لا تعديل على تعليق بعد نشره
+        allow update: if false;
+
+        // الحذف: صاحب التعليق أو صاحب المنشور
+        allow delete: if signedIn() && (
+          isMe(existing().authorId)
+          || isMe(get(/databases/$(database)/documents/posts/$(postId)).data.authorId)
+        );
+      }
+
+      // ── الإعجابات كسجلات (الأفضل لاحقاً بدل العدّاد) ──
+      match /likes/{userId} {
+        allow read: if signedIn();
+        allow create, delete: if isMe(userId);
+        allow update: if false;
+      }
+    }
+
+    // ═════════════════════════ المتابعة ═════════════════════════
+    match /follows/{followId} {
+      allow read: if signedIn();
+      // لا أحد ينشئ متابعة باسم شخص آخر، ولا يتابع نفسه
+      allow create: if signedIn()
+        && incoming().followerId == request.auth.uid
+        && incoming().followingId != request.auth.uid;
+      // إلغاء المتابعة لصاحبها فقط
+      allow delete: if signedIn() && existing().followerId == request.auth.uid;
+      allow update: if false;
+    }
+
+    // طلبات المتابعة (الحسابات الخاصة)
+    match /followRequests/{requestId} {
+      allow read: if signedIn() && (
+        existing().fromId == request.auth.uid || existing().toId == request.auth.uid
+      );
+      allow create: if signedIn()
+        && incoming().fromId == request.auth.uid
+        && incoming().toId != request.auth.uid
+        && incoming().status == 'pending';
+      // الموافقة/الرفض من صاحب الحساب الخاص فقط
+      allow update: if signedIn() && existing().toId == request.auth.uid
+        && onlyChanged(['status']);
+      // الإلغاء من الطالب أو الحذف بعد الموافقة من صاحب الحساب
+      allow delete: if signedIn() && (
+        existing().fromId == request.auth.uid || existing().toId == request.auth.uid
+      );
+    }
+
+    // ═════════════════════════ غرف الدردشة ═════════════════════════
+    match /rooms/{roomId} {
+      // الغرف العامة تُقرأ من المسجّلين (الانضمام يحتاج المصادقة)
+      allow read: if signedIn();
+
+      allow create: if signedIn()
+        && incoming().ownerId == request.auth.uid
+        && textUpTo('name', 60)
+        && textUpTo('description', 300);
+
+      // المالك يعدّل كل شي (عدا المالك نفسه) — والعضو يعدّل **عدّاد الأعضاء فقط** بخطوة ±1
+      allow update: if signedIn() && (
+        (isMe(existing().ownerId) && unchanged('ownerId') && unchanged('id'))
+        ||
+        (onlyChanged(['memberCount']) && counterStep('memberCount'))
+      );
+
+      allow delete: if signedIn() && isMe(existing().ownerId);
+
+      // ⚠️ كلمة مرور الغرفة: مستند فرعي **لا يُقرأ من أي عميل**
+      //    (التحقق يتم بجانب الخادم عبر Cloud Function، لا بالعميل)
+      match /private/{docId} {
+        allow read: if false;
+        allow write: if signedIn()
+          && isMe(get(/databases/$(database)/documents/rooms/$(roomId)).data.ownerId);
+      }
+
+      // رسائل الغرفة: تُكتب باسم كاتبها فقط ولا تُعدَّل بعد الإرسال
+      match /messages/{messageId} {
+        allow read: if signedIn();
+        allow create: if signedIn()
+          && incoming().senderId == request.auth.uid
+          && textUpTo('text', 2000);
+        allow update: if false;
+        allow delete: if signedIn() && isMe(existing().senderId);
+      }
+    }
+
+    // ═════════════════════════ القصص ═════════════════════════
+    match /stories/{storyId} {
+      allow read: if signedIn();
+      allow create: if signedIn()
+        && incoming().authorId == request.auth.uid;
+      // القصص لا تُعدَّل (تُحذف بعد 24 ساعة تلقائياً عبر TTL)
+      allow update: if false;
+      allow delete: if signedIn() && isMe(existing().authorId);
+    }
+
+    // ═════════════════════════ الإشعارات ═════════════════════════
+    match /notifications/{notificationId} {
+      // كل مستخدم يقرأ إشعاراته فقط
+      allow read: if signedIn() && existing().userId == request.auth.uid;
+      // يُسمح بتعليمها مقروءة فقط
+      allow update: if signedIn() && existing().userId == request.auth.uid
+        && onlyChanged(['isRead']);
+      allow delete: if signedIn() && existing().userId == request.auth.uid;
+      // الإنشاء من الخادم فقط (Cloud Functions) ⇒ لا تزوير إشعارات
+      allow create: if false;
+    }
+
+    // ═════════════════════════ المحفظة ═════════════════════════
+    // أرصدة الفلوس لا تُكتب من العميل إطلاقاً (منع تزوير الرصيد)
+    match /wallets/{userId} {
+      allow read: if isMe(userId);
+      allow write: if false;
+    }
+    match /walletTransactions/{txId} {
+      allow read: if signedIn() && existing().userId == request.auth.uid;
+      allow write: if false;
+    }
+
+    // ═════════════════════════ تحليلات/بلاغات ═════════════════════════
+    match /reports/{reportId} {
+      allow create: if signedIn() && incoming().reporterId == request.auth.uid;
+      allow read, update, delete: if false;   // للمشرفين عبر الخادم
+    }
+
+    // ═════════════════════════ أي مسار آخر ═════════════════════════
+    // رفض صريح لأي مجموعة غير معرّفة أعلاه
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}
