@@ -400,7 +400,79 @@ class SocialAppViewModel : ViewModel() {
             com.example.model.Follow(id = "f5", followerId = "10000003", followingId = "10000004")
         )
     )
-    val follows: StateFlow<List<com.example.model.Follow>> = _follows.asStateFlow()
+        val follows: StateFlow<List<com.example.model.Follow>> = _follows.asStateFlow()
+
+    // --- قوائمي الحقيقية (مشتقة من رسم المتابعة، لا بيانات ثابتة) ---
+    private val _myFollowersList = MutableStateFlow<List<FollowUser>>(emptyList())
+    val followersList: StateFlow<List<FollowUser>> = _myFollowersList.asStateFlow()
+
+    private val _myFollowingList = MutableStateFlow<List<FollowUser>>(emptyList())
+    val followingList: StateFlow<List<FollowUser>> = _myFollowingList.asStateFlow()
+
+    // بذرة حسابي: أتابع «سارة أحمد» و«محمد العلي» يتابعني — منها تبدأ سلسلة التنقل A→B→C→D
+    private val followSeedTargetId = "10000001"
+    private val followSeedFollowerId = "10000002"
+
+    /**
+     * يزرع بداية السلسلة لحسابي مرة واحدة فقط: أنا → سارة أحمد → محمد العلي → نورة سالم → خالد فهد.
+     * العلامة محفوظة بالجهاز (followSeedFor) ⇒ لو ألغيت متابعة سارة لاحقاً تبقى ملغاة ولا ترجع تلقائياً.
+     */
+    private fun ensureMyFollowSeed(myId: String) {
+        if (myId.isBlank()) return
+        if (LocalStore.loadFollowSeedFor() == myId) return
+        val missed = ArrayList<com.example.model.Follow>(2)
+        if (_follows.value.none { it.followerId == myId && it.followingId == followSeedTargetId }) {
+            missed.add(
+                com.example.model.Follow(
+                    id = "seed_out_$myId", followerId = myId, followingId = followSeedTargetId
+                )
+            )
+        }
+        if (_follows.value.none { it.followerId == followSeedFollowerId && it.followingId == myId }) {
+            missed.add(
+                com.example.model.Follow(
+                    id = "seed_in_$myId", followerId = followSeedFollowerId, followingId = myId
+                )
+            )
+        }
+        if (missed.isNotEmpty()) _follows.update { it + missed }
+        LocalStore.saveFollowSeedFor(myId)
+    }
+
+    /**
+     * يربط قوائمي وأعدادي برسم المتابعة لحظياً، ويحفظ أي تغيير محلياً
+     * (فتبقى المتابعات بعد إغلاق التطبيق). لا يحتاج أي تعديل من الواجهة.
+     */
+    init {
+        viewModelScope.launch {
+            LocalStore.loadFollows().takeIf { it.isNotEmpty() }?.let { _follows.value = it }
+
+            launch { _follows.collect { list -> LocalStore.saveFollows(list) } }
+
+            launch {
+                combine(_follows, _userProfile) { follows, me -> follows to me.id }
+                    .collect { (follows, myId) ->
+                        if (myId.isBlank()) return@collect
+                        ensureMyFollowSeed(myId)
+                        _myFollowingList.value = getFollowingOf(myId)
+                        _myFollowersList.value = getFollowersOf(myId)
+                        val followingNow = follows.count { it.followerId == myId }
+                        val followersNow = follows.count { it.followingId == myId }
+                        _userProfile.update { p ->
+                            if (p.followingCount == followingNow && p.followersCount == followersNow) p
+                            else p.copy(followingCount = followingNow, followersCount = followersNow)
+                        }
+                    }
+            }
+        }
+    }
+
+    // عدد المتابعين/المتابَعين الحقيقي لأي مستخدم (من الرسم مباشرة — بلا حلقات ولا تكرار)
+    private fun countFollowersOf(userId: String): Int =
+        if (userId.isBlank()) 0 else _follows.value.count { it.followingId == userId }
+
+    private fun countFollowingOf(userId: String): Int =
+        if (userId.isBlank()) 0 else _follows.value.count { it.followerId == userId }
 
     // TODO: عند ربط Firestore، تُستبدل بقراءة استعلام من مجموعة "follows" حيث followingId == userId
     fun loadFollowers(userId: String): List<com.example.model.Follow> {
