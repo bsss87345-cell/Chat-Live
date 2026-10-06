@@ -133,8 +133,9 @@ fun AuthScreen(
                 signupStep = SignupStep.PASSWORD
             }
             SignupStep.PASSWORD -> {
-                if (signupPassword.length < 6) {
-                    errorMessage = "يجب أن تكون كلمة السر 6 أحرف أو أرقام على الأقل."
+                                // كان: 6 أحرف بلا أي شرط ⇒ «123456» كانت مقبولة
+                AuthValidation.passwordProblem(signupPassword)?.let {
+                    errorMessage = it
                     return
                 }
                 // توليد رمز تأكيد وهمي (محاكاة إرسال بريد، لعدم وجود خادم فعلي حالياً)
