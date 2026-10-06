@@ -115,10 +115,10 @@ fun AuthScreen(
         errorMessage = null
         when (signupStep) {
             SignupStep.NAME -> {
-                if (signupName.trim().length < 2) {
-                    errorMessage = "يرجى إدخال اسم صحيح (حرفين على الأقل)."
+                                AuthValidation.nameProblem(signupName)?.let {
+                    errorMessage = it
                     return
-                }
+                                }
                 signupStep = SignupStep.EMAIL
             }
             SignupStep.EMAIL -> {
