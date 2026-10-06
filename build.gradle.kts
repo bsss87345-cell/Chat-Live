@@ -7,6 +7,6 @@ plugins {
   alias(libs.plugins.secrets) apply false
 
   // [ملاحظة للمرحلة القادمة]: تم تعطيل إضافة Google Services مؤقتاً لعدم وجود ملف google-services.json أو ربط حقيقي بـ Firebase.
-  // أعد تفعيل هذا السطر عند ربط مشروع Firebase وإضافة google-services.json:
-  // alias(libs.plugins.google.services) apply false
+    // ✅ مُفعَّل (الخطوة 3 من الربط السحابي): إضافة google-services متاحة لكل المشروع
+  alias(libs.plugins.google.services) apply false
 }
