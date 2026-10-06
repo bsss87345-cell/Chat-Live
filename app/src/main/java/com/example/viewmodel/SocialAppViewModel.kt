@@ -70,7 +70,15 @@ class SocialAppViewModel : ViewModel() {
         generateMockPostsFor("10000003", "نورة سالم", "@noura_s", 6) +
         generateMockPostsFor("10000004", "خالد فهد", "@khalid_f", 41)
     )
-    val posts: StateFlow<List<Post>> = _posts.asStateFlow()
+        val posts: StateFlow<List<Post>> = _posts.asStateFlow()
+
+    /** المنشورات اللي حذفها المستخدم — تظهر بصفحة «المحتوى المحذوف» بالنشاط. */
+    private val _deletedPosts = MutableStateFlow<List<Post>>(emptyList())
+    val deletedPosts: StateFlow<List<Post>> = _deletedPosts.asStateFlow()
+
+    /** معرّفات المنشورات اللي شاركها المستخدم (الأحدث أولاً، بلا تكرار). */
+    private val _sharedPostIds = MutableStateFlow<List<String>>(emptyList())
+    val sharedPostIds: StateFlow<List<String>> = _sharedPostIds.asStateFlow()
 
         private val _activeCommentPostId = MutableStateFlow<String?>(null)
     val activeCommentPostId: StateFlow<String?> = _activeCommentPostId.asStateFlow()
