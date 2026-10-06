@@ -29,7 +29,11 @@ data class FollowUser(
     val id: String = "",
     val name: String = "",
     val handle: String = "",
-    val avatarUrl: String = ""
+    val avatarUrl: String = "",
+    val bio: String = "",
+    val avatarEmoji: String = "👤",
+    val followersCount: Int = 0,
+    val followingCount: Int = 0
 )
 
 enum class StoryMediaType {
