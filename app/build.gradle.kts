@@ -122,9 +122,8 @@ secrets {
 }
 
 // [ملاحظة للمرحلة القادمة]: تم تعطيل إعدادات googleServices مؤقتاً لعدم وجود ملف google-services.json.
-// أعد تفعيل السطر أدناه عند ربط Firebase الحقيقي:
-// googleServices { missingGoogleServicesStrategy = MissingGoogleServicesStrategy.WARN }
-
+// ✅ WARN: لو غاب google-services.json لا يفشل البناء (للنسخ المحلية)
+googleServices { missingGoogleServicesStrategy = MissingGoogleServicesStrategy.WARN }
 // Some unused dependencies are commented out below instead of being removed.
 // This makes it easy to add them back in the future if needed.
 dependencies {
