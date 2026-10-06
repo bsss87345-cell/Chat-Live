@@ -156,6 +156,8 @@ fun MainScreen(viewModel: SocialAppViewModel) {
                         activeCommentPostId = activeCommentPostId,
                         onCloseComments = { viewModel.closeComments() },
                         onAddComment = { postId, text -> viewModel.addComment(postId, text) },
+                        deletedPosts = deletedPosts,
+                        sharedPostIds = sharedPostIds,
                         onBack = { viewModel.closeAccountSettings() }
                     )
                 } else {
