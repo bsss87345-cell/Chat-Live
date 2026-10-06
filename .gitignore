@@ -29,6 +29,20 @@ local.properties
 secrets.properties
 google-services.json
 app/google-services.json
+# ملف مفتاح إشعارات Firebase (لا يُرفع)
+app/notification_service_key.json
+# أسرار التوقيع المحلية
+keystore.properties
+
+# سجلات Firebase المحلية
+firebase-debug.log
+firestore-debug.log
+ui-debug.log
+.firebase/
+**/node_modules/
+
+# ⚠️ ملاحظة: **لا** يُستثنى `.firebaserc` — يجب أن يُرفع
+# ليشتغل `firebase deploy` من الـCI بدون تحديد المشروع يدوياً.
 
 # Android Keystores and signing credentials
 *.jks
