@@ -179,11 +179,10 @@ class SocialAppViewModel : ViewModel() {
     private val _chatRooms = MutableStateFlow<List<ChatRoom>>(emptyList())
     val chatRooms: StateFlow<List<ChatRoom>> = _chatRooms.asStateFlow()
 
-        init {
+               init {
                 restoreLocalData()
-        restoreSession()
         startLiveRoomUpdates()
-    }
+               } 
 
     /**
      * يستبدل الهوية المحلية بهوية الخادم (uid حقيقي + رمز جلسة) — **بعد تفعيل AuthService فقط**.
