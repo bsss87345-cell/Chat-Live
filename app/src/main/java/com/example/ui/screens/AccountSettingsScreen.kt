@@ -579,8 +579,8 @@ color = NeonCyan,
                     val activityCategories = listOf(
                         Triple(Icons.Default.Favorite, "الإعجابات", likedPosts.size),
                         Triple(Icons.Default.ChatBubbleOutline, "التعليقات", commentedPosts.size),
-                        Triple(Icons.Default.Share, "المشاركات", 0),
-                        Triple(Icons.Default.DeleteOutline, "المحتوى المحذوف", 0),
+                        Triple(Icons.Default.Share, "المشاركات", sharedPosts.size),
+                        Triple(Icons.Default.DeleteOutline, "المحتوى المحذوف", deletedPosts.size),
                         Triple(Icons.Default.MeetingRoom, "الغرف المنضم إليها", joinedRooms.size)
                     )
 
