@@ -693,6 +693,14 @@ color = NeonCyan,
                                     }
                                 }
                             }
+                                                } else if (activityDetail == "المحتوى المحذوف") {
+                            if (deletedPosts.isEmpty()) {
+                                item { ActivityEmptyState() }
+                            } else {
+                                items(deletedPosts, key = { it.id + "_del" }) { post ->
+                                    ArchivedPostCard(post = post)
+                                }
+                            }
                         } else if (detailPosts.isEmpty()) {
                             item { ActivityEmptyState() }
                         } else {
