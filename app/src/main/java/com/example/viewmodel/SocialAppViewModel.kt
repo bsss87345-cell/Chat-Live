@@ -1990,7 +1990,11 @@ fun toggleOwnerVoiceMute(roomId: String) {
     }
 
     // يبدّل حالة المتابعة (متابعة/إلغاء متابعة) لمستخدم معيّن — تُستخدم من زر المتابعة بالمنشورات
-        fun toggleFollow(targetUserId: String) {
+            fun toggleFollow(targetUserId: String) {
+        if (!allowAction("toggle_follow", 800L)) {
+            _userMessage.value = "تمهل قليلاً ⏳"
+            return
+        }
         if (isFollowing(targetUserId)) {
             unfollowUser(targetUserId)
         } else if (isFollowRequestPending(targetUserId)) {
