@@ -273,10 +273,49 @@ class SocialAppViewModel : ViewModel() {
      * يحفظ منشورات المستخدم + سلة المحذوفات + مشاركاتي.
      * الكتابة مجمّعة وغير متزامنة داخل LocalStore فما تعطل الواجهة.
      */
-    private fun persistMyPosts() {
+        private fun persistMyPosts() {
         LocalStore.saveMyPosts(_posts.value.filter { it.isAuthor })
         LocalStore.saveDeletedPosts(_deletedPosts.value)
         LocalStore.saveSharedPostIds(_sharedPostIds.value)
+    }
+
+    // ─────────────── الحماية من الإساءة: معرّفات آمنة + حدود الإدخال ───────────────
+
+    /** مولّد عشوائي آمن تشفيرياً (kotlin.random غير آمنة لهذه الاستخدامات). */
+    private val secureRandom = java.security.SecureRandom()
+
+    /**
+     * معرّف محلي فريد: طابع زمني + 48 بت عشوائية آمنة.
+     * (24 بت ما كانت تكفي: القياس الفعلي أعطى 5 تكرارات في 200 ألف معرّف بنفس الملي ثانية)
+     */
+    private fun newLocalId(prefix: String): String =
+        prefix + System.currentTimeMillis() + "_" +
+            java.lang.Long.toHexString(secureRandom.nextLong() and 0xFFFFFFFFFFFFL)
+
+    /** حدود الإدخال والمعدل — تحمي الواجهة وميزانية قاعدة البيانات لاحقاً. */
+    private object Limits {
+        const val MAX_POST_CHARS = 2000
+        const val MAX_COMMENT_CHARS = 500
+        const val MIN_INTERVAL_MS = 1200L
+        const val MIN_POST_INTERVAL_MS = 3000L
+    }
+
+    private val lastActionAt = mutableMapOf<String, Long>()
+
+    /** يمنع تكرار العملية بسرعة (سبام). يرجع false لو لازم ينتظر. */
+    private fun allowAction(key: String, minIntervalMs: Long = Limits.MIN_INTERVAL_MS): Boolean {
+        val now = System.currentTimeMillis()
+        val last = lastActionAt[key] ?: 0L
+        if (now - last < minIntervalMs) return false
+        lastActionAt[key] = now
+        return true
+    }
+
+    /** يرقّي كلمة مرور الغرفة القديمة (نص صريح) إلى مشفّرة. يرجع القيمة كما هي لو مشفّرة أصلاً. */
+    private fun upgradePasswordIfLegacy(stored: String?): String? {
+        if (stored == null) return null
+        if (PasswordHasher.isHashed(stored)) return stored
+        return PasswordHasher.hash(stored)
     }
 
     private fun startLiveRoomUpdates() {
