@@ -1019,9 +1019,11 @@ fun joinChatRoom(roomId: String, passwordInput: String = ""): Boolean {
         _chatRooms.update { list ->
             list.map {
                 if (it.id == roomId) {
-                    it.copy(
+                                        it.copy(
                         isJoined = true,
                         memberCount = it.memberCount + 1,
+                        // ترقية تلقائية: كلمة مرور قديمة نصية ⇒ مشفّرة (بلا تدخل المستخدم)
+                        password = upgradePasswordIfLegacy(it.password),
                         members = it.members + RoomMember("me", "أنت", RoomMemberRole.MEMBER, isOnline = true, avatarUrl = _userProfile.value.avatarUrl),
                         messages = it.messages + ChatMessage(
                             id = "rm_join_${System.currentTimeMillis()}",
