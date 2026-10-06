@@ -814,10 +814,12 @@ class SocialAppViewModel : ViewModel() {
     fun openRoom(roomId: String) {
         val room = _chatRooms.value.find { it.id == roomId } ?: return
 
-        if (room.blockedMembers.any { it.id == "me" }) {
-            _userMessage.value = "لا يمكنك دخول هذه الغرفة."
-            return
-        }
+                            it.copy(
+                        isJoined = true,
+                        memberCount = it.memberCount + 1,
+                        // ترقية تلقائية: كلمة مرور قديمة نصية ⇒ مشفّرة (بلا تدخل المستخدم)
+                        password = upgradePasswordIfLegacy(it.password),
+                        members = it.members + RoomMember("me", "أنت", RoomMemberRole.MEMBER, isOnline = true, avatarUrl = _userProfile.value.avatarUrl),
 
         if (room.isLocked && !room.isOwner && !room.isJoined) {
             _userMessage.value = "هذه الغرفة مقفلة حاليًا ولا تقبل أعضاء جدد."
