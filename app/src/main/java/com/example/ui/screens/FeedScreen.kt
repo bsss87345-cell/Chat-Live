@@ -2341,17 +2341,8 @@ if (screen == 0) {
                     }
                 )
             } else {
-                // Camera View (PHOTO or VIDEO mode)
-                // 1. Live Camera Preview
-                                CameraPreviewView(
-                    modifier = Modifier.fillMaxSize(),
-                    lensFacing = lensFacing,
-                    torchEnabled = currentMode == StoryCreationMode.VIDEO && isRecording && flashMode == FlashMode.ON,
-                    imageCapture = imageCapture,
-                    videoCapture = videoCapture,
-                    zoomRatio = zoomRatio,
-                    showGrid = showGrid
-                )
+                                // Camera View (PHOTO or VIDEO mode)
+                // 1. Live Camera Preview — صارت مرسومة فوق (خارج الـCrossfade) فلا تُعاد بناؤها
                 // Top Controls: Close, Flash, Flip Camera, and Active Mode Badge
                 LaunchedEffect(flashMode) {
                     imageCapture.flashMode = when (flashMode) {
