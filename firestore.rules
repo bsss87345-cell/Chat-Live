@@ -222,9 +222,16 @@ service cloud.firestore {
       // يُسمح بتعليمها مقروءة فقط
       allow update: if signedIn() && existing().userId == request.auth.uid
         && onlyChanged(['isRead']);
-      allow delete: if signedIn() && existing().userId == request.auth.uid;
-      // الإنشاء من الخادم فقط (Cloud Functions) ⇒ لا تزوير إشعارات
-      allow create: if false;
+            allow delete: if signedIn() && existing().userId == request.auth.uid;
+      // ✅ قرار المستخدم (2ب): الإشعارات تُكتب من العميل مع قيود صارمة
+      //    • fromId == uid ⇒ لا أحد يكتب إشعاراً منتحلاً اسم غيره
+      //    • المستلم userId موجود + حدّ للطول + منع الإنشاء كمقروء
+      allow create: if signedIn()
+        && incoming().fromId == request.auth.uid
+        && incoming().userId is string
+        && incoming().userId.size() > 0
+        && textUpTo('text', 300)
+        && incoming().isRead == false;
     }
 
     // ═════════════════════════ المحفظة ═════════════════════════
