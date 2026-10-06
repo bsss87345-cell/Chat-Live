@@ -96,7 +96,12 @@ fun AuthScreen(
     fun handleLogin() {
         errorMessage = null
         val identifier = loginIdentifier.trim()
-        if (identifier.isEmpty() || loginPassword.isEmpty()) {
+                // فحص أدق: مُعرّف فارغ فقط (البريد/اسم المستخدم) + كلمة السر مطلوبة
+        AuthValidation.loginIdentifierProblem(identifier)?.let {
+            errorMessage = it
+            return
+        }
+        if (loginPassword.isEmpty()) {
             errorMessage = "يرجى إدخال اسم المستخدم أو البريد الإلكتروني وكلمة السر."
             return
         }
