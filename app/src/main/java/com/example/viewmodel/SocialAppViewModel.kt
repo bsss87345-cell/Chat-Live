@@ -617,11 +617,19 @@ class SocialAppViewModel : ViewModel() {
         _userMessage.value = "تم نسخ رابط المنشور ومشاركته مع الأصدقاء!"
                 }
 
-    fun publishPost(content: String, tag: String, mediaType: PostMediaType, mediaUri: String = "") {
+        fun publishPost(content: String, tag: String, mediaType: PostMediaType, mediaUri: String = "") {
         if (content.isBlank() && mediaType == PostMediaType.NONE) return
+        if (content.length > Limits.MAX_POST_CHARS) {
+            _userMessage.value = "النص طويل جداً — الحد الأقصى ${Limits.MAX_POST_CHARS} حرف"
+            return
+        }
+        if (!allowAction("publish", Limits.MIN_POST_INTERVAL_MS)) {
+            _userMessage.value = "تمهل قليلاً قبل نشر منشور آخر ⏳"
+            return
+        }
         val profile = _userProfile.value
         val newPost = Post(
-            id = "p_${System.currentTimeMillis()}",
+            id = newLocalId("p_"),
             authorId = profile.id,
             authorName = profile.name,
             authorHandle = profile.handle.ifBlank { "ID: ${profile.id}" },
