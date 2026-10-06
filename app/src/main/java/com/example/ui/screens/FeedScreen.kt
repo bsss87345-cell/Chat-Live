@@ -41,7 +41,6 @@ import androidx.compose.ui.input.pointer.pointerInput
 import java.util.concurrent.TimeUnit
 import androidx.camera.view.PreviewView
 import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
