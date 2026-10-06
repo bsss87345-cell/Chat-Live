@@ -11,7 +11,8 @@ plugins {
   // أعد تفعيل السطر التالي عند إضافة ملف google-services.json وربط Firebase الحقيقي:
     // ✅ مُفعَّل (الخطوة 3): يقرأ الإعدادات من app/google-services.json
   // الذي يكتبه الـCI من السرّ GOOGLE_SERVICES_JSON وقت البناء (لا يُرفع للمستودع).
-  alias(libs.plugins.google.services)
+    alias(libs.plugins.google.services)
+}
 
 android {
   namespace = "com.example"
