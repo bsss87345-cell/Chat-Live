@@ -184,10 +184,12 @@ service cloud.firestore {
 
       allow delete: if signedIn() && isMe(existing().ownerId);
 
-      // ⚠️ كلمة مرور الغرفة: مستند فرعي **لا يُقرأ من أي عميل**
-      //    (التحقق يتم بجانب الخادم عبر Cloud Function، لا بالعميل)
+            // 🔑 كلمة مرور الغرفة — التحقق سحابياً قبل الدخول (قرار المستخدم)
+      //    • القراءة: أي مستخدم مسجّل — لازمة لفحص كلمة السر قبل الدخول من أي جهاز
+      //    • الكتابة: مالك الغرفة فقط
+      //    • المخزَّن بصمة PBKDF2 (100,000 دورة + ملح 16 بايت) — لا النص الأصلي
       match /private/{docId} {
-        allow read: if false;
+        allow read: if signedIn();
         allow write: if signedIn()
           && isMe(get(/databases/$(database)/documents/rooms/$(roomId)).data.ownerId);
       }
