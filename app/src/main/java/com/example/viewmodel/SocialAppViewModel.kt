@@ -857,7 +857,9 @@ class SocialAppViewModel : ViewModel() {
             iconEmoji = iconEmoji,
             imageUrl = imageUrl,
             accessType = accessType,
-                        password = if (accessType == RoomAccessType.PASSWORD) password else null,
+                                                // تُخزَّن مشفّرة (PBKDF2 + salt) لا كنص صريح
+                        password = if (accessType == RoomAccessType.PASSWORD && !password.isNullOrBlank())
+                            PasswordHasher.hash(password.trim()) else null,
             memberCount = 1,
             maxMembers = maxMembers.coerceIn(10, 1000),
             isJoined = true,
