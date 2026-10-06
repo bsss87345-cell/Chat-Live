@@ -1,0 +1,9 @@
+<resources>
+    <!--
+        ⭐ نسخة التعديلات: الاسم الظاهر تحت الأيقونة وفي الإعدادات.
+        يتجاوز `app_name` الموجود في app/src/main/res/values/strings.xml **لهذه النسخة فقط**،
+        فنسخة المستخدم تبقى باسمها الأصلي «Chat Live» بلا أي تغيير.
+        المكان: app/src/edits/res/values/strings.xml
+    -->
+    <string name="app_name">Chat Live (تعديلات)</string>
+</resources>
