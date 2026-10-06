@@ -1990,13 +1990,16 @@ fun toggleOwnerVoiceMute(roomId: String) {
     }
 
     // يبدّل حالة المتابعة (متابعة/إلغاء متابعة) لمستخدم معيّن — تُستخدم من زر المتابعة بالمنشورات
-    fun toggleFollow(targetUserId: String) {
+        fun toggleFollow(targetUserId: String) {
         if (isFollowing(targetUserId)) {
             unfollowUser(targetUserId)
+        } else if (isFollowRequestPending(targetUserId)) {
+            _pendingFollowRequests.update { list -> list.filterNot { it == targetUserId } }
+            _userMessage.value = "تم إلغاء طلب المتابعة"
         } else {
             followUser(targetUserId)
         }
-    }
+        }
 
     // TODO: عند ربط Firestore، تُستبدل بكتابة (set/update) بيانات _userProfile.value الحالية
     // بمستند المستخدم بمجموعة "users". تُستدعى بنهاية أي دالة تعدّل بيانات البروفايل.
