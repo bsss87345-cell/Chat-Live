@@ -79,6 +79,8 @@ adb install -r app/build/outputs/apk/debug/app-debug.apk
 ```
 
 ### 4. تشغيل الاختبارات
+```markdown
+### 4. تشغيل الاختبارات
 ```bash
 ./gradlew testDebugUnitTest
 ```
