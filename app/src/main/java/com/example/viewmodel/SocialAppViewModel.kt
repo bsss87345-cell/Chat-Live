@@ -1953,6 +1953,24 @@ fun toggleOwnerVoiceMute(roomId: String) {
         _userMessage.value = "تم إلغاء المتابعة"
     }
 
+        /** طلبات المتابعة المُرسلة لحسابات خاصة — بانتظار الموافقة. */
+    private val _pendingFollowRequests = MutableStateFlow<List<String>>(emptyList())
+    val pendingFollowRequests: StateFlow<List<String>> = _pendingFollowRequests.asStateFlow()
+
+    /** هل الحساب خاص؟ (الحسابات الخاصة تحتاج موافقة قبل ظهور المحتوى) */
+    fun isPrivateAccount(userId: String): Boolean =
+        getUserProfileById(userId)?.privacyLevel == "خاص"
+
+    /** هل أرسلت طلب متابعة لهذا الحساب وما زال معلّقاً؟ */
+    fun isFollowRequestPending(userId: String): Boolean =
+        _pendingFollowRequests.value.contains(userId)
+
+    /** يوافق صاحب الحساب الخاص على الطلب — يجعل المتابعة فعلية. */
+    fun approveFollowRequest(requesterId: String) {
+        _pendingFollowRequests.update { list -> list.filterNot { it == requesterId } }
+        followUser(requesterId, forceDirect = true)
+    }
+
     // يفحص هل "أنا" أتابع هذا المستخدم فعلياً حالياً
     fun isFollowing(targetUserId: String): Boolean {
         val myId = _userProfile.value.id
