@@ -347,18 +347,8 @@ class SocialAppViewModel : ViewModel() {
     private val _friendRequests = MutableStateFlow<List<FriendRequest>>(emptyList())
     val friendRequests: StateFlow<List<FriendRequest>> = _friendRequests.asStateFlow()
 
-    // --- Followers/Following State (مبنية من نظام Follow الجديد، حالة "أنا" خاصة: مرتبط تجريبياً بـ mock_1..4) ---
-        val followersList: StateFlow<List<FollowUser>> = MutableStateFlow(
-            listOf(
-               FollowUser(id = "10000002", name = "محمد العلي", handle = "@m_ali", avatarUrl = "")
-            )
-        ).asStateFlow()
-
-        val followingList: StateFlow<List<FollowUser>> = MutableStateFlow(
-            listOf(
-               FollowUser(id = "10000001", name = "سارة أحمد", handle = "@sara_a", avatarUrl = "")
-            )
-        ).asStateFlow()
+        // --- Followers/Following State ---
+    // قوائمي الحقيقية تُشتق من رسم المتابعة (_follows) وتُحدَّث لحظياً — التعريف أسفل _follows.
 
     // --- Wallet State ---
     private val _walletBalance = MutableStateFlow(0)
