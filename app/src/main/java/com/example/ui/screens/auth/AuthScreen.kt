@@ -122,8 +122,9 @@ fun AuthScreen(
                 signupStep = SignupStep.EMAIL
             }
             SignupStep.EMAIL -> {
-                if (!signupEmail.contains("@") || !signupEmail.contains(".")) {
-                    errorMessage = "يرجى إدخال بريد إلكتروني صحيح."
+                                // كان يقبل «@.» و«a@b.» — الآن فحص حقيقي (نطاق + امتداد حرفي)
+                AuthValidation.emailProblem(signupEmail)?.let {
+                    errorMessage = it
                     return
                 }
                 if (registeredAccounts.any { it.email.equals(signupEmail.trim(), ignoreCase = true) }) {
