@@ -235,10 +235,15 @@ service cloud.firestore {
     }
 
     // ═════════════════════════ المحفظة ═════════════════════════
-    // أرصدة الفلوس لا تُكتب من العميل إطلاقاً (منع تزوير الرصيد)
+        // ✅ قرار المستخدم (3ب): المالك يكتب رصيده فقط، بقيود قيم صارمة
+    //    (المحفظة تجريبية بلا دفع حقيقي)
     match /wallets/{userId} {
       allow read: if isMe(userId);
-      allow write: if false;
+      allow create, update: if isMe(userId)
+        && incoming().balance is number
+        && incoming().balance >= 0
+        && incoming().balance <= 1000000;
+      allow delete: if false;
     }
     match /walletTransactions/{txId} {
       allow read: if signedIn() && existing().userId == request.auth.uid;
