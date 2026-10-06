@@ -175,10 +175,47 @@ class SocialAppViewModel : ViewModel() {
     val chatRooms: StateFlow<List<ChatRoom>> = _chatRooms.asStateFlow()
 
         init {
-        restoreLocalData()
+                restoreLocalData()
+        restoreSession()
         startLiveRoomUpdates()
     }
 
+    /**
+     * يستبدل الهوية المحلية بهوية الخادم (uid حقيقي + رمز جلسة) — **بعد تفعيل AuthService فقط**.
+     * قبل التفعيل: ترجع فوراً بلا أي اتصال شبكة ⇒ السلوك المحلي كما هو تماماً.
+     * مستخدمة من [onAuthSuccess] — لا كود ميت.
+     */
+    private fun syncIdentityWithServer(account: AuthUserAccount) {
+        if (!AuthService.isConfigured) return
+        viewModelScope.launch {
+            when (val result = withContext(Dispatchers.IO) {
+                AuthService.registerOrLogin(account.email, account.password)
+            }) {
+                is AuthService.Result.Ok -> {
+                    // uid الخادم هو مفتاح المستند في قاعدة البيانات (لا معرّفات من العميل)
+                    _userProfile.update { it.copy(id = result.uid, authProvider = "Firebase") }
+                    SecureSessionStore.save(
+                        userId = result.uid,
+                        token = result.idToken,
+                        provider = "firebase"
+                    )
+                }
+                is AuthService.Result.Error -> _userMessage.value = result.message
+                AuthService.Result.NotConfigured -> Unit
+            }
+        }
+    }
+
+    /**
+     * يستعيد الجلسة المحفوظة (مشفّرة بـAndroid Keystore) بعد إغلاق التطبيق.
+     * بلا Keystore متاح (بيئة اختبار مثلاً) ترجع false بهدوء ⇒ السلوك القديم بلا انهيار.
+     */
+    private fun restoreSession() {
+        if (_userProfile.value.id.isBlank()) return
+        val saved = SecureSessionStore.load() ?: return
+        if (saved.userId != _userProfile.value.id) return
+        _isLoggedIn.value = true
+    }
     /**
      * يستعيد منشورات المستخدم المحفوظة محلياً ويضعها فوق المنشورات التجريبية،
      * ثم يحذف ملفات الوسائط اليتيمة اللي ما عاد لها منشور.
