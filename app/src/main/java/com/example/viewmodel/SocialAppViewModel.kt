@@ -441,13 +441,14 @@ class SocialAppViewModel : ViewModel() {
 
             launch {
                 combine(_follows, _userProfile) { follows, me -> follows to me.id }
-                    .collect { (follows, myId) ->
+                    .collect { (_, myId) ->
                         if (myId.isBlank()) return@collect
                         ensureMyFollowSeed(myId)
                         _myFollowingList.value = getFollowingOf(myId)
                         _myFollowersList.value = getFollowersOf(myId)
-                        val followingNow = follows.count { it.followerId == myId }
-                        val followersNow = follows.count { it.followingId == myId }
+                        // نقرأ القيمة بعد الزرع (لا اللقطة القديمة) ⇒ الرقم يطابق القائمة من أول لحظة
+                        val followingNow = _follows.value.count { it.followerId == myId }
+                        val followersNow = _follows.value.count { it.followingId == myId }
                         _userProfile.update { p ->
                             if (p.followingCount == followingNow && p.followersCount == followersNow) p
                             else p.copy(followingCount = followingNow, followersCount = followersNow)
