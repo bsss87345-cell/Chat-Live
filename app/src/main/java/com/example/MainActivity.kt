@@ -18,7 +18,6 @@ import com.example.data.LocalStore
 import com.example.ui.MainScreen
 import com.example.ui.SplashScreen
 import com.example.ui.theme.MyApplicationTheme
-import com.example.util.CrashGuard
 import com.example.viewmodel.SocialAppViewModel
 
 class MainActivity : ComponentActivity() {
