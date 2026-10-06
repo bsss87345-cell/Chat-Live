@@ -47,6 +47,18 @@ jobs:
           path: app/build/outputs/apk/debug/*.apk
           retention-days: 14
 
+      # نسخة التعديلات: نفس الكود بمعرّف تطبيق واسم وأيقونة مختلفين
+      # ⇒ تُثبَّت جنباً إلى جنب مع نسخة المستخدم (لا تستبدلها ولا تتعارض معها)
+      - name: Build Edits APK (developer edition)
+        run: ./gradlew assembleEdits --stacktrace
+
+      - name: Upload Edits APK as Artifact
+        uses: actions/upload-artifact@v6
+        with:
+          name: app-edits-apk
+          path: app/build/outputs/apk/edits/*.apk
+          retention-days: 14
+
       - name: Run Unit Tests
         run: ./gradlew testDebugUnitTest --tests "com.example.ExampleUnitTest" --stacktrace
 
