@@ -459,11 +459,17 @@ Column(
                 onClick = { showEditBioDialog = true }
             )
     } else {
+                val iFollowTarget = isUserFollowing(userProfile.id)
+        val targetIsPrivate = userProfile.privacyLevel == "خاص"
         ProfileNeonActionButton(
-            text = if (isUserFollowing(userProfile.id)) "إلغاء المتابعة" else "متابعة",
+            text = when {
+                iFollowTarget -> "إلغاء المتابعة"
+                targetIsPrivate -> "طلب متابعة"
+                else -> "متابعة"
+            },
             icon = Icons.Default.PersonAdd,
             accent = NeonCyan,
-            filled = !isUserFollowing(userProfile.id),
+            filled = !iFollowTarget,
             modifier = Modifier.weight(1f),
             onClick = { onToggleFollow(userProfile.id) }
         )
