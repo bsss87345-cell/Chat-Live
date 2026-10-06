@@ -63,8 +63,24 @@ android {
         null
       }
     }
-    debug {
+        debug {
       // يُترك بدون signingConfig مخصص ليستخدم توقيع Debug التلقائي الخاص بـ Gradle
+    }
+
+    // ───────────────────────── نسخة التعديلات (Developer Edition) ─────────────────────────
+    // نسخة مطوّر مستقلة تُبنى من **نفس الكود** بلا تفريع ولا نسخ مكرر:
+    //   • معرّف تطبيق مختلف (.edits) ⇒ تُثبَّت **جنباً إلى جنب** مع نسخة المستخدم ولا تستبدلها
+    //   • اسم مختلف: «Chat Live (تعديلات)» — من app/src/edits/res/values/strings.xml
+    //   • أيقونة مختلفة اللون — من app/src/edits/res/drawable/ + mipmap-*/
+    //   • ترث كل إعدادات debug (توقيع Debug · بلا R8 · قابلة للتنقيح)
+    //
+    //   نسخة المستخدم  : ./gradlew assembleDebug    ⇒ app-debug.apk
+    //   نسخة التعديلات : ./gradlew assembleEdits    ⇒ app-edits.apk
+    create("edits") {
+      initWith(getByName("debug"))
+      applicationIdSuffix = ".edits"
+      versionNameSuffix = "-edits"
+      isDebuggable = true
     }
   }
   compileOptions {
