@@ -56,6 +56,8 @@ object LocalStore {
     private const val KEY_WALLET_BALANCE = "walletBalance"
     private const val KEY_WALLET_TX = "walletTransactions"
     private const val KEY_ROOMS = "chatRooms"
+    private const val KEY_FOLLOWS = "follows"
+    private const val KEY_FOLLOW_SEED = "followSeedFor"
 
     @Volatile
     private var appContext: Context? = null
