@@ -153,6 +153,11 @@ fun ProfileScreen(
         }
     }
 
+        // حساب خاص ما أتابعه ⇒ المحتوى مخفي حتى الموافقة (سلوك إنستغرام)
+    val privateLocked = !isOnOwnProfile &&
+        userProfile.privacyLevel == "خاص" &&
+        !isUserFollowing(userProfile.id)
+
     // User's own posts (own profile) or another user's posts (other profile) - used for the header stats count and grid
     val userPosts = if (isOnOwnProfile) {
         posts.filter {
