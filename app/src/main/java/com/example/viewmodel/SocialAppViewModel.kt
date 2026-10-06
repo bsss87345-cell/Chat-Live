@@ -1924,7 +1924,8 @@ fun toggleOwnerVoiceMute(roomId: String) {
         _userMessage.value = "مرحباً بك ${account.name}! اسم المستخدم الخاص بك: $newHandle"
     }
 
-    fun logoutUser() {
+        fun logoutUser() {
+        SecureSessionStore.clear()
         _isLoggedIn.value = false
         _userMessage.value = "تم تسجيل الخروج بنجاح. مرحباً بك في أي وقت!"
     }
