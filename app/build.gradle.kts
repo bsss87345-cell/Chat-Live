@@ -9,8 +9,9 @@ plugins {
 
   // [ملاحظة للمرحلة القادمة]: تم تعطيل إضافة Google Services مؤقتاً لتمكين البناء وتوليد APK دون الحاجة لملف google-services.json
   // أعد تفعيل السطر التالي عند إضافة ملف google-services.json وربط Firebase الحقيقي:
-  // alias(libs.plugins.google.services)
-}
+    // ✅ مُفعَّل (الخطوة 3): يقرأ الإعدادات من app/google-services.json
+  // الذي يكتبه الـCI من السرّ GOOGLE_SERVICES_JSON وقت البناء (لا يُرفع للمستودع).
+  alias(libs.plugins.google.services)
 
 android {
   namespace = "com.example"
