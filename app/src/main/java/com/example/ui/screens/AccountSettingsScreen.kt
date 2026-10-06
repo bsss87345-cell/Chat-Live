@@ -64,6 +64,8 @@ fun AccountSettingsScreen(
     activeCommentPostId: String? = null,
     onCloseComments: () -> Unit = {},
     onAddComment: (String, String) -> Unit = { _, _ -> },
+    deletedPosts: List<Post> = emptyList(),
+    sharedPostIds: List<String> = emptyList(),
     onBack: () -> Unit
 ) {
     // null = showing the main vertical menu list; 0/1/2 = which full page is open
