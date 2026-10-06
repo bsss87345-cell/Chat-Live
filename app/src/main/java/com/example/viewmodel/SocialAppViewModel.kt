@@ -843,10 +843,15 @@ class SocialAppViewModel : ViewModel() {
         iconEmoji: String,
         imageUrl: String? = null
     ) {
+                if (!allowAction("create_room", 2000L)) {
+            _userMessage.value = "تمهل قليلاً قبل إنشاء غرفة جديدة ⏳"
+            return
+        }
         val existingIds = _chatRooms.value.map { it.id }.toSet()
+        // SecureRandom بدل kotlin.random (غير آمنة تشفيرياً) — ونفس نطاق الثمانية أرقام
         var generatedId: String
         do {
-                        generatedId = (55000000..99999999).random().toString()
+            generatedId = (55_000_000 + secureRandom.nextInt(45_000_000)).toString()
         } while (existingIds.contains(generatedId))
 
         val newRoom = ChatRoom(
