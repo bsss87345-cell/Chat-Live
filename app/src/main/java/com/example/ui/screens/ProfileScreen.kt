@@ -411,8 +411,14 @@ Column(
         count = "${userProfile.followingCount}",
         icon = Icons.Default.Person,
         accent = NeonPurple,
-        modifier = Modifier.weight(1f),
-        onClick = { showFollowingDialog = true }
+                modifier = Modifier.weight(1f),
+        onClick = {
+            if (privateLocked) {
+                android.widget.Toast.makeText(context, "هذا حساب خاص 🔒 — تابعه لعرض القوائم", android.widget.Toast.LENGTH_SHORT).show()
+            } else {
+                showFollowingDialog = true
+            }
+        }
     )
     ProfileNeonStatCard(
         title = "المتابعون",
