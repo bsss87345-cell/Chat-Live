@@ -1,0 +1,11 @@
+{
+  "_تعليمات": [
+    "انسخ هذا الملف باسم '.firebaserc' في جذر المستودع وبدّل معرّف المشروع.",
+    "معرّف المشروع ليس سرّاً (يظهر في كل طلب) — لكنه ضروري ليشتغل firebase deploy من الـCI.",
+    "تحصل عليه من: Firebase Console ← Project Settings ← Project ID",
+    "لا تُستثنى .firebaserc في .gitignore — يجب أن تُرفع."
+  ],
+  "projects": {
+    "default": "ضع-معرّف-مشروعك-هنا"
+  }
+}
