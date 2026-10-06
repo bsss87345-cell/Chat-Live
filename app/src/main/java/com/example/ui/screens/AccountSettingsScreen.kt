@@ -105,11 +105,12 @@ fun AccountSettingsScreen(
     }
 
     val settingsListState = rememberLazyListState()
-    val activityDetailPosts = when (activityDetail) {
+        val activityDetailPosts = when (activityDetail) {
         "الإعجابات" -> activityLikedPosts
         "التعليقات" -> activityCommentedPosts
+        "المشاركات" -> sharedPosts
         else -> emptyList()
-    }
+        }
     val activityVideoIds = activityDetailPosts
         .filter { it.mediaType == PostMediaType.SHORT_VIDEO }
         .map { it.id }
