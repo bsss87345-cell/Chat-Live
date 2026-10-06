@@ -96,7 +96,7 @@ jobs:
           fi
           ./gradlew assembleRelease --stacktrace
 
-            - name: Verify the release APK is signed (blocks unsigned uploads)
+      - name: Verify the release APK is signed (blocks unsigned uploads)
         if: env.KEYSTORE_PATH != ''
         run: |
           APK=$(ls app/build/outputs/apk/release/*.apk | head -1)
