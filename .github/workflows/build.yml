@@ -96,6 +96,23 @@ jobs:
           fi
           ./gradlew assembleRelease --stacktrace
 
+            - name: Verify the release APK is signed (blocks unsigned uploads)
+        if: env.KEYSTORE_PATH != ''
+        run: |
+          APK=$(ls app/build/outputs/apk/release/*.apk | head -1)
+          echo "المخرج: $APK"
+          if echo "$APK" | grep -q "unsigned"; then
+            echo "::error::المخرج غير موقّع — أوقفنا الرفع. تأكد من سرّ KEYSTORE_BASE64."
+            exit 1
+          fi
+          SIGNER=$(find "${ANDROID_HOME:-/usr/local/lib/android/sdk}/build-tools" -name apksigner -type f 2>/dev/null | sort -r | head -1)
+          if [ -n "$SIGNER" ]; then
+            echo "✅ الملف موقّع — الشهادة:"
+            "$SIGNER" verify --print-certs "$APK" | head -6
+          else
+            echo "ℹ️ apksigner غير موجود — نجح فحص الاسم فقط."
+          fi
+
       - name: Upload Release APK (only if properly signed)
         if: env.KEYSTORE_PATH != ''
         uses: actions/upload-artifact@v6
