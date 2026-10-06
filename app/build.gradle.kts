@@ -92,8 +92,9 @@ android {
       initWith(getByName("release"))
       applicationIdSuffix = ".perf"
       versionNameSuffix = "-perf"
-      signingConfig = signingConfigs.getByName("debug")
-      resValue("string", "app_name", "Chat Live (اختبار سرعة)")
+            signingConfig = signingConfigs.getByName("debug")
+      // الاسم «Chat Live (اختبار سرعة)» يأتي من app/src/perf/res/values/strings.xml
+      // (لا نستخدم resValue: ميزة توليد الموارد من Gradle مطفأة افتراضياً)
     }
   }
   compileOptions {
