@@ -98,11 +98,14 @@ fun AccountSettingsScreen(
                 it.id.startsWith("p_")
     }.take(6)
 
-    // --- منشورات النشاط ومنطق الفيديو النشط (نفس منطق الرئيسية) ---
+        // --- منشورات النشاط ومنطق الفيديو النشط (نفس منطق الرئيسية) ---
     val activityLikedPosts = posts.filter { it.isLiked }
     val activityCommentedPosts = posts.filter { p ->
         p.commentsList.any { it.authorName == "أنت (أنا)" }
     }
+
+    // المنشورات اللي شاركتها (مرتّبة حسب الأحدث مشاركة)
+    val sharedPosts = sharedPostIds.mapNotNull { id -> posts.find { it.id == id } }
 
     val settingsListState = rememberLazyListState()
         val activityDetailPosts = when (activityDetail) {
