@@ -211,8 +211,9 @@ class SocialAppViewModel : ViewModel() {
                 .collect { LocalStore.saveRooms(_chatRooms.value) }
         }
 
-             LocalStore.cleanupOrphanMedia(
-            _posts.value.map { it.mediaUri }.filter { it.isNotBlank() }.toSet()
+                          LocalStore.cleanupOrphanMedia(
+            (_posts.value + _deletedPosts.value)
+                .map { it.mediaUri }.filter { it.isNotBlank() }.toSet()
         )
     }
 
