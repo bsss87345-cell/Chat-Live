@@ -702,16 +702,15 @@ class SocialAppViewModel : ViewModel() {
     private fun countFollowingOf(userId: String): Int =
         if (userId.isBlank()) 0 else _follows.value.count { it.followerId == userId }
 
-    // TODO: عند ربط Firestore، تُستبدل بقراءة استعلام من مجموعة "follows" حيث followingId == userId
+        // ☁️ المصدر: Firestore (CloudStore.loadFollowsFor تُزامَن عند الإقلاع) — وهذه تقرأ من الذاكرة بعد المزامنة
     fun loadFollowers(userId: String): List<com.example.model.Follow> {
         return _follows.value.filter { it.followingId == userId }
     }
 
-    // TODO: عند ربط Firestore، تُستبدل بقراءة استعلام من مجموعة "follows" حيث followerId == userId
+    // ☁️ المصدر: Firestore (CloudStore.loadFollowsFor تُزامَن عند الإقلاع) — وهذه تقرأ من الذاكرة بعد المزامنة
     fun loadFollowing(userId: String): List<com.example.model.Follow> {
         return _follows.value.filter { it.followerId == userId }
     }
-
     // دليل مستخدمين وهميين للاختبار المحلي فقط (مؤقت، يُستبدل بـ Firestore لاحقاً)
         private val mockUsersDirectory: List<UserProfile> = listOf(
         UserProfile(id = "10000001", name = "سارة أحمد", handle = "@sara_a", bio = "أحب التصوير والسفر", avatarEmoji = "👩"),
