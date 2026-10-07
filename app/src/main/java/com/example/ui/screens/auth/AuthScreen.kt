@@ -466,7 +466,7 @@ private fun SignupContent(
         Spacer(modifier = Modifier.height(22.dp))
 
         AuthPrimaryButton(
-            text = if (step == SignupStep.OTP) "تأكيد وإنشاء الحساب" else "التالي",
+            text = if (step == SignupStep.OTP) "تحققت من بريدي — أكمل" else "التالي",
             onClick = onNextClick,
             modifier = Modifier.testTag("signup_next_button")
         )
