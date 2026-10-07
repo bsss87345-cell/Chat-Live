@@ -257,7 +257,47 @@ fun AuthScreen(
             }
 
             Spacer(modifier = Modifier.height(8.dp))
-
+            // 🔑 نافذة «نسيت كلمة السر» — يرسل Firebase رابط إعادة التعيين إلى البريد
+            if (forgotOpen) {
+                AlertDialog(
+                    onDismissRequest = { forgotOpen = false },
+                    title = { Text("استعادة كلمة السر") },
+                    text = {
+                        Column {
+                            Text("أدخل بريدك الإلكتروني وسيصلك رابط إعادة التعيين من Firebase.")
+                            Spacer(modifier = Modifier.height(12.dp))
+                            OutlinedTextField(
+                                value = forgotEmail,
+                                onValueChange = { forgotEmail = it },
+                                singleLine = true,
+                                placeholder = { Text("البريد الإلكتروني") },
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .testTag("forgot_email_field")
+                            )
+                            forgotStatus?.let { status ->
+                                Spacer(modifier = Modifier.height(10.dp))
+                                Text(status, fontSize = 13.sp, color = MujtamaDarkTextMuted)
+                            }
+                        }
+                    },
+                    confirmButton = {
+                        TextButton(
+                            onClick = {
+                                if (resetBusy) return@TextButton
+                                resetBusy = true
+                                serverResetPassword(forgotEmail.trim()) { ok, message ->
+                                    resetBusy = false
+                                    forgotStatus = message ?: if (ok) "تم الإرسال" else "تعذر الإرسال"
+                                }
+                            }
+                        ) { Text(if (resetBusy) "جارٍ الإرسال…" else "إرسال الرابط") }
+                    },
+                    dismissButton = {
+                        TextButton(onClick = { forgotOpen = false }) { Text("إغلاق") }
+                    }
+                )
+            }
             if (isLoginMode) {
                 LoginContent(
                     identifier = loginIdentifier,
