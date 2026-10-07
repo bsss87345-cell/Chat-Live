@@ -1071,7 +1071,7 @@ class SocialAppViewModel : ViewModel() {
 
                 _activeRoomId.value = roomId
         // ☁️ جلب رسائل الغرفة من السحابة (لمن شارك من جهاز آخر)
-        loadRoomMessagesFromCloud(roomId)
+                // الرسائل تصل لحظياً عبر startRoomMessagesSync
         }
     fun closeRoom() {
         _activeRoomId.value = null
