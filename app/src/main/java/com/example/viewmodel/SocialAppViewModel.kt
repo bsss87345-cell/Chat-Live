@@ -1265,13 +1265,15 @@ fun blockRoomMember(roomId: String, memberId: String) {
             gameTitle = if (type == ChatMessageType.GAME_INVITE) "تحدي الألعاب الجماعي للغرفة 🎮" else null,
             gameReward = if (type == ChatMessageType.GAME_INVITE) 100 else 0
         )
-        _chatRooms.update { list ->
+                _chatRooms.update { list ->
             list.map {
                 if (it.id == roomId) {
                     it.copy(messages = it.messages + msg)
                 } else it
             }
         }
+        // ☁️ رفع الرسالة ليراها بقية الأعضاء
+        viewModelScope.launch { withContext(Dispatchers.IO) { CloudStore.saveRoomMessage(roomId, msg) } }
     }
 
     fun pinRoomMessage(roomId: String, messageText: String) {
