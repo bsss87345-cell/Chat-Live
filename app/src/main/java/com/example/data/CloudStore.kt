@@ -407,6 +407,34 @@ object CloudStore {
         }
     )
 
+        // ───────────────── ساعة السيرفر ─────────────────
+    @Volatile private var serverOffsetMs: Long = 0L
+    @Volatile var serverClockTried: Boolean = false
+        private set
+
+    /**
+     * يقيس الفرق بين ساعة الجهاز وساعة السيرفر مرة واحدة بالجلسة
+     * (كتابة واحدة + قراءة واحدة). عند الفشل يبقى الفرق صفر، يعني نفس السلوك السابق.
+     * حاجبة ⇒ من Dispatchers.IO فقط.
+     */
+    fun syncServerClock() {
+        serverClockTried = true
+        val me = uid ?: return
+        try {
+            val ref = db().collection(USERS).document(me)
+            val before = System.currentTimeMillis()
+            Tasks.await(ref.update("serverClock", FieldValue.serverTimestamp()))
+            val after = System.currentTimeMillis()
+            val ts = Tasks.await(ref.get(Source.SERVER)).getTimestamp("serverClock") ?: return
+            serverOffsetMs = ts.toDate().time - (before + after) / 2
+        } catch (e: Exception) {
+            // بلا شبكة أو المستند غير موجود: نكمل بساعة الجهاز
+        }
+    }
+
+    /** الآن بتوقيت السيرفر (تقريبياً). */
+    fun serverNowMillis(): Long = System.currentTimeMillis() + serverOffsetMs
+
     private fun db(): FirebaseFirestore = FirebaseFirestore.getInstance()
 
     private fun awaitWrite(block: () -> Task<*>): Boolean = try {
