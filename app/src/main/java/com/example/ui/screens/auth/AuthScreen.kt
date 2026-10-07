@@ -152,20 +152,23 @@ fun AuthScreen(
                 }
                 signupStep = SignupStep.PASSWORD
             }
-            SignupStep.PASSWORD -> {
-                                // كان: 6 أحرف بلا أي شرط ⇒ «123456» كانت مقبولة
+                        SignupStep.PASSWORD -> {
                 AuthValidation.passwordProblem(signupPassword)?.let {
                     errorMessage = it
                     return
                 }
-                // توليد رمز تأكيد وهمي (محاكاة إرسال بريد، لعدم وجود خادم فعلي حالياً)
-                generatedOtp = (100000..999999).random().toString()
-                Toast.makeText(
-                    context,
-                    "رمز التأكيد (تجريبي): $generatedOtp",
-                    Toast.LENGTH_LONG
-                ).show()
-                signupStep = SignupStep.OTP
+                if (signupBusy) return
+                signupBusy = true
+                // ☁️ إنشاء الحساب فعلياً في Firebase ثم إرسال رابط تأكيد البريد (رسالة Gmail)
+                serverSignup(signupName.trim(), signupEmail.trim(), signupPassword) { ok, message ->
+                    signupBusy = false
+                    if (ok) {
+                        signupStep = SignupStep.OTP
+                    } else {
+                        errorMessage = message ?: "تعذّر إنشاء الحساب — جرّب مرة أخرى."
+                    }
+                }
+                        }
             }
             SignupStep.OTP -> {
                 if (signupOtpInput != generatedOtp) {
