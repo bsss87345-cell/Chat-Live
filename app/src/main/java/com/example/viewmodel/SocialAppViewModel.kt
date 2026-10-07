@@ -312,7 +312,8 @@ class SocialAppViewModel : ViewModel() {
             combine(_walletBalance, _transactions) { balance, transactions ->
                 balance to transactions
             }.collect { (balance, transactions) ->
-                LocalStore.saveWallet(balance, transactions)
+                                LocalStore.saveWallet(balance, transactions)
+                saveWalletToCloud(balance, transactions)
             }
         }
     }
