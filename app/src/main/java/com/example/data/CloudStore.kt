@@ -378,6 +378,7 @@ object CloudStore {
         if (uid == null || roomId.isBlank()) return null
         return try {
             db().collection(ROOMS).document(roomId).collection(MESSAGES)
+                .whereGreaterThan("createdAt", sinceMillis)
                 .orderBy("createdAt", Query.Direction.DESCENDING)
                 .limit(limit.toLong())
                 .addSnapshotListener { snap, error ->
