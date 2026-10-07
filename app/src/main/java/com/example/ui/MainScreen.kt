@@ -35,10 +35,13 @@ fun MainScreen(viewModel: SocialAppViewModel) {
             val isLoggedIn by viewModel.isLoggedIn.collectAsStateWithLifecycle()
 
         if (!isLoggedIn) {
-            AuthScreen(
+                        AuthScreen(
                 onAuthSuccess = { account, generatedId ->
                     viewModel.onAuthSuccess(account, generatedId)
-                }
+                },
+                // ☁️ الدخول الحقيقي عبر Firebase (أي جهاز · أي وقت)
+                serverLogin = viewModel::loginWithEmail,
+                serverResetPassword = viewModel::sendPasswordResetEmail
             )
         } else {
             val currentTab by viewModel.currentTab.collectAsStateWithLifecycle()
