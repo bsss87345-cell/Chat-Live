@@ -19,6 +19,8 @@ import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ListenerRegistration
 import com.google.firebase.firestore.Query
+import com.google.firebase.firestore.Source
+import java.util.Date
 
 /**
  * الجسر السحابي — كتابة/قراءة **بيانات المستخدم** في Firestore.
