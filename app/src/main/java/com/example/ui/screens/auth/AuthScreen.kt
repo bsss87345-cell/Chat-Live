@@ -206,6 +206,8 @@ fun AuthScreen(
             ).show()
         }
     }
+
+    fun goToPreviousSignupStep() {
         errorMessage = null
         signupStep = when (signupStep) {
             SignupStep.NAME -> SignupStep.NAME
