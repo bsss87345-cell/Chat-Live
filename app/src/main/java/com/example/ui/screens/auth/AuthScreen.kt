@@ -438,13 +438,29 @@ private fun SignupContent(
                 onTogglePasswordVisible = onTogglePasswordVisible,
                 modifier = Modifier.testTag("signup_password_field")
             )
-            SignupStep.OTP -> AuthPillTextField(
-                value = otpInput,
-                onValueChange = { if (it.length <= 6) onOtpInputChange(it) },
-                placeholder = "رمز التأكيد المكون من 6 أرقام",
-                keyboardType = KeyboardType.Number,
-                modifier = Modifier.testTag("signup_otp_field")
-            )
+                SignupStep.OTP -> Column(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Text("📧", fontSize = 34.sp)
+                Spacer(modifier = Modifier.height(8.dp))
+                Text(
+                    "بانتظار تأكيد بريدك…",
+                    fontSize = 13.5.sp,
+                    color = MujtamaDarkTextMuted,
+                    textAlign = TextAlign.Center
+                )
+                Spacer(modifier = Modifier.height(12.dp))
+                Text(
+                    "إعادة إرسال الرابط",
+                    fontSize = 14.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = MujtamaGold,
+                    modifier = Modifier
+                        .clickable { onResendVerification() }
+                        .testTag("resend_verification_button")
+                )
+                        }
         }
 
         Spacer(modifier = Modifier.height(22.dp))
