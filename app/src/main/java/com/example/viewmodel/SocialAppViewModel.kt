@@ -2021,7 +2021,63 @@ fun toggleOwnerVoiceMute(roomId: String) {
         }
         return candidate
     }
+    // ═══════════════ المصادقة السحابية (Firebase Auth) — تُستدعى من شاشة الدخول ═══════════════
+    // onResult(نجح؟, رسالة): الرسالة تظهر للمستخدم، وnull عند النجاح بلا تنبيه.
 
+    /** رسالة خطأ مفهومة من نتيجة خدمة الهوية (أو null عند النجاح). */
+    private fun authErrorMessage(result: AuthService.Result): String? = when (result) {
+        is AuthService.Result.Ok -> null
+        is AuthService.Result.Error -> result.message
+        AuthService.Result.NotConfigured -> "الخدمة غير مهيأة — تحقق من إعدادات المشروع."
+    }
+
+    /** يكمل الدخول بعد نجاح Firebase: يضبط الهوية ويسجّل الجلسة (نفس مسار الدخول الحالي). */
+    private fun completeServerLogin(email: String, password: String, uid: String, fallbackName: String) {
+        val name = fallbackName.trim().ifBlank { email.substringBefore('@') }
+        onAuthSuccess(
+            AuthUserAccount(
+                name = name,
+                email = email.trim(),
+                password = password,
+                avatarEmoji = "👤"
+            ),
+            uid
+        )
+    }
+
+    /** **تسجيل الدخول** بحساب موجود (لا يُنشئ حساباً جديداً — رسالة واضحة لو غير موجود). */
+    fun loginWithEmail(email: String, password: String, onResult: (Boolean, String?) -> Unit) {
+        viewModelScope.launch {
+            val result = withContext(Dispatchers.IO) { AuthService.signIn(email, password) }
+            if (result is AuthService.Result.Ok) {
+                completeServerLogin(email, password, result.uid, AuthService.displayNameOfCurrentUser())
+                val notVerified = withContext(Dispatchers.IO) { !AuthService.isEmailVerified() }
+                onResult(
+                    true,
+                    if (notVerified) "تنبيه: بريدك لم يؤكَّد بعد — افتح بريدك واضغط رابط التأكيد." else null
+                )
+            } else {
+                onResult(false, authErrorMessage(result))
+            }
+        }
+    }
+
+    /** **إنشاء حساب جديد**: ينشئ الحساب ويرسل رابط تأكيد البريد — والدخول يكتمل بعد التأكيد. */
+    fun signUpWithEmail(name: String, email: String, password: String, onResult: (Boolean, String?) -> Unit) {
+        viewModelScope.launch {
+            val result = withContext(Dispatchers.IO) { AuthService.signUp(email, password) }
+            if (result is AuthService.Result.Ok) {
+                withContext(Dispatchers.IO) {
+                    AuthService.setDisplayName(name)
+                    AuthService.sendVerificationEmail()
+                }
+                onResult(true, null)
+            } else {
+                onResult(false, authErrorMessage(result))
+            }
+        }
+    }
+    
     fun onAuthSuccess(account: AuthUserAccount, generatedId: String) {
         val newHandle = generateUniqueHandle(account.name, account.email)
         _userProfile.update { current ->
