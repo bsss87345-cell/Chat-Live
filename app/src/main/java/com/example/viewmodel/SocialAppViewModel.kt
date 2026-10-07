@@ -2247,9 +2247,49 @@ fun toggleOwnerVoiceMute(roomId: String) {
         }
         }
 
-    // TODO: عند ربط Firestore، تُستبدل بكتابة (set/update) بيانات _userProfile.value الحالية
-    // بمستند المستخدم بمجموعة "users". تُستدعى بنهاية أي دالة تعدّل بيانات البروفايل.
-    private fun syncUserProfile() {
-        // placeholder — لا يوجد Firestore مربوط حالياً
+     /**
+     * جلب بياناتي من السحابة — عند نجاح الدخول وعند الإقلاع بجلسة محفوظة.
+     * قاعدة «مصدر الحقيقة الواحد»: إن كانت السحابة فارغة (أول ربط) نرفع ما عندي،
+     * وإلا فالسحابة هي المصدر ونحدّث الحالة منها.
+     */
+    private fun pullCloudData() {
+        val me = _userProfile.value.id
+        if (me.isBlank() || me != CloudStore.uid) return
+        viewModelScope.launch(Dispatchers.IO) {
+            val cloudProfile = CloudStore.loadProfile()
+            val cloudWallet = CloudStore.loadWallet()
+            val cloudFollows = CloudStore.loadFollowsFor(me)
+            val cloudNotifications = CloudStore.loadNotifications()
+
+            if (cloudProfile == null) CloudStore.saveProfile(_userProfile.value)
+            if (cloudWallet == null) CloudStore.saveWallet(_walletBalance.value, _transactions.value)
+            if (cloudFollows.isEmpty()) _follows.value.forEach { CloudStore.addFollow(it) }
+            if (cloudNotifications.isEmpty()) _notifications.value.forEach { CloudStore.saveNotification(it) }
+
+            withContext(Dispatchers.Main) {
+                cloudProfile?.let { p ->
+                    _userProfile.update { local ->
+                        local.copy(
+                            name = p.name.ifBlank { local.name },
+                            handle = p.handle.ifBlank { local.handle },
+                            bio = p.bio,
+                            avatarEmoji = p.avatarEmoji.ifBlank { local.avatarEmoji },
+                            avatarUrl = p.avatarUrl.ifBlank { local.avatarUrl },
+                            joinDate = p.joinDate.ifBlank { local.joinDate }
+                        )
+                    }
+                }
+                cloudWallet?.let { w ->
+                    _walletBalance.value = w.balance
+                    _transactions.value = w.transactions
+                }
+                if (cloudFollows.isNotEmpty()) {
+                    _follows.value = cloudFollows.distinctBy { it.followerId + "_" + it.followingId }
+                }
+                if (cloudNotifications.isNotEmpty()) {
+                    _notifications.value = cloudNotifications
+                }
+            }
+        }
     }
-}
+
