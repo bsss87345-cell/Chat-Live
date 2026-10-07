@@ -1306,6 +1306,8 @@ fun blockRoomMember(roomId: String, memberId: String) {
                 } else it
             }
         }
+                // ☁️ حذفها من السحابة أيضاً (القاعدة تسمح لصاحب الرسالة فقط)
+        viewModelScope.launch { withContext(Dispatchers.IO) { CloudStore.deleteRoomMessage(roomId, messageId) } }
         _userMessage.value = "تم حذف الرسالة من الغرفة."
     }
 
