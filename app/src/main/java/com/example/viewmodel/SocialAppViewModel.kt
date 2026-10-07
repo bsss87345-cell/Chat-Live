@@ -2354,7 +2354,7 @@ fun toggleOwnerVoiceMute(roomId: String) {
         _userMessage.value = "تمت المتابعة بنجاح"
         }
 
-    // TODO: عند ربط Firestore، تُستبدل بحذف المستند المطابق من مجموعة "follows"
+        // ☁️ الحذف السحابي يتم داخل هذه الدالة عبر CloudStore.removeFollow (مجموعة follows)
     fun unfollowUser(targetUserId: String) {
         val myId = _userProfile.value.id
         val wasFollowing = _follows.value.any { it.followerId == myId && it.followingId == targetUserId }
