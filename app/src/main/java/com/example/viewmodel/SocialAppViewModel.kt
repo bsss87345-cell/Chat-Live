@@ -2301,8 +2301,13 @@ fun toggleOwnerVoiceMute(roomId: String) {
     // ───────────────────────── المزامنة السحابية (Firestore) ─────────────────────────
     // السياسة: الكتابة مجمّعة بفاصل زمني (خطة Spark: 20,000 كتابة/يوم)، والقراءة عند الدخول فقط.
     // وأي فشل شبكي لا يوقف التطبيق: دوال CloudStore ترجع false بهدوء.
-    private val cloudWriteIntervalMs = 10_000L
-    private val cloudWriteLock = Any()
+        private val cloudWriteIntervalMs = 10_000L
+    // ⚠️ إصلاح انهيار الإقلاع: القفل في companion object ⇒ يُهيَّأ عند تحميل الكلاس (قبل أي كائن).
+    // كان معرَّفاً هنا في آخر الملف، وجامع المحفظة يُصدر أول قيمة فوراً داخل الباني،
+    // فيصل إلى synchronized(cloudWriteLock) وهو ما زال null ⇒ NPE عند فتح التطبيق للمسجَّلين.
+    private companion object {
+        val cloudWriteLock = Any()
+    }
     private var lastProfileCloudAt = 0L
     private var lastWalletCloudAt = 0L
 
