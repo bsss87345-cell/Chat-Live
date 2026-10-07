@@ -30,6 +30,9 @@ class MainActivity : ComponentActivity() {
                super.onCreate(savedInstanceState)
                 LocalStore.initialize(this)
 
+        // 🔑 تفعيل مخزن الجلسة المشفّر (Keystore) — بدونه لا تُحفظ الجلسة ولا تُستعاد
+        com.example.data.SecureSessionStore.initialize(this)
+                
         // الفتح البارد: الرابط يجي مع نية الإطلاق
         pendingDeepLinkPostId = extractPostId(intent)
         // التطبيق شغّال أصلاً: يصل الرابط كنية جديدة
