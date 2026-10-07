@@ -52,6 +52,8 @@ private enum class SignupStep {
 @Composable
 fun AuthScreen(
     onAuthSuccess: (AuthUserAccount, String) -> Unit,
+    serverLogin: (String, String, (Boolean, String?) -> Unit) -> Unit = { _, _, done -> done(false, "الخدمة غير مهيأة") },
+    serverResetPassword: (String, (Boolean, String?) -> Unit) -> Unit = { _, done -> done(false, "الخدمة غير مهيأة") },
     modifier: Modifier = Modifier
 ) {
     val context = LocalContext.current
