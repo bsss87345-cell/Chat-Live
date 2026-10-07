@@ -223,12 +223,22 @@ class SocialAppViewModel : ViewModel() {
      * يستعيد الجلسة المحفوظة (مشفّرة بـAndroid Keystore) بعد إغلاق التطبيق.
      * بلا Keystore متاح (بيئة اختبار مثلاً) ترجع false بهدوء ⇒ السلوك القديم بلا انهيار.
      */
-    private fun restoreSession() {
+        private fun restoreSession() {
         if (_userProfile.value.id.isBlank()) return
-        val saved = SecureSessionStore.load() ?: return
-        if (saved.userId != _userProfile.value.id) return
-        _isLoggedIn.value = true
-    }
+        val saved = SecureSessionStore.load()
+        if (saved != null && saved.userId == _userProfile.value.id) {
+            _isLoggedIn.value = true
+            return
+        }
+        // 🛡️ شبكة أمان: Firebase يحفظ جلسته داخل التطبيق تلقائياً.
+        //    فإن كان معرّف الجلسة السحابية = معرّف ملفي الشخصي ⇒ نستعيد الدخول،
+        //    ونعيد كتابة ملف الجلسة المشفّر كي لا نكرر الفحص في كل فتح.
+        val cloudUid = CloudStore.uid
+        if (cloudUid != null && cloudUid == _userProfile.value.id) {
+            SecureSessionStore.save(userId = cloudUid, provider = "firebase")
+            _isLoggedIn.value = true
+        }
+        }
     /**
      * يستعيد منشورات المستخدم المحفوظة محلياً ويضعها فوق المنشورات التجريبية،
      * ثم يحذف ملفات الوسائط اليتيمة اللي ما عاد لها منشور.
