@@ -329,7 +329,8 @@ object CloudStore {
             "text" to message.text.take(2000),
             "type" to message.type.name,
             "timeText" to message.timestamp.take(20),
-            "createdAt" to System.currentTimeMillis()
+            "createdAt" to System.currentTimeMillis(),
+            "sentAt" to FieldValue.serverTimestamp()
         )
         return awaitWrite {
             db().collection(ROOMS).document(roomId).collection(MESSAGES).document(message.id).set(data)
