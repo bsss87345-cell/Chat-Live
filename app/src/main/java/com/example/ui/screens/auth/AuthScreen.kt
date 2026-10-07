@@ -269,11 +269,6 @@ fun AuthScreen(
                     errorMessage = errorMessage,
                     onDismissError = { errorMessage = null },
                     onLoginClick = { handleLogin() },
-                                        onForgotClick = {
-                        forgotStatus = null
-                        forgotEmail = loginIdentifier.trim()
-                        forgotOpen = true
-                    },
                     onSwitchToSignup = { switchMode(false) }
                 )
             } else {
@@ -312,8 +307,7 @@ private fun LoginContent(
     errorMessage: String?,
     onDismissError: () -> Unit,
     onLoginClick: () -> Unit,
-    onSwitchToSignup: () -> Unit,
-    onForgotClick: () -> Unit
+    onSwitchToSignup: () -> Unit
 ) {
     Column(
         modifier = Modifier.fillMaxWidth(),
@@ -358,7 +352,7 @@ private fun LoginContent(
             text = "هل نسيت كلمة السر؟",
             fontSize = 13.sp,
             color = MujtamaDarkTextMuted,
-            modifier = Modifier.clickable { onForgotClick() }
+            modifier = Modifier.clickable { /* شكلي حالياً، غير مفعّل بعد */ }
         )
 
         Spacer(modifier = Modifier.height(28.dp))
@@ -472,25 +466,11 @@ private fun SignupContent(
         Spacer(modifier = Modifier.height(22.dp))
 
         AuthPrimaryButton(
-            text = if (step == SignupStep.OTP) "تحققت من بريدي — أكمل" else "التالي",
+            text = if (step == SignupStep.OTP) "تأكيد وإنشاء الحساب" else "التالي",
             onClick = onNextClick,
             modifier = Modifier.testTag("signup_next_button")
         )
 
-              if (step == SignupStep.OTP) {
-            Spacer(modifier = Modifier.height(14.dp))
-            Text(
-                "أكمل لاحقاً بدون تأكيد",
-                fontSize = 13.sp,
-                color = MujtamaDarkTextMuted,
-                textAlign = TextAlign.Center,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .clickable { onSkipVerification() }
-                    .testTag("skip_verification_button")
-            )
-        }  
-        
         if (step == SignupStep.NAME) {
             Spacer(modifier = Modifier.height(24.dp))
             Text(
