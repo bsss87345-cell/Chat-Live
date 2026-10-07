@@ -90,6 +90,65 @@ object AuthService {
             Result.Error(humanError(e))
         }
     }
+    // ══════════════ دوال المصادقة الموسّعة (تسجيل دخول · حساب جديد · تأكيد بريد) ══════════════
+    // أُضيفت لأن الشاشة تحتاج: دخولاً بلا إنشاء تلقائي · إنشاءً منفصلاً · تأكيد بريد حقيقي برسالة Gmail.
+
+    /** تسجيل الدخول بحساب **موجود** فقط (بلا إنشاء تلقائي لحساب جديد). */
+    fun signIn(email: String, password: String): Result {
+        val auth = authOrNull() ?: return Result.NotConfigured
+        val mail = email.trim().lowercase()
+        val inputProblem = AuthValidation.emailProblem(mail) ?: AuthValidation.passwordProblem(password)
+        if (inputProblem != null) return Result.Error(inputProblem)
+        return authCall { auth.signInWithEmailAndPassword(mail, password) }
+    }
+
+    /** إنشاء حساب جديد فقط (يفشل لو البريد مستخدم بالفعل). */
+    fun signUp(email: String, password: String): Result {
+        val auth = authOrNull() ?: return Result.NotConfigured
+        val mail = email.trim().lowercase()
+        val inputProblem = AuthValidation.emailProblem(mail) ?: AuthValidation.passwordProblem(password)
+        if (inputProblem != null) return Result.Error(inputProblem)
+        return authCall { auth.createUserWithEmailAndPassword(mail, password) }
+    }
+
+    /** معرّف الحساب الحالي من Firebase، أو null لو لا جلسة. */
+    fun currentUid(): String? = try {
+        authOrNull()?.currentUser?.uid
+    } catch (e: Exception) {
+        null
+    }
+
+    /** اسم العرض المحفوظ للحساب الحالي (يُضبط عند إنشاء الحساب). */
+    fun displayNameOfCurrentUser(): String = try {
+        authOrNull()?.currentUser?.displayName.orEmpty()
+    } catch (e: Exception) {
+        ""
+    }
+
+    /** يضبط اسم العرض للحساب الحالي (يظهر في رسائل Firebase ولوحة التحكم). */
+    fun setDisplayName(name: String): Boolean {
+        val user = authOrNull()?.currentUser ?: return false
+        val clean = name.trim().take(60)
+        if (clean.isBlank()) return false
+        return try {
+            val request = UserProfileChangeRequest.Builder().setDisplayName(clean).build()
+            Tasks.await(user.updateProfile(request))
+            true
+        } catch (e: Exception) {
+            false
+        }
+    }
+
+    /** يرسل **رابط تأكيد البريد** إلى بريد الحساب الحالي (رسالة من Firebase تصل إلى Gmail). */
+    fun sendVerificationEmail(): Boolean {
+        val user = authOrNull()?.currentUser ?: return false
+        return try {
+            Tasks.await(user.sendEmailVerification())
+            true
+        } catch (e: Exception) {
+            false
+        }
+    }
 
     // ────────────────────────── التنفيذ ──────────────────────────
 
