@@ -2293,3 +2293,37 @@ fun toggleOwnerVoiceMute(roomId: String) {
         }
     }
 
+    // ───────────────────────── المزامنة السحابية (Firestore) ─────────────────────────
+    // السياسة: الكتابة مجمّعة بفاصل زمني (خطة Spark: 20,000 كتابة/يوم)، والقراءة عند الدخول فقط.
+    // وأي فشل شبكي لا يوقف التطبيق: دوال CloudStore ترجع false بهدوء.
+    private val cloudWriteIntervalMs = 10_000L
+    private val cloudWriteLock = Any()
+    private var lastProfileCloudAt = 0L
+    private var lastWalletCloudAt = 0L
+
+    /**
+     * كتابة بروفايلي سحابياً (تُستدعى من كل دالة تعدّل البروفايل — الخطافات موجودة أصلاً).
+     * حلّت محل الدالة الفارغة السابقة ⇒ لا كود ميت.
+     */
+    private fun syncUserProfile() {
+        val profile = _userProfile.value
+        if (profile.id.isBlank() || profile.id != CloudStore.uid) return
+        val now = System.currentTimeMillis()
+        synchronized(cloudWriteLock) {
+            if (now - lastProfileCloudAt < cloudWriteIntervalMs) return
+            lastProfileCloudAt = now
+        }
+        viewModelScope.launch(Dispatchers.IO) { CloudStore.saveProfile(profile) }
+    }
+
+    /** كتابة المحفظة سحابياً بنفس الفاصل. */
+    private fun saveWalletToCloud(balance: Int, transactions: List<WalletTransaction>) {
+        if (CloudStore.uid == null) return
+        val now = System.currentTimeMillis()
+        synchronized(cloudWriteLock) {
+            if (now - lastWalletCloudAt < cloudWriteIntervalMs) return
+            lastWalletCloudAt = now
+        }
+        viewModelScope.launch(Dispatchers.IO) { CloudStore.saveWallet(balance, transactions) }
+    }
+}
