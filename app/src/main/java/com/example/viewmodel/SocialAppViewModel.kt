@@ -212,6 +212,7 @@ class SocialAppViewModel : ViewModel() {
                     )
                     // ☁️ أول دخول: نرفع بياناتي المحلية إن كانت السحابة فارغة، ونجلب السحابية إن وُجدت
                     pullCloudData()
+                    pullCloudRooms()
                 }
                 is AuthService.Result.Error -> _userMessage.value = result.message
                 AuthService.Result.NotConfigured -> Unit
