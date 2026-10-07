@@ -458,7 +458,7 @@ class SocialAppViewModel : ViewModel() {
         /** 🔴 يشغّل/يوقف الاستماع لرسائل الغرفة تلقائياً مع تغيّر الغرفة المفتوحة. */
     private fun startRoomMessagesSync() {
         viewModelScope.launch {
-            _activeRoomId.collect { roomId ->
+              _activeRoomId.collectLatest { roomId ->
                 roomMessagesListener?.remove()
                 roomMessagesListener = null
                 if (roomId != null) {
