@@ -1318,7 +1318,8 @@ fun blockRoomMember(roomId: String, memberId: String) {
             }
         }
         // ☁️ رفع الرسالة ليراها بقية الأعضاء
-        viewModelScope.launch { withContext(Dispatchers.IO) { CloudStore.saveRoomMessage(roomId, msg) } }
+                val myName = _userProfile.value.name.ifBlank { "مستخدم" }
+        viewModelScope.launch { withContext(Dispatchers.IO) { CloudStore.saveRoomMessage(roomId, msg, myName) } }
     }
 
     fun pinRoomMessage(roomId: String, messageText: String) {
