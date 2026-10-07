@@ -168,7 +168,6 @@ fun AuthScreen(
                         errorMessage = message ?: "تعذّر إنشاء الحساب — جرّب مرة أخرى."
                     }
                 }
-                        }
             }
                         SignupStep.OTP -> {
                 if (signupBusy) return
@@ -180,7 +179,6 @@ fun AuthScreen(
                         errorMessage = message ?: "لم نتحقق من بريدك بعد — افتح رسالة Gmail واضغط الرابط."
                     }
                 }
-                        }
             }
         }
     }
