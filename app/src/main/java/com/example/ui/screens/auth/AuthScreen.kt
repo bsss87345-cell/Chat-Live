@@ -170,18 +170,17 @@ fun AuthScreen(
                 }
                         }
             }
-            SignupStep.OTP -> {
-                if (signupOtpInput != generatedOtp) {
-                    errorMessage = "رمز التأكيد غير صحيح. تحقق من الرسالة وأعد المحاولة."
-                    return
+                        SignupStep.OTP -> {
+                if (signupBusy) return
+                signupBusy = true
+                // ☁️ فحص تأكيد البريد من الخادم؛ وعند النجاح يكتمل الدخول داخل الViewModel
+                serverConfirmSignup(signupEmail.trim(), signupPassword, signupName.trim(), false) { ok, message ->
+                    signupBusy = false
+                    if (!ok) {
+                        errorMessage = message ?: "لم نتحقق من بريدك بعد — افتح رسالة Gmail واضغط الرابط."
+                    }
                 }
-                val newAccount = AuthUserAccount(
-                    name = signupName.trim(),
-                    email = signupEmail.trim(),
-                    password = signupPassword
-                )
-                registeredAccounts.add(newAccount)
-                onAuthSuccess(newAccount, generateUniqueUserId())
+                        }
             }
         }
     }
