@@ -308,6 +308,53 @@ object CloudStore {
             ownerId = owner
         )
     }
+
+        // ───────────────── رسائل الغرف (rooms/{roomId}/messages/{msgId}) ─────────────────
+
+    /** يرفع رسالة غرفة — القاعدة تشترط senderId = معرّف المُرسِل وطول النص ≤ 2000. */
+    fun saveRoomMessage(roomId: String, message: ChatMessage): Boolean {
+        val me = uid ?: return false
+        val data = mapOf(
+            "senderId" to me,
+            "senderName" to message.senderName.take(60),
+            "text" to message.text.take(2000),
+            "type" to message.type.name,
+            "timeText" to message.timestamp.take(20),
+            "createdAt" to System.currentTimeMillis()
+        )
+        return awaitWrite {
+            db().collection(ROOMS).document(roomId).collection(MESSAGES).document(message.id).set(data)
+        }
+    }
+
+    /** يحذف رسالة (يسمح به لمن أرسلها فقط). */
+    fun deleteRoomMessage(roomId: String, messageId: String): Boolean = awaitWrite {
+        db().collection(ROOMS).document(roomId).collection(MESSAGES).document(messageId).delete()
+    }
+
+    /** رسائل الغرفة بالترتيب الزمني (الأقدم أولاً). */
+    fun loadRoomMessages(roomId: String, limit: Int = 100): List<ChatMessage> = try {
+        if (uid == null) emptyList()
+        else Tasks.await(
+            db().collection(ROOMS).document(roomId).collection(MESSAGES)
+                .orderBy("createdAt").limit(limit.toLong()).get()
+        ).documents.map { d ->
+            ChatMessage(
+                id = d.id,
+                senderName = d.getString("senderName").orEmpty(),
+                text = d.getString("text").orEmpty(),
+                timestamp = d.getString("timeText") ?: "الآن",
+                isFromMe = d.getString("senderId") == uid,
+                type = try {
+                    ChatMessageType.valueOf(d.getString("type") ?: "TEXT")
+                } catch (e: Exception) {
+                    ChatMessageType.TEXT
+                }
+            )
+        }
+    } catch (e: Exception) {
+        emptyList()
+    }
     
     // ───────────────── التنفيذ ─────────────────
 
