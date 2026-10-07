@@ -471,6 +471,20 @@ private fun SignupContent(
             modifier = Modifier.testTag("signup_next_button")
         )
 
+              if (step == SignupStep.OTP) {
+            Spacer(modifier = Modifier.height(14.dp))
+            Text(
+                "أكمل لاحقاً بدون تأكيد",
+                fontSize = 13.sp,
+                color = MujtamaDarkTextMuted,
+                textAlign = TextAlign.Center,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .clickable { onSkipVerification() }
+                    .testTag("skip_verification_button")
+            )
+        }  
+        
         if (step == SignupStep.NAME) {
             Spacer(modifier = Modifier.height(24.dp))
             Text(
