@@ -1024,7 +1024,9 @@ class SocialAppViewModel : ViewModel() {
             return
         }
 
-        _activeRoomId.value = roomId
+                _activeRoomId.value = roomId
+        // ☁️ جلب رسائل الغرفة من السحابة (لمن شارك من جهاز آخر)
+        loadRoomMessagesFromCloud(roomId)
         }
     fun closeRoom() {
         _activeRoomId.value = null
