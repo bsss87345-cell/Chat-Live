@@ -185,7 +185,27 @@ fun AuthScreen(
         }
     }
 
-    fun goToPreviousSignupStep() {
+        /** «أكمل لاحقاً»: يكمل الدخول بلا انتظار تأكيد البريد. */
+    fun skipVerification() {
+        errorMessage = null
+        if (signupBusy) return
+        signupBusy = true
+        serverConfirmSignup(signupEmail.trim(), signupPassword, signupName.trim(), true) { ok, message ->
+            signupBusy = false
+            if (!ok) errorMessage = message ?: "تعذّر إكمال التسجيل — جرّب مرة أخرى."
+        }
+    }
+
+    /** يعيد إرسال رابط تأكيد البريد. */
+    fun resendVerification() {
+        serverResendVerification { ok, message ->
+            Toast.makeText(
+                context,
+                message ?: if (ok) "أُرسل رابط التأكيد ✅" else "تعذّر الإرسال — تحقق من الاتصال.",
+                Toast.LENGTH_LONG
+            ).show()
+        }
+    }
         errorMessage = null
         signupStep = when (signupStep) {
             SignupStep.NAME -> SignupStep.NAME
