@@ -358,7 +358,7 @@ private fun LoginContent(
             text = "هل نسيت كلمة السر؟",
             fontSize = 13.sp,
             color = MujtamaDarkTextMuted,
-            modifier = Modifier.clickable { /* شكلي حالياً، غير مفعّل بعد */ }
+            modifier = Modifier.clickable { onForgotClick() }
         )
 
         Spacer(modifier = Modifier.height(28.dp))
