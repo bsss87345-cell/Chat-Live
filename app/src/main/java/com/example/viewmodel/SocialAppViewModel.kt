@@ -453,6 +453,46 @@ class SocialAppViewModel : ViewModel() {
         return PasswordHasher.hash(stored)
     }
 
+        /** 🔴 يشغّل/يوقف الاستماع لرسائل الغرفة تلقائياً مع تغيّر الغرفة المفتوحة. */
+    private fun startRoomMessagesSync() {
+        viewModelScope.launch {
+            _activeRoomId.collect { roomId ->
+                roomMessagesListener?.remove()
+                roomMessagesListener = null
+                if (roomId != null) {
+                    roomMessagesListener = CloudStore.listenRoomMessages(roomId) { remote ->
+                        mergeRoomMessages(roomId, remote)
+                    }
+                }
+            }
+        }
+    }
+
+    /** رسائل محلية فقط: رسائل النظام، ورسالتي المرسلة قبل لحظات ولم تصل لقطة السحابة. */
+    private fun isLocalOnlyMessage(m: ChatMessage, now: Long): Boolean {
+        if (m.id == "rm_init" || m.id.startsWith("rm_join_") || m.id.startsWith("rm_kick_")) return true
+        val sentAt = m.id.removePrefix("rm_").toLongOrNull() ?: return false
+        return m.isFromMe && now - sentAt < 15_000L
+    }
+
+    private fun mergeRoomMessages(roomId: String, remote: List<ChatMessage>) {
+        val now = System.currentTimeMillis()
+        _chatRooms.update { list ->
+            list.map { room ->
+                if (room.id != roomId) return@map room
+                val remoteIds = remote.map { it.id }.toSet()
+                val localOnly = room.messages.filter { it.id !in remoteIds && isLocalOnlyMessage(it, now) }
+                val (first, rest) = localOnly.partition { it.id == "rm_init" }
+                room.copy(messages = first + remote + rest)
+            }
+        }
+    }
+
+    override fun onCleared() {
+        roomMessagesListener?.remove()
+        super.onCleared()
+    }
+
     private fun startLiveRoomUpdates() {
         viewModelScope.launch {
             while (true) {
