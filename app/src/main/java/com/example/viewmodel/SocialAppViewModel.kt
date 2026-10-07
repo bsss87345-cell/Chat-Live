@@ -462,7 +462,10 @@ class SocialAppViewModel : ViewModel() {
                 roomMessagesListener?.remove()
                 roomMessagesListener = null
                 if (roomId != null) {
-                    val enteredAt = System.currentTimeMillis()
+                    if (!CloudStore.serverClockTried) {
+                        withContext(Dispatchers.IO) { CloudStore.syncServerClock() }
+                    }
+                    val enteredAt = CloudStore.serverNowMillis()
                     roomMessagesListener = CloudStore.listenRoomMessages(
                         roomId,
                         sinceMillis = enteredAt
