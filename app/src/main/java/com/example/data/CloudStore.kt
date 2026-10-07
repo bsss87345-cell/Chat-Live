@@ -314,11 +314,15 @@ object CloudStore {
         // ───────────────── رسائل الغرف (rooms/{roomId}/messages/{msgId}) ─────────────────
 
     /** يرفع رسالة غرفة — القاعدة تشترط senderId = معرّف المُرسِل وطول النص ≤ 2000. */
-    fun saveRoomMessage(roomId: String, message: ChatMessage): Boolean {
+        fun saveRoomMessage(
+        roomId: String,
+        message: ChatMessage,
+        senderName: String = message.senderName
+    ): Boolean {
         val me = uid ?: return false
         val data = mapOf(
             "senderId" to me,
-            "senderName" to message.senderName.take(60),
+            "senderName" to senderName.take(60),
             "text" to message.text.take(2000),
             "type" to message.type.name,
             "timeText" to message.timestamp.take(20),
