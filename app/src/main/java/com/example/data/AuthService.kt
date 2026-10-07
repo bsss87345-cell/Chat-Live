@@ -152,6 +152,28 @@ object AuthService {
 
     // ────────────────────────── التنفيذ ──────────────────────────
 
+        /** حالة تأكيد البريد **كما هي محلياً** (بلا اتصال). */
+    fun isEmailVerified(): Boolean = authOrNull()?.currentUser?.isEmailVerified ?: false
+
+    /** يعيد تحميل حالة الحساب من الخادم ثم يفحص التأكيد (يُستخدم زر «تحققت من بريدي»). */
+    fun refreshEmailVerified(): Boolean {
+        val user = authOrNull()?.currentUser ?: return false
+        return try {
+            Tasks.await(user.reload())
+            user.isEmailVerified
+        } catch (e: Exception) {
+            false
+        }
+    }
+
+    /** تسجيل خروج من Firebase (ينهي الجلسة السحابية — يُستدعى مع تسجيل الخروج المحلي). */
+    fun signOut() {
+        try {
+            authOrNull()?.signOut()
+        } catch (e: Exception) {
+            // تجاهل: الجلسة المحلية تُمسح على أي حال
+        }
+    }
     /** يجلب نسخة FirebaseAuth أو null لو المشروع غير مهيّأ (بلا google-services.json). */
     private fun authOrNull(): FirebaseAuth? = try {
         FirebaseAuth.getInstance()
