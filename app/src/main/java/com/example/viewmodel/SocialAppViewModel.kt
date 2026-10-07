@@ -1066,6 +1066,8 @@ class SocialAppViewModel : ViewModel() {
             maxMembers = maxMembers.coerceIn(10, 1000),
             isJoined = true,
             isOwner = true,
+            // 🆔 مالك الغرفة = معرّف جلستي السحابية (شرط القاعدة لإنشاء الغرفة)
+            ownerId = CloudStore.uid.orEmpty(),
             members = listOf(
                 RoomMember("me", "أنت (المالك)", RoomMemberRole.OWNER, isOnline = true, avatarUrl = _userProfile.value.avatarUrl)
             ),
