@@ -193,6 +193,7 @@ class SocialAppViewModel : ViewModel() {
                init {
                 restoreLocalData()
         startLiveRoomUpdates()
+        startRoomMessagesSync()
                } 
 
     /**
