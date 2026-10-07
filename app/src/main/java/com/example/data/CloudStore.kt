@@ -2,6 +2,10 @@ package com.example.data
 
 import com.example.model.AppNotification
 import com.example.model.Follow
+import com.example.model.ChatMessage
+import com.example.model.ChatMessageType
+import com.example.model.ChatRoom
+import com.example.model.RoomAccessType
 import com.example.model.NotificationType
 import com.example.model.TransactionType
 import com.example.model.UserProfile
