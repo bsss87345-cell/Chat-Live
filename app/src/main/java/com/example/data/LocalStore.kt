@@ -431,7 +431,8 @@ object LocalStore {
         lockCode = if (o.isNull("lockCode")) null else o.optString("lockCode", ""),
         pinnedMessage = if (o.isNull("pinnedMessage")) null else o.optString("pinnedMessage", ""),
         imageUrl = if (o.isNull("imageUrl")) null else o.optString("imageUrl", ""),
-        backgroundImageUrl = if (o.isNull("backgroundImageUrl")) null else o.optString("backgroundImageUrl", "")
+        backgroundImageUrl = if (o.isNull("backgroundImageUrl")) null else o.optString("backgroundImageUrl", ""),
+        ownerId = o.optString("ownerId", "")
     )
 
     private fun postToJson(p: Post): JSONObject = JSONObject().apply {
