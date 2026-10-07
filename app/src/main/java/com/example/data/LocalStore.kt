@@ -408,6 +408,7 @@ object LocalStore {
         put("pinnedMessage", r.pinnedMessage ?: JSONObject.NULL)
         put("imageUrl", r.imageUrl ?: JSONObject.NULL)
         put("backgroundImageUrl", r.backgroundImageUrl ?: JSONObject.NULL)
+        put("ownerId", r.ownerId)
     }
 
     private fun roomFromJson(o: JSONObject): ChatRoom = ChatRoom(
