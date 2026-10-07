@@ -208,8 +208,10 @@ class SocialAppViewModel : ViewModel() {
                     SecureSessionStore.save(
                         userId = result.uid,
                         token = result.idToken,
-                        provider = "firebase"
+                                                provider = "firebase"
                     )
+                    // ☁️ أول دخول: نرفع بياناتي المحلية إن كانت السحابة فارغة، ونجلب السحابية إن وُجدت
+                    pullCloudData()
                 }
                 is AuthService.Result.Error -> _userMessage.value = result.message
                 AuthService.Result.NotConfigured -> Unit
