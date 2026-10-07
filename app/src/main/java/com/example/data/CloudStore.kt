@@ -33,6 +33,9 @@ object CloudStore {
     private const val WALLETS = "wallets"
     private const val MAX_TRANSACTIONS = 100
     private const val MAX_BALANCE = 1_000_000
+    private const val ROOMS = "rooms"
+    private const val MESSAGES = "messages"
+    private const val MAX_ROOMS = 50
 
     /** معرّف الحساب الحقيقي من Firebase Auth، أو null لو لا جلسة. */
     val uid: String? get() = try {
