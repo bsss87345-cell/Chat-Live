@@ -269,6 +269,11 @@ fun AuthScreen(
                     errorMessage = errorMessage,
                     onDismissError = { errorMessage = null },
                     onLoginClick = { handleLogin() },
+                                        onForgotClick = {
+                        forgotStatus = null
+                        forgotEmail = loginIdentifier.trim()
+                        forgotOpen = true
+                    },
                     onSwitchToSignup = { switchMode(false) }
                 )
             } else {
