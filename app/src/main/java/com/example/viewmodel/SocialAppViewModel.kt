@@ -461,7 +461,11 @@ class SocialAppViewModel : ViewModel() {
                 roomMessagesListener?.remove()
                 roomMessagesListener = null
                 if (roomId != null) {
-                    roomMessagesListener = CloudStore.listenRoomMessages(roomId) { remote ->
+                    val enteredAt = System.currentTimeMillis()
+                    roomMessagesListener = CloudStore.listenRoomMessages(
+                        roomId,
+                        sinceMillis = enteredAt
+                    ) { remote ->
                         mergeRoomMessages(roomId, remote)
                     }
                 }
