@@ -1142,6 +1142,11 @@ fun joinChatRoom(roomId: String, passwordInput: String = ""): Boolean {
             }
         }
         _activeRoomId.value = roomId
+                // ☁️ عدّاد الأعضاء في السحابة (+1) — القاعدة تسمح بتغيير العدّاد فقط لغير المالك
+        val joinedRoom = _chatRooms.value.find { it.id == roomId }
+        if (joinedRoom != null && !joinedRoom.isOwner && joinedRoom.ownerId.isNotBlank()) {
+            viewModelScope.launch { withContext(Dispatchers.IO) { CloudStore.stepRoomMemberCount(roomId, 1) } }
+        }
         _userMessage.value = "تم الانضمام إلى الغرفة بنجاح!"
         return true
     }
