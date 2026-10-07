@@ -201,7 +201,9 @@ data class ChatRoom(
     val wheelWinnerId: String? = null,
     val wheelWinnerName: String = "",
     val wheelWinnerAvatarUrl: String = "",
-    val wheelTargetRotation: Float = 0f
+    val wheelTargetRotation: Float = 0f,
+    // 🆔 مالك الغرفة في السحابة (فراغ = غرفة محلية قديمة/تجريبية)
+    val ownerId: String = ""
 )
 
 data class TeamMember(
