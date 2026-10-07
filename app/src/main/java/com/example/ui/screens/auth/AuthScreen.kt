@@ -79,6 +79,11 @@ fun AuthScreen(
     var generatedOtp by remember { mutableStateOf("") }
 
     var errorMessage by remember { mutableStateOf<String?>(null) }
+    var loginBusy by remember { mutableStateOf(false) }
+    var forgotOpen by remember { mutableStateOf(false) }
+    var forgotEmail by remember { mutableStateOf("") }
+    var forgotStatus by remember { mutableStateOf<String?>(null) }
+    var resetBusy by remember { mutableStateOf(false) }
 
     fun resetSignupState() {
         signupStep = SignupStep.NAME
