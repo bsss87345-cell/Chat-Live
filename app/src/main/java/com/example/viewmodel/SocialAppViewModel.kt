@@ -482,6 +482,8 @@ class SocialAppViewModel : ViewModel() {
                 restoreSession()
         // ☁️ بجلسة سحابية محفوظة نجلب بياناتي
         if (_isLoggedIn.value) pullCloudData()
+        // ☁️🪑 الغرف: نجلب السحابية وندمجها (ثم يُرفع ما أملكه تلقائياً)
+        if (_isLoggedIn.value) pullCloudRooms()
         }
 
     // Follow System (نظام مشابه لإنستغرام/تيك توك) — بالذاكرة مؤقتاً، جاهز للربط بـ Firestore لاحقاً
