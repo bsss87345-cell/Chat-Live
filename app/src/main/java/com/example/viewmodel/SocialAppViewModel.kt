@@ -240,6 +240,75 @@ class SocialAppViewModel : ViewModel() {
             _isLoggedIn.value = true
         }
         }
+            /**
+     * ☁️🪑 الغرف السحابية: يجلب كل الغرف من Firestore ويدمجها مع المحلية،
+     * ثم يرفع غرفي سحابياً حتى يراها الجميع، ويراقب أي تعديل لاحق عليها فيرفعه تلقائياً.
+     * بلا جلسة سحابية يرجع بهدوء ⇒ التطبيق يبقى يعمل محلياً كما هو.
+     */
+    private fun pullCloudRooms() {
+        if (CloudStore.uid == null) return
+        viewModelScope.launch {
+            val myUid = CloudStore.uid ?: return@launch
+            val cloud = withContext(Dispatchers.IO) { CloudStore.loadRooms() }
+            if (cloud.isNotEmpty()) {
+                _chatRooms.update { local ->
+                    val localById = local.associateBy { it.id }
+                    val merged = cloud.map { remote ->
+                        val mine = remote.ownerId == myUid
+                        val wasLocal = localById[remote.id]
+                        remote.copy(
+                            isOwner = mine,
+                            isJoined = mine || (wasLocal?.isJoined ?: false),
+                            members = wasLocal?.members ?: remote.members,
+                            messages = wasLocal?.messages ?: remote.messages
+                        )
+                    }
+                    val cloudIds = cloud.map { it.id }.toSet()
+                    merged + local.filter { it.id !in cloudIds }
+                }
+            }
+            // غرفي القديمة قد تكون بلا ownerId ⇒ نثبّت المعرّف الحالي ثم نرفعها
+            _chatRooms.update { list ->
+                list.map { if (it.isOwner && it.ownerId.isBlank()) it.copy(ownerId = myUid) else it }
+            }
+            withContext(Dispatchers.IO) {
+                _chatRooms.value.filter { it.isOwner }.forEach { CloudStore.saveRoom(it) }
+            }
+            startRoomCloudSync()
+        }
+    }
+
+    /** ☁️ يراقب غرفي: أي تغيير (اسم/وصف/قفل/خلفية/تثبيت…) يُرفع سحابياً بعد 3 ثوانٍ. */
+    private fun startRoomCloudSync() {
+        if (CloudStore.uid == null) return
+        viewModelScope.launch {
+            _chatRooms
+                .map { rooms -> rooms.filter { it.isOwner }.map { roomSignature(it) }.sorted().joinToString("~") }
+                .distinctUntilChanged()
+                .collect {
+                    kotlinx.coroutines.delay(3000)
+                    withContext(Dispatchers.IO) {
+                        _chatRooms.value.filter { it.isOwner }.forEach { CloudStore.saveRoom(it) }
+                    }
+                }
+        }
+    }
+
+    /** ☁️ يجلب رسائل الغرفة السحابية ويدمجها مع المحلية (بلا تكرار). */
+    private fun loadRoomMessagesFromCloud(roomId: String) {
+        if (CloudStore.uid == null) return
+        viewModelScope.launch {
+            val remote = withContext(Dispatchers.IO) { CloudStore.loadRoomMessages(roomId) }
+            if (remote.isEmpty()) return@launch
+            _chatRooms.update { list ->
+                list.map { room ->
+                    if (room.id != roomId) return@map room
+                    val knownIds = room.messages.map { it.id }.toSet()
+                    room.copy(messages = room.messages + remote.filter { it.id !in knownIds })
+                }
+            }
+        }
+    }
     /**
      * يستعيد منشورات المستخدم المحفوظة محلياً ويضعها فوق المنشورات التجريبية،
      * ثم يحذف ملفات الوسائط اليتيمة اللي ما عاد لها منشور.
