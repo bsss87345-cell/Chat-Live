@@ -361,6 +361,43 @@ object CloudStore {
     
     // ───────────────── التنفيذ ─────────────────
 
+        /**
+     * 🔴 استماع لحظي لرسائل الغرفة (آخر [limit] رسالة، الأقدم أولاً).
+     * بخلاف باقي الدوال: غير حاجبة، تُستدعى من أي خيط، والنتيجة تصل على الخيط الرئيسي.
+     * لازم تستدعي remove() على المسجّل عند الخروج من الغرفة.
+     */
+    fun listenRoomMessages(
+        roomId: String,
+        limit: Int = 50,
+        onChange: (List<ChatMessage>) -> Unit
+    ): ListenerRegistration? {
+        if (uid == null || roomId.isBlank()) return null
+        return try {
+            db().collection(ROOMS).document(roomId).collection(MESSAGES)
+                .orderBy("createdAt", Query.Direction.DESCENDING)
+                .limit(limit.toLong())
+                .addSnapshotListener { snap, error ->
+                    if (error != null || snap == null) return@addSnapshotListener
+                    onChange(snap.documents.map { it.toChatMessage() }.reversed())
+                }
+        } catch (e: Exception) {
+            null
+        }
+    }
+
+    private fun DocumentSnapshot.toChatMessage(): ChatMessage = ChatMessage(
+        id = id,
+        senderName = getString("senderName").orEmpty(),
+        text = getString("text").orEmpty(),
+        timestamp = getString("timeText") ?: "الآن",
+        isFromMe = getString("senderId") == uid,
+        type = try {
+            ChatMessageType.valueOf(getString("type") ?: "TEXT")
+        } catch (e: Exception) {
+            ChatMessageType.TEXT
+        }
+    )
+
     private fun db(): FirebaseFirestore = FirebaseFirestore.getInstance()
 
     private fun awaitWrite(block: () -> Task<*>): Boolean = try {
