@@ -372,6 +372,7 @@ object CloudStore {
     fun listenRoomMessages(
         roomId: String,
         limit: Int = 50,
+        sinceMillis: Long = 0L,
         onChange: (List<ChatMessage>) -> Unit
     ): ListenerRegistration? {
         if (uid == null || roomId.isBlank()) return null
