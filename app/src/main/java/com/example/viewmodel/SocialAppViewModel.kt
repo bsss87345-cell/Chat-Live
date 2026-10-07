@@ -2153,7 +2153,9 @@ fun toggleOwnerVoiceMute(roomId: String) {
     }
 
         fun logoutUser() {
-        SecureSessionStore.clear()
+                SecureSessionStore.clear()
+        // ☁️ إنهاء الجلسة السحابية أيضاً (وإلا بقي الحساب مسجّلاً في Firebase)
+        AuthService.signOut()
         _isLoggedIn.value = false
         _userMessage.value = "تم تسجيل الخروج بنجاح. مرحباً بك في أي وقت!"
     }
