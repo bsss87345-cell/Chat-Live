@@ -41,7 +41,10 @@ fun MainScreen(viewModel: SocialAppViewModel) {
                 },
                 // ☁️ الدخول الحقيقي عبر Firebase (أي جهاز · أي وقت)
                 serverLogin = viewModel::loginWithEmail,
-                serverResetPassword = viewModel::sendPasswordResetEmail
+                serverResetPassword = viewModel::sendPasswordResetEmail,
+                serverSignup = viewModel::signUpWithEmail,
+                serverConfirmSignup = viewModel::confirmSignupEmail,
+                serverResendVerification = viewModel::resendVerificationEmail
             )
         } else {
             val currentTab by viewModel.currentTab.collectAsStateWithLifecycle()
