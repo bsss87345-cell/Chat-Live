@@ -467,7 +467,9 @@ class SocialAppViewModel : ViewModel() {
         restoreProfileAndWallet()
         // استعادة الجلسة **هنا تحديداً**: تعتمد على _userProfile المُعرَّف فوق بالسطر 453،
         // ولو نُفِّذت في كتلة التهيئة الأولى لانهار التطبيق (وكل الاختبارات) بـNullPointerException.
-        restoreSession()
+                restoreSession()
+        // ☁️ بجلسة سحابية محفوظة نجلب بياناتي
+        if (_isLoggedIn.value) pullCloudData()
         }
 
     // Follow System (نظام مشابه لإنستغرام/تيك توك) — بالذاكرة مؤقتاً، جاهز للربط بـ Firestore لاحقاً
