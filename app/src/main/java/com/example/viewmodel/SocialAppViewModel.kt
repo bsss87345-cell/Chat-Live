@@ -2185,7 +2185,10 @@ fun toggleOwnerVoiceMute(roomId: String) {
             return
         }
 
-        _follows.update { it + com.example.model.Follow(followerId = myId, followingId = targetUserId) }
+                val newFollow = com.example.model.Follow(followerId = myId, followingId = targetUserId)
+        _follows.update { it + newFollow }
+        // ☁️ مزامنة المتابعة سحابياً
+        viewModelScope.launch(Dispatchers.IO) { CloudStore.addFollow(newFollow) }
         _userProfile.update { it.copy(followingCount = it.followingCount + 1) }
         _userMessage.value = "تمت المتابعة بنجاح"
         }
