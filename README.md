@@ -6,10 +6,10 @@
 
 ## 📱 نوع المشروع وتفاصيل البيئة (Project Type)
 - **النوع:** **تطبيق أندرويد أصلي (Native Android)**
-- **لغة البرمجة:** Kotlin 2.0+
-- **واجهة المستخدم:** Jetpack Compose (Material Design 3)
-- **نظام البناء:** Gradle 8+ (Kotlin DSL - `build.gradle.kts`)
-- **إصدار جافا المستهدف:** Java / JDK 21
+- **لغة البرمجة:** Kotlin 2.2.10 (إضافة Kotlin Compose)
+- **واجهة المستخدم:** Jetpack Compose (Material Design 3) — BOM 2024.09.00
+- **نظام البناء:** Gradle 9.3.1 + AGP 9.1.1 (Kotlin DSL - `build.gradle.kts`)
+- **إصدار جافا المستهدف:** Java 11 بالكود · JDK 17 ببيئة البناء (GitHub Actions)
 - **مستوى حزمة أندرويد:** `minSdk: 24` (Android 7.0+) | `targetSdk: 36` | `compileSdk: 36`
 
 ---
