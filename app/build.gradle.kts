@@ -65,8 +65,17 @@ android {
         null
       }
         }
-    debug {
-      // يُترك بدون signingConfig مخصص ليستخدم توقيع Debug التلقائي الخاص بـ Gradle
+        debug {
+      // 🔑 توقيع ثابت للنسخة التجريبية: بلا هذا، كل تشغيل بناء على GitHub يوقّع بمفتاح Debug
+      //    عشوائي جديد ⇒ أندرويد يرفض التثبيت فوق النسخة القديمة ⇒ حذف التطبيق = مسح كل البيانات
+      //    (الجلسة + دخول Firebase + ملفك الشخصي) ⇒ يبدو كأن «الدخول لا يُحفظ».
+      //    إن وُجد مفتاح الإصدار (سرّ KEYSTORE_BASE64 في CI أو my-upload-key.jks محلياً) ⇒ نوقّع به.
+      val dbgKeystore = file(System.getenv("KEYSTORE_PATH") ?: "${rootDir}/my-upload-key.jks")
+      val dbgPasswordsReady =
+        !System.getenv("STORE_PASSWORD").isNullOrBlank() && !System.getenv("KEY_PASSWORD").isNullOrBlank()
+      if (dbgKeystore.exists() && dbgPasswordsReady) {
+        signingConfig = signingConfigs.getByName("release")
+      }
     }
 
     // ───────────────────────── نسخة التعديلات (Developer Edition) ─────────────────────────
