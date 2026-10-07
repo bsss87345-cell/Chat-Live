@@ -286,6 +286,8 @@ fun AuthScreen(
                     onOtpInputChange = { signupOtpInput = it },
                     errorMessage = errorMessage,
                     onDismissError = { errorMessage = null },
+                    onSkipVerification = { skipVerification() },
+                    onResendVerification = { resendVerification() },
                     onNextClick = { goToNextSignupStep() },
                     onSwitchToLogin = { switchMode(true) }
                 )
