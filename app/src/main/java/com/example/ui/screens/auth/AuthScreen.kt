@@ -352,7 +352,8 @@ private fun LoginContent(
     errorMessage: String?,
     onDismissError: () -> Unit,
     onLoginClick: () -> Unit,
-    onSwitchToSignup: () -> Unit
+    onSwitchToSignup: () -> Unit,
+    onForgotClick: () -> Unit
 ) {
     Column(
         modifier = Modifier.fillMaxWidth(),
