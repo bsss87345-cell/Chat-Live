@@ -183,3 +183,67 @@ object CloudStore {
             isRead = getBoolean("isRead") ?: false
         )
     }
+    // ───────────────── المحفظة (wallets/{uid}) ─────────────────
+
+    fun saveWallet(balance: Int, transactions: List<WalletTransaction>): Boolean {
+        val me = uid ?: return false
+        val tx = transactions.take(MAX_TRANSACTIONS).map { t ->
+            mapOf(
+                "id" to t.id.take(60),
+                "title" to t.title.take(80),
+                "type" to t.type.name,
+                "points" to t.points,
+                "date" to t.date.take(30),
+                "note" to t.note.take(120)
+            )
+        }
+        return awaitWrite {
+            db().collection(WALLETS).document(me)
+                .set(mapOf("balance" to balance.coerceIn(0, MAX_BALANCE), "transactions" to tx))
+        }
+    }
+
+    fun loadWallet(): WalletSnapshot? {
+        val me = uid ?: return null
+        val d = awaitRead { db().collection(WALLETS).document(me).get() } ?: return null
+        if (!d.exists()) return null
+        val balance = (d.getLong("balance") ?: 0L).toInt()
+        val raw = d.get("transactions")
+        val list = ArrayList<WalletTransaction>(8)
+        if (raw is List<*>) {
+            raw.forEach { item ->
+                val map = item as? Map<*, *> ?: return@forEach
+                val type = runCatching { TransactionType.valueOf(map["type"] as? String ?: "") }
+                    .getOrDefault(TransactionType.EARN)
+                list.add(
+                    WalletTransaction(
+                        id = (map["id"] as? String).orEmpty(),
+                        title = (map["title"] as? String).orEmpty(),
+                        type = type,
+                        points = (map["points"] as? Number)?.toInt() ?: 0,
+                        date = (map["date"] as? String).orEmpty(),
+                        note = (map["note"] as? String).orEmpty()
+                    )
+                )
+            }
+        }
+        return WalletSnapshot(balance = balance, transactions = list)
+    }
+
+    // ───────────────── التنفيذ ─────────────────
+
+    private fun db(): FirebaseFirestore = FirebaseFirestore.getInstance()
+
+    private fun awaitWrite(block: () -> Task<*>): Boolean = try {
+        Tasks.await(block())
+        true
+    } catch (e: Exception) {
+        false
+    }
+
+    private fun awaitRead(block: () -> Task<DocumentSnapshot>): DocumentSnapshot? = try {
+        Tasks.await(block())
+    } catch (e: Exception) {
+        null
+    }
+}
