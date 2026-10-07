@@ -49,7 +49,25 @@ jobs:
             echo "::warning::لا يوجد سرّ GOOGLE_SERVICES_JSON — البناء سيكمل بلا Firebase."
           fi
 
+            # 🔑 مفتاح التوقيع الثابت: يُفكّ مرة واحدة هنا ⇒ يصل لكل خطوات البناء عبر KEYSTORE_PATH
+      #    في $GITHUB_ENV ⇒ التوقيع نفسه في كل تشغيل ⇒ تحديث التطبيق لا يمسح بيانات المستخدم
+      #    (الجلسة + دخول Firebase + الملف الشخصي) — وهذا كان سبب «يطلب دخول من جديد».
+      - name: Restore stable signing keystore
+        env:
+          KEYSTORE_BASE64: ${{ secrets.KEYSTORE_BASE64 }}
+        run: |
+          if [ -n "$KEYSTORE_BASE64" ]; then
+            echo "$KEYSTORE_BASE64" | base64 -d > "$RUNNER_TEMP/upload-key.jks"
+            echo "KEYSTORE_PATH=$RUNNER_TEMP/upload-key.jks" >> "$GITHUB_ENV"
+            echo "✅ مفتاح التوقيع الثابت جاهز"
+          else
+            echo "::warning::لا يوجد سرّ KEYSTORE_BASE64 — التوقيع سيبقى عشوائياً."
+          fi
+
       - name: Build Debug APK with Gradle
+        env:
+          STORE_PASSWORD: ${{ secrets.STORE_PASSWORD }}
+          KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
         run: ./gradlew assembleDebug --stacktrace
 
       - name: Upload Debug APK as Artifact
