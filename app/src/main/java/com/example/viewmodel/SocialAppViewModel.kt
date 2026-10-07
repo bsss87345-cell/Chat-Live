@@ -1169,6 +1169,11 @@ fun joinChatRoom(roomId: String, passwordInput: String = ""): Boolean {
                 } else it
             }
         }
+                // ☁️ عدّاد الأعضاء في السحابة (−1)
+        val leftRoom = _chatRooms.value.find { it.id == roomId }
+        if (leftRoom != null && !leftRoom.isOwner && leftRoom.ownerId.isNotBlank()) {
+            viewModelScope.launch { withContext(Dispatchers.IO) { CloudStore.stepRoomMemberCount(roomId, -1) } }
+        }
         _activeRoomId.value = null
         _userMessage.value = "تمت مغادرة الغرفة."
     }
