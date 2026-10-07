@@ -148,11 +148,16 @@ class SocialAppViewModel : ViewModel() {
             type = type,
             text = text
         )
-        _notifications.value = listOf(item) + _notifications.value
+                _notifications.value = listOf(item) + _notifications.value
+        // ☁️ مزامنة سحابية (القرار 2ب): يُخزَّن الإشعار لتراه من أي جهاز — بلا حجب الواجهة
+        viewModelScope.launch(Dispatchers.IO) { CloudStore.saveNotification(item) }
     }
 
     fun markAllNotificationsRead() {
         _notifications.value = _notifications.value.map { it.copy(isRead = true) }
+        // ☁️ نفس الحالة سحابياً
+        val ids = _notifications.value.map { it.id }
+        viewModelScope.launch(Dispatchers.IO) { ids.forEach { CloudStore.markNotificationRead(it) } }
     }
 
     private val _showNotifications = MutableStateFlow(false)
