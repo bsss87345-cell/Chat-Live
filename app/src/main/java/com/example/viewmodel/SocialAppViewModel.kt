@@ -2077,6 +2077,56 @@ fun toggleOwnerVoiceMute(roomId: String) {
             }
         }
     }
+
+        /**
+     * زر «تحققت من بريدي»: يعيد تحميل حالة الحساب من الخادم ثم يفحص التأكيد.
+     * عند التأكيد (أو عند «أكمل لاحقاً») يكتمل الدخول ويدخل المستخدم التطبيق.
+     */
+    fun confirmSignupEmail(
+        email: String,
+        password: String,
+        name: String,
+        skipVerification: Boolean,
+        onResult: (Boolean, String?) -> Unit
+    ) {
+        viewModelScope.launch {
+            val verified = skipVerification || withContext(Dispatchers.IO) { AuthService.refreshEmailVerified() }
+            if (verified) {
+                val uid = withContext(Dispatchers.IO) { AuthService.currentUid() }
+                if (uid.isNullOrBlank()) {
+                    onResult(false, "انتهت الجلسة — أنشئ الحساب من جديد.")
+                } else {
+                    completeServerLogin(email, password, uid, name)
+                    onResult(
+                        true,
+                        if (skipVerification) "تم إنشاء الحساب. يمكنك تأكيد بريدك لاحقاً من رسالة التأكيد." else null
+                    )
+                }
+            } else {
+                onResult(false, "لم نتحقق من بريدك بعد — افتح الرسالة واضغط الرابط ثم أعد المحاولة.")
+            }
+        }
+    }
+
+    /** يعيد إرسال رابط تأكيد البريد (للمستخدم الذي لم تصل له الرسالة). */
+    fun resendVerificationEmail(onResult: (Boolean, String?) -> Unit) {
+        viewModelScope.launch {
+            val sent = withContext(Dispatchers.IO) { AuthService.sendVerificationEmail() }
+            onResult(sent, if (sent) "أُرسل رابط التأكيد إلى بريدك ✅" else "تعذّر الإرسال — تحقق من الاتصال.")
+        }
+    }
+
+    /** **نسيت كلمة السر**: يرسل رابط إعادة التعيين إلى البريد (رسالة من Firebase). */
+    fun sendPasswordResetEmail(email: String, onResult: (Boolean, String?) -> Unit) {
+        viewModelScope.launch {
+            val result = withContext(Dispatchers.IO) { AuthService.sendPasswordReset(email) }
+            if (result is AuthService.Result.Ok) {
+                onResult(true, "أُرسل رابط إعادة تعيين كلمة السر إلى بريدك ✅")
+            } else {
+                onResult(false, authErrorMessage(result))
+            }
+        }
+    }
     
     fun onAuthSuccess(account: AuthUserAccount, generatedId: String) {
         val newHandle = generateUniqueHandle(account.name, account.email)
