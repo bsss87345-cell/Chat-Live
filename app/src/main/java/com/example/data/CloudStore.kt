@@ -238,6 +238,77 @@ object CloudStore {
         return WalletSnapshot(balance = balance, transactions = list)
     }
 
+        // ───────────────── الغرف (rooms/{roomId}) ─────────────────
+
+    /** يحفظ غرفة **أملكها** سحابياً (إنشاء أول مرة أو تحديث لاحق). غير المالك يُرفض بهدوء. */
+    fun saveRoom(room: ChatRoom): Boolean {
+        val me = uid ?: return false
+        val data = mapOf(
+            "id" to room.id.take(40),
+            "ownerId" to me,
+            "name" to room.name.trim().take(60),
+            "description" to room.description.trim().take(300),
+            "category" to room.category.take(30),
+            "iconEmoji" to room.iconEmoji.take(8),
+            "imageUrl" to (room.imageUrl ?: "").take(500),
+            "backgroundImageUrl" to (room.backgroundImageUrl ?: "").take(500),
+            "accessType" to room.accessType.name,
+            "password" to (room.password ?: ""),
+            "memberCount" to room.memberCount,
+            "maxMembers" to room.maxMembers,
+            "isLocked" to room.isLocked,
+            "lockCode" to (room.lockCode ?: ""),
+            "pinnedMessage" to (room.pinnedMessage ?: "").take(300),
+            "updatedAt" to System.currentTimeMillis()
+        )
+        return awaitWrite { db().collection(ROOMS).document(room.id).set(data) }
+    }
+
+    /** يعدّل عدّاد الأعضاء فقط (+1/-1) — تسمح به القاعدة لأي عضو مسجَّل. */
+    fun stepRoomMemberCount(roomId: String, step: Int): Boolean {
+        if (uid == null || (step != 1 && step != -1)) return false
+        return awaitWrite {
+            db().collection(ROOMS).document(roomId).update("memberCount", FieldValue.increment(step.toLong()))
+        }
+    }
+
+    /** كل الغرف السحابية (للتصفح). */
+    fun loadRooms(): List<ChatRoom> = try {
+        if (uid == null) emptyList()
+        else Tasks.await(db().collection(ROOMS).limit(MAX_ROOMS.toLong()).get())
+            .documents.mapNotNull { d -> if (d.exists()) d.toRoom() else null }
+    } catch (e: Exception) {
+        emptyList()
+    }
+
+    private fun DocumentSnapshot.toRoom(): ChatRoom {
+        val owner = getString("ownerId").orEmpty()
+        val access = try {
+            RoomAccessType.valueOf(getString("accessType") ?: "PUBLIC")
+        } catch (e: Exception) {
+            RoomAccessType.PUBLIC
+        }
+        return ChatRoom(
+            id = getString("id") ?: id,
+            name = getString("name").orEmpty(),
+            description = getString("description").orEmpty(),
+            category = getString("category") ?: "عام",
+            iconEmoji = getString("iconEmoji") ?: "💬",
+            accessType = access,
+            password = getString("password")?.takeIf { it.isNotBlank() },
+            memberCount = (getLong("memberCount") ?: 1L).toInt(),
+            maxMembers = (getLong("maxMembers") ?: 100L).toInt(),
+            isJoined = owner == uid,
+            isOwner = owner == uid,
+            isLocked = getBoolean("isLocked") ?: false,
+            lockCode = getString("lockCode")?.takeIf { it.isNotBlank() },
+            pinnedMessage = getString("pinnedMessage")?.takeIf { it.isNotBlank() },
+            imageUrl = getString("imageUrl")?.takeIf { it.isNotBlank() },
+            backgroundImageUrl = getString("backgroundImageUrl")?.takeIf { it.isNotBlank() },
+            ownerId = owner
+        )
+    }
+    
     // ───────────────── التنفيذ ─────────────────
 
     private fun db(): FirebaseFirestore = FirebaseFirestore.getInstance()
