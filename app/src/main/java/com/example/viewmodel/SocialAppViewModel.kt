@@ -387,7 +387,9 @@ class SocialAppViewModel : ViewModel() {
                 _chatRooms.update { currentRooms ->
                     if (currentRooms.isEmpty()) currentRooms
                     else {
-                        currentRooms.map { room ->
+                                                currentRooms.map { room ->
+                            // الغرف السحابية لها عدّاد حقيقي ⇒ لا تذبذبه
+                            if (room.ownerId.isNotBlank()) return@map room
                             val delta = listOf(-1, 0, 1, 1).random()
                             val newCount = (room.memberCount + delta).coerceIn(1, room.maxMembers)
                             if (newCount != room.memberCount) {
