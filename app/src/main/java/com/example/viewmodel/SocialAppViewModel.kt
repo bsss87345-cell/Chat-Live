@@ -2328,7 +2328,7 @@ fun toggleOwnerVoiceMute(roomId: String) {
     }
 
     // --- Follow System (نظام مشابه لإنستغرام/تيك توك) ---
-    // TODO: عند ربط Firestore، تُستبدل بإضافة مستند جديد لمجموعة "follows"
+        // ☁️ الكتابة السحابية تتم داخل هذه الدالة عبر CloudStore.addFollow (مجموعة follows)
         fun followUser(targetUserId: String, forceDirect: Boolean = false) {
         val myId = _userProfile.value.id
         if (myId == targetUserId || myId.isBlank()) return
