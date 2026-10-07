@@ -92,6 +92,9 @@ jobs:
           retention-days: 14
 
       - name: Build Edits APK (developer edition)
+        env:
+          STORE_PASSWORD: ${{ secrets.STORE_PASSWORD }}
+          KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
         run: ./gradlew assembleEdits --stacktrace
 
       - name: Upload Edits APK as Artifact
