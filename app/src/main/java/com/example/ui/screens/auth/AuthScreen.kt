@@ -86,6 +86,7 @@ fun AuthScreen(
     var forgotOpen by remember { mutableStateOf(false) }
     var forgotEmail by remember { mutableStateOf("") }
     var forgotStatus by remember { mutableStateOf<String?>(null) }
+    var resetBusy by remember { mutableStateOf(false) }
     var signupBusy by remember { mutableStateOf(false) }
 
     fun resetSignupState() {
