@@ -383,7 +383,9 @@ private fun SignupContent(
     errorMessage: String?,
     onDismissError: () -> Unit,
     onNextClick: () -> Unit,
-    onSwitchToLogin: () -> Unit
+    onSwitchToLogin: () -> Unit,
+    onSkipVerification: () -> Unit,
+    onResendVerification: () -> Unit
 ) {
     Column(modifier = Modifier.fillMaxWidth()) {
         val (title, description) = when (step) {
