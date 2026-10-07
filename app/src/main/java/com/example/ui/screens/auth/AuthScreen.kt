@@ -113,15 +113,18 @@ fun AuthScreen(
             errorMessage = "يرجى إدخال اسم المستخدم أو البريد الإلكتروني وكلمة السر."
             return
         }
-        val account = registeredAccounts.find {
-            (it.email.equals(identifier, ignoreCase = true) || it.name == identifier) &&
-                it.password == loginPassword
+                if (loginBusy) return
+        loginBusy = true
+        // ☁️ الدخول الحقيقي عبر Firebase — يعمل من أي جهاز بهذا الحساب
+        //    (onAuthSuccess يُستدعى داخل الـViewModel عند النجاح ⇒ لا نستدعيه هنا)
+        serverLogin(identifier, loginPassword) { ok, message ->
+            loginBusy = false
+            if (!ok) {
+                errorMessage = message ?: "تعذّر تسجيل الدخول — تحقق من الاتصال وحاول مجدداً."
+            } else if (message != null) {
+                Toast.makeText(context, message, Toast.LENGTH_LONG).show()
+            }
         }
-        if (account == null) {
-            errorMessage = "بيانات الدخول غير صحيحة، أو لا يوجد حساب بهذه البيانات بعد."
-            return
-        }
-        onAuthSuccess(account, generateUniqueUserId())
     }
 
     fun goToNextSignupStep() {
