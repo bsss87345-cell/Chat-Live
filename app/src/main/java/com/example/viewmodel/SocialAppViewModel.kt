@@ -187,6 +187,9 @@ class SocialAppViewModel : ViewModel() {
     private val _chatRooms = MutableStateFlow<List<ChatRoom>>(emptyList())
     val chatRooms: StateFlow<List<ChatRoom>> = _chatRooms.asStateFlow()
 
+    /** مسجّل الاستماع اللحظي لرسائل الغرفة المفتوحة حالياً. */
+    private var roomMessagesListener: ListenerRegistration? = null
+
                init {
                 restoreLocalData()
         startLiveRoomUpdates()
