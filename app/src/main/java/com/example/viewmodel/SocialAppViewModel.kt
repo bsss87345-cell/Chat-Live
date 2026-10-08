@@ -798,18 +798,28 @@ class SocialAppViewModel : ViewModel() {
     }
     
     // --- Feed Actions ---
-    fun toggleLike(postId: String) {
+        fun toggleLike(postId: String) {
+        var newLiked: Boolean? = null
         _posts.update { list ->
             list.map { post ->
                 if (post.id == postId) {
-                    val newLiked = !post.isLiked
-                    val newCount = if (newLiked) post.likesCount + 1 else post.likesCount - 1
-                    post.copy(isLiked = newLiked, likesCount = newCount)
+                    val liked = !post.isLiked
+                    newLiked = liked
+                    val newCount = if (liked) post.likesCount + 1 else post.likesCount - 1
+                    post.copy(isLiked = liked, likesCount = newCount)
                                 } else post
             }
         }
+        // ☁️ مزامنة الإعجاب مع السحابة عند تغيّر الحالة فقط
+        newLiked?.let { liked ->
+            val likedIds = _posts.value.filter { it.isLiked }.map { it.id }.toSet()
+            viewModelScope.launch(Dispatchers.IO) {
+                CloudStore.setLike(postId, liked)
+                CloudStore.saveLikedPostIds(likedIds)
+            }
+        }
         persistMyPosts()
-    }
+        }
 
     fun openComments(postId: String) {
         _activeCommentPostId.value = postId
