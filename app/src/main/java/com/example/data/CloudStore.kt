@@ -496,8 +496,6 @@ object CloudStore {
             else -> "منذ ${minutes / (60 * 24)} يوم"
         }
     }
-
-        // ───────────────── ساعة السيرفر ─────────────────
     
         // ───────────────── ساعة السيرفر ─────────────────
     @Volatile private var serverOffsetMs: Long = 0L
