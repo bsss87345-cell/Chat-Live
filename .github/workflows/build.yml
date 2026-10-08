@@ -34,7 +34,17 @@ jobs:
             cp .env.example .env
           fi
 
-      - name: Make gradlew executable
+      - name: Inject Agora App ID from secret into .env
+        env:
+          AGORA_APP_ID: ${{ secrets.AGORA_APP_ID }}
+        run: |
+          if [ -n "$AGORA_APP_ID" ]; then
+            sed -i "s|^AGORA_APP_ID=.*|AGORA_APP_ID=${AGORA_APP_ID}|" .env
+          else
+            echo "::warning::لا يوجد سرّ AGORA_APP_ID — ميزة الصوت لن تتصل بالخدمة في هذا البناء."
+          fi
+
+      - name: Make gradlew executable 
         run: chmod +x ./gradlew
 
       # ملف إعداد Firebase يُكتب من السرّ وقت البناء — لا يُرفع للمستودع أبداً
