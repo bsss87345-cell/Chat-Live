@@ -25,6 +25,12 @@ android {
     versionCode = 1
     versionName = "1.0"
 
+    // 🎙️ صوت الغرف (Agora): معماريتان 64-بت فقط — مكتبات 32-بت محاذاتها 4KB
+    // (تفشل شرط 16KB في بلي)، و arm64-v8a و x86_64 محاذاتهما 16KB
+    ndk {
+      abiFilters += listOf("arm64-v8a", "x86_64")
+    }
+
     testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
   }
 
