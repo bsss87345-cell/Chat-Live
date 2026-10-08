@@ -858,6 +858,8 @@ class SocialAppViewModel : ViewModel() {
             (listOf(post.id) + ids.filter { it != post.id }).take(50)
         }
         persistMyPosts()
+                // ☁️ عدّاد المشاركات سحابياً (+1)
+        viewModelScope.launch(Dispatchers.IO) { CloudStore.stepPostCounter(post.id, "sharesCount", 1) }
         _userMessage.value = "تم نسخ رابط المنشور ومشاركته مع الأصدقاء!"
                 }
 
