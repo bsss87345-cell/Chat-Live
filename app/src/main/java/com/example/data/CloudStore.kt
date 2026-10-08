@@ -587,7 +587,52 @@ object CloudStore {
         }
     }
 
-        // ───────────────── ساعة السيرفر ─────────────────
+               // ───────────────── الإعجابات (posts/{postId}/likes/{uid}) ─────────────────
+
+    /**
+     * إعجاب أو إلغاؤه: سجل `likes/{uid}` داخل المنشور + خطوة ±1 على العدّاد.
+     * ⚠️ تُستدعى عند **تغيّر** الحالة فقط (لا مع كل ضغطة) وإلا صار العدّاد سالباً.
+     * حاجبة ⇒ من IO فقط.
+     */
+    fun setLike(postId: String, liked: Boolean): Boolean {
+        val me = uid ?: return false
+        if (postId.isBlank()) return false
+        val likeRef = db().collection(POSTS).document(postId).collection(LIKES).document(me)
+        val wrote = if (liked) {
+            awaitWrite { likeRef.set(mapOf("likedAt" to System.currentTimeMillis())) }
+        } else {
+            awaitWrite { likeRef.delete() }
+        }
+        if (!wrote) return false
+        return awaitWrite {
+            db().collection(POSTS).document(postId)
+                .update("likesCount", FieldValue.increment(if (liked) 1L else -1L))
+        }
+    }
+
+    /**
+     * المعرّفات اللي أعجب بها الحساب — تُحفظ كحقل داخل `users/{uid}`
+     * (قراءة واحدة بدل استعلام لكل منشور وقت بناء التغذية).
+     */
+    fun saveLikedPostIds(ids: Set<String>): Boolean {
+        val me = uid ?: return false
+        return awaitWrite {
+            db().collection(USERS).document(me).update("likedPostIds", ids.take(200).toList())
+        }
+    }
+
+    fun loadLikedPostIds(): Set<String> {
+        val me = uid ?: return emptySet()
+        return try {
+            val d = Tasks.await(db().collection(USERS).document(me).get()) ?: return emptySet()
+            @Suppress("UNCHECKED_CAST")
+            (d.get("likedPostIds") as? List<String>)?.toSet() ?: emptySet()
+        } catch (e: Exception) {
+            emptySet()
+        }
+    }
+
+        // ───────────────── ساعة السيرفر ───────────────── 
     
         // ───────────────── ساعة السيرفر ─────────────────
     @Volatile private var serverOffsetMs: Long = 0L
