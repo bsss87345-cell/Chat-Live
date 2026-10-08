@@ -846,6 +846,11 @@ class SocialAppViewModel : ViewModel() {
             }
         }
         persistMyPosts()
+                // ☁️ تعليق سحابي + عدّاد التعليقات (+1)
+        viewModelScope.launch(Dispatchers.IO) {
+            CloudStore.saveComment(postId, newComment)
+            CloudStore.stepPostCounter(postId, "commentsCount", 1)
+        }
         _userMessage.value = "تمت إضافة تعليقك بنجاح!"
     }
 
