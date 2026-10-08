@@ -41,6 +41,12 @@ object CloudStore {
     private const val ROOMS = "rooms"
     private const val MESSAGES = "messages"
     private const val MAX_ROOMS = 50
+    private const val POSTS = "posts"
+    private const val COMMENTS = "comments"
+    private const val LIKES = "likes"
+    private const val STORIES = "stories"
+    private const val MAX_POSTS = 50
+    private const val MAX_STORIES = 30
 
     /** معرّف الحساب الحقيقي من Firebase Auth، أو null لو لا جلسة. */
     val uid: String? get() = try {
