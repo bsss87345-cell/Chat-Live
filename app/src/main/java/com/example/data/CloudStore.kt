@@ -413,6 +413,92 @@ object CloudStore {
         }
     )
 
+            // ───────────────── المنشورات (posts/{postId}) ─────────────────
+
+    /** ينشر منشوراً أو يحدّث نص منشوره — القاعدة تمنع تعديل منشور غيره. حاجبة ⇒ من IO فقط. */
+    fun savePost(post: com.example.model.Post): Boolean {
+        val me = uid ?: return false
+        if (post.id.isBlank()) return false
+        val data = mapOf(
+            "id" to post.id.take(40),
+            "authorId" to me,
+            "authorName" to post.authorName.trim().take(60),
+            "authorHandle" to post.authorHandle.trim().take(40),
+            "content" to post.content.take(2000),
+            "mediaType" to post.mediaType.name,
+            "mediaCaption" to (post.mediaCaption ?: "").take(300),
+            "tag" to (post.tag ?: "").take(40),
+            "likesCount" to post.likesCount,
+            "commentsCount" to post.commentsCount,
+            "sharesCount" to post.sharesCount,
+            "authorAvatarUrl" to post.authorAvatarUrl.take(500),
+            "mediaUri" to post.mediaUri.take(500),
+            "createdAt" to System.currentTimeMillis()
+        )
+        return awaitWrite { db().collection(POSTS).document(post.id).set(data) }
+    }
+
+    /** آخر المنشورات السحابية — الأحدث أولاً. حاجبة ⇒ من IO فقط. */
+    fun loadPosts(limit: Int = MAX_POSTS, likedIds: Set<String> = emptySet()): List<com.example.model.Post> = try {
+        if (uid == null) emptyList()
+        else Tasks.await(
+            db().collection(POSTS)
+                .orderBy("createdAt", Query.Direction.DESCENDING)
+                .limit(limit.toLong())
+                .get()
+        ).documents.mapNotNull { d -> if (d.exists()) d.toPost(likedIds) else null }
+    } catch (e: Exception) {
+        emptyList()
+    }
+
+    /** حذف منشور — القاعدة تقبله من صاحب المنشور فقط. */
+    fun deletePost(postId: String): Boolean {
+        if (uid == null || postId.isBlank()) return false
+        return awaitWrite { db().collection(POSTS).document(postId).delete() }
+    }
+
+    private fun DocumentSnapshot.toPost(likedIds: Set<String> = emptySet()): com.example.model.Post {
+        val author = getString("authorId").orEmpty()
+        return com.example.model.Post(
+            id = getString("id") ?: id,
+            authorId = author,
+            authorName = getString("authorName").orEmpty(),
+            authorHandle = getString("authorHandle").orEmpty(),
+            timeAgo = timeAgoFromMillis(getLong("createdAt") ?: 0L),
+            content = getString("content").orEmpty(),
+            mediaType = try {
+                com.example.model.PostMediaType.valueOf(getString("mediaType") ?: "NONE")
+            } catch (e: Exception) {
+                com.example.model.PostMediaType.NONE
+            },
+            mediaCaption = getString("mediaCaption")?.takeIf { it.isNotBlank() },
+            tag = getString("tag")?.takeIf { it.isNotBlank() },
+            likesCount = (getLong("likesCount") ?: 0L).toInt(),
+            isLiked = likedIds.contains(id),
+            commentsCount = (getLong("commentsCount") ?: 0L).toInt(),
+            sharesCount = (getLong("sharesCount") ?: 0L).toInt(),
+            commentsList = emptyList(),
+            isAuthor = author == uid,
+            isFollowing = false,
+            authorAvatarUrl = getString("authorAvatarUrl").orEmpty(),
+            mediaUri = getString("mediaUri").orEmpty()
+        )
+    }
+
+    /** نص «منذ…» عربي يُحسب من ساعة السيرفر (لا من ساعة الجهاز). */
+    private fun timeAgoFromMillis(millis: Long): String {
+        if (millis <= 0L) return ""
+        val minutes = (serverNowMillis() - millis) / 60_000L
+        return when {
+            minutes < 1 -> "الآن"
+            minutes < 60 -> "منذ $minutes دقيقة"
+            minutes < 60 * 24 -> "منذ ${minutes / 60} ساعة"
+            else -> "منذ ${minutes / (60 * 24)} يوم"
+        }
+    }
+
+        // ───────────────── ساعة السيرفر ─────────────────
+    
         // ───────────────── ساعة السيرفر ─────────────────
     @Volatile private var serverOffsetMs: Long = 0L
     @Volatile var serverClockTried: Boolean = false
