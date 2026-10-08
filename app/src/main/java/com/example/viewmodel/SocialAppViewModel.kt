@@ -907,8 +907,10 @@ class SocialAppViewModel : ViewModel() {
                 (listOf(target) + list.filter { it.id != postId }).take(50)
             }
         }
-                _posts.update { list -> list.filter { it.id != postId } }
+        _posts.update { list -> list.filter { it.id != postId } }
         persistMyPosts()
+        // ☁️ حذف سحابي (حاجب ⇒ IO)
+        viewModelScope.launch(Dispatchers.IO) { CloudStore.deletePost(postId) } 
         _userMessage.value = "تم حذف المنشور — تجده في «المحتوى المحذوف» 📋"
                 }
 
