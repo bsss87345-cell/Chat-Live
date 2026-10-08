@@ -1,0 +1,7 @@
+name = "chat-live-token"
+main = "src/index.js"
+compatibility_date = "2026-01-01"
+
+[vars]
+# معرّف مشروع Firebase (ليس سرّاً)
+FIREBASE_PROJECT_ID = "chat-live-official-689bf"
