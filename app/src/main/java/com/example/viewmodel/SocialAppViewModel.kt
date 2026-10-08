@@ -2424,7 +2424,14 @@ fun toggleOwnerVoiceMute(roomId: String) {
             if (cloudProfile == null) CloudStore.saveProfile(_userProfile.value)
             if (cloudWallet == null) CloudStore.saveWallet(_walletBalance.value, _transactions.value)
             if (cloudFollows.isEmpty()) _follows.value.forEach { CloudStore.addFollow(it) }
-            if (cloudNotifications.isEmpty()) _notifications.value.forEach { CloudStore.saveNotification(it) }
+                        if (cloudNotifications.isEmpty()) _notifications.value.forEach { CloudStore.saveNotification(it) }
+            // أول ربط: السحابة فارغة ⇒ نرفع منشوراتي وقصصي الحقيقية (مرة واحدة)
+            if (cloudPosts.isEmpty() && myLocalPosts.isNotEmpty()) {
+                myLocalPosts.forEach { CloudStore.savePost(it) }
+            }
+            if (cloudStories.isEmpty()) {
+                _stories.value.filter { it.isCurrentUser }.forEach { CloudStore.saveStory(it) }
+            }
 
             withContext(Dispatchers.Main) {
                 cloudProfile?.let { p ->
