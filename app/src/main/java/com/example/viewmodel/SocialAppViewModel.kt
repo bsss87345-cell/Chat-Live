@@ -2446,8 +2446,16 @@ fun toggleOwnerVoiceMute(roomId: String) {
                 if (cloudFollows.isNotEmpty()) {
                     _follows.value = cloudFollows.distinctBy { it.followerId + "_" + it.followingId }
                 }
-                if (cloudNotifications.isNotEmpty()) {
+                                if (cloudNotifications.isNotEmpty()) {
                     _notifications.value = cloudNotifications
+                }
+                // ☁️ السحابة مصدر الحقيقة للمنشورات الحقيقية — والتجريبية تبقى محلية
+                val cloudSide = if (cloudPosts.isEmpty()) myLocalPosts else cloudPosts
+                if (cloudSide.isNotEmpty()) {
+                    _posts.value = (cloudSide + _posts.value.filterNot { it.isAuthor }).distinctBy { it.id }
+                }
+                if (cloudStories.isNotEmpty()) {
+                    _stories.value = (cloudStories + _stories.value).distinctBy { it.id }
                 }
             }
         }
