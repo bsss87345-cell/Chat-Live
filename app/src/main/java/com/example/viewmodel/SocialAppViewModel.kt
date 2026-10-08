@@ -2420,6 +2420,11 @@ fun toggleOwnerVoiceMute(roomId: String) {
             val cloudWallet = CloudStore.loadWallet()
             val cloudFollows = CloudStore.loadFollowsFor(me)
             val cloudNotifications = CloudStore.loadNotifications()
+            val likedIds = CloudStore.loadLikedPostIds()
+            val cloudPosts = CloudStore.loadPosts(likedIds = likedIds)
+            val cloudStories = CloudStore.loadStories()
+            // منشوراتي **الحقيقية** محلياً فقط (التجريبية ما تُرفع للسحابة)
+            val myLocalPosts = _posts.value.filter { it.isAuthor }
 
             if (cloudProfile == null) CloudStore.saveProfile(_userProfile.value)
             if (cloudWallet == null) CloudStore.saveWallet(_walletBalance.value, _transactions.value)
