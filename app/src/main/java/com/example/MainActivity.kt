@@ -59,6 +59,7 @@ class MainActivity : ComponentActivity() {
                 setContent {
             val viewModel: SocialAppViewModel = viewModel()
             val isDarkMode by viewModel.isDarkMode.collectAsStateWithLifecycle()
+            val online by applicationContext.observeInternet().collectAsState(initial = true)
 
             // الرابط يُقرأ بالنشاط، ويُمرَّر للـViewModel هنا حيث يكون جاهزاً
             LaunchedEffect(pendingDeepLinkPostId) {
