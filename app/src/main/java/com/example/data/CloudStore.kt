@@ -632,7 +632,129 @@ object CloudStore {
         }
     }
 
-        // ───────────────── ساعة السيرفر ───────────────── 
+                // ───────────────── التعليقات (posts/{postId}/comments/{commentId}) ─────────────────
+
+    /** يضيف تعليقاً — `authorId` يُكتب من الجلسة (القاعدة ترفض أي هوية أخرى). حاجبة ⇒ من IO فقط. */
+    fun saveComment(postId: String, comment: com.example.model.PostComment): Boolean {
+        val me = uid ?: return false
+        if (postId.isBlank() || comment.id.isBlank()) return false
+        val data = mapOf(
+            "id" to comment.id.take(40),
+            "authorId" to me,
+            "authorName" to comment.authorName.trim().take(60),
+            "text" to comment.text.take(500),
+            "createdAt" to System.currentTimeMillis()
+        )
+        return awaitWrite {
+            db().collection(POSTS).document(postId).collection(COMMENTS).document(comment.id).set(data)
+        }
+    }
+
+    /** تعليقات منشور — الأقدم أولاً. حاجبة ⇒ من IO فقط. */
+    fun loadComments(postId: String, limit: Int = 50): List<com.example.model.PostComment> = try {
+        if (uid == null || postId.isBlank()) emptyList()
+        else Tasks.await(
+            db().collection(POSTS).document(postId).collection(COMMENTS)
+                .orderBy("createdAt", Query.Direction.ASCENDING)
+                .limit(limit.toLong())
+                .get()
+        ).documents.mapNotNull { d -> if (d.exists()) d.toComment() else null }
+    } catch (e: Exception) {
+        emptyList()
+    }
+
+    /** حذف تعليق — القاعدة تسمح لصاحب التعليق أو صاحب المنشور. */
+    fun deleteComment(postId: String, commentId: String): Boolean {
+        if (uid == null || postId.isBlank() || commentId.isBlank()) return false
+        return awaitWrite {
+            db().collection(POSTS).document(postId).collection(COMMENTS).document(commentId).delete()
+        }
+    }
+
+    /** خطوة ±1 على عدّاد المنشور (`commentsCount` أو `sharesCount`) — مسموح لأي مسجّل بالقواعد. */
+    fun stepPostCounter(postId: String, field: String, step: Int): Boolean {
+        if (uid == null || postId.isBlank()) return false
+        if (field != "commentsCount" && field != "sharesCount") return false
+        if (step != 1 && step != -1) return false
+        return awaitWrite {
+            db().collection(POSTS).document(postId).update(field, FieldValue.increment(step.toLong()))
+        }
+    }
+
+    private fun DocumentSnapshot.toComment(): com.example.model.PostComment = com.example.model.PostComment(
+        id = getString("id") ?: id,
+        authorName = getString("authorName").orEmpty(),
+        text = getString("text").orEmpty(),
+        timeAgo = timeAgoFromMillis(getLong("createdAt") ?: 0L)
+    )
+
+                // ───────────────── القصص (stories/{storyId}) ─────────────────
+
+    /**
+     * ينشر قصة — **لأول مرة فقط**: القاعدة تمنع تعديل القصة بعد نشرها،
+     * والحذف يتم تلقائياً بعد 24 ساعة عبر TTL. حاجبة ⇒ من IO فقط.
+     */
+    fun saveStory(story: com.example.model.Story): Boolean {
+        val me = uid ?: return false
+        if (story.id.isBlank()) return false
+        val data = mapOf(
+            "id" to story.id.take(40),
+            "authorId" to me,
+            "authorName" to story.authorName.trim().take(60),
+            "mediaText" to story.mediaText.take(500),
+            "mediaType" to story.mediaType.name,
+            "mediaUri" to (story.mediaUri ?: "").take(500),
+            "gradientColors" to story.gradientColors.take(4),
+            "authorAvatarUrl" to story.authorAvatarUrl.take(500),
+            "createdAt" to System.currentTimeMillis()
+        )
+        return awaitWrite { db().collection(STORIES).document(story.id).set(data) }
+    }
+
+    /** آخر القصص السحابية — الأحدث أولاً. حاجبة ⇒ من IO فقط. */
+    fun loadStories(limit: Int = MAX_STORIES): List<com.example.model.Story> = try {
+        if (uid == null) emptyList()
+        else Tasks.await(
+            db().collection(STORIES)
+                .orderBy("createdAt", Query.Direction.DESCENDING)
+                .limit(limit.toLong())
+                .get()
+        ).documents.mapNotNull { d -> if (d.exists()) d.toStory() else null }
+    } catch (e: Exception) {
+        emptyList()
+    }
+
+    /** حذف قصة — القاعدة تقبله من صاحبها فقط. */
+    fun deleteStory(storyId: String): Boolean {
+        if (uid == null || storyId.isBlank()) return false
+        return awaitWrite { db().collection(STORIES).document(storyId).delete() }
+    }
+
+    private fun DocumentSnapshot.toStory(): com.example.model.Story {
+        val author = getString("authorId").orEmpty()
+        val fallbackGradient = listOf(0xFF673AB7L, 0xFF00897BL)
+        return com.example.model.Story(
+            id = getString("id") ?: id,
+            authorName = getString("authorName").orEmpty(),
+            isViewed = false,
+            mediaText = getString("mediaText").orEmpty(),
+            timeAgo = timeAgoFromMillis(getLong("createdAt") ?: 0L),
+            isCurrentUser = author == uid,
+            gradientColors = try {
+                @Suppress("UNCHECKED_CAST")
+                (get("gradientColors") as? List<Long>)?.takeIf { it.size >= 2 } ?: fallbackGradient
+            } catch (e: Exception) {
+                fallbackGradient
+            },
+            mediaType = try {
+                com.example.model.StoryMediaType.valueOf(getString("mediaType") ?: "TEXT")
+            } catch (e: Exception) {
+                com.example.model.StoryMediaType.TEXT
+            },
+            mediaUri = getString("mediaUri")?.takeIf { it.isNotBlank() },
+            authorAvatarUrl = getString("authorAvatarUrl").orEmpty()
+        )
+    }
     
         // ───────────────── ساعة السيرفر ─────────────────
     @Volatile private var serverOffsetMs: Long = 0L
