@@ -169,6 +169,8 @@ dependencies {
   implementation(libs.coil.video)
   implementation(libs.androidx.media3.exoplayer)
   implementation(libs.androidx.media3.ui)
+  // 🎙️ صوت الغرف الحيّة (بلا استخدام بعد — يُفعَّل بمرحلة لاحقة)
+  implementation(libs.agora.voice.sdk)
   // implementation(libs.converter.moshi)
   // implementation(libs.firebase.ai)
     // ✅ مُفعَّل (الخطوة 3): تخزين بيانات المستخدمين سحابياً — خطة Spark المجانية
