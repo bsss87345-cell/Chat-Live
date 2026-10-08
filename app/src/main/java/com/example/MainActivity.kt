@@ -73,7 +73,11 @@ class MainActivity : ComponentActivity() {
                 if (showSplash) {
                     SplashScreen(onFinished = { showSplash = false })
                 } else {
-                    MainScreen(viewModel = viewModel)
+                    if (online) {
+    MainScreen(viewModel = viewModel)
+} else {
+    NoInternetScreen()
+                    }
                 }
                         }
         }
