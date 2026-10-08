@@ -970,6 +970,8 @@ class SocialAppViewModel : ViewModel() {
         _stories.update { list ->
             listOf(newStory) + list.filter { !it.isCurrentUser }
         }
+                // ☁️ قصة سحابية (حاجب ⇒ IO)
+        viewModelScope.launch(Dispatchers.IO) { CloudStore.saveStory(newStory) }
         _userMessage.value = "تم نشر قصتك المؤقتة لجميع المتابعين بنجاح!"
         addNotification(NotificationType.SYSTEM, "تم نشر قصتك بنجاح")
     }
