@@ -920,6 +920,10 @@ class SocialAppViewModel : ViewModel() {
             }
         }
         persistMyPosts()
+                // ☁️ تعديل سحابي: القاعدة تسمح لصاحب المنشور بتعديل نصّه فقط
+        _posts.value.find { it.id == postId }?.let { post ->
+            viewModelScope.launch(Dispatchers.IO) { CloudStore.savePost(post) }
+        }
         _userMessage.value = "تم تعديل المنشور بنجاح"
     }
 
