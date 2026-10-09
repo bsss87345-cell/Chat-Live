@@ -11,7 +11,7 @@ import io.agora.rtc2.RtcEngineConfig
 /**
  * محرّك صوت الغرف الحيّة (Agora RTC) — طبقة رفيعة فوق RtcEngine.
  *
- * ⚠️ لا يُستدعى من أي مكان بعد: كوميت مستقل بلا استخدام (يثبت أن الكود يُترجم فقط).
+ * ⚠️ يُستدعى من VoiceRoomViewModel فقط، والواجهة لا تستدعيه مباشرة.
  *
  * قرارات التصميم:
  *  • CHANNEL_PROFILE_LIVE_BROADCASTING + دورين (مضيف/مستمع): المقاعد = مضيفون، البقية مستمعون.
@@ -135,6 +135,27 @@ class AudioEngine(
     /** true = السماعة الخارجية، false = سماعة الأذن. */
     fun setSpeakerOn(on: Boolean): Int =
         engine?.setEnableSpeakerphone(on) ?: Constants.ERR_NOT_INITIALIZED
+
+    /**
+     * يبدّل الدور داخل القناة الحالية بدون مغادرتها: true ⇒ متحدث (ينشر المايك)، false ⇒ مستمع.
+     * التبديل إلى متحدث يحتاج توكناً بصلاحية نشر، فاستدعِ [renewToken] بتوكن المضيف قبله.
+     * يُرجع رمز Agora: 0 = نجاح.
+     */
+    fun setRole(asHost: Boolean): Int {
+        val e = engine ?: return Constants.ERR_NOT_INITIALIZED
+        val role = if (asHost) Constants.CLIENT_ROLE_BROADCASTER else Constants.CLIENT_ROLE_AUDIENCE
+        val roleResult = e.setClientRole(role)
+        if (roleResult != 0) return roleResult
+        val options = ChannelMediaOptions().apply {
+            clientRoleType = if (asHost) Constants.CLIENT_ROLE_BROADCASTER else Constants.CLIENT_ROLE_AUDIENCE
+            publishMicrophoneTrack = asHost
+            autoSubscribeAudio = true
+        }
+        return e.updateChannelMediaOptions(options)
+    }
+
+    /** يجدّد توكن القناة الحالية (قبل انتهائه، أو قبل التبديل إلى متحدث). يُرجع 0 = نجاح. */
+    fun renewToken(token: String): Int = engine?.renewToken(token) ?: Constants.ERR_NOT_INITIALIZED
 
     /** يغادر ويُتلف المحرّك نهائياً. يُستدعى عند إغلاق الغرفة. */
     fun release() {
