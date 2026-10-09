@@ -18,6 +18,8 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
 import kotlinx.coroutines.withTimeoutOrNull
 
 /** مرحلة الغرفة الصوتية: خامل، يتصل، داخل الغرفة، أو خطأ. */
@@ -40,7 +42,9 @@ data class VoiceRoomUiState(
  * يدير دخول الغرفة الصوتية: يجهّز المحرّك، يطلب التوكن من الخادم، ثم يدخل القناة.
  *
  * قواعد:
- *  • المضيف (asHost=true) يحتاج إذن الميكروفون، والشاشة تطلبه قبل الاستدعاء.
+ *  • المضيف المباشر (asHost=true) يحتاج إذن الميكروفون، والشاشة تطلبه قبل الاستدعاء.
+ *  • الدخول العادي كمستمع. [setHostRole] يرفع المستخدم إلى متحدث داخل نفس القناة بدون خروج.
+ *  • تبديل الدور وتجديد التوكن يمرّان عبر قفل واحد، فلا يتعارضان على التوكن نفسه.
  *  • المحرّك يُنشأ ويُحفظ دون أي تعليق بينهما، فلا يضيع حتى لو أُلغي الدخول في منتصف الطريق.
  *  • نداءات Agora تأتي من خيط أصلي، والتحديث عبر update() آمن للخيوط.
  *  • المحرّك يُتلف عند إغلاق الـViewModel فقط.
@@ -51,12 +55,21 @@ class VoiceRoomViewModel(application: Application) : AndroidViewModel(applicatio
     private var engine: AudioEngine? = null
     private var joinJob: Job? = null
 
+    /** الدور المطلوب حالياً (من المقعد). يُطبَّق فوراً داخل الغرفة، أو عند اكتمال الدخول. */
+    @Volatile
+    private var wantHost = false
+
+    /** يمنع تبديل الدور وتجديد التوكن في نفس الوقت. */
+    private val roleMutex = Mutex()
+
     private val _state = MutableStateFlow(VoiceRoomUiState())
     val state: StateFlow<VoiceRoomUiState> = _state.asStateFlow()
 
     private val listener = object : AudioEngine.Listener {
         override fun onJoined(channel: String, uid: Int) {
             _state.update { it.copy(phase = VoicePhase.JOINED, channel = channel, uid = uid, errorMessage = null) }
+            // لو طُلب دور المتحدث أثناء الاتصال، نطبّقه الآن.
+            applyRoleAsync()
         }
 
         override fun onRemoteJoined(uid: Int) {
@@ -73,6 +86,10 @@ class VoiceRoomViewModel(application: Application) : AndroidViewModel(applicatio
             _state.update { it.copy(speakingLevels = levels) }
         }
 
+        override fun onTokenWillExpire(token: String) {
+            viewModelScope.launch { roleMutex.withLock { renewCurrentToken() } }
+        }
+
         override fun onError(code: Int) {
             _state.update { current ->
                 if (current.phase == VoicePhase.CONNECTING) {
@@ -84,7 +101,10 @@ class VoiceRoomViewModel(application: Application) : AndroidViewModel(applicatio
         }
     }
 
-    /** يدخل الغرفة. المضيف يحتاج إذن الميكروفون، والمستمع لا يحتاجه. */
+    /**
+     * يدخل الغرفة. المضيف المباشر (asHost=true) يحتاج إذن الميكروفون.
+     * الجسر يدخل دائماً بـ asHost=false، ثم يستدعي [setHostRole] حسب المقعد.
+     */
     fun join(channel: String, asHost: Boolean) {
         val phase = _state.value.phase
         if (phase == VoicePhase.CONNECTING || phase == VoicePhase.JOINED) return
@@ -92,6 +112,7 @@ class VoiceRoomViewModel(application: Application) : AndroidViewModel(applicatio
             fail(NEED_MIC)
             return
         }
+        wantHost = asHost
         val kept = _state.value
         _state.value = VoiceRoomUiState(
             phase = VoicePhase.CONNECTING,
@@ -130,9 +151,23 @@ class VoiceRoomViewModel(application: Application) : AndroidViewModel(applicatio
     fun leave() {
         joinJob?.cancel()
         joinJob = null
+        wantHost = false
         engine?.leave()
         val kept = _state.value
         _state.value = VoiceRoomUiState(micMuted = kept.micMuted, speakerOn = kept.speakerOn)
+    }
+
+    /**
+     * يرفع المستخدم إلى متحدث (true) أو ينزله إلى مستمع (false) داخل الغرفة الحالية، بدون خروج منها.
+     * الجسر يستدعيها عند الجلوس على مقعد أو القيام منه. إن لم يكتمل الدخول بعد، يُطبَّق عند اكتماله.
+     */
+    fun setHostRole(asHost: Boolean) {
+        if (asHost && !hasMicPermission()) {
+            _state.update { it.copy(errorMessage = NEED_MIC) }
+            return
+        }
+        wantHost = asHost
+        applyRoleAsync()
     }
 
     /** يكتم المايك أو يفعّله. قبل الدخول يُحفظ الاختيار ويُطبّق عند إنشاء المحرّك. */
@@ -161,9 +196,80 @@ class VoiceRoomViewModel(application: Application) : AndroidViewModel(applicatio
 
     override fun onCleared() {
         joinJob?.cancel()
+        wantHost = false
         engine?.release()
         engine = null
         super.onCleared()
+    }
+
+    /** يطبّق الدور المطلوب في الخلفية، تحت القفل، وبالترتيب. */
+    private fun applyRoleAsync() {
+        viewModelScope.launch { roleMutex.withLock { applyRole() } }
+    }
+
+    /** يطبّق الدور المطلوب مرة واحدة. يُستدعى داخل القفل فقط. */
+    private suspend fun applyRole() {
+        val target = wantHost
+        val before = _state.value
+        if (before.phase != VoicePhase.JOINED || before.asHost == target) return
+        val channel = before.channel ?: return
+        val audio = engine ?: return
+
+        if (target) {
+            val token = try {
+                tokenClient.fetchToken(channel, VoiceRole.HOST)
+            } catch (e: VoiceTokenException) {
+                reportRoleError(e.message ?: ROLE_ON_FAILED)
+                return
+            }
+            // بعد انتظار الشبكة قد يكون المستخدم غادر الغرفة، فلا نلمس المحرّك.
+            if (_state.value.phase != VoicePhase.JOINED) return
+            if (before.uid != null && token.uid != before.uid) {
+                reportRoleError(ROLE_ON_FAILED)
+                return
+            }
+            val renewRc = audio.renewToken(token.token)
+            if (renewRc != 0) {
+                reportRoleError("$ROLE_ON_FAILED (رمز $renewRc)")
+                return
+            }
+            val roleRc = audio.setRole(true)
+            if (roleRc != 0) {
+                audio.setRole(false) // نضمن أن المحرّك بقي مستمعاً
+                reportRoleError("$ROLE_ON_FAILED (رمز $roleRc)")
+                return
+            }
+        } else {
+            val rc = audio.setRole(false)
+            if (rc != 0) {
+                reportRoleError("$ROLE_OFF_FAILED (رمز $rc)")
+                return
+            }
+        }
+        _state.update { it.copy(asHost = target) }
+    }
+
+    /** يجدّد توكن الدور الحالي قبل انتهائه، ويُبقي الدور كما هو. يُستدعى داخل القفل فقط. */
+    private suspend fun renewCurrentToken() {
+        val current = _state.value
+        if (current.phase != VoicePhase.JOINED) return
+        val channel = current.channel ?: return
+        val audio = engine ?: return
+        val role = if (current.asHost) VoiceRole.HOST else VoiceRole.AUDIENCE
+        val token = try {
+            tokenClient.fetchToken(channel, role)
+        } catch (e: VoiceTokenException) {
+            reportRoleError(TOKEN_RENEW_FAILED)
+            return
+        }
+        if (_state.value.phase != VoicePhase.JOINED) return
+        val rc = audio.renewToken(token.token)
+        if (rc != 0) reportRoleError("$TOKEN_RENEW_FAILED (رمز $rc)")
+    }
+
+    /** خطأ تغيير الدور لا يُخرج المستخدم من الغرفة. يبقى كما هو ويعرض الرسالة. */
+    private fun reportRoleError(message: String) {
+        _state.update { it.copy(errorMessage = message) }
     }
 
     /** يُنشئ المحرّك عند أول استعمال ويحفظه، ويطبّق التفضيلات الحالية عليه. */
@@ -195,5 +301,8 @@ class VoiceRoomViewModel(application: Application) : AndroidViewModel(applicatio
         const val JOIN_GENERIC = "تعذّر دخول الغرفة. جرّب مرة ثانية."
         const val JOIN_TIMEOUT = "انتهت مهلة دخول الغرفة. جرّب مرة ثانية."
         const val JOIN_TIMEOUT_MS = 15_000L
+        const val ROLE_ON_FAILED = "تعذّر تفعيل المايك للتحدّث. جرّب مرة ثانية."
+        const val ROLE_OFF_FAILED = "تعذّر إيقاف المايك. اخرج من الغرفة وادخل من جديد."
+        const val TOKEN_RENEW_FAILED = "تعذّر تجديد صلاحية الصوت. اخرج من الغرفة وادخل من جديد."
     }
 }
