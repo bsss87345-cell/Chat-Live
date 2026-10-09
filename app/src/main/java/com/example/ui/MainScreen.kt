@@ -54,6 +54,7 @@ fun MainScreen(viewModel: SocialAppViewModel) {
             val activeChatId by viewModel.activeChatId.collectAsStateWithLifecycle()
             val activeGameType by viewModel.activeGameType.collectAsStateWithLifecycle()
             val showAccountSettings by viewModel.showAccountSettings.collectAsStateWithLifecycle()
+                        VoiceSeatBridge(socialViewModel = viewModel)
 
         // Hide top bar and bottom navigation when user is inside any chat room, active game, active conversation, or the account settings page
         val isInsideRoom = currentTab == AppTab.CHAT && activeRoomId != null
