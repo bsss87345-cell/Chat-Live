@@ -49,14 +49,14 @@ service cloud.firestore {
         && textUpTo('name', 60)
         && textUpTo('bio', 300);
 
-      // التعديل: صاحب الحساب فقط، وبلا لمس الهوية أو البريد
+       // التعديل: صاحب الحساب فقط، وبلا لمس الهوية أو البريد
       allow update: if isMe(userId)
         && unchanged('id')
         && unchanged('email')
         && unchanged('authProvider')
         && unchanged('joinDate')
         && textUpTo('name', 60)
-        && textUpTo('bio', 300);
+        && textUpTo('bio', 300); 
 
       // لا حذف حساب من العميل (يُدار من الخادم/الدعم)
       allow delete: if false;
