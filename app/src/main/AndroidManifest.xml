@@ -62,6 +62,14 @@
                     android:scheme="chatlive" />
             </intent-filter>
         </activity>
+        <!-- 🔔 استقبال إشعارات FCM (Firebase Cloud Messaging) -->
+        <service
+            android:name=".data.FcmService"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="com.google.firebase.MESSAGING_EVENT" />
+            </intent-filter>
+        </service>
 
         <!-- يسمح بمشاركة ملفات الصور والفيديو مع التطبيقات الأخرى بأمان.
              أندرويد يمنع تمرير مسارات الملفات مباشرة منذ API 24. -->
