@@ -50,13 +50,18 @@ service cloud.firestore {
         && textUpTo('bio', 300);
 
        // التعديل: صاحب الحساب فقط، وبلا لمس الهوية أو البريد
+      // (أو تحديث توكنات FCM فقط — للإشعارات Push)
       allow update: if isMe(userId)
-        && unchanged('id')
-        && unchanged('email')
-        && unchanged('authProvider')
-        && unchanged('joinDate')
-        && textUpTo('name', 60)
-        && textUpTo('bio', 300); 
+        && (
+          (unchanged('id')
+            && unchanged('email')
+            && unchanged('authProvider')
+            && unchanged('joinDate')
+            && textUpTo('name', 60)
+            && textUpTo('bio', 300))
+          ||
+          onlyChanged(['fcmTokens'])
+        ); 
 
       // لا حذف حساب من العميل (يُدار من الخادم/الدعم)
       allow delete: if false;
