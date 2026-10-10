@@ -103,6 +103,16 @@ object CloudStore {
             privacyLevel = d.getString("privacyLevel") ?: "عام للجميع"
         )
     }
+    
+    /** 🔔 يحفظ توكن FCM للجهاز الحالي في مستند المستخدم (arrayUnion — بلا تكرار). */
+    fun saveFcmToken(token: String): Boolean {
+        val me = uid ?: return false
+        if (token.isBlank()) return false
+        return awaitWrite {
+            db().collection(USERS).document(me)
+                .set(mapOf("fcmTokens" to FieldValue.arrayUnion(token)), SetOptions.merge())
+        }
+    }
     // ───────────────── المتابعات (follows/{follower}_{following}) ─────────────────
 
     private fun followIdOf(followerId: String, followingId: String) = "${followerId}_${followingId}"
