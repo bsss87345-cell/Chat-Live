@@ -220,5 +220,6 @@ dependencies {
   // "ksp"(libs.androidx.room.compiler)
   // "ksp"(libs.moshi.kotlin.codegen)
 }
+
   // 🔔 إشعارات Push (FCM) — المرحلة 1 من خطة اكتمال البنية التحتية
   implementation("com.google.firebase:firebase-messaging")
