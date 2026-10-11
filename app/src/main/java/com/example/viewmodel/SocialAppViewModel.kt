@@ -1241,6 +1241,11 @@ fun joinChatRoom(roomId: String, passwordInput: String = ""): Boolean {
     }
 
     fun leaveChatRoom(roomId: String) {
+                val mySeatNumbers = _chatRooms.value.find { it.id == roomId }?.let { r ->
+            (listOf(r.ownerVoiceSeat) + r.voiceSeats)
+                .filter { it.occupantId == "me" }
+                .map { it.seatNumber }
+        } ?: emptyList()
         _chatRooms.update { list ->
             list.map {
                 if (it.id == roomId) {
