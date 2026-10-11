@@ -28,6 +28,9 @@ class SocialAppViewModel : ViewModel() {
     
        // 🔔 عميل إشعارات Push (FCM) عبر خادم Cloudflare
     private val notifyClient = NotifyClient() 
+    
+    // 🔔 مستمع مقاعد الغرفة (مزامنة Firestore بين الأجهزة)
+    private var seatsListener: ListenerRegistration? = null
 
     // --- Authentication State (الشاشة التي تظهر عند فتح التطبيق لأول مرة) ---
     private val _isLoggedIn = MutableStateFlow(false)
