@@ -57,6 +57,7 @@ jobs:
           CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
           AGORA_APP_ID: ${{ secrets.AGORA_APP_ID }}
           AGORA_APP_CERTIFICATE: ${{ secrets.AGORA_APP_CERTIFICATE }}
+          NOTIFICATION_SERVICE_KEY: ${{ secrets.NOTIFICATION_SERVICE_KEY }}
         run: |
           printf '%s' "$AGORA_APP_ID" | npx --yes wrangler@4 secret put AGORA_APP_ID
           printf '%s' "$AGORA_APP_CERTIFICATE" | npx --yes wrangler@4 secret put AGORA_APP_CERTIFICATE
