@@ -25,6 +25,9 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 class SocialAppViewModel : ViewModel() {
+    
+       // 🔔 عميل إشعارات Push (FCM) عبر خادم Cloudflare
+    private val notifyClient = NotifyClient() 
 
     // --- Authentication State (الشاشة التي تظهر عند فتح التطبيق لأول مرة) ---
     private val _isLoggedIn = MutableStateFlow(false)
