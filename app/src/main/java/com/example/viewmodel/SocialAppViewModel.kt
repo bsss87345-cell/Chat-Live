@@ -1744,6 +1744,32 @@ val stopAngle = (360f - (eliminatedIndex * sectorAngle)) % 360f
         }
     }
 
+      /** 🔔 يبدأ الاستماع لمقاعد الغرفة من Firestore (مزامنة بين الأجهزة). */
+    private fun startSeatsListener(roomId: String) {
+        stopSeatsListener()
+        seatsListener = CloudStore.listenRoomSeats(roomId) { seats ->
+            val myUid = _userProfile.value.id
+            fun mapSeat(seat: VoiceSeat): VoiceSeat =
+                if (myUid.isNotBlank() && seat.occupantId == myUid) seat.copy(occupantId = "me") else seat
+            val ownerSeat = mapSeat(seats.firstOrNull { it.seatNumber == 0 } ?: VoiceSeat(0))
+            val regular = (1..8).map { n ->
+                mapSeat(seats.firstOrNull { it.seatNumber == n } ?: VoiceSeat(n))
+            }
+            _chatRooms.update { list ->
+                list.map { room ->
+                    if (room.id == roomId) {
+                        room.copy(ownerVoiceSeat = ownerSeat, voiceSeats = regular)
+                    } else room
+                }
+            }
+        }
+    }
+
+    /** 🔔 يوقف استماع المقاعد. */
+    private fun stopSeatsListener() {
+        seatsListener?.remove()
+        seatsListener = null
+    }  
     
     fun takeVoiceSeatDirectly(roomId: String, seatNumber: Int) {
         val room = _chatRooms.value.find { it.id == roomId } ?: return
