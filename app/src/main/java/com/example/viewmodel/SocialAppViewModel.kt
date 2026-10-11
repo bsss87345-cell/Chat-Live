@@ -2393,6 +2393,16 @@ fun toggleOwnerVoiceMute(roomId: String) {
         _follows.update { it + newFollow }
         // ☁️ مزامنة المتابعة سحابياً
         viewModelScope.launch(Dispatchers.IO) { CloudStore.addFollow(newFollow) }
+                // 🔔 إشعار المستهدف بالمتابعة الجديدة
+        val followerName = _userProfile.value.name.ifBlank { "مستخدم" }
+        viewModelScope.launch {
+            notifyClient.notifyUsers(
+                userIds = listOf(targetUserId),
+                title = "👤 متابع جديد",
+                body = "$followerName بدأ يتابعك",
+                data = mapOf("type" to "follow", "fromId" to myId),
+            )
+        }
         _userProfile.update { it.copy(followingCount = it.followingCount + 1) }
         _userMessage.value = "تمت المتابعة بنجاح"
         }
