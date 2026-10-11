@@ -1,6 +1,7 @@
 // Chat Live — خادم التوكن (Cloudflare Worker)
 // 1) يتحقق أن المستخدم مسجّل دخول عبر توكن Firebase (Authorization: Bearer).
 // 2) يُصدر توكن Agora RTC صالحاً لساعة للغرفة المطلوبة.
+// 3) /notify: يرسل إشعارات Push (FCM) لقائمة مستخدمين — يحتاج السر NOTIFICATION_SERVICE_KEY.
 // الشهادة AGORA_APP_CERTIFICATE تُقرأ من بيئة Cloudflare فقط، ولا تُعاد ولا تُسجَّل أبداً.
 // الخوارزمية مطابقة لـAccessToken2 الرسمية من AgoraIO/Tools.
 
@@ -177,6 +178,180 @@ export async function verifyFirebaseIdToken(idToken, projectId, { getKeys = fire
   return payload.sub;
 }
 
+// ---------- إشعارات Push (FCM — Firebase Cloud Messaging API v1) ----------
+// يستخدم حساب الخدمة (Service Account) من السر NOTIFICATION_SERVICE_KEY (base64 لملف JSON).
+const FCM_SCOPE = 'https://www.googleapis.com/auth/firebase.messaging';
+const OAUTH_TOKEN_URL = 'https://oauth2.googleapis.com/token';
+const FIRESTORE_DOC_URL = (projectId, userId) =>
+  `https://firestore.googleapis.com/v1/projects/${projectId}/databases/(default)/documents/users/${encodeURIComponent(userId)}`;
+const FCM_SEND_URL = (projectId) =>
+  `https://fcm.googleapis.com/v1/projects/${projectId}/messages:send`;
+
+const b64url = (bytes) => base64(bytes).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
+const b64urlJson = (obj) => b64url(enc.encode(JSON.stringify(obj)));
+
+function pemToPkcs8Bytes(pem) {
+  const body = String(pem)
+    .replace(/-----BEGIN [^-]+-----/g, '')
+    .replace(/-----END [^-]+-----/g, '')
+    .replace(/\s+/g, '');
+  return Uint8Array.from(atob(body), (c) => c.charCodeAt(0));
+}
+
+let notifyTokenCache = { token: null, expiresAt: 0 };
+
+// توكن OAuth2 لحساب الخدمة: JWT موقّع بمفتاح RSA الخاص ثم يُبادل في Google
+async function notifyAccessToken(env) {
+  if (notifyTokenCache.token && Date.now() < notifyTokenCache.expiresAt) {
+    return notifyTokenCache.token;
+  }
+  const raw = env.NOTIFICATION_SERVICE_KEY;
+  if (!raw) throw new Error('notify_not_configured');
+  let account;
+  try {
+    account = JSON.parse(dec.decode(Uint8Array.from(atob(raw), (c) => c.charCodeAt(0))));
+  } catch {
+    throw new Error('notify_key_invalid');
+  }
+  const clientEmail = account?.client_email;
+  const privateKey = account?.private_key;
+  if (!clientEmail || !privateKey) throw new Error('notify_key_invalid');
+
+  const key = await crypto.subtle.importKey(
+    'pkcs8',
+    pemToPkcs8Bytes(privateKey),
+    { name: 'RSASSA-PKCS1-v1_5', hash: 'SHA-256' },
+    false,
+    ['sign'],
+  );
+  const now = Math.floor(Date.now() / 1000);
+  const assertion = `${b64urlJson({ alg: 'RS256', typ: 'JWT' })}.${b64urlJson({
+    iss: clientEmail,
+    scope: FCM_SCOPE,
+    aud: OAUTH_TOKEN_URL,
+    iat: now,
+    exp: now + 3600,
+  })}`;
+  const signature = await crypto.subtle.sign('RSASSA-PKCS1-v1_5', key, enc.encode(assertion));
+  const jwt = `${assertion}.${b64url(new Uint8Array(signature))}`;
+
+  const res = await fetch(OAUTH_TOKEN_URL, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+    body: `grant_type=urn:ietf:params:oauth:grant-type:jwt-bearer&assertion=${encodeURIComponent(jwt)}`,
+  });
+  if (!res.ok) throw new Error('oauth_failed');
+  const data = await res.json();
+  if (typeof data.access_token !== 'string') throw new Error('oauth_failed');
+  const ttlMs = (Number(data.expires_in) - 60) * 1000;
+  notifyTokenCache = { token: data.access_token, expiresAt: Date.now() + ttlMs };
+  return data.access_token;
+}
+
+// قراءة توكنات FCM للمستخدم من Firestore (حساب الخدمة يتجاوز قواعد الأمان)
+async function readFcmTokens(accessToken, projectId, userId) {
+  const res = await fetch(FIRESTORE_DOC_URL(projectId, userId), {
+    headers: { Authorization: `Bearer ${accessToken}` },
+  });
+  if (res.status === 404) return [];
+  if (!res.ok) throw new Error('firestore_read_failed');
+  const doc = await res.json();
+  const values = doc?.fields?.fcmTokens?.arrayValue?.values;
+  if (!Array.isArray(values)) return [];
+  return values.map((v) => v?.stringValue).filter((t) => typeof t === 'string' && t.length > 0);
+}
+
+// إرسال رسالة FCM v1 لجهاز واحد
+async function sendFcmMessage(accessToken, projectId, token, title, body, data) {
+  const res = await fetch(FCM_SEND_URL(projectId), {
+    method: 'POST',
+    headers: {
+      Authorization: `Bearer ${accessToken}`,
+      'Content-Type': 'application/json; charset=utf-8',
+    },
+    body: JSON.stringify({
+      message: { token, notification: { title, body }, data, android: { priority: 'HIGH' } },
+    }),
+  });
+  return res.ok;
+}
+
+async function handleNotify(request, env) {
+  const projectId = env.FIREBASE_PROJECT_ID;
+  if (!projectId) return json({ error: 'server_misconfigured' }, 500);
+
+  const match = /^Bearer (.+)$/.exec(request.headers.get('Authorization') || '');
+  if (!match) return json({ error: 'unauthorized' }, 401);
+  try {
+    await verifyFirebaseIdToken(match[1], projectId);
+  } catch {
+    return json({ error: 'unauthorized' }, 401);
+  }
+
+  let body;
+  try {
+    body = await request.json();
+  } catch {
+    return json({ error: 'invalid_json' }, 400);
+  }
+  const userIds = body?.userIds;
+  if (
+    !Array.isArray(userIds) ||
+    userIds.length === 0 ||
+    userIds.length > 200 ||
+    !userIds.every((u) => typeof u === 'string' && /^[A-Za-z0-9_-]{1,128}$/.test(u))
+  ) {
+    return json({ error: 'invalid_user_ids' }, 400);
+  }
+  const title = body?.title;
+  if (typeof title !== 'string' || title.length === 0 || title.length > 100) {
+    return json({ error: 'invalid_title' }, 400);
+  }
+  const text = body?.body;
+  if (typeof text !== 'string' || text.length > 500) {
+    return json({ error: 'invalid_body' }, 400);
+  }
+  // قيم data في FCM يجب أن تكون نصوصاً
+  const data = {};
+  const rawData = body?.data;
+  if (rawData && typeof rawData === 'object' && !Array.isArray(rawData)) {
+    for (const [k, v] of Object.entries(rawData)) {
+      if (typeof k === 'string' && k.length > 0 && k.length <= 64) data[k] = String(v);
+    }
+  }
+
+  let accessToken;
+  try {
+    accessToken = await notifyAccessToken(env);
+  } catch (e) {
+    if (e?.message === 'notify_not_configured') {
+      return json({ error: 'notify_not_configured' }, 503);
+    }
+    return json({ error: 'notify_unavailable' }, 502);
+  }
+
+  let sent = 0;
+  let failed = 0;
+  for (const userId of userIds) {
+    let tokens;
+    try {
+      tokens = await readFcmTokens(accessToken, projectId, userId);
+    } catch {
+      failed += 1;
+      continue;
+    }
+    for (const token of tokens) {
+      try {
+        if (await sendFcmMessage(accessToken, projectId, token, title, text, data)) sent += 1;
+        else failed += 1;
+      } catch {
+        failed += 1;
+      }
+    }
+  }
+  return json({ sent, failed });
+}
+
 // ---------- نقطة الدخول ----------
 const json = (body, status = 200, headers = {}) =>
   new Response(JSON.stringify(body), {
@@ -190,8 +365,10 @@ const json = (body, status = 200, headers = {}) =>
 
 export default {
   async fetch(request, env) {
-    if (new URL(request.url).pathname !== '/token') return json({ error: 'not_found' }, 404);
+    const path = new URL(request.url).pathname;
+    if (path !== '/token' && path !== '/notify') return json({ error: 'not_found' }, 404);
     if (request.method !== 'POST') return json({ error: 'method_not_allowed' }, 405, { Allow: 'POST' });
+    if (path === '/notify') return handleNotify(request, env);
 
     const appId = env.AGORA_APP_ID;
     const appCertificate = env.AGORA_APP_CERTIFICATE;
