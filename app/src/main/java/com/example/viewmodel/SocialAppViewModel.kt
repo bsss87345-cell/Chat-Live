@@ -1975,6 +1975,8 @@ fun muteVoiceSeat(roomId: String, seatNumber: Int) {
         }
 }
 fun toggleOwnerVoiceMute(roomId: String) {
+            val room = _chatRooms.value.find { it.id == roomId } ?: return
+        val newMuted = !room.ownerVoiceSeat.isMuted
         _chatRooms.update { list ->
             list.map { room ->
                 if (room.id == roomId) {
