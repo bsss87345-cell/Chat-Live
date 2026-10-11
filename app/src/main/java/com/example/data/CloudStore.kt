@@ -330,6 +330,67 @@ object CloudStore {
             imageUrl = getString("imageUrl")?.takeIf { it.isNotBlank() },
             backgroundImageUrl = getString("backgroundImageUrl")?.takeIf { it.isNotBlank() },
             ownerId = owner
+            
+    // ───────────────── مقاعد الغرفة الصوتية (rooms/{roomId}/seats/{seatId}) ─────────────────
+
+    /** معرّف مستند المقعد: "owner" للمقعد الرئيسي، أو "seat_1".."seat_8" للمقاعد. */
+    fun seatDocId(seatNumber: Int): String = if (seatNumber == 0) "owner" else "seat_$seatNumber"
+
+    /** يكتب/يحدّث مقعداً صوتياً — اللاعب يكتب مقعده فقط. */
+    fun saveRoomSeat(roomId: String, seat: VoiceSeat): Boolean {
+        val me = uid ?: return false
+        if (seat.occupantId != me) return false
+        val data = mapOf(
+            "seatNumber" to seat.seatNumber,
+            "occupantId" to me,
+            "occupantName" to (seat.occupantName ?: "").take(60),
+            "occupantAvatarUrl" to (seat.occupantAvatarUrl ?: "").take(500),
+            "isMuted" to seat.isMuted
+        )
+        return awaitWrite {
+            db().collection(ROOMS).document(roomId).collection(SEATS).document(seatDocId(seat.seatNumber)).set(data)
+        }
+    }
+
+    /** يحذف مستند المقعد (قوم من المقعد / طرد / إزالة). */
+    fun removeRoomSeat(roomId: String, seatNumber: Int): Boolean {
+        val me = uid ?: return false
+        return awaitWrite {
+            db().collection(ROOMS).document(roomId).collection(SEATS).document(seatDocId(seatNumber)).delete()
+        }
+    }
+
+    /** يحدّث حالة كتم مقعد (صاحب المقعد أو مالك الغرفة). */
+    fun setRoomSeatMuted(roomId: String, seatNumber: Int, muted: Boolean): Boolean {
+        return awaitWrite {
+            db().collection(ROOMS).document(roomId).collection(SEATS).document(seatDocId(seatNumber))
+                .update("isMuted", muted)
+        }
+    }
+
+    /** يستمع لتغييرات مقاعد الغرفة ويعيدها (seatNumber = 0 للمقعد الرئيسي). */
+    fun listenRoomSeats(roomId: String, onSeats: (List<VoiceSeat>) -> Unit): ListenerRegistration? {
+        if (uid == null) return null
+        return try {
+            db().collection(ROOMS).document(roomId).collection(SEATS)
+                .addSnapshotListener { snap, _ ->
+                    if (snap == null) return@addSnapshotListener
+                    val seats = snap.documents.mapNotNull { d ->
+                        val num = (d.getLong("seatNumber") ?: return@mapNotNull null).toInt()
+                        VoiceSeat(
+                            seatNumber = num,
+                            occupantId = d.getString("occupantId"),
+                            occupantName = d.getString("occupantName"),
+                            occupantAvatarUrl = d.getString("occupantAvatarUrl"),
+                            isMuted = d.getBoolean("isMuted") ?: false,
+                        )
+                    }
+                    onSeats(seats)
+                }
+        } catch (e: Exception) {
+            null
+        }
+    }
         )
     }
 
