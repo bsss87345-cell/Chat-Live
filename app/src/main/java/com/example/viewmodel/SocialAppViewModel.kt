@@ -1358,6 +1358,19 @@ fun blockRoomMember(roomId: String, memberId: String) {
         // ☁️ رفع الرسالة ليراها بقية الأعضاء
                 val myName = _userProfile.value.name.ifBlank { "مستخدم" }
         viewModelScope.launch { withContext(Dispatchers.IO) { CloudStore.saveRoomMessage(roomId, msg, myName) } }
+                // 🔔 إشعار مالك الغرفة بالرسالة الجديدة (إذا لم يكن أنت المالك)
+        val myId = _userProfile.value.id
+        if (room.ownerId.isNotBlank() && room.ownerId != myId && text.isNotBlank()) {
+            val senderName = _userProfile.value.name.ifBlank { "مستخدم" }
+            viewModelScope.launch {
+                notifyClient.notifyUsers(
+                    userIds = listOf(room.ownerId),
+                    title = "💬 رسالة جديدة في ${room.name}",
+                    body = "$senderName: ${text.take(200)}",
+                    data = mapOf("type" to "room_message", "roomId" to roomId),
+                )
+            }
+        }
     }
 
     fun pinRoomMessage(roomId: String, messageText: String) {
