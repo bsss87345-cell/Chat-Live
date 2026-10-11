@@ -58,6 +58,15 @@ fun MainScreen(viewModel: SocialAppViewModel) {
             val activeChatId by viewModel.activeChatId.collectAsStateWithLifecycle()
             val activeGameType by viewModel.activeGameType.collectAsStateWithLifecycle()
             val showAccountSettings by viewModel.showAccountSettings.collectAsStateWithLifecycle()
+                     // 🔔 طلب إذن الإشعارات (Android 13+)
+            val notificationsPermissionLauncher = rememberLauncherForActivityResult(
+                contract = ActivityResultContracts.RequestPermission(),
+            ) { }
+            LaunchedEffect(Unit) {
+                if (Build.VERSION.SDK_INT >= 33) {
+                    notificationsPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
+                }
+            }
                         VoiceSeatBridge(socialViewModel = viewModel)
 
         // Hide top bar and bottom navigation when user is inside any chat room, active game, active conversation, or the account settings page
