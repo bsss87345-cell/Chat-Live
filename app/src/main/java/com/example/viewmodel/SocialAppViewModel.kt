@@ -1958,6 +1958,8 @@ fun leaveVoiceSeat(roomId: String, seatNumber: Int) {
         }
 }
 fun muteVoiceSeat(roomId: String, seatNumber: Int) {
+           val room = _chatRooms.value.find { it.id == roomId } ?: return
+        val newMuted = !(room.voiceSeats.find { it.seatNumber == seatNumber }?.isMuted ?: false) 
         _chatRooms.update { list ->
             list.map { room ->
                 if (room.id == roomId) {
