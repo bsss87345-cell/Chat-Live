@@ -1269,6 +1269,12 @@ fun joinChatRoom(roomId: String, passwordInput: String = ""): Boolean {
             viewModelScope.launch { withContext(Dispatchers.IO) { CloudStore.stepRoomMemberCount(roomId, -1) } }
         }
         _activeRoomId.value = null
+                stopSeatsListener()
+        if (mySeatNumbers.isNotEmpty()) {
+            viewModelScope.launch(Dispatchers.IO) {
+                mySeatNumbers.forEach { CloudStore.removeRoomSeat(roomId, it) }
+            }
+        }
         _userMessage.value = "تمت مغادرة الغرفة."
     }
 
