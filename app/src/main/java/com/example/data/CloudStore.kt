@@ -393,8 +393,6 @@ object CloudStore {
             null
         }
     }
-        )
-    }
 
         // ───────────────── رسائل الغرف (rooms/{roomId}/messages/{msgId}) ─────────────────
 
