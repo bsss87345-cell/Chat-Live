@@ -1111,6 +1111,7 @@ class SocialAppViewModel : ViewModel() {
         }
 
                 _activeRoomId.value = roomId
+                 startSeatsListener(roomId)
         // ☁️ جلب رسائل الغرفة من السحابة (لمن شارك من جهاز آخر)
                 // الرسائل تصل لحظياً عبر startRoomMessagesSync
         }
