@@ -330,9 +330,9 @@ object CloudStore {
             imageUrl = getString("imageUrl")?.takeIf { it.isNotBlank() },
             backgroundImageUrl = getString("backgroundImageUrl")?.takeIf { it.isNotBlank() },
             ownerId = owner
-                    )
+            )
     }
-            
+    
     // ───────────────── مقاعد الغرفة الصوتية (rooms/{roomId}/seats/{seatId}) ─────────────────
 
     /** معرّف مستند المقعد: "owner" للمقعد الرئيسي، أو "seat_1".."seat_8" للمقاعد. */
