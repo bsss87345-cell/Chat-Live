@@ -1977,6 +1977,7 @@ fun muteVoiceSeat(roomId: String, seatNumber: Int) {
             }
         }
 }
+    viewModelScope.launch(Dispatchers.IO) { CloudStore.setRoomSeatMuted(roomId, 0, newMuted) }
 fun toggleOwnerVoiceMute(roomId: String) {
             val room = _chatRooms.value.find { it.id == roomId } ?: return
         val newMuted = !room.ownerVoiceSeat.isMuted
