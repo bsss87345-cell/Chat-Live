@@ -1860,6 +1860,14 @@ val stopAngle = (360f - (eliminatedIndex * sectorAngle)) % 360f
             }
         }
         _userMessage.value = "تم الصعود على مايك المالك."
+                viewModelScope.launch(Dispatchers.IO) {
+            CloudStore.saveRoomSeat(roomId, VoiceSeat(
+                seatNumber = 0,
+                occupantId = _userProfile.value.id,
+                occupantName = _userProfile.value.name,
+                occupantAvatarUrl = _userProfile.value.avatarUrl,
+            ))
+        }
     }
 
     fun inviteMemberToOwnerSeat(roomId: String, memberId: String) {
