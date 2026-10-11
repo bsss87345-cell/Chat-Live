@@ -330,6 +330,8 @@ object CloudStore {
             imageUrl = getString("imageUrl")?.takeIf { it.isNotBlank() },
             backgroundImageUrl = getString("backgroundImageUrl")?.takeIf { it.isNotBlank() },
             ownerId = owner
+                    )
+    }
             
     // ───────────────── مقاعد الغرفة الصوتية (rooms/{roomId}/seats/{seatId}) ─────────────────
 
