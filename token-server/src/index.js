@@ -180,7 +180,8 @@ export async function verifyFirebaseIdToken(idToken, projectId, { getKeys = fire
 
 // ---------- إشعارات Push (FCM — Firebase Cloud Messaging API v1) ----------
 // يستخدم حساب الخدمة (Service Account) من السر NOTIFICATION_SERVICE_KEY (base64 لملف JSON).
-const FCM_SCOPE = 'https://www.googleapis.com/auth/firebase.messaging';
+// صلاحيات حساب الخدمة: FCM (إشعارات) + Firestore (فحص المقاعد)
+const GOOGLE_SCOPES = 'https://www.googleapis.com/auth/firebase.messaging https://www.googleapis.com/auth/datastore';
 const OAUTH_TOKEN_URL = 'https://oauth2.googleapis.com/token';
 const FIRESTORE_DOC_URL = (projectId, userId) =>
   `https://firestore.googleapis.com/v1/projects/${projectId}/databases/(default)/documents/users/${encodeURIComponent(userId)}`;
