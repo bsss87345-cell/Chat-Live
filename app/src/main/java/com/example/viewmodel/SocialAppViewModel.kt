@@ -1959,7 +1959,7 @@ fun leaveVoiceSeat(roomId: String, seatNumber: Int) {
             }
         }
 }
- viewModelScope.launch(Dispatchers.IO) { CloudStore.setRoomSeatMuted(roomId, seatNumber, newMuted) }
+ 
 fun muteVoiceSeat(roomId: String, seatNumber: Int) {
            val room = _chatRooms.value.find { it.id == roomId } ?: return
         val newMuted = !(room.voiceSeats.find { it.seatNumber == seatNumber }?.isMuted ?: false) 
@@ -1976,6 +1976,7 @@ fun muteVoiceSeat(roomId: String, seatNumber: Int) {
                 } else room
             }
         }
+        viewModelScope.launch(Dispatchers.IO) { CloudStore.setRoomSeatMuted(roomId, seatNumber, newMuted) }
 }
     
 fun toggleOwnerVoiceMute(roomId: String) {
