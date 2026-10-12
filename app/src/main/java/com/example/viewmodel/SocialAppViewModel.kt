@@ -1941,9 +1941,9 @@ val stopAngle = (360f - (eliminatedIndex * sectorAngle)) % 360f
                 } else room
             }
         }
+        viewModelScope.launch(Dispatchers.IO) { CloudStore.removeRoomSeat(roomId, 0) }
     }
     viewModelScope.launch(Dispatchers.IO) { CloudStore.removeRoomSeat(roomId, seatNumber) }
-    viewModelScope.launch(Dispatchers.IO) { CloudStore.removeRoomSeat(roomId, 0) }
 fun leaveVoiceSeat(roomId: String, seatNumber: Int) {
         _chatRooms.update { list ->
             list.map { room ->
