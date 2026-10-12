@@ -208,6 +208,32 @@ service cloud.firestore {
         allow update: if false;
         allow delete: if signedIn() && isMe(existing().senderId);
       }
+
+      // ── مقاعد الغرفة الصوتية (rooms/{roomId}/seats/{seatId}) ──
+      // اللاعب يكتب مقعده فقط
+      match /seats/{seatId} {
+        allow read: if signedIn();
+
+        // إنشاء: اللاعب ينشئ مقعده فقط
+        allow create: if signedIn()
+          && incoming().occupantId == request.auth.uid
+          && incoming().seatNumber is number;
+
+        // التعديل: صاحب المقعد (مع unchanged للمعرّف)، أو المالك (كتم فقط)
+        allow update: if signedIn() && (
+          (existing().occupantId == request.auth.uid
+            && incoming().occupantId == request.auth.uid)
+          ||
+          (isMe(get(/databases/$(database)/documents/rooms/$(roomId)).data.ownerId)
+            && onlyChanged(['isMuted']))
+        );
+
+        // الحذف: صاحب المقعد أو المالك
+        allow delete: if signedIn() && (
+          existing().occupantId == request.auth.uid
+          || isMe(get(/databases/$(database)/documents/rooms/$(roomId)).data.ownerId)
+        );
+      }
     }
 
     // ═════════════════════════ القصص ═════════════════════════
