@@ -412,6 +412,18 @@ export default {
     }
     if (role !== 'host' && role !== 'audience') return json({ error: 'invalid_role' }, 400);
 
+       // 🔒 role=host: التحقق أن المستخدم جالس على مقعد صوتي (server-side)
+    if (role === 'host') {
+      let accessToken;
+      try {
+        accessToken = await notifyAccessToken(env);
+      } catch {
+        return json({ error: 'seat_check_unavailable' }, 503);
+      }
+      const onSeat = await isOnVoiceSeat(accessToken, projectId, channel, firebaseUid);
+      if (!onSeat) return json({ error: 'not_on_voice_seat' }, 403);
+    } 
+    
     const uid = await agoraUidFor(firebaseUid);
     const token = await buildRtcToken({
       appId,
