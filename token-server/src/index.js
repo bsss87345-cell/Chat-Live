@@ -228,7 +228,7 @@ async function notifyAccessToken(env) {
   const now = Math.floor(Date.now() / 1000);
   const assertion = `${b64urlJson({ alg: 'RS256', typ: 'JWT' })}.${b64urlJson({
     iss: clientEmail,
-    scope: FCM_SCOPE,
+    scope: GOOGLE_SCOPES,
     aud: OAUTH_TOKEN_URL,
     iat: now,
     exp: now + 3600,
