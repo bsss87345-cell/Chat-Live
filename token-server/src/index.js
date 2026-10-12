@@ -262,6 +262,18 @@ async function readFcmTokens(accessToken, projectId, userId) {
   return values.map((v) => v?.stringValue).filter((t) => typeof t === 'string' && t.length > 0);
 }
 
+// 🔒 هل المستخدم جالس على مقعد صوتي في الغرفة؟ (قراءة مجموعة seats)
+async function isOnVoiceSeat(accessToken, projectId, channel, uid) {
+  const res = await fetch(
+    `https://firestore.googleapis.com/v1/projects/${projectId}/databases/(default)/documents/rooms/${encodeURIComponent(channel)}/seats`,
+    { headers: { Authorization: `Bearer ${accessToken}` } }
+  );
+  if (!res.ok) return false;
+  const data = await res.json();
+  const docs = data.documents || [];
+  return docs.some((d) => d?.fields?.occupantId?.stringValue === uid);
+}
+
 // إرسال رسالة FCM v1 لجهاز واحد
 async function sendFcmMessage(accessToken, projectId, token, title, body, data) {
   const res = await fetch(FCM_SEND_URL(projectId), {
