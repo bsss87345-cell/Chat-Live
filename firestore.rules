@@ -234,24 +234,6 @@ service cloud.firestore {
           || isMe(get(/databases/$(database)/documents/rooms/$(roomId)).data.ownerId)
         );
       }
-      // ── مقاعد الغرفة الصوتية (rooms/{roomId}/seats/{seatId}) ──
-      // ✍️ اللاعب يكتب مقعده فقط — المالك يقدر يكتم/يطرد
-      match /seats/{seatId} {
-        allow read: if signedIn();
-        allow create: if signedIn()
-          && incoming().occupantId == request.auth.uid
-          && textUpTo('occupantName', 60);
-        allow update: if signedIn() && (
-          isMe(existing().occupantId)
-          ||
-          (isMe(get(/databases/$(database)/documents/rooms/$(roomId)).data.ownerId) && onlyChanged(['isMuted']))
-        );
-        allow delete: if signedIn() && (
-          isMe(existing().occupantId)
-          ||
-          isMe(get(/databases/$(database)/documents/rooms/$(roomId)).data.ownerId)
-        );
-      }
     }
 
     // ═════════════════════════ القصص ═════════════════════════
