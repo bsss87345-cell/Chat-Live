@@ -1477,12 +1477,11 @@ fun blockRoomMember(roomId: String, memberId: String) {
             }
         }
         _userMessage.value = "تم إلغاء تثبيت الإعلان."
+        fun deleteConversation(conversationId: String) {
+        _conversations.update { list -> list.filter { it.id != conversationId } }
+        viewModelScope.launch(Dispatchers.IO) { CloudStore.deleteConversation(conversationId) }
+        _userMessage.value = "تم حذف المحادثة."
     }
-
-    fun deleteRoomMessage(roomId: String, messageId: String) {
-        _chatRooms.update { list ->
-            list.map {
-                if (it.id == roomId) {
                     it.copy(messages = it.messages.filter { m -> m.id != messageId })
                 } else it
             }
