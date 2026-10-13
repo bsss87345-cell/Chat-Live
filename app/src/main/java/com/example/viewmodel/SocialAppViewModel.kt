@@ -1820,7 +1820,6 @@ val stopAngle = (360f - (eliminatedIndex * sectorAngle)) % 360f
         membersListener?.remove()
         membersListener = null
     }
-    }  
     
     fun takeVoiceSeatDirectly(roomId: String, seatNumber: Int) {
         val room = _chatRooms.value.find { it.id == roomId } ?: return
