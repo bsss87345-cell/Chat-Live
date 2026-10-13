@@ -244,10 +244,13 @@ service cloud.firestore {
         allow create: if signedIn()
           && memberId == request.auth.uid
           && incoming().uid == request.auth.uid;
-        allow update: if signedIn() && (
+          allow update: if signedIn() && (
           isMe(memberId)
-          ||
-          isMe(get(/databases/$(database)/documents/rooms/$(roomId)).data.ownerId)
+          || (isRoomOwner(roomId) && existing().role != 'OWNER')
+          || (isRoomAdmin(roomId)
+              && existing().role != 'OWNER'
+              && existing().role != 'ADMIN'
+              && onlyChanged(['isMuted']))
         );
                 allow delete: if signedIn() && (
           isMe(memberId)
