@@ -43,6 +43,7 @@ object CloudStore {
     private const val ROOMS = "rooms"
     private const val MESSAGES = "messages"
     private const val SEATS = "seats"
+    private const val MEMBERS = "members"
     private const val MAX_ROOMS = 50
     private const val POSTS = "posts"
     private const val COMMENTS = "comments"
