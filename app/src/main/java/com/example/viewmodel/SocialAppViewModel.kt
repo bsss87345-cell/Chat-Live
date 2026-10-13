@@ -1180,6 +1180,7 @@ class SocialAppViewModel : ViewModel() {
             CloudStore.saveRoomMember(newRoom.id, RoomMember("me", _userProfile.value.name.ifBlank { "مستخدم" }, RoomMemberRole.OWNER, isOnline = true, avatarUrl = _userProfile.value.avatarUrl))
         }
         startMembersListener(newRoom.id)
+        startSeatRequestsListener(newRoom.id)
         _activeRoomId.value = newRoom.id
         _userMessage.value = "تم إنشاء غرفة الدردشة '${newRoom.name}' بنجاح وأنت الآن المالك!"
     }
