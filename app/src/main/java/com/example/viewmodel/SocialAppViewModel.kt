@@ -196,6 +196,7 @@ class SocialAppViewModel : ViewModel() {
         startLiveRoomUpdates()
         startRoomMessagesSync()
         startConversationsListener()
+        startFollowRequestsListeners()
                } 
 
     /**
