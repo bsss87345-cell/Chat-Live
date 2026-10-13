@@ -2612,7 +2612,15 @@ fun toggleOwnerVoiceMute(roomId: String) {
                 _userMessage.value = "طلب المتابعة مُرسل مسبقاً — بانتظار الموافقة ⏳"
                 return
             }
-            _pendingFollowRequests.update { it + targetUserId }
+            viewModelScope.launch(Dispatchers.IO) { CloudStore.saveFollowRequest(targetUserId) }
+            viewModelScope.launch {
+                notifyClient.notifyUsers(
+                    userIds = listOf(targetUserId),
+                    title = "📩 طلب متابعة",
+                    body = "${_userProfile.value.name.ifBlank { "مستخدم" }} يطلب متابعتك",
+                    data = mapOf("type" to "follow_request", "fromId" to myId)
+                )
+            }
             _userMessage.value = "تم إرسال طلب المتابعة — بانتظار موافقة صاحب الحساب ⏳"
             return
         }
