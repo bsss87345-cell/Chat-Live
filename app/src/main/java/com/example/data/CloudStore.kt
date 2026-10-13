@@ -48,6 +48,7 @@ object CloudStore {
     private const val SEATS = "seats"
     private const val MEMBERS = "members"
     private const val SEAT_REQUESTS = "seatRequests"
+    private const val BLOCKED = "blocked"
     private const val MAX_ROOMS = 50
     private const val POSTS = "posts"
     private const val COMMENTS = "comments"
@@ -604,6 +605,15 @@ object CloudStore {
         }
     }
 
+    /** يطرد عضواً — للمالك أو المشرف فقط (يحذف عضويته من الغرفة). */
+    fun removeRoomMemberOf(roomId: String, memberUid: String): Boolean {
+        if (uid == null || memberUid.isBlank()) return false
+        return awaitWrite {
+            db().collection(ROOMS).document(roomId).collection(MEMBERS).document(memberUid).delete()
+        }
+    }
+
+
     /** يحدّث دور/حالة العضو — للمالك فقط (الإشراف). */
     fun updateRoomMember(roomId: String, memberUid: String, role: RoomMemberRole? = null, isMuted: Boolean? = null): Boolean {
         val data = buildMap {
@@ -640,6 +650,54 @@ object CloudStore {
         }
     }
     
+    // ───────────────── المحظورون في الغرفة (rooms/{roomId}/blocked/{uid}) ─────────────────
+
+    /** يحظر عضواً — للمالك أو المشرف فقط. */
+    fun saveRoomBlock(roomId: String, blockedUid: String, name: String, avatarUrl: String): Boolean {
+        if (uid == null || blockedUid.isBlank()) return false
+        val data = mapOf(
+            "uid" to blockedUid,
+            "name" to name.take(60),
+            "avatarUrl" to avatarUrl.take(500),
+            "blockedAt" to System.currentTimeMillis()
+        )
+        return awaitWrite {
+            db().collection(ROOMS).document(roomId).collection(BLOCKED).document(blockedUid).set(data)
+        }
+    }
+
+    /** يفك حظر عضو — للمالك أو المشرف فقط. */
+    fun removeRoomBlock(roomId: String, blockedUid: String): Boolean {
+        if (uid == null || blockedUid.isBlank()) return false
+        return awaitWrite {
+            db().collection(ROOMS).document(roomId).collection(BLOCKED).document(blockedUid).delete()
+        }
+    }
+
+    /** يستمع لقائمة المحظورين في الغرفة (تحديث لحظي لكل الأجهزة). */
+    fun listenRoomBlocks(roomId: String, onBlocked: (List<RoomMember>) -> Unit): ListenerRegistration? {
+        if (uid == null) return null
+        return try {
+            db().collection(ROOMS).document(roomId).collection(BLOCKED)
+                .addSnapshotListener { snap, _ ->
+                    if (snap == null) return@addSnapshotListener
+                    val blocked = snap.documents.mapNotNull { d ->
+                        RoomMember(
+                            id = d.getString("uid") ?: d.id,
+                            name = d.getString("name").orEmpty(),
+                            role = RoomMemberRole.MEMBER,
+                            isOnline = false,
+                            isMuted = false,
+                            avatarUrl = d.getString("avatarUrl").orEmpty()
+                        )
+                    }
+                    onBlocked(blocked)
+                }
+        } catch (e: Exception) {
+            null
+        }
+    }
+
             // ───────────────── المنشورات (posts/{postId}) ─────────────────
 
     /** ينشر منشوراً أو يحدّث نص منشوره — القاعدة تمنع تعديل منشور غيره. حاجبة ⇒ من IO فقط. */
