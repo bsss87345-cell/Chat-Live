@@ -698,6 +698,145 @@ object CloudStore {
         }
     }
 
+        // ───────────────── المحادثات الخاصة (conversations/{convId}) ─────────────────
+
+    /** معرّف محادثة 1:1 ثابت من المعرّفين (يمنع تكرار المحادثة بين نفس الشخصين). */
+    fun conversationIdFor(otherUid: String): String? {
+        val me = uid ?: return null
+        if (otherUid.isBlank() || otherUid == me) return null
+        return listOf(me, otherUid).sorted().joinToString("_")
+    }
+
+    /** ينشئ محادثة 1:1 (أو يحدّث بيانات الطرفين) — يرجع معرّفها. */
+    fun saveConversation(
+        otherUid: String,
+        otherName: String,
+        otherAvatarUrl: String,
+        myName: String,
+        myAvatarUrl: String
+    ): String? {
+        val me = uid ?: return null
+        val convId = conversationIdFor(otherUid) ?: return null
+        val data = mapOf(
+            "participants" to listOf(me, otherUid),
+            "isGroup" to false,
+            "names" to mapOf(me to myName.take(60), otherUid to otherName.take(60)),
+            "avatarUrls" to mapOf(me to myAvatarUrl.take(500), otherUid to otherAvatarUrl.take(500)),
+            "lastMessage" to "",
+            "lastSenderId" to "",
+            "createdAt" to System.currentTimeMillis(),
+            "updatedAt" to System.currentTimeMillis()
+        )
+        val ok = awaitWrite {
+            db().collection(CONVERSATIONS).document(convId).set(data, SetOptions.merge())
+        }
+        return if (ok) convId else null
+    }
+
+    /** يرسل رسالة خاصة ويحدّث آخر رسالة في المحادثة. */
+    fun saveDirectMessage(conversationId: String, message: ChatMessage, preview: String): Boolean {
+        val me = uid ?: return false
+        val msgData = mapOf(
+            "senderId" to me,
+            "senderName" to message.senderName.take(60),
+            "text" to message.text.take(2000),
+            "type" to message.type.name,
+            "timeText" to message.timestamp.take(20),
+            "imageUri" to message.imageUri.take(500),
+            "createdAt" to System.currentTimeMillis(),
+            "sentAt" to FieldValue.serverTimestamp()
+        )
+        val sent = awaitWrite {
+            db().collection(CONVERSATIONS).document(conversationId)
+                .collection(MESSAGES).document(message.id).set(msgData)
+        }
+        if (!sent) return false
+        return awaitWrite {
+            db().collection(CONVERSATIONS).document(conversationId).update(
+                mapOf(
+                    "lastMessage" to preview.take(120),
+                    "lastSenderId" to me,
+                    "updatedAt" to System.currentTimeMillis()
+                )
+            )
+        }
+    }
+
+    /** يستمع لمحادثات المستخدم — الترتيب محلياً (بلا فهرس مركّب). */
+    fun listenConversations(onConversations: (List<com.example.model.ChatConversation>) -> Unit): ListenerRegistration? {
+        val me = uid ?: return null
+        return try {
+            db().collection(CONVERSATIONS)
+                .whereArrayContains("participants", me)
+                .addSnapshotListener { snap, _ ->
+                    if (snap == null) return@addSnapshotListener
+                    val list = snap.documents.mapNotNull { d ->
+                        val updatedAt = d.getLong("updatedAt") ?: 0L
+                        val conv = d.toConversation(me) ?: return@mapNotNull null
+                        conv to updatedAt
+                    }.sortedByDescending { it.second }.map { it.first }
+                    onConversations(list)
+                }
+        } catch (e: Exception) {
+            null
+        }
+    }
+
+    /** يستمع لرسائل محادثة معيّنة (الأقدم أولاً). */
+    fun listenDirectMessages(
+        conversationId: String,
+        onMessages: (List<ChatMessage>) -> Unit
+    ): ListenerRegistration? {
+        val me = uid ?: return null
+        return try {
+            db().collection(CONVERSATIONS).document(conversationId).collection(MESSAGES)
+                .orderBy("createdAt").limit(200)
+                .addSnapshotListener { snap, _ ->
+                    if (snap == null) return@addSnapshotListener
+                    onMessages(snap.documents.map { d ->
+                        ChatMessage(
+                            id = d.id,
+                            senderName = d.getString("senderName").orEmpty(),
+                            text = d.getString("text").orEmpty(),
+                            timestamp = d.getString("timeText") ?: "الآن",
+                            isFromMe = d.getString("senderId") == me,
+                            type = try {
+                                ChatMessageType.valueOf(d.getString("type") ?: "TEXT")
+                            } catch (e: Exception) {
+                                ChatMessageType.TEXT
+                            },
+                            imageUri = d.getString("imageUri").orEmpty()
+                        )
+                    })
+                }
+        } catch (e: Exception) {
+            null
+        }
+    }
+
+    /** يحذف المحادثة من جهاز المستخدم (القاعدة تسمح لأي طرف). */
+    fun deleteConversation(conversationId: String): Boolean = awaitWrite {
+        db().collection(CONVERSATIONS).document(conversationId).delete()
+    }
+
+    private fun DocumentSnapshot.toConversation(me: String): com.example.model.ChatConversation? {
+        val participants = get("participants") as? List<*> ?: return null
+        val other = participants.mapNotNull { it as? String }.firstOrNull { it != me } ?: return null
+        @Suppress("UNCHECKED_CAST")
+        val names = (get("names") as? Map<String, String>) ?: emptyMap()
+        @Suppress("UNCHECKED_CAST")
+        val avatars = (get("avatarUrls") as? Map<String, String>) ?: emptyMap()
+        return com.example.model.ChatConversation(
+            id = id,
+            name = names[other].orEmpty().ifBlank { "مستخدم" },
+            isGroup = getBoolean("isGroup") ?: false,
+            lastMessage = getString("lastMessage").orEmpty(),
+            time = timeAgoFromMillis(getLong("updatedAt") ?: 0L),
+            memberCount = participants.size,
+            avatarUrl = avatars[other].orEmpty()
+        )
+    }
+    
             // ───────────────── المنشورات (posts/{postId}) ─────────────────
 
     /** ينشر منشوراً أو يحدّث نص منشوره — القاعدة تمنع تعديل منشور غيره. حاجبة ⇒ من IO فقط. */
