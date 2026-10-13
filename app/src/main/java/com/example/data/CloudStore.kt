@@ -396,7 +396,92 @@ object CloudStore {
             null
         }
     }
+    
+    // ───────────────── طلبات المايك (rooms/{roomId}/seatRequests/{uid}) ─────────────────
 
+    /**
+     * 🔔 يرسل طلب مايك — مستند واحد لكل مستخدم (المعرّف = uid الطالب)،
+     * فلا يتكرر الطلب حتى لو ضغط المستخدم أكثر من مرة.
+     */
+    fun saveSeatRequest(roomId: String, seatNumber: Int, name: String, avatarUrl: String?): Boolean {
+        val me = uid ?: return false
+        val data = mapOf(
+            "uid" to me,
+            "name" to name.take(60),
+            "avatarUrl" to (avatarUrl ?: "").take(500),
+            "seatNumber" to seatNumber,
+            "createdAt" to System.currentTimeMillis()
+        )
+        return awaitWrite {
+            db().collection(ROOMS).document(roomId).collection(SEAT_REQUESTS).document(me).set(data)
+        }
+    }
+
+    /** يلغي طلب مايك — الطالب يلغي طلبه فقط (docId = uid). */
+    fun removeSeatRequest(roomId: String): Boolean {
+        val me = uid ?: return false
+        return awaitWrite {
+            db().collection(ROOMS).document(roomId).collection(SEAT_REQUESTS).document(me).delete()
+        }
+    }
+
+    /** يحذف طلب مايك لمستخدم آخر — للمالك بعد القبول أو الرفض. */
+    fun removeSeatRequestOf(roomId: String, requesterUid: String): Boolean {
+        if (uid == null || requesterUid.isBlank()) return false
+        return awaitWrite {
+            db().collection(ROOMS).document(roomId).collection(SEAT_REQUESTS).document(requesterUid).delete()
+        }
+    }
+
+    /**
+     * يضع مستخدماً على مقعد — للمالك/المشرف عند قبول طلب مايك.
+     * بخلاف [saveRoomSeat] لا يشترط أن يكون الجالس هو المستخدم الحالي.
+     */
+    fun assignRoomSeat(
+        roomId: String,
+        seatNumber: Int,
+        occupantUid: String,
+        occupantName: String,
+        occupantAvatarUrl: String?
+    ): Boolean {
+        if (uid == null || occupantUid.isBlank()) return false
+        val data = mapOf(
+            "seatNumber" to seatNumber,
+            "occupantId" to occupantUid,
+            "occupantName" to occupantName.take(60),
+            "occupantAvatarUrl" to (occupantAvatarUrl ?: "").take(500),
+            "isMuted" to false
+        )
+        return awaitWrite {
+            db().collection(ROOMS).document(roomId).collection(SEATS).document(seatDocId(seatNumber)).set(data)
+        }
+    }
+
+    /** يستمع لطلبات المايك في الغرفة (تحديث لحظي لكل الأجهزة). */
+    fun listenSeatRequests(roomId: String, onRequests: (List<VoiceSeatRequest>) -> Unit): ListenerRegistration? {
+        if (uid == null) return null
+        return try {
+            db().collection(ROOMS).document(roomId).collection(SEAT_REQUESTS)
+                .addSnapshotListener { snap, _ ->
+                    if (snap == null) return@addSnapshotListener
+                    val requests = snap.documents.mapNotNull { d ->
+                        VoiceSeatRequest(
+                            id = d.id,
+                            requesterId = d.getString("uid") ?: d.id,
+                            requesterName = d.getString("name").orEmpty(),
+                            requesterAvatarUrl = d.getString("avatarUrl").orEmpty(),
+                            seatNumber = (d.getLong("seatNumber") ?: return@mapNotNull null).toInt(),
+                            requestedAtMillis = d.getLong("createdAt") ?: 0L
+                        )
+                    }
+                    onRequests(requests)
+                }
+        } catch (e: Exception) {
+            null
+        }
+    }
+    
+    
         // ───────────────── رسائل الغرف (rooms/{roomId}/messages/{msgId}) ─────────────────
 
     /** يرفع رسالة غرفة — القاعدة تشترط senderId = معرّف المُرسِل وطول النص ≤ 2000. */
