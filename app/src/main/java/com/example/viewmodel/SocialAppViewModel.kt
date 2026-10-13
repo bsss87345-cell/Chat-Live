@@ -1775,6 +1775,7 @@ val stopAngle = (360f - (eliminatedIndex * sectorAngle)) % 360f
       /** 🔔 يبدأ الاستماع لمقاعد الغرفة من Firestore (مزامنة بين الأجهزة). */
     private fun startSeatsListener(roomId: String) {
         stopSeatsListener()
+        startSeatRequestsListener(roomId)
         seatsListener = CloudStore.listenRoomSeats(roomId) { seats ->
             val myUid = _userProfile.value.id
             fun mapSeat(seat: VoiceSeat): VoiceSeat =
