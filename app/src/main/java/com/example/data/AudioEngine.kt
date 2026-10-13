@@ -99,8 +99,14 @@ class AudioEngine(
                 mAudioScenario = Constants.AUDIO_SCENARIO_CHATROOM
             }
             val created = RtcEngine.create(config)
-            created.enableAudio()
             engine = created
+            // ⚠️ تفعيل الصوت قد يرمي استثناءً (مثلاً بلا إذن الميكروفون وقت الدخول) —
+            // لا يُسقط إنشاء المحرّك كاملاً؛ نُفعِّله لاحقاً عند الجلوس على المقعد.
+            try {
+                created.enableAudio()
+            } catch (t: Throwable) {
+                Log.w(TAG, "تعذّر تفعيل الصوت عند الإنشاء", t)
+            }
             true
         } catch (e: Exception) {
             Log.w(TAG, "فشل إنشاء محرّك Agora", e)
