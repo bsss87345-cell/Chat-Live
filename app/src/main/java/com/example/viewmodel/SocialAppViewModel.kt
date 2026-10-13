@@ -1280,6 +1280,9 @@ fun joinChatRoom(roomId: String, passwordInput: String = ""): Boolean {
         val leftRoom = _chatRooms.value.find { it.id == roomId }
         if (leftRoom != null && !leftRoom.isOwner && leftRoom.ownerId.isNotBlank()) {
             viewModelScope.launch { withContext(Dispatchers.IO) { CloudStore.stepRoomMemberCount(roomId, -1) } }
+                    // ☁️ حذف العضوية السحابية + إيقاف الاستماع
+        stopMembersListener()
+        viewModelScope.launch(Dispatchers.IO) { CloudStore.removeRoomMember(roomId) }
         }
         _activeRoomId.value = null
                 stopSeatsListener()
