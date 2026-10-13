@@ -38,6 +38,20 @@ service cloud.firestore {
           || incoming()[field] - existing()[field] == -1;
     }
 
+    // مالك الغرفة
+    function isRoomOwner(roomId) {
+      return isMe(get(/databases/$(database)/documents/rooms/$(roomId)).data.ownerId);
+    }
+    // مشرف الغرفة (عضو رتبته ADMIN فيها)
+    function isRoomAdmin(roomId) {
+      return signedIn()
+        && exists(/databases/$(database)/documents/rooms/$(roomId)/members/$(request.auth.uid))
+        && get(/databases/$(database)/documents/rooms/$(roomId)/members/$(request.auth.uid)).data.role == 'ADMIN';
+    }
+    // المالك أو المشرف
+    function isRoomStaff(roomId) {
+      return isRoomOwner(roomId) || isRoomAdmin(roomId);
+    }
     // ═════════════════════════ المستخدمون ═════════════════════════
     match /users/{userId} {
       // أي مستخدم مسجّل يقدر يقرأ البروفايلات (بروفايلات عامة)
