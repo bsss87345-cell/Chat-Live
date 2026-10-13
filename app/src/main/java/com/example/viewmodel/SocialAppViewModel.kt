@@ -1244,6 +1244,10 @@ fun joinChatRoom(roomId: String, passwordInput: String = ""): Boolean {
         val joinedRoom = _chatRooms.value.find { it.id == roomId }
         if (joinedRoom != null && !joinedRoom.isOwner && joinedRoom.ownerId.isNotBlank()) {
             viewModelScope.launch { withContext(Dispatchers.IO) { CloudStore.stepRoomMemberCount(roomId, 1) } }
+                    // ☁️ عضوية سحابية (members/{uid})
+        viewModelScope.launch(Dispatchers.IO) {
+            CloudStore.saveRoomMember(roomId, RoomMember("me", _userProfile.value.name.ifBlank { "مستخدم" }, RoomMemberRole.MEMBER, isOnline = true, avatarUrl = _userProfile.value.avatarUrl))
+        }
         }
         _userMessage.value = "تم الانضمام إلى الغرفة بنجاح!"
         return true
