@@ -2563,6 +2563,37 @@ fun toggleOwnerVoiceMute(roomId: String) {
         _userMessage.value = "تم تسجيل الخروج بنجاح. مرحباً بك في أي وقت!"
     }
 
+            /** معرّفات من أرسلوا لي طلبات متابعة (حسابي خاص). */
+    private val _incomingFollowRequests = MutableStateFlow<List<String>>(emptyList())
+    val incomingFollowRequests: StateFlow<List<String>> = _incomingFollowRequests.asStateFlow()
+
+    /** 🔔 يستمع لطلبات المتابعة (الصادرة والواردة). */
+    private fun startFollowRequestsListeners() {
+        if (CloudStore.uid == null) return
+        outgoingFollowRequestsListener?.remove()
+        outgoingFollowRequestsListener = CloudStore.listenOutgoingFollowRequests { list ->
+            _pendingFollowRequests.value = list.filter { it.second == "pending" }.map { it.first }
+            // ✅ وافق صاحب الحساب ⇒ تصير المتابعة فعلية ثم نحذف الطلب
+            list.filter { it.second == "approved" }.forEach { (toId, _) ->
+                if (!isFollowing(toId)) {
+                    followUser(toId, forceDirect = true)
+                    viewModelScope.launch(Dispatchers.IO) { CloudStore.removeFollowRequest(toId) }
+                }
+            }
+        }
+        incomingFollowRequestsListener?.remove()
+        incomingFollowRequestsListener = CloudStore.listenIncomingFollowRequests { ids ->
+            _incomingFollowRequests.value = ids
+        }
+    }
+
+    private fun stopFollowRequestsListeners() {
+        outgoingFollowRequestsListener?.remove()
+        outgoingFollowRequestsListener = null
+        incomingFollowRequestsListener?.remove()
+        incomingFollowRequestsListener = null
+    }
+        
     // --- Follow System (نظام مشابه لإنستغرام/تيك توك) ---
         // ☁️ الكتابة السحابية تتم داخل هذه الدالة عبر CloudStore.addFollow (مجموعة follows)
         fun followUser(targetUserId: String, forceDirect: Boolean = false) {
