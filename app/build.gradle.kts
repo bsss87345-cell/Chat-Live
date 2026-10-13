@@ -20,7 +20,7 @@ android {
 
   defaultConfig {
     applicationId = "com.aistudio.mujtamauna.ar8vzp"
-    minSdk = 24
+    minSdk = 26
     targetSdk = 36
     versionCode = 1
     versionName = "1.0"
