@@ -1820,6 +1820,26 @@ val stopAngle = (360f - (eliminatedIndex * sectorAngle)) % 360f
         membersListener?.remove()
         membersListener = null
     }
+
+        /** 🔔 يبدأ الاستماع لطلبات المايك (uids حقيقية → "me" للتوافق المحلي). */
+    private fun startSeatRequestsListener(roomId: String) {
+        stopSeatRequestsListener()
+        seatRequestsListener = CloudStore.listenSeatRequests(roomId) { requests ->
+            val myUid = _userProfile.value.id
+            val mapped = requests.map { r ->
+                if (myUid.isNotBlank() && r.requesterId == myUid) r.copy(requesterId = "me") else r
+            }
+            _chatRooms.update { list ->
+                list.map { room -> if (room.id == roomId) room.copy(voiceSeatRequests = mapped) else room }
+            }
+        }
+    }
+
+    /** 🔔 يوقف استماع طلبات المايك. */
+    private fun stopSeatRequestsListener() {
+        seatRequestsListener?.remove()
+        seatRequestsListener = null
+    }
     
     fun takeVoiceSeatDirectly(roomId: String, seatNumber: Int) {
         val room = _chatRooms.value.find { it.id == roomId } ?: return
