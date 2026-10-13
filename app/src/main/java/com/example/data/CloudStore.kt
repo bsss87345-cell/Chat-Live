@@ -161,6 +161,80 @@ object CloudStore {
                         )
                     )
                 }
+
+                
+    // ───────────────── طلبات المتابعة (followRequests/{fromId}_{toId}) ─────────────────
+
+    private fun followRequestIdOf(fromId: String, toId: String) = "${fromId}_${toId}"
+
+    /** يرسل طلب متابعة لحساب خاص (مستند واحد لكل زوج ⇒ بلا تكرار). */
+    fun saveFollowRequest(toId: String): Boolean {
+        val me = uid ?: return false
+        if (toId.isBlank() || toId == me) return false
+        val data = mapOf(
+            "fromId" to me,
+            "toId" to toId,
+            "status" to "pending",
+            "createdAt" to System.currentTimeMillis()
+        )
+        return awaitWrite {
+            db().collection(FOLLOW_REQUESTS).document(followRequestIdOf(me, toId)).set(data)
+        }
+    }
+
+    /** يلغي طلب متابعة — الطالب فقط. */
+    fun removeFollowRequest(toId: String): Boolean {
+        val me = uid ?: return false
+        return awaitWrite {
+            db().collection(FOLLOW_REQUESTS).document(followRequestIdOf(me, toId)).delete()
+        }
+    }
+
+    /** يقبل أو يرفض طلباً وارداً — صاحب الحساب الخاص فقط. */
+    fun respondFollowRequest(fromId: String, approve: Boolean): Boolean {
+        val me = uid ?: return false
+        return awaitWrite {
+            db().collection(FOLLOW_REQUESTS).document(followRequestIdOf(fromId, me))
+                .update("status", if (approve) "approved" else "rejected")
+        }
+    }
+
+    /** يستمع لطلباتي الصادرة (الطرف الثاني + الحالة). */
+    fun listenOutgoingFollowRequests(onOutgoing: (List<Pair<String, String>>) -> Unit): ListenerRegistration? {
+        val me = uid ?: return null
+        return try {
+            db().collection(FOLLOW_REQUESTS)
+                .whereEqualTo("fromId", me)
+                .addSnapshotListener { snap, _ ->
+                    if (snap == null) return@addSnapshotListener
+                    onOutgoing(snap.documents.mapNotNull { d ->
+                        val toId = d.getString("toId") ?: return@mapNotNull null
+                        toId to (d.getString("status") ?: "pending")
+                    })
+                }
+        } catch (e: Exception) {
+            null
+        }
+    }
+
+    /** يستمع لطلباتي الواردة المعلّقة (معرّفات الطالبين). */
+    fun listenIncomingFollowRequests(onIncoming: (List<String>) -> Unit): ListenerRegistration? {
+        val me = uid ?: return null
+        return try {
+            db().collection(FOLLOW_REQUESTS)
+                .whereEqualTo("toId", me)
+                .addSnapshotListener { snap, _ ->
+                    if (snap == null) return@addSnapshotListener
+                    onIncoming(snap.documents.mapNotNull { d ->
+                        if (d.getString("status") != "pending") return@mapNotNull null
+                        d.getString("fromId")
+                    })
+                }
+        } catch (e: Exception) {
+            null
+        }
+    }
+                
             Tasks.await(db().collection(FOLLOWS).whereEqualTo("followingId", userId).get())
                 .documents.forEach { d ->
                     out.add(
