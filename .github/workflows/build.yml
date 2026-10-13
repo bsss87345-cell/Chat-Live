@@ -38,10 +38,15 @@ jobs:
         env:
           AGORA_APP_ID: ${{ secrets.AGORA_APP_ID }}
         run: |
+          echo "::notice::طول AGORA_APP_ID = ${#AGORA_APP_ID} خانة (المطلوب 32)"
           if [ -n "$AGORA_APP_ID" ]; then
+            if [ "${#AGORA_APP_ID}" -ne 32 ]; then
+              echo "::error::AGORA_APP_ID طوله ${#AGORA_APP_ID} والمطلوب 32 خانة — الصوت لن يعمل"
+            fi
             sed -i "s|^AGORA_APP_ID=.*|AGORA_APP_ID=${AGORA_APP_ID}|" .env
+            echo "✅ تم حقن AGORA_APP_ID"
           else
-            echo "::warning::لا يوجد سرّ AGORA_APP_ID — ميزة الصوت لن تتصل بالخدمة في هذا البناء."
+            echo "::error::لا يوجد سرّ AGORA_APP_ID — الصوت لن يعمل في هذا البناء"
           fi
 
       - name: Make gradlew executable 
