@@ -464,9 +464,23 @@ class SocialAppViewModel : ViewModel() {
         /** 🔴 يشغّل/يوقف الاستماع لرسائل الغرفة تلقائياً مع تغيّر الغرفة المفتوحة. */
     private fun startRoomMessagesSync() {
         viewModelScope.launch {
+            var lastRoomId: String? = null
               _activeRoomId.collectLatest { roomId ->
                 roomMessagesListener?.remove()
                 roomMessagesListener = null
+                // 🧹 الشات «جلسة»: عند مغادرة الغرفة تُنظَّف رسائلها،
+                // فلا تعود رسائل الجلسة السابقة عند الدخول مرة أخرى.
+                val leaving = lastRoomId
+                if (leaving != null && leaving != roomId) {
+                    _chatRooms.update { list ->
+                        list.map { room ->
+                            if (room.id == leaving) {
+                                room.copy(messages = room.messages.filter { it.id == "rm_init" })
+                            } else room
+                        }
+                    }
+                }
+                lastRoomId = roomId
                 if (roomId != null) {
                     if (!CloudStore.serverClockTried) {
                         withContext(Dispatchers.IO) { CloudStore.syncServerClock() }
