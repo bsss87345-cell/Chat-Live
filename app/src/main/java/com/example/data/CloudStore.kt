@@ -490,6 +490,69 @@ object CloudStore {
         }
     )
 
+        // ───────────────── أعضاء الغرفة (rooms/{roomId}/members/{uid}) ─────────────────
+
+    /** يكتب/يحدّث عضوية المستخدم في الغرفة. */
+    fun saveRoomMember(roomId: String, member: RoomMember): Boolean {
+        val me = uid ?: return false
+        if (member.id != me && member.id != "me") return false
+        val data = mapOf(
+            "uid" to me,
+            "name" to member.name.take(60),
+            "role" to member.role.name,
+            "avatarUrl" to member.avatarUrl.take(500),
+            "isOnline" to true,
+            "joinedAt" to System.currentTimeMillis()
+        )
+        return awaitWrite {
+            db().collection(ROOMS).document(roomId).collection(MEMBERS).document(me).set(data)
+        }
+    }
+
+    /** يحذف عضوية المستخدم (مغادرة الغرفة). */
+    fun removeRoomMember(roomId: String): Boolean {
+        val me = uid ?: return false
+        return awaitWrite {
+            db().collection(ROOMS).document(roomId).collection(MEMBERS).document(me).delete()
+        }
+    }
+
+    /** يحدّث دور/حالة العضو — للمالك فقط (الإشراف). */
+    fun updateRoomMember(roomId: String, memberUid: String, role: RoomMemberRole? = null, isMuted: Boolean? = null): Boolean {
+        val data = buildMap {
+            role?.let { put("role", it.name) }
+            isMuted?.let { put("isMuted", it) }
+        }
+        if (data.isEmpty()) return false
+        return awaitWrite {
+            db().collection(ROOMS).document(roomId).collection(MEMBERS).document(memberUid).update(data)
+        }
+    }
+
+    /** يستمع لقائمة أعضاء الغرفة. */
+    fun listenRoomMembers(roomId: String, onMembers: (List<RoomMember>) -> Unit): ListenerRegistration? {
+        if (uid == null) return null
+        return try {
+            db().collection(ROOMS).document(roomId).collection(MEMBERS)
+                .addSnapshotListener { snap, _ ->
+                    if (snap == null) return@addSnapshotListener
+                    val members = snap.documents.mapNotNull { d ->
+                        RoomMember(
+                            id = d.getString("uid") ?: d.id,
+                            name = d.getString("name").orEmpty(),
+                            role = try { RoomMemberRole.valueOf(d.getString("role") ?: "MEMBER") } catch (e: Exception) { RoomMemberRole.MEMBER },
+                            isOnline = d.getBoolean("isOnline") ?: false,
+                            isMuted = d.getBoolean("isMuted") ?: false,
+                            avatarUrl = d.getString("avatarUrl").orEmpty(),
+                        )
+                    }
+                    onMembers(members)
+                }
+        } catch (e: Exception) {
+            null
+        }
+    }
+    
             // ───────────────── المنشورات (posts/{postId}) ─────────────────
 
     /** ينشر منشوراً أو يحدّث نص منشوره — القاعدة تمنع تعديل منشور غيره. حاجبة ⇒ من IO فقط. */
