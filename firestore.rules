@@ -215,9 +215,12 @@ service cloud.firestore {
         allow read: if signedIn();
 
         // إنشاء: اللاعب ينشئ مقعده فقط
-        allow create: if signedIn()
-          && incoming().occupantId == request.auth.uid
-          && incoming().seatNumber is number;
+          allow create: if signedIn()
+          && incoming().seatNumber is number
+          && (
+            incoming().occupantId == request.auth.uid
+            || isMe(get(/databases/$(database)/documents/rooms/$(roomId)).data.ownerId)
+          );
 
         // التعديل: صاحب المقعد (مع unchanged للمعرّف)، أو المالك (كتم فقط)
         allow update: if signedIn() && (
