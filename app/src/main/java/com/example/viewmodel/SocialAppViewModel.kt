@@ -1063,26 +1063,35 @@ class SocialAppViewModel : ViewModel() {
     fun togglePushNotifications() {
         _pushNotificationsEnabled.value = !_pushNotificationsEnabled.value
         _userMessage.value = if (_pushNotificationsEnabled.value) "تم تفعيل التنبيهات الفورية (Push Notifications)" else "تم كتم التنبيهات الفورية"
-    }
-
-    fun openConversation(conversationId: String) {
-        _activeChatId.value = conversationId
-        _conversations.update { list ->
-            list.map { if (it.id == conversationId) it.copy(unreadCount = 0) else it }
+        /** 💬 يفتح (أو ينشئ) محادثة 1:1 مع مستخدم آخر ثم يفتحها. */
+    fun startConversationWith(otherUid: String, otherName: String, otherAvatarUrl: String) {
+        if (otherUid.isBlank() || otherUid == CloudStore.uid) return
+        viewModelScope.launch {
+            val convId = withContext(Dispatchers.IO) {
+                CloudStore.saveConversation(
+                    otherUid,
+                    otherName,
+                    otherAvatarUrl,
+                    _userProfile.value.name,
+                    _userProfile.value.avatarUrl
+                )
+            }
+            if (convId != null) openConversation(convId)
+            else _userMessage.value = "تعذّر بدء المحادثة، تأكد من اتصالك."
         }
-        startDirectMessagesListener(conversationId)
-    }
-
-    fun closeConversation() {
-        _activeChatId.value = null
-        stopDirectMessagesListener()
     }
 
     fun sendMessage(conversationId: String, text: String, type: ChatMessageType = ChatMessageType.TEXT, imageUri: String = "") {
         if (text.isBlank() && type == ChatMessageType.TEXT) return
+        val preview = when (type) {
+            ChatMessageType.AUDIO -> "تسجيل صوتي (0:12)"
+            ChatMessageType.IMAGE -> "صورة مرفقة 📷"
+            ChatMessageType.GAME_INVITE -> "دعوة لتحدي لعبة سريعة 🎮"
+            else -> text
+        }
         val msg = ChatMessage(
             id = "m_${System.currentTimeMillis()}",
-            senderName = "أنت",
+            senderName = _userProfile.value.name.ifBlank { "أنت" },
             text = text,
             timestamp = "الآن",
             isFromMe = true,
@@ -1092,9 +1101,11 @@ class SocialAppViewModel : ViewModel() {
             gameReward = if (type == ChatMessageType.GAME_INVITE) 100 else 0,
             imageUri = imageUri
         )
-        _conversations.update { list ->
-            list.map { conv ->
-                if (conv.id == conversationId) {
+        // ☁️ الرسالة تصل للطرفين عبر مستمع الرسائل (بلا تكرار محلي)
+        viewModelScope.launch(Dispatchers.IO) {
+            CloudStore.saveDirectMessage(conversationId, msg, "أنت: $preview")
+        }
+    }
                     val preview = when (type) {
                                 fun startInChatGame(conversationId: String, gameType: GameType = GameType.DOMINO) {
         val gameTitle = gameType.titleAr
