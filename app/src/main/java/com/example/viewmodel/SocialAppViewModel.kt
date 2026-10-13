@@ -1111,11 +1111,11 @@ class SocialAppViewModel : ViewModel() {
         }
     }
 
-        fun startInChatGame(conversationId: String, gameType: GameType = GameType.DOMINO) {
+                fun startInChatGame(conversationId: String, gameType: GameType = GameType.DOMINO) {
         val gameTitle = gameType.titleAr
         val msg = ChatMessage(
             id = "m_${System.currentTimeMillis()}",
-            senderName = "أنت",
+            senderName = _userProfile.value.name.ifBlank { "أنت" },
             text = "هيا نلعب $gameTitle معاً الآن! 🎮",
             timestamp = "الآن",
             isFromMe = true,
@@ -1123,18 +1123,9 @@ class SocialAppViewModel : ViewModel() {
             gameTitle = gameTitle,
             gameReward = 100
         )
-        _conversations.update { list ->
-            list.map { conv ->
-                if (conv.id == conversationId) {
-                    conv.copy(
-                        lastMessage = "أنت: دعوة لتحدي $gameTitle 🎮",
-                        time = "الآن",
-                        messages = conv.messages + msg
-                    )
-                } else conv
-            }
+        viewModelScope.launch(Dispatchers.IO) {
+            CloudStore.saveDirectMessage(conversationId, msg, "أنت: دعوة لتحدي $gameTitle 🎮")
         }
-        _userMessage.value = "تم إرسال دعوة لعبة $gameTitle إلى المحادثة! يمكنك خوض اللعبة بالضغط على 'العب التحدي الآن'."
     }
 
 // --- Chat Rooms Actions ---
