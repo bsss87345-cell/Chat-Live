@@ -1292,6 +1292,7 @@ fun joinChatRoom(roomId: String, passwordInput: String = ""): Boolean {
             }
         }
         _userMessage.value = "تمت مغادرة الغرفة."
+        viewModelScope.launch(Dispatchers.IO) { CloudStore.removeSeatRequest(roomId) }
     }
 
     fun toggleRoomLock(roomId: String) {
