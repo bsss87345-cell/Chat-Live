@@ -2644,7 +2644,7 @@ fun toggleOwnerVoiceMute(roomId: String) {
                 _follows.update { list -> list.filterNot { it.followerId == myId && it.followingId == targetUserId } }
                 // ☁️ إلغاء المتابعة سحابياً أيضاً
         viewModelScope.launch(Dispatchers.IO) { CloudStore.removeFollow(myId, targetUserId) }
-        _pendingFollowRequests.update { list -> list.filterNot { it == targetUserId } }
+        viewModelScope.launch(Dispatchers.IO) { CloudStore.removeFollowRequest(targetUserId) }
         _userProfile.update { it.copy(followingCount = (it.followingCount - 1).coerceAtLeast(0)) }
         _userMessage.value = "تم إلغاء المتابعة"
     }
