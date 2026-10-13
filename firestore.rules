@@ -249,7 +249,10 @@ service cloud.firestore {
           ||
           isMe(get(/databases/$(database)/documents/rooms/$(roomId)).data.ownerId)
         );
-        allow delete: if signedIn() && isMe(memberId);
+                allow delete: if signedIn() && (
+          isMe(memberId)
+          || (isRoomStaff(roomId) && existing().role != 'OWNER')
+        );
       }
 
       // ── طلبات المايك (rooms/{roomId}/seatRequests/{uid}) ──
