@@ -263,7 +263,7 @@ service cloud.firestore {
         allow update: if false;
         allow delete: if signedIn() && (
           isMe(requesterId)
-          || isMe(get(/databases/$(database)/documents/rooms/$(roomId)).data.ownerId)
+          || isRoomStaff(roomId)
         );
       }
 
