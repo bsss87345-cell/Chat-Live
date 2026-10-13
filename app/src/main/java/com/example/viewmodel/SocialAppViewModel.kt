@@ -33,6 +33,7 @@ class SocialAppViewModel : ViewModel() {
     private var seatsListener: ListenerRegistration? = null
     private var membersListener: ListenerRegistration? = null
     private var seatRequestsListener: ListenerRegistration? = null
+    private var blocksListener: ListenerRegistration? = null
     
     // --- Authentication State (الشاشة التي تظهر عند فتح التطبيق لأول مرة) ---
     private val _isLoggedIn = MutableStateFlow(false)
@@ -1337,30 +1338,33 @@ fun updateRoomBackground(roomId: String, imageUrl: String) {
         }
     }
 fun blockRoomMember(roomId: String, memberId: String) {
-        _chatRooms.update { list ->
-            list.map { room ->
-                if (room.id == roomId) {
-                    val memberToBlock = room.members.find { it.id == memberId }
-                    if (memberToBlock != null) {
-                        room.copy(
-                            members = room.members.filter { it.id != memberId },
-                            memberCount = (room.memberCount - 1).coerceAtLeast(0),
-                            blockedMembers = room.blockedMembers + memberToBlock
-                        )
-                    } else room
-                } else room
-            }
+        val target = moderationTarget(roomId, memberId)
+        if (target == null) {
+            _userMessage.value = "ما تقدر تحظر هذا العضو."
+            return
         }
+        val room = _chatRooms.value.find { it.id == roomId } ?: return
+        val seatNumbers = (listOf(room.ownerVoiceSeat) + room.voiceSeats)
+            .filter { it.occupantId == memberId }
+            .map { it.seatNumber }
+        viewModelScope.launch(Dispatchers.IO) {
+            seatNumbers.forEach { CloudStore.removeRoomSeat(roomId, it) }
+            CloudStore.removeSeatRequestOf(roomId, target.id)
+            CloudStore.removeRoomMemberOf(roomId, target.id)
+            CloudStore.saveRoomBlock(roomId, target.id, target.name, target.avatarUrl)
+            CloudStore.stepRoomMemberCount(roomId, -1)
+        }
+        _userMessage.value = "تم حظر ${target.name} من الغرفة."
     }
 
     fun unblockRoomMember(roomId: String, memberId: String) {
-        _chatRooms.update { list ->
-            list.map { room ->
-                if (room.id == roomId) {
-                    room.copy(blockedMembers = room.blockedMembers.filter { it.id != memberId })
-                } else room
-            }
+        if (memberId.isBlank() || memberId == "me") return
+        if (!isRoomStaff(roomId)) {
+            _userMessage.value = "هذي الصلاحية للمالك والمشرف فقط."
+            return
         }
+        viewModelScope.launch(Dispatchers.IO) { CloudStore.removeRoomBlock(roomId, memberId) }
+        _userMessage.value = "تم فك حظر العضو."
     }
     fun sendRoomMessage(roomId: String, text: String, type: ChatMessageType = ChatMessageType.TEXT) {
         if (text.isBlank() && type == ChatMessageType.TEXT) return
@@ -1468,43 +1472,35 @@ fun blockRoomMember(roomId: String, memberId: String) {
     }
 
     fun kickRoomMember(roomId: String, memberId: String) {
-        _chatRooms.update { list ->
-            list.map {
-                if (it.id == roomId) {
-                    val kickedMember = it.members.find { m -> m.id == memberId }
-                    val memberName = kickedMember?.name ?: "العضو"
-                    it.copy(
-                        memberCount = (it.memberCount - 1).coerceAtLeast(1),
-                        members = it.members.filter { m -> m.id != memberId },
-                        messages = it.messages + ChatMessage(
-                            id = "rm_kick_${System.currentTimeMillis()}",
-                            senderName = "إدارة الغرفة",
-                            text = "تم طرد $memberName من الغرفة من قبل المشرف.",
-                            timestamp = "الآن",
-                            isFromMe = false
-                        )
-                    )
-                } else it
-            }
+        val target = moderationTarget(roomId, memberId)
+        if (target == null) {
+            _userMessage.value = "ما تقدر تطرد هذا العضو."
+            return
         }
-        _userMessage.value = "تم طرد العضو من الغرفة بنجاح."
+        val room = _chatRooms.value.find { it.id == roomId } ?: return
+        val seatNumbers = (listOf(room.ownerVoiceSeat) + room.voiceSeats)
+            .filter { it.occupantId == memberId }
+            .map { it.seatNumber }
+        viewModelScope.launch(Dispatchers.IO) {
+            seatNumbers.forEach { CloudStore.removeRoomSeat(roomId, it) }
+            CloudStore.removeSeatRequestOf(roomId, target.id)
+            CloudStore.removeRoomMemberOf(roomId, target.id)
+            CloudStore.stepRoomMemberCount(roomId, -1)
+        }
+        _userMessage.value = "تم طرد ${target.name} من الغرفة."
     }
 
     fun muteRoomMember(roomId: String, memberId: String) {
-        _chatRooms.update { list ->
-            list.map {
-                if (it.id == roomId) {
-                    val target = it.members.find { m -> m.id == memberId }
-                    val willBeMuted = !(target?.isMuted ?: false)
-                    it.copy(
-                        members = it.members.map { m ->
-                            if (m.id == memberId) m.copy(isMuted = willBeMuted) else m
-                        }
-                    )
-                } else it
-            }
+        val target = moderationTarget(roomId, memberId)
+        if (target == null) {
+            _userMessage.value = "ما تقدر تكتم هذا العضو."
+            return
         }
-        _userMessage.value = "تم تحديث حالة كتم العضو."
+        val willBeMuted = !target.isMuted
+        viewModelScope.launch(Dispatchers.IO) {
+            CloudStore.updateRoomMember(roomId, target.id, isMuted = willBeMuted)
+        }
+        _userMessage.value = if (willBeMuted) "تم كتم ${target.name}." else "تم فك كتم ${target.name}."
     }
 fun requestVoiceSeat(roomId: String, seatNumber: Int) {
         val room = _chatRooms.value.find { it.id == roomId } ?: return
@@ -1804,6 +1800,7 @@ val stopAngle = (360f - (eliminatedIndex * sectorAngle)) % 360f
         /** 🔔 يبدأ الاستماع لطلبات المايك (uids حقيقية → "me" للتوافق المحلي). */
     private fun startSeatRequestsListener(roomId: String) {
         stopSeatRequestsListener()
+        startBlocksListener(roomId)
         seatRequestsListener = CloudStore.listenSeatRequests(roomId) { requests ->
             val myUid = _userProfile.value.id
             val mapped = requests.map { r ->
@@ -1819,7 +1816,50 @@ val stopAngle = (360f - (eliminatedIndex * sectorAngle)) % 360f
     private fun stopSeatRequestsListener() {
         seatRequestsListener?.remove()
         seatRequestsListener = null
+        stopBlocksListener()
     }
+
+    /** 🔔 يبدأ الاستماع للمحظورين في الغرفة (uids حقيقية → "me" للتوافق المحلي). */
+    private fun startBlocksListener(roomId: String) {
+        stopBlocksListener()
+        blocksListener = CloudStore.listenRoomBlocks(roomId) { blocked ->
+            val myUid = _userProfile.value.id
+            val mapped = blocked.map { m ->
+                if (myUid.isNotBlank() && m.id == myUid) m.copy(id = "me") else m
+            }
+            _chatRooms.update { list ->
+                list.map { room -> if (room.id == roomId) room.copy(blockedMembers = mapped) else room }
+            }
+        }
+    }
+
+    /** 🔔 يوقف استماع المحظورين. */
+    private fun stopBlocksListener() {
+        blocksListener?.remove()
+        blocksListener = null
+    }
+
+    /** 🔐 المالك أو المشرف في هذه الغرفة. */
+    private fun isRoomStaff(roomId: String): Boolean {
+        val room = _chatRooms.value.find { it.id == roomId } ?: return false
+        if (room.isOwner) return true
+        return room.members.find { it.id == "me" }?.role == RoomMemberRole.ADMIN
+    }
+
+    /**
+     * 🔐 يتحقق من صلاحية الإشراف ويرجع العضو الهدف:
+     * المالك يقدر على الجميع، والمشرف على الأعضاء فقط (لا مشرف ثاني ولا المالك).
+     */
+    private fun moderationTarget(roomId: String, memberId: String): RoomMember? {
+        if (memberId.isBlank() || memberId == "me") return null
+        if (!isRoomStaff(roomId)) return null
+        val room = _chatRooms.value.find { it.id == roomId } ?: return null
+        val target = room.members.find { it.id == memberId } ?: return null
+        if (target.role == RoomMemberRole.OWNER) return null
+        if (!room.isOwner && target.role == RoomMemberRole.ADMIN) return null
+        return target
+    }
+
     
     fun takeVoiceSeatDirectly(roomId: String, seatNumber: Int) {
         val room = _chatRooms.value.find { it.id == roomId } ?: return
@@ -2031,16 +2071,16 @@ fun toggleOwnerVoiceMute(roomId: String) {
     }
 
     fun changeRoomMemberRole(roomId: String, memberId: String, newRole: RoomMemberRole) {
-        _chatRooms.update { list ->
-            list.map {
-                if (it.id == roomId) {
-                    it.copy(
-                        members = it.members.map { m ->
-                            if (m.id == memberId) m.copy(role = newRole) else m
-                        }
-                    )
-                } else it
-            }
+        val room = _chatRooms.value.find { it.id == roomId } ?: return
+        if (!room.isOwner) {
+            _userMessage.value = "تعيين الرتب للمالك فقط."
+            return
+        }
+        if (memberId.isBlank() || memberId == "me") return
+        val target = room.members.find { it.id == memberId } ?: return
+        if (target.role == RoomMemberRole.OWNER) return
+        viewModelScope.launch(Dispatchers.IO) {
+            CloudStore.updateRoomMember(roomId, target.id, role = newRole)
         }
         _userMessage.value = "تم تعيين الرتبة (${newRole.labelAr}) للعضو بنجاح."
     }
