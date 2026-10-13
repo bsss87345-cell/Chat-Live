@@ -225,7 +225,7 @@ service cloud.firestore {
             && incoming().occupantId == request.auth.uid)
           ||
           (isMe(get(/databases/$(database)/documents/rooms/$(roomId)).data.ownerId)
-            && onlyChanged(['isMuted']))
+             && onlyChanged(['occupantId', 'occupantName', 'occupantAvatarUrl', 'isMuted']))
         );
 
         // الحذف: صاحب المقعد أو المالك
