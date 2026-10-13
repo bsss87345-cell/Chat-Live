@@ -221,6 +221,7 @@ class SocialAppViewModel : ViewModel() {
                     pullCloudData()
                     pullCloudRooms()
                     startConversationsListener()
+                    startFollowRequestsListeners()
                 }
                 is AuthService.Result.Error -> _userMessage.value = result.message
                 AuthService.Result.NotConfigured -> Unit
