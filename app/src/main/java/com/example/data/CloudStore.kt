@@ -10,6 +10,8 @@ import com.example.model.NotificationType
 import com.example.model.TransactionType
 import com.example.model.UserProfile
 import com.example.model.VoiceSeat
+import com.example.model.RoomMember
+import com.example.model.RoomMemberRole
 import com.example.model.WalletTransaction
 import com.google.android.gms.tasks.Task
 import com.google.android.gms.tasks.Tasks
