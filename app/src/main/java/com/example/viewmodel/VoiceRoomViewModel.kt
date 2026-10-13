@@ -278,7 +278,18 @@ class VoiceRoomViewModel(application: Application) : AndroidViewModel(applicatio
         val appId = BuildConfig.AGORA_APP_ID
         if (appId.isBlank()) throw IllegalStateException(NOT_CONFIGURED)
         val created = AudioEngine(getApplication<Application>(), appId, listener)
-        if (!created.init()) throw IllegalStateException(NO_ENGINE)
+                if (!created.init()) {
+            val mic = if (
+                ContextCompat.checkSelfPermission(
+                    getApplication<Application>(), Manifest.permission.RECORD_AUDIO
+                ) == PackageManager.PERMISSION_GRANTED
+            ) "ممنوح" else "غير_ممنوح"
+            val idOk = appId.matches(Regex("[0-9a-fA-F]{32}"))
+            throw IllegalStateException(
+                "$NO_ENGINE السبب: ${created.lastInitError ?: "غير معروف"} | " +
+                    "appId=${appId.length}حرف/${if (idOk) "صحيح" else "خاطئ"} | الميكروفون=$mic"
+            )
+                }
         val current = _state.value
         created.setSpeakerOn(current.speakerOn)
         created.setMicMuted(current.micMuted)
