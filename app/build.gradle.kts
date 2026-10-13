@@ -25,10 +25,11 @@ android {
     versionCode = 1
     versionName = "1.0"
 
-    // 🎙️ صوت الغرف (Agora): معماريتان 64-بت فقط — مكتبات 32-بت محاذاتها 4KB
-    // (تفشل شرط 16KB في بلي)، و arm64-v8a و x86_64 محاذاتهما 16KB
+        // 🎙️ صوت الغرف (Agora): تدعم armeabi-v7a و arm64-v8a و x86 و x86_64 (أندرويد 4.1+).
+    // ⚠️ شرط محاذاة 16KB في بلي يخص المعماريات 64-بت فقط (arm64-v8a و x86_64)؛
+    //    معماريات 32-بت (armeabi-v7a) تبقى على صفحات 4KB ومسموح بها.
     ndk {
-      abiFilters += listOf("arm64-v8a", "x86_64")
+      abiFilters += listOf("arm64-v8a", "armeabi-v7a", "x86_64")
     }
 
     testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
