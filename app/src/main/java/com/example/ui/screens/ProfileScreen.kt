@@ -750,7 +750,8 @@ Column(
             onLoadFollowingFor = onLoadFollowingFor,
             onLoadPostsFor = onLoadPostsFor,
             isUserFollowing = isUserFollowing,
-            onToggleFollow = onToggleFollow
+            onToggleFollow = onToggleFollow,
+            onStartChat = onStartChat
         )
     }
 
@@ -765,7 +766,8 @@ Column(
             onLoadFollowingFor = onLoadFollowingFor,
             onLoadPostsFor = onLoadPostsFor,
             isUserFollowing = isUserFollowing,
-            onToggleFollow = onToggleFollow
+            onToggleFollow = onToggleFollow,
+            onStartChat = onStartChat
         )
     }
     // Comments Bottom Sheet
@@ -843,7 +845,8 @@ private fun FollowListFullScreen(
     onLoadFollowingFor: (String) -> List<FollowUser> = { emptyList() },
     onLoadPostsFor: (String) -> List<Post> = { emptyList() },
     isUserFollowing: (String) -> Boolean = { false },
-    onToggleFollow: (String) -> Unit = {}
+    onToggleFollow: (String) -> Unit = {},
+    onStartChat: (String, String, String) -> Unit = { _, _, _ -> }
 ) {
     var selectedUser by remember { mutableStateOf<FollowUser?>(null) }
     Dialog(
