@@ -34,6 +34,8 @@ class SocialAppViewModel : ViewModel() {
     private var membersListener: ListenerRegistration? = null
     private var seatRequestsListener: ListenerRegistration? = null
     private var blocksListener: ListenerRegistration? = null
+    private var outgoingFollowRequestsListener: ListenerRegistration? = null
+    private var incomingFollowRequestsListener: ListenerRegistration? = null
     private var conversationsListener: ListenerRegistration? = null
     private var directMessagesListener: ListenerRegistration? = null
     
