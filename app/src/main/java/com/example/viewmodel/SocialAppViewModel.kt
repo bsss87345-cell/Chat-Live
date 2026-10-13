@@ -1492,10 +1492,9 @@ fun blockRoomMember(roomId: String, memberId: String) {
         _userMessage.value = "تم حذف الرسالة من الغرفة."
     }
 
-    fun deleteConversation(conversationId: String) {
-        _conversations.update { list ->
-            list.filter { it.id != conversationId }
-        }
+        fun deleteConversation(conversationId: String) {
+        _conversations.update { list -> list.filter { it.id != conversationId } }
+        viewModelScope.launch(Dispatchers.IO) { CloudStore.deleteConversation(conversationId) }
         _userMessage.value = "تم حذف المحادثة."
     }
 
