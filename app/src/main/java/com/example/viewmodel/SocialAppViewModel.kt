@@ -1120,6 +1120,7 @@ class SocialAppViewModel : ViewModel() {
     fun closeRoom() {
         _activeRoomId.value = null
          stopSeatsListener()
+         stopMembersListener()
     }
 
     fun createChatRoom(
