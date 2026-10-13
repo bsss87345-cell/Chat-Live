@@ -1797,6 +1797,7 @@ val stopAngle = (360f - (eliminatedIndex * sectorAngle)) % 360f
     private fun stopSeatsListener() {
         seatsListener?.remove()
         seatsListener = null
+        stopSeatRequestsListener()
     }
         
     /** 🔔 يبدأ الاستماع لأعضاء الغرفة (uids حقيقية → "me" للتوافق المحلي). */
