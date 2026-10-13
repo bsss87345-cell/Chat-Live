@@ -1096,30 +1096,22 @@ class SocialAppViewModel : ViewModel() {
             list.map { conv ->
                 if (conv.id == conversationId) {
                     val preview = when (type) {
-                        ChatMessageType.AUDIO -> "تسجيل صوتي (0:12)"
-                        ChatMessageType.IMAGE -> "صورة مرفقة 📷"
-                        ChatMessageType.GAME_INVITE -> "دعوة لتحدي لعبة سريعة 🎮"
-                        else -> text
-                    }
-                    conv.copy(
-                        lastMessage = "أنت: $preview",
-                        time = "الآن",
-                        messages = conv.messages + msg
-                    )
-                } else conv
-            }
-        }
-    }
-
-        fun startInChatGame(conversationId: String, gameType: GameType = GameType.DOMINO) {
+                                fun startInChatGame(conversationId: String, gameType: GameType = GameType.DOMINO) {
         val gameTitle = gameType.titleAr
         val msg = ChatMessage(
             id = "m_${System.currentTimeMillis()}",
-            senderName = "أنت",
+            senderName = _userProfile.value.name.ifBlank { "أنت" },
             text = "هيا نلعب $gameTitle معاً الآن! 🎮",
             timestamp = "الآن",
             isFromMe = true,
             type = ChatMessageType.GAME_INVITE,
+            gameTitle = gameTitle,
+            gameReward = 100
+        )
+        viewModelScope.launch(Dispatchers.IO) {
+            CloudStore.saveDirectMessage(conversationId, msg, "أنت: دعوة لتحدي $gameTitle 🎮")
+        }
+    }
             gameTitle = gameTitle,
             gameReward = 100
         )
