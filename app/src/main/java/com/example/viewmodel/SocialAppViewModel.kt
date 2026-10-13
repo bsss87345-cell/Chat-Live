@@ -1535,50 +1535,25 @@ fun requestVoiceSeat(roomId: String, seatNumber: Int) {
             return
         }
         lastVoiceSeatRequestTime[requestKey] = now
-        _chatRooms.update { list ->
-            list.map {
-                if (it.id == roomId) {
-                    it.copy(
-                        voiceSeatRequests = it.voiceSeatRequests + VoiceSeatRequest(
-                            id = "vsr_${System.currentTimeMillis()}",
-                            requesterId = "me",
-                            requesterName = me?.name ?: "أنت",
-                            requesterAvatarUrl = _userProfile.value.avatarUrl,
-                            seatNumber = seatNumber
-                        )
-                    )
-                } else it
-            }
+        viewModelScope.launch(Dispatchers.IO) {
+            CloudStore.saveSeatRequest(roomId, seatNumber, me?.name ?: "أنت", _userProfile.value.avatarUrl)
         }
         _userMessage.value = "تم إرسال طلب المايك، بانتظار موافقة المالك."
 }
 fun respondToVoiceSeatRequest(roomId: String, requestId: String, accept: Boolean) {
-        _chatRooms.update { list ->
-            list.map { room ->
-                if (room.id == roomId) {
-                    val request = room.voiceSeatRequests.find { it.id == requestId }
-                    if (request == null) {
-                        room
-                    } else if (accept) {
-                        room.copy(
-                            voiceSeats = room.voiceSeats.map { seat ->
-                                if (seat.seatNumber == request.seatNumber) {
-                                    seat.copy(
-                                        occupantId = request.requesterId,
-                                        occupantName = request.requesterName,
-                                        occupantAvatarUrl = request.requesterAvatarUrl
-                                    )
-                                } else seat
-                            },
-                            voiceSeatRequests = room.voiceSeatRequests.filter { it.id != requestId }
-                        )
-                    } else {
-                        room.copy(
-                            voiceSeatRequests = room.voiceSeatRequests.filter { it.id != requestId }
-                        )
-                    }
-                } else room
+        val room = _chatRooms.value.find { it.id == roomId } ?: return
+        val request = room.voiceSeatRequests.find { it.id == requestId } ?: return
+        viewModelScope.launch(Dispatchers.IO) {
+            if (accept) {
+                CloudStore.assignRoomSeat(
+                    roomId,
+                    request.seatNumber,
+                    request.id,
+                    request.requesterName,
+                    request.requesterAvatarUrl
+                )
             }
+            CloudStore.removeSeatRequestOf(roomId, request.id)
         }
         _userMessage.value = if (accept) "تم قبول الطلب وصعود العضو للمايك." else "تم رفض الطلب."
     }
