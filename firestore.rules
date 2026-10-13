@@ -266,6 +266,16 @@ service cloud.firestore {
           || isMe(get(/databases/$(database)/documents/rooms/$(roomId)).data.ownerId)
         );
       }
+
+      // ── المحظورون من الغرفة (rooms/{roomId}/blocked/{uid}) ──
+      // 🚫 المالك أو المشرف يحظر ويفك الحظر (ولا يقدر يحظر نفسه)
+      match /blocked/{blockedId} {
+        allow read: if signedIn();
+        allow create, delete: if signedIn()
+          && isRoomStaff(roomId)
+          && blockedId != request.auth.uid;
+        allow update: if false;
+      }
     }
 
     // ═════════════════════════ القصص ═════════════════════════
