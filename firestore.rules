@@ -232,9 +232,9 @@ service cloud.firestore {
         );
 
         // الحذف: صاحب المقعد أو المالك
-        allow delete: if signedIn() && (
+          allow delete: if signedIn() && (
           existing().occupantId == request.auth.uid
-          || isMe(get(/databases/$(database)/documents/rooms/$(roomId)).data.ownerId)
+          || isRoomStaff(roomId)
         );
       }
       // ── أعضاء الغرفة (rooms/{roomId}/members/{uid}) ──
