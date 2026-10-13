@@ -132,7 +132,8 @@ fun ProfileScreen(
     isUserFollowing: (String) -> Boolean = { false },
     onToggleFollow: (String) -> Unit = {},
     chatRooms: List<ChatRoom> = emptyList(),
-    onOpenRoom: (String) -> Unit = {}
+    onOpenRoom: (String) -> Unit = {},
+    onStartChat: (String, String, String) -> Unit = { _, _, _ -> }
 ) {
     val profileShareContext = LocalContext.current
     var showEditBioDialog by remember { mutableStateOf(false) }
@@ -472,6 +473,14 @@ Column(
             filled = !iFollowTarget,
             modifier = Modifier.weight(1f),
             onClick = { onToggleFollow(userProfile.id) }
+        )
+        ProfileNeonActionButton(
+            text = "مراسلة",
+            icon = Icons.Default.Chat,
+            accent = NeonPurple,
+            filled = true,
+            modifier = Modifier.weight(1f),
+            onClick = { onStartChat(userProfile.id, userProfile.name, userProfile.avatarUrl) }
         )
     }
 }
@@ -965,7 +974,8 @@ private fun FollowListFullScreen(
                     onBackFromOtherProfile = { selectedUser = null },
                     onLoadPostsFor = onLoadPostsFor,
                     isUserFollowing = isUserFollowing,
-                    onToggleFollow = onToggleFollow
+                    onToggleFollow = onToggleFollow,
+                    onStartChat = onStartChat
                 )
             }
         }
