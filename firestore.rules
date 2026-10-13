@@ -298,6 +298,37 @@ service cloud.firestore {
       }
     }
 
+    // ═════════════════════════ المحادثات الخاصة ═════════════════════════
+    match /conversations/{convId} {
+      // القراءة: لأطراف المحادثة فقط (يعمل مع الاستعلام أيضاً)
+      allow read: if signedIn() && request.auth.uid in resource.data.participants;
+
+      // الإنشاء: محادثة 1:1 وأنا أحد طرفيها
+      allow create: if signedIn()
+        && request.auth.uid in incoming().participants
+        && incoming().participants.size() == 2
+        && incoming().isGroup == false;
+
+      // التعديل: آخر رسالة / الأسماء / الصور فقط
+      allow update: if signedIn()
+        && request.auth.uid in resource.data.participants
+        && onlyChanged(['lastMessage', 'lastSenderId', 'updatedAt', 'names', 'avatarUrls']);
+
+      allow delete: if signedIn() && request.auth.uid in resource.data.participants;
+
+      // ── الرسائل (conversations/{convId}/messages/{msgId}) ──
+      match /messages/{msgId} {
+        allow read: if signedIn()
+          && request.auth.uid in get(/databases/$(database)/documents/conversations/$(convId)).data.participants;
+        allow create: if signedIn()
+          && request.auth.uid in get(/databases/$(database)/documents/conversations/$(convId)).data.participants
+          && incoming().senderId == request.auth.uid
+          && textUpTo('text', 2000);
+        allow update: if false;
+        allow delete: if signedIn() && isMe(resource.data.senderId);
+      }
+    }
+
     // ═════════════════════════ القصص ═════════════════════════
     match /stories/{storyId} {
       allow read: if signedIn();
