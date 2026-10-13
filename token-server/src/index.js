@@ -406,7 +406,7 @@ const json = (body, status = 200, headers = {}) =>
 export default {
   async fetch(request, env) {
     const path = new URL(request.url).pathname;
-    if (path !== '/token' && path !== '/notify') return json({ error: 'not_found' }, 404);
+    if (path !== '/token' && path !== '/notify' && path !== '/rtm-token') return json({ error: 'not_found' }, 404);
     if (request.method !== 'POST') return json({ error: 'method_not_allowed' }, 405, { Allow: 'POST' });
     if (path === '/rtm-token') return handleRtmToken(request, env);
 
