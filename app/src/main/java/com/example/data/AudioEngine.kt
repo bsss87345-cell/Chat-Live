@@ -49,6 +49,10 @@ class AudioEngine(
     private val appContext: Context = context.applicationContext
     private var engine: RtcEngine? = null
 
+    /** آخر سبب فشل لإنشاء المحرّك — يُعرض للمستخدم بدل رسالة غامضة. */
+    var lastInitError: String? = null
+        private set
+
     private val handler = object : IRtcEngineEventHandler() {
         override fun onJoinChannelSuccess(channel: String?, uid: Int, elapsed: Int) {
             listener.onJoined(channel.orEmpty(), uid)
@@ -100,10 +104,12 @@ class AudioEngine(
             true
         } catch (e: Exception) {
             Log.w(TAG, "فشل إنشاء محرّك Agora", e)
+            lastInitError = "${e.javaClass.simpleName}: ${e.message}"
             false
         } catch (e: LinkageError) {
             // UnsatisfiedLinkError أو NoClassDefFoundError: مكتبة Agora الأصلية غير متوفرة لمعمارية الجهاز
             Log.w(TAG, "مكتبة Agora الأصلية غير متوفرة لهذه المعمارية", e)
+            lastInitError = "مكتبة غير متوفرة (${e.javaClass.simpleName}): ${e.message}"
             false
         }
     }
