@@ -212,6 +212,20 @@ service cloud.firestore {
       // ── مقاعد الغرفة الصوتية (rooms/{roomId}/seats/{seatId}) ──
       // اللاعب يكتب مقعده فقط
       match /seats/{seatId} {
+      // ── أعضاء الغرفة (rooms/{roomId}/members/{uid}) ──
+      // 👤 العضو يكتب عضويته فقط — المالك يعدّل الأدوار/الكتم
+      match /members/{memberId} {
+        allow read: if signedIn();
+        allow create: if signedIn()
+          && memberId == request.auth.uid
+          && incoming().uid == request.auth.uid;
+        allow update: if signedIn() && (
+          isMe(memberId)
+          ||
+          isMe(get(/databases/$(database)/documents/rooms/$(roomId)).data.ownerId)
+        );
+        allow delete: if signedIn() && isMe(memberId);
+      }
         allow read: if signedIn();
 
         // إنشاء: اللاعب ينشئ مقعده فقط
