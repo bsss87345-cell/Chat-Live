@@ -408,7 +408,7 @@ export default {
     const path = new URL(request.url).pathname;
     if (path !== '/token' && path !== '/notify') return json({ error: 'not_found' }, 404);
     if (request.method !== 'POST') return json({ error: 'method_not_allowed' }, 405, { Allow: 'POST' });
-    if (path === '/notify') return handleNotify(request, env);
+    if (path === '/rtm-token') return handleRtmToken(request, env);
 
     const appId = env.AGORA_APP_ID;
     const appCertificate = env.AGORA_APP_CERTIFICATE;
