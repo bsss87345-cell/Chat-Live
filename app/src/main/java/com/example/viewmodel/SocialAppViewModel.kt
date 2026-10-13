@@ -31,6 +31,7 @@ class SocialAppViewModel : ViewModel() {
     
     // 🔔 مستمع مقاعد الغرفة (مزامنة Firestore بين الأجهزة)
     private var seatsListener: ListenerRegistration? = null
+    private var membersListener: ListenerRegistration? = null
 
     // --- Authentication State (الشاشة التي تظهر عند فتح التطبيق لأول مرة) ---
     private val _isLoggedIn = MutableStateFlow(false)
