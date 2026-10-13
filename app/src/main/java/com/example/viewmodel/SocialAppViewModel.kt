@@ -34,6 +34,8 @@ class SocialAppViewModel : ViewModel() {
     private var membersListener: ListenerRegistration? = null
     private var seatRequestsListener: ListenerRegistration? = null
     private var blocksListener: ListenerRegistration? = null
+    private var conversationsListener: ListenerRegistration? = null
+    private var directMessagesListener: ListenerRegistration? = null
     
     // --- Authentication State (الشاشة التي تظهر عند فتح التطبيق لأول مرة) ---
     private val _isLoggedIn = MutableStateFlow(false)
@@ -127,19 +129,7 @@ class SocialAppViewModel : ViewModel() {
     }
 
     // --- Chat State ---
-    private val _conversations = MutableStateFlow<List<ChatConversation>>(
-        listOf(
-            ChatConversation(
-                id = "test_conv_1",
-                name = "محادثة تجريبية",
-                isGroup = false,
-                lastMessage = "هذه رسالة تجريبية لاختبار الضغط المطوّل",
-                time = "الآن",
-                unreadCount = 1,
-                isOnline = true
-            )
-        )
-    )
+    private val _conversations = MutableStateFlow<List<ChatConversation>>(emptyList())
     val conversations: StateFlow<List<ChatConversation>> = _conversations.asStateFlow()
 
     private val _activeChatId = MutableStateFlow<String?>(null)
@@ -205,6 +195,7 @@ class SocialAppViewModel : ViewModel() {
                 restoreLocalData()
         startLiveRoomUpdates()
         startRoomMessagesSync()
+        startConversationsListener()
                } 
 
     /**
@@ -229,6 +220,7 @@ class SocialAppViewModel : ViewModel() {
                     // ☁️ أول دخول: نرفع بياناتي المحلية إن كانت السحابة فارغة، ونجلب السحابية إن وُجدت
                     pullCloudData()
                     pullCloudRooms()
+                    startConversationsListener()
                 }
                 is AuthService.Result.Error -> _userMessage.value = result.message
                 AuthService.Result.NotConfigured -> Unit
@@ -979,6 +971,41 @@ class SocialAppViewModel : ViewModel() {
         _userMessage.value = "تم استلام البلاغ وسيتم مراجعته من قِبل المشرفين، شكراً لمساعدتك في حماية المجتمع"
     }
 
+    /** 🔔 يستمع لمحادثاتي من Firestore (تحديث لحظي بين الأجهزة). */
+    private fun startConversationsListener() {
+        if (CloudStore.uid == null) return
+        conversationsListener?.remove()
+        conversationsListener = CloudStore.listenConversations { list ->
+            val localById = _conversations.value.associateBy { it.id }
+            _conversations.value = list.map { conv ->
+                val old = localById[conv.id]
+                conv.copy(isPinned = old?.isPinned ?: false, isBlocked = old?.isBlocked ?: false)
+            }
+        }
+    }
+
+    private fun stopConversationsListener() {
+        conversationsListener?.remove()
+        conversationsListener = null
+    }
+
+    /** 🔔 يستمع لرسائل المحادثة المفتوحة. */
+    private fun startDirectMessagesListener(conversationId: String) {
+        if (CloudStore.uid == null) return
+        stopDirectMessagesListener()
+        directMessagesListener = CloudStore.listenDirectMessages(conversationId) { messages ->
+            _conversations.update { list ->
+                list.map { conv -> if (conv.id == conversationId) conv.copy(messages = messages) else conv }
+            }
+        }
+    }
+
+    private fun stopDirectMessagesListener() {
+        directMessagesListener?.remove()
+        directMessagesListener = null
+    }
+
+
     fun togglePinConversation(conversationId: String) {
         _conversations.update { list ->
             list.map { conv ->
@@ -1043,10 +1070,12 @@ class SocialAppViewModel : ViewModel() {
         _conversations.update { list ->
             list.map { if (it.id == conversationId) it.copy(unreadCount = 0) else it }
         }
+        startDirectMessagesListener(conversationId)
     }
 
     fun closeConversation() {
         _activeChatId.value = null
+        stopDirectMessagesListener()
     }
 
     fun sendMessage(conversationId: String, text: String, type: ChatMessageType = ChatMessageType.TEXT, imageUri: String = "") {
