@@ -380,7 +380,11 @@ onSendImage = { convId, uri -> viewModel.sendMessage(convId, "", ChatMessageType
                                 isUserFollowing = { userId -> viewModel.isFollowing(userId) },
                                 onToggleFollow = { userId -> viewModel.toggleFollow(userId) },
                                 chatRooms = profileChatRooms,
-                                onOpenRoom = { roomId -> viewModel.openRoom(roomId) }
+                                onOpenRoom = { roomId -> viewModel.openRoom(roomId) },
+                                onStartChat = { uid, name, avatar ->
+                                    viewModel.startConversationWith(uid, name, avatar)
+                                    viewModel.setTab(AppTab.CHAT)
+                                }
                                 )
                         }
                     }
