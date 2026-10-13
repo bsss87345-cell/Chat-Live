@@ -365,6 +365,33 @@ async function handleNotify(request, env) {
   return json({ sent, failed });
 }
 
+// /rtm-token: يُصدر توكن دخول Signaling (RTM) — لرسائل الغرفة المؤقتة.
+async function handleRtmToken(request, env) {
+  const appId = env.AGORA_APP_ID;
+  const appCertificate = env.AGORA_APP_CERTIFICATE;
+  const projectId = env.FIREBASE_PROJECT_ID;
+  if (!isHex32(appId) || !isHex32(appCertificate) || !projectId) {
+    return json({ error: 'server_misconfigured' }, 500);
+  }
+
+  const match = /^Bearer (.+)$/.exec(request.headers.get('Authorization') || '');
+  if (!match) return json({ error: 'unauthorized' }, 401);
+  let firebaseUid;
+  try {
+    firebaseUid = await verifyFirebaseIdToken(match[1], projectId);
+  } catch {
+    return json({ error: 'unauthorized' }, 401);
+  }
+
+  // معرّف RTM = معرّف Firebase نفسه (ثابت لكل مستخدم، حروف وأرقام فقط)
+  const token = await buildRtmToken({
+    appId,
+    appCertificate,
+    userId: firebaseUid,
+    expireSeconds: TOKEN_TTL_SECONDS,
+  });
+  return json({ token, userId: firebaseUid, expiresIn: TOKEN_TTL_SECONDS });
+}
 // ---------- نقطة الدخول ----------
 const json = (body, status = 200, headers = {}) =>
   new Response(JSON.stringify(body), {
