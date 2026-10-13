@@ -1783,6 +1783,28 @@ val stopAngle = (360f - (eliminatedIndex * sectorAngle)) % 360f
     private fun stopSeatsListener() {
         seatsListener?.remove()
         seatsListener = null
+        
+    /** 🔔 يبدأ الاستماع لأعضاء الغرفة (uids حقيقية → "me" للتوافق المحلي). */
+    private fun startMembersListener(roomId: String) {
+        stopMembersListener()
+        membersListener = CloudStore.listenRoomMembers(roomId) { members ->
+            val myUid = _userProfile.value.id
+            val mapped = members.map { m ->
+                if (myUid.isNotBlank() && m.id == myUid) m.copy(id = "me") else m
+            }
+            _chatRooms.update { list ->
+                list.map { room ->
+                    if (room.id == roomId) room.copy(members = mapped) else room
+                }
+            }
+        }
+    }
+
+    /** 🔔 يوقف استماع الأعضاء. */
+    private fun stopMembersListener() {
+        membersListener?.remove()
+        membersListener = null
+    }
     }  
     
     fun takeVoiceSeatDirectly(roomId: String, seatNumber: Int) {
