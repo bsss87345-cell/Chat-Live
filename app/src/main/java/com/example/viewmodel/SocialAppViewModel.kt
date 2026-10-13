@@ -2682,7 +2682,7 @@ fun toggleOwnerVoiceMute(roomId: String) {
         if (isFollowing(targetUserId)) {
             unfollowUser(targetUserId)
         } else if (isFollowRequestPending(targetUserId)) {
-            _pendingFollowRequests.update { list -> list.filterNot { it == targetUserId } }
+            viewModelScope.launch(Dispatchers.IO) { CloudStore.removeFollowRequest(targetUserId) }
             _userMessage.value = "تم إلغاء طلب المتابعة"
         } else {
             followUser(targetUserId)
