@@ -286,8 +286,7 @@ class VoiceRoomViewModel(application: Application) : AndroidViewModel(applicatio
             ) "ممنوح" else "غير_ممنوح"
             val idOk = appId.matches(Regex("[0-9a-fA-F]{32}"))
             throw IllegalStateException(
-                "$NO_ENGINE السبب: ${created.lastInitError ?: "غير معروف"} | " +
-                    "appId=${appId.length}حرف/${if (idOk) "صحيح" else "خاطئ"} | الميكروفون=$mic"
+                                "عطل صوت: id=${appId.length}/${if (idOk) "صح" else "خطأ"} ميك=$mic ${created.lastInitError?.take(45)}"
             )
                 }
         val current = _state.value
