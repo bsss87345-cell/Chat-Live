@@ -32,6 +32,17 @@ android {
       abiFilters += listOf("arm64-v8a", "armeabi-v7a", "x86_64")
     }
 
+    // 🎙️ حقن صريح لمعرّف أغورا من ملف .env (يضمن وصوله ولو تعارضت إضافة الأسرار)
+    val agoraAppId = rootProject.file(".env").let { f ->
+        if (!f.exists()) "" else f.readLines()
+            .firstOrNull { it.trim().startsWith("AGORA_APP_ID=") }
+            ?.substringAfter("=")
+            ?.trim()
+            ?.trim('"')
+            ?: ""
+    }
+    buildConfigField("String", "AGORA_APP_ID_ENV", "\"$agoraAppId\"")
+
     testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
   }
 
