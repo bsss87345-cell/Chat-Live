@@ -124,6 +124,44 @@ export async function buildRtcToken({
   return '007' + base64(await deflateZlib(content));
 }
 
+// ---------- توكن Agora RTM (Signaling) ----------
+// نفس بنية AccessToken2/Token007 لكن: نوع الخدمة 2 (RTM) وصلاحية الدخول 1000،
+// والبيانات = معرّف المستخدم (بلا قناة) لأن الدخول عام على مستوى الحساب.
+const RTM_SERVICE_TYPE = 2;
+const PRIV_LOGIN = 1000;
+
+function packRtmService(userId, seconds) {
+  return concat([
+    u16(RTM_SERVICE_TYPE),
+    privilegeMap({ [PRIV_LOGIN]: seconds }),
+    lenPrefixed(enc.encode(userId)),
+  ]);
+}
+
+export async function buildRtmToken({
+  appId,
+  appCertificate,
+  userId,
+  expireSeconds = TOKEN_TTL_SECONDS,
+  issueTs,
+  salt,
+}) {
+  const ts = issueTs ?? Math.floor(Date.now() / 1000);
+  const s = salt ?? 1 + (crypto.getRandomValues(new Uint32Array(1))[0] % 99999999);
+  const signingKey = await deriveSigningKey(appCertificate, ts, s);
+  const info = concat([
+    lenPrefixed(enc.encode(appId)),
+    u32(ts),
+    u32(expireSeconds),
+    u32(s),
+    u16(1), // عدد الخدمات: خدمة RTM واحدة
+    packRtmService(userId, expireSeconds),
+  ]);
+  const signature = await hmacSha256(signingKey, info);
+  const content = concat([lenPrefixed(signature), info]);
+  return '007' + base64(await deflateZlib(content));
+}
+
 // uid ثابت لكل مستخدم مشتق من معرّف Firebase، والعميل لا يختاره (فلا ينتحل أحد هوية غيره)
 export async function agoraUidFor(firebaseUid) {
   const d = new Uint8Array(await crypto.subtle.digest('SHA-256', enc.encode(firebaseUid)));
