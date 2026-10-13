@@ -808,6 +808,21 @@ class SocialAppViewModel : ViewModel() {
     }
     
     // --- Feed Actions ---
+
+    /** 🔔 يرسل إشعار Push لصاحب المنشور (بلا إشعار النفس). */
+    private fun notifyPostAuthor(postId: String, title: String, body: String) {
+        val authorId = _posts.value.find { it.id == postId }?.authorId.orEmpty()
+        if (authorId.isBlank() || authorId == CloudStore.uid) return
+        viewModelScope.launch {
+            notifyClient.notifyUsers(
+                userIds = listOf(authorId),
+                title = title,
+                body = body,
+                data = mapOf("type" to "post", "postId" to postId)
+            )
+        }
+    }
+
         fun toggleLike(postId: String) {
         var newLiked: Boolean? = null
         _posts.update { list ->
@@ -827,6 +842,7 @@ class SocialAppViewModel : ViewModel() {
                 CloudStore.setLike(postId, liked)
                 CloudStore.saveLikedPostIds(likedIds)
             }
+            if (liked) notifyPostAuthor(postId, "إعجاب جديد ❤️", "أعجب أحدهم بمنشورك")
         }
         persistMyPosts()
         }
@@ -872,6 +888,7 @@ class SocialAppViewModel : ViewModel() {
             CloudStore.stepPostCounter(postId, "commentsCount", 1)
         }
         _userMessage.value = "تمت إضافة تعليقك بنجاح!"
+        notifyPostAuthor(postId, "تعليق جديد 💬", commentText.trim().take(80))
     }
 
                 fun sharePost(post: Post) {
