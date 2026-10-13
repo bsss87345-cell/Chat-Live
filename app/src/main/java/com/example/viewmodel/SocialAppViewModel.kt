@@ -2661,10 +2661,16 @@ fun toggleOwnerVoiceMute(roomId: String) {
     fun isFollowRequestPending(userId: String): Boolean =
         _pendingFollowRequests.value.contains(userId)
 
-    /** يوافق صاحب الحساب الخاص على الطلب — يجعل المتابعة فعلية. */
+    /** يوافق صاحب الحساب الخاص على الطلب — الطالب هو من يكتب المتابعة. */
     fun approveFollowRequest(requesterId: String) {
-        _pendingFollowRequests.update { list -> list.filterNot { it == requesterId } }
-        followUser(requesterId, forceDirect = true)
+        viewModelScope.launch(Dispatchers.IO) { CloudStore.respondFollowRequest(requesterId, true) }
+        _userMessage.value = "تم قبول طلب المتابعة."
+    }
+
+    /** يرفض طلب متابعة وارد. */
+    fun rejectFollowRequest(requesterId: String) {
+        viewModelScope.launch(Dispatchers.IO) { CloudStore.respondFollowRequest(requesterId, false) }
+        _userMessage.value = "تم رفض طلب المتابعة."
     }
 
     // يفحص هل "أنا" أتابع هذا المستخدم فعلياً حالياً
