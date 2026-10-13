@@ -38,7 +38,8 @@ jobs:
         env:
           AGORA_APP_ID: ${{ secrets.AGORA_APP_ID }}
         run: |
-          echo "::notice::طول AGORA_APP_ID = ${#AGORA_APP_ID} خانة (المطلوب 32)"
+         echo "::notice::طول AGORA_APP_ID = ${#AGORA_APP_ID} خانة (المطلوب 32)"
+          echo "::notice::بصمة AGORA_APP_ID = ${AGORA_APP_ID:0:4}***${AGORA_APP_ID: -2} (المفروض حروف hex)"
           if [ -n "$AGORA_APP_ID" ]; then
             if [ "${#AGORA_APP_ID}" -ne 32 ]; then
               echo "::error::AGORA_APP_ID طوله ${#AGORA_APP_ID} والمطلوب 32 خانة — الصوت لن يعمل"
