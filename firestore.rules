@@ -248,6 +248,21 @@ service cloud.firestore {
         );
         allow delete: if signedIn() && isMe(memberId);
       }
+
+      // ── طلبات المايك (rooms/{roomId}/seatRequests/{uid}) ──
+      // 🙋 العضو يكتب طلبه فقط — المالك يحذفه بعد القبول أو الرفض
+      match /seatRequests/{requesterId} {
+        allow read: if signedIn();
+        allow create: if signedIn()
+          && requesterId == request.auth.uid
+          && incoming().uid == request.auth.uid
+          && incoming().seatNumber is number;
+        allow update: if false;
+        allow delete: if signedIn() && (
+          isMe(requesterId)
+          || isMe(get(/databases/$(database)/documents/rooms/$(roomId)).data.ownerId)
+        );
+      }
     }
 
     // ═════════════════════════ القصص ═════════════════════════
