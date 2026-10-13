@@ -39,6 +39,7 @@ object CloudStore {
 
     private const val USERS = "users"
     private const val FOLLOWS = "follows"
+    private const val FOLLOW_REQUESTS = "followRequests"
     private const val NOTIFICATIONS = "notifications"
     private const val WALLETS = "wallets"
     private const val MAX_TRANSACTIONS = 100
